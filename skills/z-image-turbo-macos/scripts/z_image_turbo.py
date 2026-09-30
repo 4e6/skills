@@ -2,7 +2,7 @@
 """Z-Image Turbo on an Apple Silicon Mac: check the machine, set it up, generate images.
 
     python3 z_image_turbo.py check
-    python3 z_image_turbo.py setup
+    python3 z_image_turbo.py setup --yes
     python3 z_image_turbo.py generate --prompt '...' --out picture.jpg
     python3 z_image_turbo.py generate --jobs jobs.json --out-dir images
 
@@ -125,9 +125,15 @@ def venv_dir() -> Path:
 
 
 def pins_hash() -> str:
-    """What the environment should be built from; kept in its marker."""
-    digest = hashlib.sha256(REQUIREMENTS.read_bytes() + b"\0" + CONSTRAINTS.read_bytes())
-    return digest.hexdigest()
+    """What the environment should be built from; kept in its marker. The pins
+    alone, not the comments, so rewording a comment rebuilds nobody's environment."""
+    lines = []
+    for path in (REQUIREMENTS, CONSTRAINTS):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.split("#", 1)[0].strip()
+            if line:
+                lines.append(line)
+    return hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest()
 
 
 def marker_hash() -> str | None:
@@ -251,7 +257,10 @@ def packages_ready(deep: bool = False) -> bool:
         return False
     code = "import importlib.metadata as m; print(m.version('mflux'))"
     if deep:
-        code = "import mlx.core, mflux; " + code
+        # What `generate` itself imports, torch and transformers included: about
+        # a second warm, and it catches a broken install before the host is told
+        # the Mac is ready.
+        code = "from mflux.models.z_image import ZImage; " + code
     try:
         out = subprocess.run([str(py), "-c", code], capture_output=True, text=True,
                              timeout=VENV_PROBE_TIMEOUT, check=True)
@@ -437,7 +446,8 @@ def cmd_setup(args: argparse.Namespace) -> int:
         except OSError as exc:
             print(f"[setup] failed: could not build {venv}: {exc.strerror or exc}", file=sys.stderr)
             return EXIT_PARTIAL
-        pip = [str(venv_python()), "-m", "pip", "install", "--disable-pip-version-check",
+        # Quiet: pip's hundred lines of progress would bury the one error line.
+        pip = [str(venv_python()), "-m", "pip", "install", "--quiet", "--disable-pip-version-check",
                # A package with no wheel for this Mac fails here in seconds,
                # rather than after a long, doomed build from source.
                "--only-binary=:all:", "-r", str(REQUIREMENTS), "-c", str(CONSTRAINTS)]
@@ -489,6 +499,9 @@ SIDE_STEP, SIDE_MIN, SIDE_MAX = 16, 256, 1536
 # Past four times the largest drawing, --resize only enlarges blur, and a typo
 # such as 100000x100000 would ask Pillow for tens of gigabytes per image.
 RESIZE_MAX = 4 * SIDE_MAX
+# The most extreme drawing shape is SIDE_MAX:SIDE_MIN, 6:1; a --resize four
+# times flatter than that crops the drawing to a sliver.
+RESIZE_RATIO_MAX = 4 * SIDE_MAX / SIDE_MIN
 DEFAULT_PIXELS = 1024 * 1024
 # Seeds are 32-bit: what the prompt hash gives, and far below MLX's own limit.
 SEED_MAX = 2**32 - 1
@@ -509,6 +522,9 @@ def parse_size(text: str, flag: str, model_side: bool) -> tuple[int, int]:
         raise UsageError(f"{flag} must be positive (got {text})")
     if not model_side and max(w, h) > RESIZE_MAX:
         raise UsageError(f"{flag} sides can be at most {RESIZE_MAX} (got {text})")
+    if not model_side and max(w, h) / min(w, h) > RESIZE_RATIO_MAX:
+        raise UsageError(f"{flag} can be at most {RESIZE_RATIO_MAX:.0f} times wider than tall, "
+                         f"or taller than wide (got {text})")
     if model_side:
         for side in (w, h):
             if side % SIDE_STEP or not SIDE_MIN <= side <= SIDE_MAX:
@@ -520,12 +536,15 @@ def parse_size(text: str, flag: str, model_side: bool) -> tuple[int, int]:
 
 
 def size_for(shape: tuple[int, int]) -> tuple[int, int]:
-    """About one megapixel in the given shape, each side a multiple of 16: what
-    the model draws best, so that --resize crops away as little as it can."""
+    """The drawing size for a final size: its shape, so --resize crops away as
+    little as it can, and at least one megapixel, where the model is at its best.
+    Larger when the final size is larger, as far as the sides allow, so a print
+    is drawn at its own size rather than enlarged. Each side a multiple of 16."""
     ratio = shape[0] / shape[1]
+    pixels = max(DEFAULT_PIXELS, shape[0] * shape[1])
     def side(x: float) -> int:
         return min(SIDE_MAX, max(SIDE_MIN, SIDE_STEP * round(x / SIDE_STEP)))
-    w, h = math.sqrt(DEFAULT_PIXELS * ratio), math.sqrt(DEFAULT_PIXELS / ratio)
+    w, h = math.sqrt(pixels * ratio), math.sqrt(pixels / ratio)
     # Clamp the long side first and derive the short one from it, so an extreme
     # shape keeps as much of its ratio as the bounds allow.
     if w >= h:
@@ -542,11 +561,14 @@ def upscale(size: tuple[int, int], resize: tuple[int, int]) -> float:
 
 
 def default_seed(prompt: str, out: str) -> int:
-    """A seed from the prompt and `out` as written, not the job's place in the
-    list: reordering jobs changes nothing, the same job redraws the same image,
-    and two files with one prompt get two different images. `out` as written,
-    not resolved, so the same jobs file gives the same images from any folder."""
-    digest = hashlib.sha256(f"{prompt}\n{out}".encode("utf-8")).digest()
+    """A seed from the prompt and `out`, not the job's place in the list:
+    reordering jobs changes nothing, the same job redraws the same image, and
+    two files with one prompt get two different images. `out` relative to
+    --out-dir, so a jobs file gives the same images from any folder; normalised,
+    so ./fox.jpg is fox.jpg; and without its extension, so fox.png is fox.jpg's
+    image in another format."""
+    stem = os.path.splitext(os.path.normpath(out))[0]
+    digest = hashlib.sha256(f"{prompt}\n{stem}".encode("utf-8")).digest()
     return int.from_bytes(digest[:4], "big")
 
 
@@ -613,15 +635,19 @@ def load_jobs(args: argparse.Namespace) -> list[dict]:
 
 
 def finished(path: Path) -> bool:
-    """An image already there: a JPEG, PNG or WebP by its first bytes. Anything
-    else at the path, empty or not an image, is generated over."""
+    """An image already there: the format its extension names, by its first
+    bytes. Anything else at the path, empty or not that image, is generated over."""
     try:
         with open(path, "rb") as f:
             head = f.read(12)
     except OSError:
         return False
-    return (head[:3] == b"\xff\xd8\xff" or head[:8] == b"\x89PNG\r\n\x1a\n"
-            or (head[:4] == b"RIFF" and head[8:12] == b"WEBP"))
+    fmt = SUFFIXES[path.suffix.lower()]
+    if fmt == "JPEG":
+        return head[:3] == b"\xff\xd8\xff"
+    if fmt == "PNG":
+        return head[:8] == b"\x89PNG\r\n\x1a\n"
+    return head[:4] == b"RIFF" and head[8:12] == b"WEBP"
 
 
 def show(path: Path) -> str:
@@ -743,8 +769,8 @@ def draw(jobs: list[dict], size: tuple[int, int], args: argparse.Namespace) -> i
         else:
             made += 1
             kb = job["path"].stat().st_size / 1024
-            print(f"made  {show(job['path'])}  ({kb:.0f} KB, {time.monotonic() - t:.0f}s, "
-                  f"{n}/{len(jobs)})", flush=True)
+            print(f"made  {show(job['path'])}  seed={job['seed']}  ({kb:.0f} KB, "
+                  f"{time.monotonic() - t:.0f}s, {n}/{len(jobs)})", flush=True)
         # Without this, peak memory creeps up over a long batch.
         mx.clear_cache()
 
@@ -775,11 +801,16 @@ def cmd_generate(args: argparse.Namespace) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_USAGE
 
-    if resize and upscale(size, resize) > 1.05:
-        print(f"note: --resize {resize[0]}x{resize[1]} enlarges the drawing {upscale(size, resize):.1f}x, "
-              "so the images will be soft", file=sys.stderr)
+    def note_upscale() -> None:
+        # Below 1.5x, a Lanczos enlargement is hard to see on screen or paper.
+        if resize and upscale(size, resize) > 1.5:
+            print(f"note: --resize {resize[0]}x{resize[1]} enlarges the drawing "
+                  f"{upscale(size, resize):.1f}x, so the images will be soft", file=sys.stderr)
+
     pending = [j for j in jobs if args.force or not finished(j["path"])]
     if args.dry_run or not pending:
+        if pending:
+            note_upscale()
         for job in jobs:
             if job in pending:
                 print(f"draw  {show(job['path'])}  {size[0]}x{size[1]}  seed={job['seed']}  "
@@ -815,6 +846,7 @@ def cmd_generate(args: argparse.Namespace) -> int:
     except UsageError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_USAGE
+    note_upscale()
     for job in jobs:
         if job not in pending:
             print(f"have  {show(job['path'])}", flush=True)
@@ -844,8 +876,8 @@ def main() -> int:
     g.add_argument("--seed", type=int, help="one image: its seed (default: from the prompt and file name)")
     g.add_argument("--jobs", help="many images: a JSON list of {\"prompt\", \"out\", optional \"seed\"}")
     g.add_argument("--out-dir", default=".", help="where relative \"out\" paths land (default: here)")
-    g.add_argument("--size", help="size the model draws at (default: about 1 megapixel, "
-                                  "in the shape of --resize if given, else 1024x1024)")
+    g.add_argument("--size", help="size the model draws at (default: --resize's shape and size, "
+                                  "at least 1 megapixel and at most 1536 a side; else 1024x1024)")
     g.add_argument("--resize", help="centre-crop and scale each image to WIDTHxHEIGHT before saving")
     g.add_argument("--quality", type=int, default=85, help="JPEG and WebP quality (default: 85)")
     # mflux's own default for this model, and what its publishers recommend.

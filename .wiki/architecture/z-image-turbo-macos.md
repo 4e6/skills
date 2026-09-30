@@ -3,7 +3,7 @@ type: Module
 title: Z-Image Turbo on macOS
 description: One model on one kind of machine, and no fallback. The one skill here whose substance is a download, so its network use is fenced into a setup the user agrees to, pinned to what was tested, and generating stays offline.
 tags: [architecture, images, distribution]
-timestamp: 2026-09-30T17:00:00Z
+timestamp: 2026-09-30T18:00:00Z
 sources: [skills/z-image-turbo-macos/**]
 source_commit: 60984927c08b2927285a9aca5f832877c13b332c
 ---
@@ -72,19 +72,25 @@ that doesn't.
   own would have had it emptied. A marker is the only licence to delete, and it
   is written before the environment is built, so an interrupted build is still
   setup's to redo; any other non-empty folder is a refusal. The marker also holds
-  a hash of the pins, so a skill update that changes them rebuilds the
-  environment rather than calling the old one ready.
-- **A seed follows the prompt and `out` as written**, not the job's place in the
-  list. The predecessor used base seed plus index, so reordering a batch redrew
-  every image; a seed from the prompt alone made four jobs asking for four takes
-  on one prompt come out identical, and one from the file name alone made
-  `a/hero.jpg` and `b/hero.jpg` collide. `out` as written, not resolved, keeps a
-  jobs file's images the same from any folder. A job that would still repeat
-  another is refused before anything is generated.
-- **The drawing size follows the final shape.** Asked for a 1200×630 header, a
-  host had to guess a drawing size; now `--resize` alone picks about one
-  megapixel in its shape, so the crop throws little away. A final size larger
-  than the drawing is allowed, with a note that it will be soft.
+  a hash of the pins — the pins alone, not the files' comments — so a skill
+  update that changes them rebuilds the environment rather than calling the old
+  one ready, and one that rewords a comment asks nobody to download again.
+- **A seed follows the prompt and `out`**, not the job's place in the list. The
+  predecessor used base seed plus index, so reordering a batch redrew every
+  image; a seed from the prompt alone made four jobs asking for four takes on
+  one prompt come out identical, and one from the file name alone made
+  `a/hero.jpg` and `b/hero.jpg` collide. `out` relative to `--out-dir` keeps a
+  jobs file's images the same from any folder; normalised and without its
+  extension, `./fox.jpg`, `fox.jpg` and `fox.png` are one image. Every `made`
+  line prints the seed, so any image can be made again elsewhere. A job that
+  would still repeat another is refused before anything is generated.
+- **The drawing size follows the final size.** Asked for a 1200×630 header, a
+  host had to guess a drawing size; asked for a 1200×1800 print, a one-megapixel
+  drawing was enlarged 1.4 times. Now `--resize` alone sets the drawing to its
+  shape and size, at least one megapixel and within the sides' bounds, so the
+  crop throws little away and a print is drawn near its own size. A note says
+  when the final image is enlarged more than 1.5 times, below which it is hard
+  to see.
 - **The MLX buffer cache is capped at 1 GB.** Uncapped, MLX keeps freed buffers
   until memory runs short, and one image showed a 34 GB peak on a 48 GB Mac. The
   cap is mflux's own low-memory value.
@@ -119,6 +125,7 @@ On an M5 Pro with 48 GB, at 9 steps:
 | 256×256 | 3 s | — |
 | 768×768 | 21 s | 26 GB uncapped |
 | 1024×1024 | 38–40 s | 34 GB uncapped, 18 GB capped |
+| 1024×1536 | 63 s | 19 GB capped |
 | 1536×1536 | 109–120 s | 39 GB uncapped, 24 GB capped |
 
 Three images in about 130 s, the model's load folded into the first. An
@@ -138,6 +145,13 @@ put the prompts in a jobs file, got five different logos with the lettering
 right, and handed them over. It did not report asking before setup, and read
 the running batch's output 84 times; both are answered above.
 
+**A third host run.** Opus, asked for a 1200×1800 watercolour for printing and
+then for two more versions of it: it asked before setup with the check's own
+figure, ran `setup --yes`, got two variants that differed, and redrew one whose
+candle stood on the book's pages. It found the print enlarged 1.4 times, the
+enlargement note printed twice, no redraw path for a prompt with an apostrophe,
+and pip's output burying setup's; all four were fixed.
+
 **Not measured:** a first `setup` that downloads the model, a Mac with less than
-48 GB, any M1 to M4 timing, Opus as the host, and any host run since `--yes`. No evaluation suite
+48 GB, any M1 to M4 timing, and a host run since the last round of fixes. No evaluation suite
 exists, the same known gap as the [meal-plan skill](/conventions/editing-a-skill.md#where-the-skill-knowingly-differs-from-the-guidance).

@@ -36,8 +36,9 @@ from the folder the images are for — the user's working directory, never this
 skill's folder, which is replaced when the skill is updated. `--out`,
 `--out-dir` and `--jobs` are relative to where you run it. Below, `SKILL_DIR`
 stands for this skill's directory. Any command's exit 4 is a fault in the
-script: stop, and show the user its message. With no `python3` at all, tell the
-user the skill needs Apple's command-line tools, and stop.
+script: stop, and show the user its message. With no `python3` at all, or a
+message about `xcode-select` in its place, tell the user the skill needs Apple's
+command-line tools, and stop.
 
 ```
 - [ ] 1  check the machine
@@ -56,7 +57,7 @@ python3 SKILL_DIR/scripts/z_image_turbo.py check
 | Exit | Last line | Next |
 |---|---|---|
 | 0 | `ready` | step 3 |
-| 1 | `setup needed: …` | step 2 |
+| 1 | starts `setup needed:` | step 2 |
 | 3 | `cannot run here: …` | stop |
 
 On exit 3, tell the user in one sentence what the line marked `no` or `short`
@@ -66,9 +67,10 @@ will be much slower, and go on if they want to.
 
 ## 2. Set up, once
 
-Setup is the only step that uses the network. **Tell the user how much the
-check says it downloads, up to about 12 GB, and ask them before running it.**
-`--yes` says they agreed; without it, setup downloads nothing and exits 2.
+Setup is the only step that uses the network. **Tell the user the figure in
+the check's last line — the most it can be is about 12 GB — and ask them before
+running it.** `--yes` says they agreed; without it, setup downloads nothing and
+exits 2.
 
 ```
 python3 SKILL_DIR/scripts/z_image_turbo.py setup --yes
@@ -95,24 +97,28 @@ in step 1.
 ## 4. Generate
 
 One image. Single-quote the prompt; a prompt with a quote mark or apostrophe
-of either kind goes in a jobs file instead, where the shell cannot touch it:
+of either kind goes in a jobs file instead, even a jobs file of one, where the
+shell cannot touch it:
 
 ```
 python3 SKILL_DIR/scripts/z_image_turbo.py generate --prompt 'A lighthouse on a rocky coast at dusk, warm light in the lantern room, cinematic' --out lighthouse.jpg
 ```
 
 Several: write a jobs file and run it once, since the model loads once per run.
-`out` is relative to `--out-dir`, and its extension — `.jpg`, `.jpeg`, `.png` or
-`.webp` — chooses the format. Each job's seed comes from its prompt and its
-`out`, unless you give one: several jobs with one prompt give several different
-images, and the same job gives the same image every time, so a second batch of
-the same prompts needs new seeds. Use new file names: an image already at a
-path counts as done.
+Keep jobs files out of the user's folder; a temporary folder will do. `out` is
+relative to `--out-dir`, and its extension — `.jpg`, `.jpeg`, `.png` or `.webp`
+— chooses the format. An image already at a path counts as done, so use new
+file names.
+
+**Seeds.** A job without a `seed` gets one from its prompt and its `out` name,
+and every `made` line prints it. So several jobs with one prompt and different
+names give different images, the same job gives the same image every time, and
+the same image in another format or place needs that seed passed on.
 
 ```json
 [
   {"prompt": "Food photography, top-down view: porridge with blueberries and sliced banana in a rustic ceramic bowl, natural daylight, wooden table, no text", "out": "porridge.jpg"},
-  {"prompt": "A hand-painted wooden sign reading \"OPEN DAILY\" hanging in a bakery door", "out": "sign.png"}
+  {"prompt": "A hand-painted wooden sign reading \"OPEN DAILY\" hanging in a bakery door", "out": "sign.png", "seed": 7}
 ]
 ```
 
@@ -122,15 +128,15 @@ python3 SKILL_DIR/scripts/z_image_turbo.py generate --jobs jobs.json --out-dir i
 
 | Option | Default | What it does |
 |---|---|---|
-| `--resize WxH` | none | the final size: centre-crops to its shape and scales to it, such as `1200x630` or `480x480`. A note says when it enlarges the drawing |
-| `--size WxH` | about one megapixel, in `--resize`'s shape, else `1024x1024` | the size the model draws at, sides multiples of 16 from 256 to 1536. Leave it out |
+| `--resize WxH` | none | the final size, such as `1200x630`, `1200x1800` or `480x480`: centre-crops to its shape and scales to it |
+| `--size WxH` | `--resize`'s shape and size, at least one megapixel and at most 1536 a side; else `1024x1024` | the size the model draws at. Leave it out |
 | `--quality N` | `85` | JPEG and WebP quality |
 | `--steps N` | `9` | what the model is tuned for; leave it |
 | `--force` | off | redraws images that already exist |
 | `--dry-run` | off | checks the jobs and lists what would be made |
 
-**It takes about 40 seconds an image**, measured on an M5 Pro, and longer on
-earlier and base chips. Tell the user roughly how long a batch will take, and
+**It takes about 40 seconds a megapixel**, measured on an M5 Pro — a
+1200×1800 print takes about a minute — and longer on earlier and base chips. Tell the user roughly how long a batch will take, and
 run `generate` in the background where your host can: many hosts stop a command
 at two minutes. A line appears only as each image finishes, so wait for the
 command to exit rather than reading its output over and over.
@@ -148,16 +154,21 @@ stopped: interrupted, a full disk, or a MacBook down to 10% battery).
 
 ## 5. Look at every image
 
-View each image before handing it over, where you can see images. The same job
-redraws the same image, so for one that misses the prompt — a wrong count of
-things, garbled lettering, a mangled hand — reword the prompt or pick a new
-seed, and redraw that image alone with the same `--resize` as before:
+View each image before handing it over, where you can see images. A miss is
+anything that contradicts the prompt or could not be so: a wrong count of
+things, garbled lettering, a mangled hand, a candle standing on a book's open
+pages. Redraw a miss alone, with the same `--resize` as before, and either a
+reworded prompt, which brings its own new seed, or the same prompt with a new
+`--seed`:
 
 ```
 python3 SKILL_DIR/scripts/z_image_turbo.py generate --prompt '…' --out images/porridge.jpg --seed 8 --force
 ```
 
-`--force` on a jobs file redraws every image in it. Redraw an image at most
-twice; then hand it over and say what is still wrong.
+A prompt with a quote mark or apostrophe goes in a jobs file of one, run with
+`--force`; `--force` on the whole jobs file would redraw every image in it.
+Redraw an image at most twice; then hand it over and say what is still wrong.
 
-Give the user the full path of each image, and nothing of the command's output.
+Give the user the full path of each image. Pass on, in your own words, anything
+the command said that they need, such as a note that an image was enlarged;
+quote none of its output.

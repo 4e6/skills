@@ -4,7 +4,7 @@ title: What this repository is
 description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a described training week into meals, a shopping list and a printable page; z-image-turbo-macos draws images on an Apple Silicon Mac.
 tags: [overview]
 timestamp: 2026-09-30T15:00:00Z
-sources: [README.md, skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
+sources: [/README.md, skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
 source_commit: 4757fa27aade35d4ca5a676123a3c9c0eb45d9e3
 ---
 
