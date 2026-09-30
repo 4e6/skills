@@ -1,6 +1,7 @@
 # Wiki Update Log
 
 ## 2026-09-30
+* **Update**: A meal has no `extra` any more: everything on the plate is an ingredient in a recipe, so every figure counts it; the scripts still read one in an older plan ([carb periodization](/domain/carb-periodization.md), [the list buys what the week uses](/invariants/the-list-buys-what-the-week-uses.md)).
 * **Update**: A review of the snacks change: food served with a dish every time moves into its recipe, `extra` is estimated and a range's middle taken in the snack arithmetic, a shortfall that rounds to nothing gets no line, figures and page citations corrected, and every inference listed ([carb periodization](/domain/carb-periodization.md), [the daily targets question](/questions/daily-carbohydrate-targets.md), [which copy is the source](/questions/which-copy-is-the-source.md)).
 * **Update**: A day's hours count only its sessions at moderate intensity or harder, after two rounds of simulated hosts read an hour's hard swim with an easy run both ways ([carb periodization](/domain/carb-periodization.md)).
 * **Update**: An easy session of about an hour or less is the light band, after the first round of simulated hosts split two and two ([carb periodization](/domain/carb-periodization.md)).

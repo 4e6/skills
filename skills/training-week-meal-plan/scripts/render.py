@@ -239,6 +239,7 @@ def meal_body(meal, name=prose, bookkeeping=True) -> str:
         return body
     if "note" in meal:
         body += ' <span class="note">(' + prose(meal["note"]) + ")</span>"
+    # Not in the schema any more, and still printed where an older plan has one.
     if "extra" in meal:
         body += ' <span class="extra">' + prose(meal["extra"]) + "</span>"
     return body

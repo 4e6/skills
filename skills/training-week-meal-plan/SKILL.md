@@ -308,7 +308,8 @@ worth stating twice:
 - **Each meal's `dish`, and every name in its `alongside`, matches a recipe
   entry's `title` at that meal exactly.** They are matched against each other by
   those strings, so a near-miss silently breaks the link between a meal and its
-  method. A side has quantities and a method; a slice of bread is `extra`.
+  method. A side has quantities and a method; bread served with a dish is an
+  ingredient line in that dish's recipe.
 
 Where this host has no way to run a command at all — no shell, no code
 execution — you already know there will be no check and no page: read

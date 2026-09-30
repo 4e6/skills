@@ -226,7 +226,7 @@
                   "type": "string"
                 },
                 "alongside": {
-                  "description": "Every other dish cooked for this meal, each matching exactly a recipe title for this day and meal. A dish has quantities and a method; bread served with a dish every time is an ingredient line in that dish's recipe. Omit when the meal is one dish, and never repeat `dish` here.",
+                  "description": "Every other dish cooked for this meal, each matching exactly a recipe title for this day and meal. A dish has quantities and a method; anything served with it — bread with the soup, a lemon wedge — is an ingredient line in that dish's recipe, so its amount is bought and its figures counted. Omit when the meal is one dish, and never repeat `dish` here.",
                   "minItems": 1,
                   "type": "array",
                   "items": {
@@ -241,10 +241,6 @@
                 },
                 "note": {
                   "description": "Portion bookkeeping shown in parentheses, e.g. \"cook 2 — eat 1, reserve 1\" or \"leftover from Mon\".",
-                  "type": "string"
-                },
-                "extra": {
-                  "description": "Food on the table that needs no recipe and is not there every time the dish is eaten, or carries next to nothing, e.g. \"with a lemon wedge\". Food served with the dish every time is an ingredient in its recipe instead; if it has quantities and a method it is a dish in `alongside`. Never here and in a recipe.",
                   "type": "string"
                 }
               },

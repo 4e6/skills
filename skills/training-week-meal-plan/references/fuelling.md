@@ -226,8 +226,7 @@ sitting.
 **The snacks carry what the meals and the fuel do not:**
 
 1. Add up the day's meal carbohydrate — for each dish, its origin's
-   `nutrition.carbs` times the plate's `portions` — and anything a meal names in
-   `extra`, from what its label would say.
+   `nutrition.carbs` times the plate's `portions`.
 2. Add the food on the day's fuel lines, from the table under *Fuel belongs to a
    session*, and anything not on it from what its label would say. Where the
    table gives a range, take its middle.
@@ -449,13 +448,12 @@ beside the chicken.
   written in one answer that has a length limit: every dish is a whole recipe.
 - **A dish has quantities and a method.** If it is cooked, weighed or has steps,
   it is a dish in `alongside` with its own recipe.
-- **Food served with a dish every time it is eaten is part of that dish's
-  recipe**: bread with the soup is an ingredient line, `Sourdough — 2 slices`,
-  and its carbohydrate is in the dish's `nutrition`. Then the list buys its
-  amount, the plate scales it, and every figure counts it.
-- **`extra` is what is left**: food on the table that needs no recipe and is not
-  there every time the dish is eaten, or carries next to nothing — `with a lemon
-  wedge`. Never both: rice in `extra` and in a recipe is bought twice.
+- **Everything on the plate is in a recipe.** Food served with a dish — bread
+  with the soup, a lemon wedge with the fish — is an ingredient line in that
+  dish's recipe, `Sourdough — 2 slices`, and its carbohydrate is in the dish's
+  `nutrition`. Then the list buys its amount, the plate scales it, and every
+  figure counts it. A dish eaten again as a leftover or a repeat comes with the
+  same things, so put in the recipe only what goes with it every time.
 - **Each dish is its own batch.** It has its own `servings`, its own portions
   and its own `nutrition`, and the rules above apply to it on its own — a side
   can be a leftover of Monday's while the main is cooked fresh.
@@ -550,8 +548,7 @@ beside the chicken.
   "veg omelette" reads like it contains mushrooms; what counts is what your recipe
   actually lists.
   - A day counts if its own recipe lists the item, or if it is a **repeat** whose
-    origin recipe lists it, or if a meal that day names it beside the dish, as
-    `extra` does — `with a lemon wedge`.
+    origin recipe lists it.
   - A **leftover** day does not count.
   - A day the fridge covers does not count. The fridge is eaten first, from the
     plan's first day: with 6 eggs in `fridge` and 2 cooked on Tuesday, 3 on

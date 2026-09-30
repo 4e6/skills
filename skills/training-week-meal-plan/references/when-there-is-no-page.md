@@ -76,7 +76,7 @@ and any preparation in brackets — *1 onion (diced)*.
 2. **The days, in order from the first, each whole on its own.** A bold line
    with the day and its session; each session's `before`, `during` and `after`
    as one short line each — its `example` and when, not the guidance around it;
-   then breakfast, lunch and dinner, each with its `extra` beside the dish; then
+   then breakfast, lunch and dinner; then
    the day's `snacks` as one short line — its `guidance` and its `example`.
    - **Where a dish is first cooked:** its name, its batch line, one line of
      ingredients with quantities, then the plan's own numbered steps as

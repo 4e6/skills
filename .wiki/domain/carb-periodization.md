@@ -148,7 +148,7 @@ a line of **snacks** that closes the gap:
   the shopping list, never checked, and no time of day.
 - **A line is an instruction, so it appears only on a day that falls short.** The
   day's band at the athlete's stated weight, less the meals' carbohydrate — each
-  dish's, and anything in `extra` estimated from its label — and the fuel lines'
+  dish's — and the fuel lines'
   food, taking the middle of a table range, gives `at least` the shortfall to the
   band's bottom and `up to` its top, rounded to 10 g; the example food makes up
   the first figure. A day that already reaches the bottom, or falls short by less
@@ -161,11 +161,14 @@ a line of **snacks** that closes the gap:
   already fed and snacks were optional, and it read as *eat these*. A small-caps
   label and concrete food make any line an instruction, so the only honest
   optional line is none.
-- **Food eaten with a dish every time is in its recipe.** Bread with the soup is
-  an ingredient line, so its carbohydrate is in the dish's `nutrition` and the
-  arithmetic counts it exactly; `extra` is left for what varies between sittings
-  or carries next to nothing. A review found the example's Monday snack line
-  existed only because its soup's sourdough, then an `extra`, was never counted.
+- **Everything on the plate is in a recipe.** Bread with the soup is an
+  ingredient line, so its carbohydrate is in the dish's `nutrition` and the
+  arithmetic counts it exactly. A meal used to carry an `extra` — food on the
+  table with no recipe and no amount — and a review found the example's Monday
+  snack line existed only because its soup's sourdough, an `extra` then, was
+  never counted. Moving such food into recipes was first kept beside `extra` for
+  food that varied between sittings; no simulated host wrote one, so the field
+  went, and the scripts still read one in an older plan.
 - **The meals still carry the ranking.** Check 10 compares meals alone, so snacks
   top a day up and never stand in for a hard day's bigger plates.
 
@@ -192,11 +195,11 @@ and an 82 kg lactose-intolerant cyclist planning Thursday to Sunday.
   the host's own meals and fuel, taking a range's middle. The hard swim with an
   easy run went to the moderate band in both runs that met it. The protein-only
   line appeared for the first time, on three days of the marathoner's week. No
-  host wrote an `extra` at all, so moving served-every-time food into recipes was
-  not exercised. One host gave a one-hour hard swim no fuel lines, a miss in the
+  host wrote an `extra` at all. One host gave a one-hour hard swim no fuel lines, a miss in the
   fuel rules rather than the snacks, which the snack line then made up.
 - **Not measured**: a real host; Haiku; a host without Python, whose reply prints
-  the line; a race week; a plan whose meals carry an `extra`; and whether any
+  the line; a race week; a plan with bread or sides served with a dish, since `extra` went;
+  and whether any
   athlete eats to the line.
 
 **Inferences, and they need a professional:**

@@ -46,8 +46,7 @@ has moved:
 - `validate.py` gained `origin-without-ingredients`, a finding the reference
   implementation does not emit, which a parity suite that refuses a code only one
   side emits would fail;
-- `plan-schema.json` gained a day's `snacks` and new descriptions for `extra` and
-  `alongside`, by hand, so the schema is no longer what the generator would write
+- `plan-schema.json` gained a day's `snacks` and lost a meal's `extra`, by hand, so the schema is no longer what the generator would write
   and a byte comparison against it would fail;
 - `fuelling.md` gained the daily targets and the snack rules, and moved food
   served with a dish every time into its recipe;
