@@ -1,6 +1,7 @@
 # Wiki Update Log
 
 ## 2026-09-30
+* **Update**: The meal plan's dish photo is 512 px square, and [z-image-turbo-macos](/architecture/z-image-turbo-macos.md) draws a final size down to 512×512's area at that size, so the photo is drawn in about 9 s rather than 38 s at 1024×1024 and shrunk ([dish photos](/architecture/dish-photos.md)).
 * **Update**: A second skill, [z-image-turbo-macos](/architecture/z-image-turbo-macos.md), extracted from the private codebase's meal-plan skill with only its local image path. It is the first skill that is not a pure payload, so [the payload](/architecture/the-payload.md), the [overview](/overview.md) and [editing a skill](/conventions/editing-a-skill.md) now say where the rules bend and for whom.
 * **Update**: A meal has no `extra` any more: everything on the plate is an ingredient in a recipe, so every figure counts it; the scripts still read one in an older plan ([carb periodization](/domain/carb-periodization.md), [the list buys what the week uses](/invariants/the-list-buys-what-the-week-uses.md)).
 * **Update**: A review of the snacks change: food served with a dish every time moves into its recipe, `extra` is estimated and a range's middle taken in the snack arithmetic, a shortfall that rounds to nothing gets no line, figures and page citations corrected, and every inference listed ([carb periodization](/domain/carb-periodization.md), [the daily targets question](/questions/daily-carbohydrate-targets.md), [which copy is the source](/questions/which-copy-is-the-source.md)).

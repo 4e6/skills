@@ -80,7 +80,7 @@ CSS_PATH = Path(__file__).resolve().parent.parent / "assets" / "plan.css"
 
 # A dish's photo, where the host that ran the skill could draw one.
 #
-# One file may be 150 KB: a 480 px square JPEG at quality 80 is 45-80 KB, and an
+# One file may be 150 KB: a 512 px square JPEG at quality 80 is 35-80 KB, and an
 # image tool's own output, a PNG of about 2.4 MB, is refused until it is shrunk.
 # The page's photos together may be 2 MB, every card counted, because each card
 # embeds its bytes again: the sample week's twenty-one cards at 80 KB come to
