@@ -5,7 +5,7 @@ description: Each row's quantity is what the recipes cook with, less what the fr
 tags: [plan-quality, shopping, validation]
 timestamp: 2026-09-30T14:00:00Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
-source_commit: 36cd180908e7f0820c5f9881c1f3ddf776de7eb9
+source_commit: d2e959842d2f175a45c0d098e42338b69645360d
 ---
 
 # Statement
