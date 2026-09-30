@@ -3,9 +3,9 @@ type: Module
 title: The zip release
 description: Web hosts install a skill from an uploaded zip. Each skill is released on its own when its version changes, as a zip built from the commit, and README.md's download link is both the offer and the list of skills that get one.
 tags: [distribution, release, ci]
-timestamp: 2026-09-30T21:57:09Z
+timestamp: 2026-09-30T22:05:51Z
 sources: [tools/release.py, .github/workflows/release.yml, /README.md, /.gitignore]
-source_commit: ea7f6298478cd9c23b755800ddd3edab26f32348
+source_commit: dfbb7c71b3f6a33830d3a9f2f0e1d75b28c30ecc
 ---
 
 # Why there is a zip at all
@@ -66,6 +66,9 @@ app's chat does not have.
   so the same skill came out different each time. With `--mtime` an unchanged
   skill rebuilds to the same bytes. That needs git 2.45 and the whole history in
   CI, not a shallow clone.
+- **Built in UTC.** Zip records a file's time in the builder's local zone, so
+  the first release, built in UTC, differed by an hour on every file from the
+  same zip built on a laptop in BST. The build sets the zone itself.
 
 # What CI checks, and on what
 
