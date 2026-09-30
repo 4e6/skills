@@ -5,7 +5,7 @@ description: A run writes plan-<first day>.json and .html, so weekly runs from o
 tags: [architecture, files]
 timestamp: 2026-09-30T14:00:00Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/last-week.md, skills/training-week-meal-plan/scripts/last_week.py]
-source_commit: 4757fa27aade35d4ca5a676123a3c9c0eb45d9e3
+source_commit: 01265d60524785eee06f6acb56fc010adb69359b
 ---
 
 # Each week's page is named for its first day

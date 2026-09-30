@@ -5,7 +5,7 @@ description: Step 1 asks for the week, the weight, three optional things and whi
 tags: [architecture, intake]
 timestamp: 2026-09-30T14:00:00Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/fuelling.md]
-source_commit: 4757fa27aade35d4ca5a676123a3c9c0eb45d9e3
+source_commit: 01265d60524785eee06f6acb56fc010adb69359b
 ---
 
 # What it asks

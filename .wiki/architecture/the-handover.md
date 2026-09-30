@@ -5,7 +5,7 @@ description: The progress checklist is the host's and never the athlete's. The a
 tags: [architecture, conversation]
 timestamp: 2026-09-30T14:00:00Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/when-there-is-no-page.md]
-source_commit: 4757fa27aade35d4ca5a676123a3c9c0eb45d9e3
+source_commit: 01265d60524785eee06f6acb56fc010adb69359b
 ---
 
 # Progress is the host's, and the reply is the athlete's
