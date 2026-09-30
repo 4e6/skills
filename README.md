@@ -56,9 +56,6 @@ An uploaded skill does not update itself. Each new version is a
 [release](https://github.com/4e6/skills/releases) with its own zip; to take it,
 upload that zip in place of the old one.
 
-`z-image-turbo-macos` has no zip. It runs on your own Mac, and a web app runs
-skills on its own servers.
-
 ## Licence
 
 MIT — see [LICENSE](LICENSE). Each skill carries its own copy, so the licence
