@@ -286,7 +286,8 @@ it from the two fridge rows above, that are answers somebody could mean.
 Read [references/fuelling.md](references/fuelling.md) before writing any JSON.
 It carries the things the schema cannot say: how the days get ranked, how a
 batch of food is accounted for, the three kinds of recipe entry, and how the
-shopping list is grouped. Then read [references/last-week.md](references/last-week.md).
+shopping list is grouped. Its figures are the ones to use: do not look up other
+nutrition guidelines. Then read [references/last-week.md](references/last-week.md).
 
 ## Step 3 — write `plan-<date>.json`
 

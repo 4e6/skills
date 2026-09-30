@@ -69,6 +69,11 @@ unmeasured.
 
 # The figures, and where each comes from
 
+**These are the only figures the host uses.** `fuelling.md` and step 2 tell it
+not to look up other guidelines. A host once searched the web for protein and
+carbohydrate recommendations mid-run; whatever it finds is unchecked, varies by
+run, and can contradict what the skill ships.
+
 | Part | What the rules state | Source | Needs a professional |
 |---|---|---|---|
 | Gate | ~45 min or more, main work at threshold or harder — not an easier session with a few hard efforts | T16 Table 2, sustained high intensity 45–75 min | **Yes** |
@@ -112,6 +117,31 @@ published.
 **Where the week leaves out a length or an intensity**, a session it names as hard or long gets lines saying what depends on the missing figure — *past an
 hour, 30–60 g an hour, the top past 90 minutes* — and the figure is never supplied
 ([nothing about the athlete is invented](/invariants/nothing-about-the-athlete-is-invented.md)).
+
+## Daily targets: checked, and not shipped
+
+The skill ranks the days and sizes meals by that ranking; it states **no daily
+carbohydrate or protein target** outside race week. The published daily figures
+were checked against T16's open-access Dietitians of Canada edition on
+2026-09-30:
+
+| Day | Situation | Carbohydrate | Source |
+|---|---|---|---|
+| Light | low intensity or skill-based | 3–5 g/kg/day | T16, DC edition Table 1, p. 14 |
+| Moderate | a moderate programme, ~1 h a day | 5–7 g/kg/day | the same |
+| High | endurance, 1–3 h a day at moderate to high intensity | 6–10 g/kg/day | the same |
+| Very high | more than 4–5 h a day at moderate to high intensity | 8–12 g/kg/day | the same |
+
+**Protein: 1.2–2.0 g/kg/day**, higher for short periods of intensified training
+or reduced energy intake, spread in moderate amounts across the day and after
+hard sessions — about 0.3 g/kg after key sessions and every 3–5 hours
+(DC edition p. 16).
+
+The carbohydrate bands are for when training quality matters, to be fine-tuned
+to the individual, and they are **whole-day intake**. They were not added because
+the plan is three meals and session fuel with no snacks, and meals sized to reach
+them would be a different plan from the one the skill writes today
+([open](/questions/daily-carbohydrate-targets.md)).
 
 ## What an example's food adds up to
 
@@ -181,8 +211,9 @@ A literature read, not a sports dietitian's review; the *Needs a professional*
 column says where that matters most.
 
 - **T16** — Thomas, Erdman & Burke, *Nutrition and Athletic Performance*, MSSE
-  48(3):543–568, 2016. Thresholds cross-checked against the Dietitians of Canada
-  edition, because the publisher PDF renders `<` and `>` wrongly.
+  48(3):543–568, 2016.   Thresholds cross-checked against the Dietitians of Canada edition, because the
+  publisher PDF renders `<` and `>` wrongly. The DC edition is open access:
+  <https://www.dietitians.ca/DietitiansOfCanada/media/Documents/Resources/noap-position-paper.pdf>
 - **J14** — Jeukendrup, *A step towards personalized sports nutrition*, Sports
   Med 44 Suppl 1, 2014.
 - **K17** — Kerksick et al., *ISSN position stand: nutrient timing*, JISSN 14:33,

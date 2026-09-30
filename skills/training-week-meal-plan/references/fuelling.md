@@ -2,6 +2,11 @@
 
 The rules the schema cannot express. Read this before writing any JSON.
 
+Every figure here is taken from published sports-nutrition guidance and checked
+against it. Use these and no others: do not look up other guidelines,
+which may state different figures, and a plan built from two sets of figures
+contradicts itself.
+
 ## Contents
 
 - The one rule that makes this worth doing
