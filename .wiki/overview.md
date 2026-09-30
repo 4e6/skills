@@ -5,7 +5,7 @@ description: Agent Skills that run in somebody else's session. training-week-mea
 tags: [overview]
 timestamp: 2026-09-30T15:00:00Z
 sources: [/README.md, skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
-source_commit: b87cbd9f148a0a03d13ada92b45b2100f60c2bda
+source_commit: 1fe8e50b9c494a943c7577be596b0680ea2425dc
 ---
 
 # What it is

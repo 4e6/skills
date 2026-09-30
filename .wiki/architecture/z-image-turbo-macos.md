@@ -3,9 +3,9 @@ type: Module
 title: Z-Image Turbo on macOS
 description: One model on one kind of machine, and no fallback. The one skill here whose substance is a download, so its network use is fenced into a setup the user agrees to, pinned to what was tested, and generating stays offline.
 tags: [architecture, images, distribution]
-timestamp: 2026-09-30T18:00:00Z
+timestamp: 2026-09-30T16:44:20Z
 sources: [skills/z-image-turbo-macos/**]
-source_commit: a06734a4c1247f194d8c703bb3ee1a539c0f757d
+source_commit: 1fe8e50b9c494a943c7577be596b0680ea2425dc
 ---
 
 # What it is, and what it refuses to be
@@ -88,11 +88,19 @@ that doesn't.
 - **The drawing size follows the final size.** Asked for a 1200×630 header, a
   host had to guess a drawing size; asked for a 1200×1800 print, a one-megapixel
   drawing was enlarged 1.4 times. Now `--resize` alone sets the drawing to its
-  shape and, as its size asks, from about one megapixel up to 1024×1536's area,
-  so the crop throws little away and a print is drawn near its own size. Not
-  further: 1536×1536 peaked at 24 GB, which would swap the 24 GB Mac the check
-  calls enough. A note says when the final image is enlarged more than 1.5
-  times, below which it is hard to see.
+  shape and its area, so the crop throws little away and a print is drawn near
+  its own size. Not larger than 1024×1536's area: 1536×1536 peaked at 24 GB,
+  which would swap the 24 GB Mac the check calls enough. A note says when the
+  final image is enlarged more than 1.5 times, below which it is hard to see.
+- **Not smaller than 512×512's area, and a final size inside the bounds is drawn
+  exactly.** The floor was once one megapixel, the size the model is trained
+  around, so a 480 px dish photo was drawn at 1024×1024 and shrunk: a week of
+  seven photos took 279 s. Drawn at 512×512 it took 9 s rather than 38, and
+  side by side at 480 px the two were hard to tell apart — the smaller slightly
+  softer in fine texture. A side that is a multiple of 16 needs no crop or
+  scale, so `--resize 512x512` is the drawing itself. The cost falls on mid
+  sizes too: a 1200×630 header is now drawn at 1200×624, not about a megapixel.
+  With no `--resize`, the drawing is still 1024×1024.
 - **The MLX buffer cache is capped at 1 GB.** Uncapped, MLX keeps freed buffers
   until memory runs short, and one image showed a 34 GB peak on a 48 GB Mac. The
   cap is mflux's own low-memory value.
@@ -115,8 +123,9 @@ that doesn't.
 [Dish photos](/architecture/dish-photos.md) are drawn only where the host has a
 tool that makes a picture from a description. On a Mac with this skill
 installed, it has one. Neither skill names the other. The meal plan's photo —
-square, 480 px, JPEG at about quality 80, at most 150 KB — is
-`--resize 480x480 --quality 80`, which came to 31 KB for a bowl of porridge.
+square, 512 px, JPEG at about quality 80, at most 150 KB — is
+`--resize 512x512 --quality 80`, drawn at that size with nothing to crop, which
+came to 35–38 KB for a plate of chicken and a bowl of yoghurt.
 
 # Measured, 2026-09-30
 
@@ -125,6 +134,7 @@ On an M5 Pro with 48 GB, at 9 steps:
 | Size | Time | Peak memory footprint |
 |---|---|---|
 | 256×256 | 3 s | — |
+| 512×512 | 9 s | — |
 | 768×768 | 21 s | 26 GB uncapped |
 | 1024×1024 | 38–40 s | 34 GB uncapped, 18 GB capped |
 | 1024×1536 | 63 s | 19 GB capped |

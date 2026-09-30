@@ -518,6 +518,10 @@ RESIZE_MAX = 4 * SIDE_MAX
 # times flatter than that crops the drawing to a sliver.
 RESIZE_RATIO_MAX = 4 * SIDE_MAX / SIDE_MIN
 DEFAULT_PIXELS = 1024 * 1024
+# The drawing shrinks toward a smaller --resize only this far: 512x512 took 9 s
+# where 1024x1024 took 38 s, and a food photo shown at 480 px was hard to tell
+# from the larger drawing's.
+MIN_DEFAULT_PIXELS = 512 * 512
 # The default drawing grows toward a larger --resize only this far: 1024x1536
 # peaked at 19 GB, where 1536x1536 took 24 GB and would swap a 24 GB Mac.
 MAX_DEFAULT_PIXELS = 1024 * 1536
@@ -555,12 +559,14 @@ def parse_size(text: str, flag: str, model_side: bool) -> tuple[int, int]:
 
 def size_for(shape: tuple[int, int]) -> tuple[int, int]:
     """The drawing size for a final size: its shape, so --resize crops away as
-    little as it can, and about one megapixel, where the model is at its best.
-    Larger when the final size is larger, up to MAX_DEFAULT_PIXELS, so a print
-    is drawn near its own size rather than enlarged. Each side a multiple of 16,
+    little as it can, and its area, so nothing is drawn only to be thrown away.
+    No smaller than MIN_DEFAULT_PIXELS, and no larger than MAX_DEFAULT_PIXELS,
+    so a print is drawn near its own size rather than enlarged. A final size
+    inside those bounds with sides that are multiples of 16 is drawn exactly,
+    and --resize then has nothing left to do. Each side a multiple of 16,
     within the sides' bounds, which make very wide shapes a little smaller."""
     ratio = shape[0] / shape[1]
-    pixels = min(MAX_DEFAULT_PIXELS, max(DEFAULT_PIXELS, shape[0] * shape[1]))
+    pixels = min(MAX_DEFAULT_PIXELS, max(MIN_DEFAULT_PIXELS, shape[0] * shape[1]))
     def side(x: float) -> int:
         return min(SIDE_MAX, max(SIDE_MIN, SIDE_STEP * round(x / SIDE_STEP)))
     w, h = math.sqrt(pixels * ratio), math.sqrt(pixels / ratio)
@@ -814,7 +820,7 @@ def cmd_generate(args: argparse.Namespace) -> int:
         if args.size:
             size = parse_size(args.size, "--size", True)
         else:
-            size = size_for(resize) if resize else size_for((1, 1))
+            size = size_for(resize) if resize else size_for((1024, 1024))
         if not 1 <= args.quality <= 100:
             raise UsageError("--quality must be from 1 to 100")
         if not 1 <= args.steps <= STEPS_MAX:
@@ -899,8 +905,8 @@ def main() -> int:
     g.add_argument("--seed", type=int, help="one image: its seed (default: from the prompt and file name)")
     g.add_argument("--jobs", help="many images: a JSON list of {\"prompt\", \"out\", optional \"seed\"}")
     g.add_argument("--out-dir", default=".", help="where relative \"out\" paths land (default: here)")
-    g.add_argument("--size", help="size the model draws at (default: --resize's shape, about 1 to "
-                                  "1.6 megapixels as its size asks; else 1024x1024)")
+    g.add_argument("--size", help="size the model draws at (default: --resize's shape and area, "
+                                  "from 512x512's area to 1024x1536's; else 1024x1024)")
     g.add_argument("--resize", help="centre-crop and scale each image to WIDTHxHEIGHT before saving")
     g.add_argument("--quality", type=int, default=85, help="JPEG and WebP quality (default: 85)")
     # mflux's own default for this model, and what its publishers recommend.

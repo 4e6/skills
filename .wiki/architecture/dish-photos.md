@@ -3,9 +3,9 @@ type: Module
 title: Dish photos
 description: Where the host can draw, each dish gets a square photo beside its recipe's title. The renderer lists the dishes, names each photo for what it shows, embeds the bytes, and never lets a bad photo cost the page.
 tags: [architecture, rendering, photos]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-09-30T16:44:20Z
 sources: [skills/training-week-meal-plan/references/photos.md, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css]
-source_commit: 01265d60524785eee06f6acb56fc010adb69359b
+source_commit: 1fe8e50b9c494a943c7577be596b0680ea2425dc
 ---
 
 # Why the renderer does it
@@ -51,10 +51,12 @@ drawn again. Nothing is deleted or dated.
 - **The bytes decide the type** — JPEG, PNG or WebP, read from the first bytes,
   size from the header. Anything else, the plan named by mistake included, is
   never embedded in a page that may be published.
-- **150 KB a photo, 2 MB a page, every card counted.** A 480 px square JPEG at
-  quality 80 is 45–80 KB. The page cap has no measured basis beyond one preview
-  opening 1.2 MB and refusing 48 MB. `photos.md` specifies the photo — square, 480 px, about
-  quality 80 — and does not teach resizing: the standard library cannot, and a
+- **150 KB a photo, 2 MB a page, every card counted.** A 512 px square JPEG at
+  quality 80 is about 35–90 KB: 35–38 KB measured, the top
+  scaled from the 80 KB once seen at 480 px. The page cap has no measured basis beyond one preview
+  opening 1.2 MB and refusing 48 MB. `photos.md` specifies the photo — square, 512 px, about
+  quality 80, asked for at that size rather than drawn larger and shrunk — and
+  does not teach resizing: the standard library cannot, and a
   host that draws usually sizes its pictures too. The host that cannot is caught
   before it spends the week: the first photo is made and checked before the rest,
   and one too big with no way to shrink it stops the drawing.
@@ -116,6 +118,12 @@ that could not shrink drew one, stopped and said so. **No host that could not
 draw drew anything.** After the pointer was made bold, Sonnet drew; Haiku still
 skipped it.
 
+**A real host, 2026-09-30.** Opus in Claude Code, drawing with
+[Z-Image Turbo](/architecture/z-image-turbo-macos.md) on an M5 Pro: seven dishes
+at 480 px took 279 s, each drawn at 1024×1024 and shrunk, plus 47 s to redraw one
+whose count of bread rolls was wrong. That is why the photo became 512 px: drawn
+at its own size it takes about 9 s. The page came to about 620 KB.
+
 **Still open:** a dish cooked again repeats its photo on every card, and a page
-where only some dishes got a photo looks uneven. Not measured: how long drawing
-takes on a real host, and a real image tool's output.
+where only some dishes got a photo looks uneven. Not measured: any other image
+tool's output, and a whole week drawn at 512 px.
