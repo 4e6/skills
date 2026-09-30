@@ -3,7 +3,7 @@ type: Module
 title: Z-Image Turbo on macOS
 description: One model on one kind of machine, and no fallback. The one skill here whose substance is a download, so its network use is fenced into a setup the user agrees to, pinned to what was tested, and generating stays offline.
 tags: [architecture, images, distribution]
-timestamp: 2026-09-30T16:44:20Z
+timestamp: 2026-09-30T17:43:05Z
 sources: [skills/z-image-turbo-macos/**]
 source_commit: bae027044545122fadf81e46fed4acac4f6b0a62
 ---
@@ -123,9 +123,10 @@ that doesn't.
 [Dish photos](/architecture/dish-photos.md) are drawn only where the host has a
 tool that makes a picture from a description. On a Mac with this skill
 installed, it has one. Neither skill names the other. The meal plan's photo —
-square, 512 px, JPEG at about quality 80, at most 150 KB — is
-`--resize 512x512 --quality 80`, drawn at that size with nothing to crop, which
-came to 35–38 KB for a plate of chicken and a bowl of yoghurt.
+square, 640 px, JPEG at about quality 80, at most 400 KB — is
+`--resize 640x640 --quality 80`, drawn at that size with nothing to crop, which
+came to 55–68 KB for the sample week's eleven dishes. It was 512 px until the
+page's tile grew to 80 mm.
 
 # Measured, 2026-09-30
 
@@ -135,6 +136,7 @@ On an M5 Pro with 48 GB, at 9 steps:
 |---|---|---|
 | 256×256 | 3 s | — |
 | 512×512 | 9 s | — |
+| 640×640 | 14–15 s | — |
 | 768×768 | 21 s | 26 GB uncapped |
 | 1024×1024 | 38–40 s | 34 GB uncapped, 18 GB capped |
 | 1024×1536 | 63 s | 19 GB capped |

@@ -25,7 +25,8 @@ do.
   page or a file where your client can do that, and otherwise opened in your
   browser or pointed at, and printed with Cmd-P. Nothing to install, and laid
   out so the recipes sit under the day that cooks them, no recipe is split across
-  a page, and the shopping list can be torn off.
+  a page, and the shopping list can be torn off. On a wide screen it reads like
+  the printed page, with the whole week beside it one click from any recipe.
 
 ## What it asks you for
 
