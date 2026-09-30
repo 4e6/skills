@@ -1,5 +1,5 @@
 # The environment z_image_turbo.py `setup` builds, installed with
 # `-c constraints.txt`, which pins everything mflux brings with it: MLX, torch,
-# transformers, huggingface_hub, Pillow. About 1.2 GB installed.
+# transformers, huggingface_hub, Pillow. About 1.4 GB installed.
 # Keep the version equal to MFLUX_VERSION in z_image_turbo.py.
 mflux==0.19.0

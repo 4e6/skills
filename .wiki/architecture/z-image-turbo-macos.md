@@ -3,7 +3,7 @@ type: Module
 title: Z-Image Turbo on macOS
 description: One model on one kind of machine, and no fallback. The one skill here whose substance is a download, so its network use is fenced into a setup the user agrees to, pinned to what was tested, and generating stays offline.
 tags: [architecture, images, distribution]
-timestamp: 2026-09-30T16:00:00Z
+timestamp: 2026-09-30T17:00:00Z
 sources: [skills/z-image-turbo-macos/**]
 source_commit: 60984927c08b2927285a9aca5f832877c13b332c
 ---
@@ -30,9 +30,11 @@ network and its scripts on Python 3.9's standard library. Neither can hold here:
 the model is 11 GB, far too big to ship in the folder, and the packages need a
 Python macOS does not provide. What the skill keeps instead:
 
-- **The network is fenced into `setup`.** `check` reads the machine and the
-  cache and downloads nothing, and prints the figure the host must put to the
-  user before setup runs. `generate` switches the Hugging Face hub offline, so a
+- **The network is fenced into `setup`, and `setup` into `--yes`.** `check`
+  reads the machine and the cache and downloads nothing, and prints the figure
+  the host must put to the user. A bold rule in `SKILL.md` was not enough: a
+  Haiku host ran setup without reporting that it asked. So without `--yes`
+  setup downloads nothing and exits 2, and the flag is the host saying it asked. `generate` switches the Hugging Face hub offline, so a
   missing file is an exit 3 rather than an 11 GB download nobody agreed to.
 - **What is installed is what was tested.** The model is pinned to a revision,
   and every package to the version in a working environment, not mflux alone:
@@ -63,20 +65,26 @@ that doesn't.
 
 - **The environment lives outside the skill's folder**, in the user's cache.
   Installing or updating a skill replaces its folder, which would throw away a
-  1.2 GB environment each time; and a folder symlinked from a checkout would put
+  1.4 GB environment each time; and a folder symlinked from a checkout would put
   it inside the repository.
 - **Setup deletes only what it made.** It rebuilds a broken environment, and the
   path can be moved with an environment variable, so a user naming a folder they
-  own would have had it emptied. A marker file written at creation is the only
-  licence to delete; any other non-empty folder is a refusal.
-- **A seed follows the prompt and the file's name**, not the job's place in the
+  own would have had it emptied. A marker is the only licence to delete, and it
+  is written before the environment is built, so an interrupted build is still
+  setup's to redo; any other non-empty folder is a refusal. The marker also holds
+  a hash of the pins, so a skill update that changes them rebuilds the
+  environment rather than calling the old one ready.
+- **A seed follows the prompt and `out` as written**, not the job's place in the
   list. The predecessor used base seed plus index, so reordering a batch redrew
   every image; a seed from the prompt alone made four jobs asking for four takes
-  on one prompt come out identical. A job that would still repeat another is
-  refused before anything is generated.
+  on one prompt come out identical, and one from the file name alone made
+  `a/hero.jpg` and `b/hero.jpg` collide. `out` as written, not resolved, keeps a
+  jobs file's images the same from any folder. A job that would still repeat
+  another is refused before anything is generated.
 - **The drawing size follows the final shape.** Asked for a 1200×630 header, a
   host had to guess a drawing size; now `--resize` alone picks about one
-  megapixel in its shape, so the crop throws little away.
+  megapixel in its shape, so the crop throws little away. A final size larger
+  than the drawing is allowed, with a note that it will be soft.
 - **The MLX buffer cache is capped at 1 GB.** Uncapped, MLX keeps freed buffers
   until memory runs short, and one image showed a 34 GB peak on a 48 GB Mac. The
   cap is mflux's own low-memory value.
@@ -86,6 +94,9 @@ that doesn't.
 - **A MacBook on battery stops at 10%.** mflux registers its battery cut-off only
   in its own command line; the predecessor drove the Python API and documented a
   cut-off it never had.
+- **The host waits rather than polls.** A line appears only as an image
+  finishes; the Haiku host read the output 84 times in one batch. `SKILL.md`
+  now says to wait for the exit.
 - **Exit 1 always means a re-run can help, and an unexpected error is 4.**
   Python reports any uncaught exception as 1, which the skill tells the host to
   retry; a fault in the script would have been retried forever. Retries are also
@@ -105,6 +116,7 @@ On an M5 Pro with 48 GB, at 9 steps:
 
 | Size | Time | Peak memory footprint |
 |---|---|---|
+| 256×256 | 3 s | — |
 | 768×768 | 21 s | 26 GB uncapped |
 | 1024×1024 | 38–40 s | 34 GB uncapped, 18 GB capped |
 | 1536×1536 | 109–120 s | 39 GB uncapped, 24 GB capped |
@@ -120,6 +132,12 @@ downloaded.
 image miss *steep*, and redrew that one with a new seed. It could not tell where
 to run the script from or which drawing size to pick; both were fixed.
 
+**A second host run.** Haiku, asked for four takes on a fox-head logo and one
+with the words "Nordic Trails", square PNGs at 512 px: it set up from scratch,
+put the prompts in a jobs file, got five different logos with the lettering
+right, and handed them over. It did not report asking before setup, and read
+the running batch's output 84 times; both are answered above.
+
 **Not measured:** a first `setup` that downloads the model, a Mac with less than
-48 GB, any M1 to M4 timing, and Haiku or Opus as the host. No evaluation suite
+48 GB, any M1 to M4 timing, Opus as the host, and any host run since `--yes`. No evaluation suite
 exists, the same known gap as the [meal-plan skill](/conventions/editing-a-skill.md#where-the-skill-knowingly-differs-from-the-guidance).

@@ -94,7 +94,7 @@ A single word list cannot express the rules, so there are several:
 | Rule | Applies to |
 |---|---|
 | **Machinery the skill does not have** — a computed load field, a calendar brief, *the coach* as a party the skill hears from (a coach's week the athlete pastes is fine), a choice of plan language, localisation fields | the files the host reads as instructions: `SKILL.md`, `references/`, `scripts/`, `examples/` |
-| **Anything outside the folder** — a product it could be read as promoting, repositories, issue numbers, absolute paths, `webcal://` | everything under the folder |
+| **Anything outside the folder** — a product it could be read as promoting, repositories, issue numbers, absolute paths, `webcal://` | everything under the folder, except what `z-image-turbo-macos` installs and where ([why](/architecture/z-image-turbo-macos.md#it-is-not-a-pure-payload-and-where-it-bends)) |
 
 `calendar` is on neither: the fuelling rules have to be able to say there is no
 calendar, and that clause is what stops the model looking for one. The page's
@@ -108,7 +108,7 @@ visible outside this repository. How the skill is edited is
 
 # The skill that cannot be a pure payload
 
-`z-image-turbo-macos` is an 11 GB model and a runtime that needs Python 3.10, so
+`z-image-turbo-macos` is an 11 GB model and a runtime that needs Python 3.12 to 3.14, so
 it cannot ship its substance or run on the standard library. It keeps the
 boundary's purpose rather than its letter: the network only in a setup the user
 agrees to, pinned to what was tested, and drawing offline
@@ -122,5 +122,5 @@ Its one script's own fact, in the same terms as the others:
   machine is. Under Python 3.9's standard library it reads the environment and
   the model cache and writes nothing but a lock file and, in `setup`, the
   environment. Only under the environment's Python, which it builds, does it
-  import `huggingface_hub` (in `setup`, the one network call), `mlx`, `mflux` and
+  import `huggingface_hub` (in `setup`, for the model; pip fetches the packages), `mlx`, `mflux` and
   `PIL`; it writes the images it is told to, and nothing else.

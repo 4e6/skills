@@ -39,9 +39,10 @@ The first time, the assistant checks the Mac and asks before it downloads
 anything. Setup then fetches about 12 GB:
 
 - mflux and its dependencies from PyPI, at pinned versions, into their own
-  environment at `~/.cache/z-image-turbo-macos/venv` — about 1.2 GB installed.
-  Set `Z_IMAGE_TURBO_VENV` to a new folder to put it elsewhere; setup will not
-  replace a folder it did not make.
+  environment at `~/.cache/z-image-turbo-macos/venv` — about 1.4 GB installed.
+  To put it elsewhere, set `Z_IMAGE_TURBO_VENV` to a new folder's absolute path,
+  for every run, not only setup's; setup will not replace a folder it did not
+  make.
 - the model from Hugging Face, into the Hugging Face cache (`~/.cache/huggingface`,
   or wherever `HF_HOME` points) — 11 GB. No Hugging Face account or token is
   needed.
@@ -56,8 +57,8 @@ twenty times as long as one.
 
 ## Removing it
 
-Delete the skill's folder, the environment (`~/.cache/z-image-turbo-macos/`
-unless you moved it) and the model
+Delete the skill's folder, `~/.cache/z-image-turbo-macos/` (the environment,
+unless you moved it, and setup's lock file) and the model
 (`models--mflux-community--z-image-turbo-mflux-q8` in the Hugging Face cache,
 `~/.cache/huggingface/hub/` unless `HF_HOME` moved it). pip also keeps the
 packages it downloaded in its own cache; `pip cache purge` clears it.

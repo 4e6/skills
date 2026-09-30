@@ -18,8 +18,9 @@ into its own environment and downloads the model into the Hugging Face cache.
 Exit status:
     check     0 ready; 1 this Mac can run it, and `setup` has work to do;
               3 this machine cannot run it, or cannot until something is fixed.
-    setup     0 ready; 1 a step failed, and a re-run resumes;
-              3 this machine cannot run it, or setup refuses to go on.
+    setup     0 ready; 1 a step failed, and a re-run resumes; 2 run without
+              --yes, so nothing was downloaded; 3 this machine cannot run it,
+              or setup refuses to go on.
     generate  0 every job has its image; 1 some have none (failed, interrupted,
               stopped on low battery or a full disk), and a re-run draws only
               those; 2 the command or the jobs file is wrong, nothing was drawn;
@@ -71,8 +72,8 @@ REQUIREMENTS = HERE / "requirements.txt"
 CONSTRAINTS = HERE / "constraints.txt"
 MFLUX_VERSION = "0.19.0"  # keep equal to the pin in requirements.txt
 
-# Measured: the built environment takes ~1.2 GB; what pip downloads is less.
-PACKAGES_BYTES = 1_200_000_000
+# Measured: the built environment takes 1.42 GB; what pip downloads is less.
+PACKAGES_BYTES = 1_400_000_000
 # Room on top of what is downloaded, for pip's unpacking and the cache's own files.
 DISK_HEADROOM = 1_000_000_000
 # Generating one megapixel peaks at about 18 GB of unified memory (measured,
@@ -86,7 +87,9 @@ MIN_MACOS = 14
 PYTHON_CANDIDATES = [f"python3.{m}" for m in range(MAX_PYTHON[1], MIN_PYTHON[1] - 1, -1)] + ["python3"]
 # Where Homebrew puts a native arm64 Python; a host's PATH often lacks it.
 HOMEBREW_BIN = Path("/opt/homebrew/bin")
-# Written into the environment by `setup`: the only folder it will ever delete.
+# Written into the environment by `setup` before anything else, holding a hash
+# of the pins it was built from: the only folder setup will ever delete, and the
+# way it tells an environment built from older pins, which it rebuilds.
 VENV_MARKER = ".z-image-turbo-macos"
 # Probing an interpreter is instant; a first run after an update can take a few
 # seconds to compile. Past these, the interpreter is treated as unusable.
@@ -110,11 +113,28 @@ def cache_home() -> Path:
     return env_path("XDG_CACHE_HOME") or Path.home() / ".cache"
 
 
+def skill_cache() -> Path:
+    return cache_home() / "z-image-turbo-macos"
+
+
 def venv_dir() -> Path:
     """The environment `setup` builds. Outside the skill's folder on purpose:
-    reinstalling or updating the skill replaces that folder, and a 1.2 GB
+    reinstalling or updating the skill replaces that folder, and a 1.4 GB
     environment inside it would be rebuilt every time."""
-    return env_path("Z_IMAGE_TURBO_VENV") or cache_home() / "z-image-turbo-macos" / "venv"
+    return env_path("Z_IMAGE_TURBO_VENV") or skill_cache() / "venv"
+
+
+def pins_hash() -> str:
+    """What the environment should be built from; kept in its marker."""
+    digest = hashlib.sha256(REQUIREMENTS.read_bytes() + b"\0" + CONSTRAINTS.read_bytes())
+    return digest.hexdigest()
+
+
+def marker_hash() -> str | None:
+    try:
+        return (venv_dir() / VENV_MARKER).read_text().split()[0]
+    except (OSError, IndexError):
+        return None
 
 
 def venv_python() -> Path:
@@ -222,11 +242,16 @@ def python_range() -> str:
 # --- what is installed ------------------------------------------------------
 
 
-def packages_ready() -> bool:
+def packages_ready(deep: bool = False) -> bool:
+    """Whether the environment was built from the current pins and has mflux.
+    `deep` also imports MLX and mflux, which catches a broken install at the
+    cost of a few seconds; `generate` skips it and reports a failed load instead."""
     py = venv_python()
-    if not py.exists():
+    if not py.exists() or marker_hash() != pins_hash():
         return False
     code = "import importlib.metadata as m; print(m.version('mflux'))"
+    if deep:
+        code = "import mlx.core, mflux; " + code
     try:
         out = subprocess.run([str(py), "-c", code], capture_output=True, text=True,
                              timeout=VENV_PROBE_TIMEOUT, check=True)
@@ -266,6 +291,8 @@ def venv_refusal() -> str | None:
     It deletes only a folder it made itself, so a path the user pointed
     Z_IMAGE_TURBO_VENV at by mistake is never emptied."""
     venv = venv_dir()
+    if not venv.is_absolute():
+        return f"Z_IMAGE_TURBO_VENV is {venv}; make it an absolute path"
     if venv.is_symlink():
         return f"{venv} is a link; point Z_IMAGE_TURBO_VENV at a real folder"
     if not venv.exists() or (venv / VENV_MARKER).exists():
@@ -278,69 +305,83 @@ def venv_refusal() -> str | None:
 # --- check ------------------------------------------------------------------
 
 
-def row(label: str, state: str, detail: str) -> None:
-    print(f"{label:<9} {state:<8} {detail}", flush=True)
+def writable_ancestor(path: Path) -> bool:
+    """Whether `path`, or the nearest folder above it that exists, can be written."""
+    probe = path
+    while not probe.exists() and probe != probe.parent:
+        probe = probe.parent
+    return os.access(probe, os.W_OK)
 
 
-def survey(report: bool) -> tuple[int, int]:
-    """Look at the machine and what is installed. Returns (exit code, bytes
-    setup still needs); with `report`, prints one row per finding."""
-    say = row if report else (lambda *_: None)
+def survey() -> tuple[int, int, list[tuple[str, str, str]]]:
+    """Look at the machine and what is installed, once. Returns the exit code,
+    the bytes setup still needs, and one (label, state, detail) row per finding."""
+    rows = []
 
     problem = platform_problem()
     if problem:
-        say("platform", "no", problem)
-        return EXIT_CANNOT, 0
-    say("platform", "ok", describe_mac())
+        rows.append(("platform", "no", problem))
+        return EXIT_CANNOT, 0, rows
+    rows.append(("platform", "ok", describe_mac()))
 
     mem = memory_bytes()
     if mem and mem < MIN_MEMORY_BYTES:
-        say("memory", "low", f"{mem / 1024**3:.0f} GB; generating peaks at about 18 GB, "
-                             "so expect swapping and much slower images")
+        rows.append(("memory", "low", f"{mem / 1024**3:.0f} GB; generating peaks at about 18 GB, "
+                                      "so expect swapping and much slower images"))
     else:
-        say("memory", "ok", f"{mem / 1024**3:.0f} GB" if mem else "unknown")
+        rows.append(("memory", "ok", f"{mem / 1024**3:.0f} GB" if mem else "unknown"))
 
     needs = 0
-    if packages_ready():
-        say("packages", "ready", f"mflux {MFLUX_VERSION} in {venv_dir()}")
+    if packages_ready(deep=True):
+        rows.append(("packages", "ready", f"mflux {MFLUX_VERSION} in {venv_dir()}"))
     else:
         refusal = venv_refusal()
+        if refusal is None and not writable_ancestor(venv_dir()):
+            refusal = f"cannot write to {venv_dir()} or the folder above it"
         if refusal:
-            say("packages", "no", refusal)
-            return EXIT_CANNOT, 0
+            rows.append(("packages", "no", refusal))
+            return EXIT_CANNOT, 0, rows
         py = find_python()
         if py is None:
-            say("python", "no", f"no native Python {python_range()} found; install one "
-                                "(Homebrew's `brew install python` is one way) and check again")
-            return EXIT_CANNOT, 0
-        say("python", "ok", f"{py[0]} ({py[1][0]}.{py[1][1]})")
-        say("packages", "missing", f"setup installs mflux {MFLUX_VERSION} into {venv_dir()} "
-                                   f"(about {gb(PACKAGES_BYTES)} on disk)")
+            rows.append(("python", "no", f"no native Python {python_range()} found; install one "
+                                         "(Homebrew's `brew install python` is one way) and check again"))
+            return EXIT_CANNOT, 0, rows
+        rows.append(("python", "ok", f"{py[0]} ({py[1][0]}.{py[1][1]})"))
+        rows.append(("packages", "missing", f"setup installs mflux {MFLUX_VERSION} into {venv_dir()} "
+                                            f"(about {gb(PACKAGES_BYTES)} on disk)"))
         needs += PACKAGES_BYTES
 
     missing = model_missing_bytes()
     if missing == 0:
-        say("model", "ready", f"{MODEL_REPO} ({gb(MODEL_BYTES)})")
+        rows.append(("model", "ready", f"{MODEL_REPO} ({gb(MODEL_BYTES)})"))
+    elif not writable_ancestor(hf_hub_cache()):
+        rows.append(("model", "no", f"cannot write to {hf_hub_cache()}, where the model goes"))
+        return EXIT_CANNOT, 0, rows
     else:
-        say("model", "missing", f"setup downloads {gb(missing)} of {MODEL_REPO} into {hf_hub_cache()}")
+        rows.append(("model", "missing", f"setup downloads {gb(missing)} of {MODEL_REPO} into {hf_hub_cache()}"))
         needs += missing
 
     if needs:
         free = min(free_bytes(venv_dir()), free_bytes(hf_hub_cache()))
-        if free < needs + DISK_HEADROOM:
-            say("disk", "short", f"{gb(free)} free, setup needs {gb(needs + DISK_HEADROOM)}")
-            return EXIT_CANNOT, needs
-        say("disk", "ok", f"{gb(free)} free, setup needs {gb(needs)}")
-        return EXIT_PARTIAL, needs
-    return EXIT_OK, 0
+        state = "ok" if free >= needs + DISK_HEADROOM else "short"
+        rows.append(("disk", state, f"{gb(free)} free, setup needs {gb(needs + DISK_HEADROOM)}"))
+        return (EXIT_PARTIAL if state == "ok" else EXIT_CANNOT), needs, rows
+    return EXIT_OK, 0, rows
+
+
+def print_rows(rows, stream=sys.stdout) -> None:
+    for label, state, detail in rows:
+        print(f"{label:<9} {state:<8} {detail}", file=stream, flush=True)
 
 
 def cmd_check(_args: argparse.Namespace) -> int:
-    code, needs = survey(report=True)
+    code, needs, rows = survey()
+    print_rows(rows)
     if code == EXIT_CANNOT:
         print("cannot run here: see the line marked no or short")
     elif code == EXIT_PARTIAL:
-        print(f"setup needed: it takes about {gb(needs)} of disk, most of it downloaded, once")
+        print(f"setup needed: it downloads up to {gb(needs)}, once; "
+              "ask the user, then run `setup --yes`")
     else:
         print("ready")
     return code
@@ -349,45 +390,58 @@ def cmd_check(_args: argparse.Namespace) -> int:
 # --- setup ------------------------------------------------------------------
 
 
-def cmd_setup(_args: argparse.Namespace) -> int:
-    code, _needs = survey(report=False)
+def cmd_setup(args: argparse.Namespace) -> int:
+    code, needs, rows = survey()
     if code == EXIT_CANNOT:
-        survey(report=True)
+        print_rows(rows, sys.stderr)
         print("cannot set up: see the line marked no or short", file=sys.stderr)
         return EXIT_CANNOT
     if code == EXIT_OK:
         print("ready")
         return EXIT_OK
+    if not args.yes:
+        # The download is the user's to agree to, and the flag is how the host
+        # says it asked: without it, setup only says what it would fetch.
+        print(f"error: setup downloads up to {gb(needs)}; ask the user first, "
+              "then run `setup --yes`", file=sys.stderr)
+        return EXIT_USAGE
 
     import fcntl
 
     venv = venv_dir()
-    venv.parent.mkdir(parents=True, exist_ok=True)
-    lock = open(venv.parent / f".{venv.name}.setup.lock", "w")
+    try:
+        skill_cache().mkdir(parents=True, exist_ok=True)
+        lock = open(skill_cache() / "setup.lock", "w")
+    except OSError as exc:
+        print(f"cannot set up: cannot write to {skill_cache()}: {exc.strerror}", file=sys.stderr)
+        return EXIT_CANNOT
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError:
         print("[setup] another setup is already running; wait for it to finish", file=sys.stderr)
         return EXIT_PARTIAL
 
-    if not packages_ready():
+    if not packages_ready(deep=True):
         py = find_python()
         assert py is not None  # survey() returned EXIT_CANNOT otherwise
         print(f"[setup] building {venv} with {py[0]}", flush=True)
-        if (venv / VENV_MARKER).exists():
-            shutil.rmtree(venv)  # ours, and half-built: not worth repairing
         try:
+            if (venv / VENV_MARKER).exists():
+                shutil.rmtree(venv)  # ours: half-built, broken, or from older pins
+            # The marker goes in first, so an environment interrupted while it
+            # is built is still recognisably setup's, and is rebuilt next time.
+            venv.mkdir(parents=True, exist_ok=True)
+            (venv / VENV_MARKER).write_text(f"{pins_hash()}\nmade by z_image_turbo.py setup; safe to delete\n")
             if subprocess.run([py[0], "-m", "venv", str(venv)]).returncode != 0:
-                raise OSError("could not create the environment")
-            (venv / VENV_MARKER).write_text("made by z_image_turbo.py setup; safe to delete\n")
+                raise OSError(errno.EIO, "python -m venv failed")
         except OSError as exc:
-            print(f"[setup] failed: {exc}", file=sys.stderr)
+            print(f"[setup] failed: could not build {venv}: {exc.strerror or exc}", file=sys.stderr)
             return EXIT_PARTIAL
         pip = [str(venv_python()), "-m", "pip", "install", "--disable-pip-version-check",
                # A package with no wheel for this Mac fails here in seconds,
                # rather than after a long, doomed build from source.
                "--only-binary=:all:", "-r", str(REQUIREMENTS), "-c", str(CONSTRAINTS)]
-        if subprocess.run(pip).returncode != 0 or not packages_ready():
+        if subprocess.run(pip).returncode != 0 or not packages_ready(deep=True):
             print("[setup] failed: the packages did not install; the lines above say why", file=sys.stderr)
             return EXIT_PARTIAL
         print(f"[setup] mflux {MFLUX_VERSION} installed", flush=True)
@@ -428,9 +482,13 @@ def cmd_download(_args: argparse.Namespace) -> int:
 
 SUFFIXES = {".jpg": "JPEG", ".jpeg": "JPEG", ".png": "PNG", ".webp": "WEBP"}
 # Z-Image's VAE downsamples by 8 and its transformer takes 2x2 patches, so a
-# side must be a multiple of 16. The model is trained around one megapixel;
-# 1536x1536 is the largest size this skill has run.
+# side must be a multiple of 16. The model is trained around one megapixel; the
+# bounds are the smallest and largest sizes this skill has run, and a smaller or
+# larger final image comes from --resize.
 SIDE_STEP, SIDE_MIN, SIDE_MAX = 16, 256, 1536
+# Past four times the largest drawing, --resize only enlarges blur, and a typo
+# such as 100000x100000 would ask Pillow for tens of gigabytes per image.
+RESIZE_MAX = 4 * SIDE_MAX
 DEFAULT_PIXELS = 1024 * 1024
 # Seeds are 32-bit: what the prompt hash gives, and far below MLX's own limit.
 SEED_MAX = 2**32 - 1
@@ -449,6 +507,8 @@ def parse_size(text: str, flag: str, model_side: bool) -> tuple[int, int]:
         raise UsageError(f"{flag} takes WIDTHxHEIGHT, like 1024x1024 (got {text!r})")
     if w <= 0 or h <= 0:
         raise UsageError(f"{flag} must be positive (got {text})")
+    if not model_side and max(w, h) > RESIZE_MAX:
+        raise UsageError(f"{flag} sides can be at most {RESIZE_MAX} (got {text})")
     if model_side:
         for side in (w, h):
             if side % SIDE_STEP or not SIDE_MIN <= side <= SIDE_MAX:
@@ -465,15 +525,28 @@ def size_for(shape: tuple[int, int]) -> tuple[int, int]:
     ratio = shape[0] / shape[1]
     def side(x: float) -> int:
         return min(SIDE_MAX, max(SIDE_MIN, SIDE_STEP * round(x / SIDE_STEP)))
-    h = side(math.sqrt(DEFAULT_PIXELS / ratio))
+    w, h = math.sqrt(DEFAULT_PIXELS * ratio), math.sqrt(DEFAULT_PIXELS / ratio)
+    # Clamp the long side first and derive the short one from it, so an extreme
+    # shape keeps as much of its ratio as the bounds allow.
+    if w >= h:
+        w = side(w)
+        return w, side(w / ratio)
+    h = side(h)
     return side(h * ratio), h
 
 
-def default_seed(prompt: str, path: Path) -> int:
-    """A seed from the prompt and the file's name, not the job's place in the
+def upscale(size: tuple[int, int], resize: tuple[int, int]) -> float:
+    """How much --resize enlarges the part of the drawing it keeps."""
+    kept_w = min(size[0], size[1] * resize[0] / resize[1])
+    return resize[0] / kept_w
+
+
+def default_seed(prompt: str, out: str) -> int:
+    """A seed from the prompt and `out` as written, not the job's place in the
     list: reordering jobs changes nothing, the same job redraws the same image,
-    and two files with one prompt get two different images."""
-    digest = hashlib.sha256(f"{prompt}\n{path.name}".encode("utf-8")).digest()
+    and two files with one prompt get two different images. `out` as written,
+    not resolved, so the same jobs file gives the same images from any folder."""
+    digest = hashlib.sha256(f"{prompt}\n{out}".encode("utf-8")).digest()
     return int.from_bytes(digest[:4], "big")
 
 
@@ -528,7 +601,7 @@ def load_jobs(args: argparse.Namespace) -> list[dict]:
         seen_paths[key] = i
         seed = job.get("seed")
         if seed is None:
-            seed = default_seed(prompt, path)
+            seed = default_seed(prompt, out.strip())
         elif not isinstance(seed, int) or isinstance(seed, bool) or not 0 <= seed <= SEED_MAX:
             raise UsageError(f"{where}: \"seed\" must be a whole number from 0 to {SEED_MAX}")
         if (prompt, seed) in seen_images:
@@ -540,10 +613,15 @@ def load_jobs(args: argparse.Namespace) -> list[dict]:
 
 
 def finished(path: Path) -> bool:
+    """An image already there: a JPEG, PNG or WebP by its first bytes. Anything
+    else at the path, empty or not an image, is generated over."""
     try:
-        return path.is_file() and path.stat().st_size > 0
+        with open(path, "rb") as f:
+            head = f.read(12)
     except OSError:
         return False
+    return (head[:3] == b"\xff\xd8\xff" or head[:8] == b"\x89PNG\r\n\x1a\n"
+            or (head[:4] == b"RIFF" and head[8:12] == b"WEBP"))
 
 
 def show(path: Path) -> str:
@@ -625,7 +703,9 @@ def draw(jobs: list[dict], size: tuple[int, int], args: argparse.Namespace) -> i
         mx.set_cache_limit(MLX_CACHE_LIMIT)
         model = ZImage(model_path=str(model_snapshot()), model_config=ModelConfig.z_image_turbo())
         # Stops before the next image once a MacBook on battery reaches 10%;
-        # what is finished is kept, and a re-run on power resumes.
+        # what is finished is kept, and a re-run on power resumes. Twice mflux's
+        # own 5%, because a batch runs unattended and the user still has to
+        # find it stopped and plug in.
         model.callbacks.register(BatterySaver(battery_percentage_stop_limit=10))
     except KeyboardInterrupt:
         print("[gen] interrupted while loading the model; nothing was generated", flush=True)
@@ -695,6 +775,9 @@ def cmd_generate(args: argparse.Namespace) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_USAGE
 
+    if resize and upscale(size, resize) > 1.05:
+        print(f"note: --resize {resize[0]}x{resize[1]} enlarges the drawing {upscale(size, resize):.1f}x, "
+              "so the images will be soft", file=sys.stderr)
     pending = [j for j in jobs if args.force or not finished(j["path"])]
     if args.dry_run or not pending:
         for job in jobs:
@@ -751,7 +834,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="command", required=True, metavar="{check,setup,generate}")
     sub.add_parser("check", help="say whether this Mac can run the model, and what setup would download")
-    sub.add_parser("setup", help="install mflux and download the model (network, about 12 GB, once)")
+    s = sub.add_parser("setup", help="install mflux and download the model (network, about 12 GB, once)")
+    s.add_argument("--yes", action="store_true", help="the user has agreed to the download")
     sub.add_parser("_download", help=argparse.SUPPRESS)
 
     g = sub.add_parser("generate", help="generate images from prompts, offline")
