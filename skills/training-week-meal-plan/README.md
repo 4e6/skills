@@ -13,8 +13,8 @@ do.
 - **Every day from the first you need through to Sunday** — the rest of this
   week, or all of next — breakfast, lunch and dinner, plus in-session and
   post-session fuel on the days that need it.
-- **A line of snacks** on each day the meals fall short of its carbohydrate
-  target — how much, and example food. Guidance, not a shopping list.
+- **A line of snacks** on each day the meals fall short of its carbohydrate or
+  protein target — how much, and example food. Guidance, not a shopping list.
 - **Recipes with quantities** — 4–8 ingredients, 3–7 steps, written as a kitchen
   reference rather than a cookbook.
 - **A shopping list** grouped by aisle, with each item tagged with the days that

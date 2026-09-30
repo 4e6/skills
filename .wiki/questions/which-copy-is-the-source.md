@@ -40,12 +40,22 @@ Nothing in this repository runs any of it.
 
 # The copies have already diverged
 
-On 2026-09-30 this repository changed the skill on its own: `validate.py` gained
-`origin-without-ingredients`, a finding the reference implementation does not
-emit, and the frontmatter `description` and `README.md` stopped promising seven days.
-Then `plan-schema.json` gained a day's `snacks`, by hand, so the schema is no
-longer what the generator would write. Copying the folder back unchanged would fail a parity suite that refuses a
-code only one side emits.
+On 2026-09-30 this repository changed the skill on its own, and every part of it
+has moved:
+
+- `validate.py` gained `origin-without-ingredients`, a finding the reference
+  implementation does not emit, which a parity suite that refuses a code only one
+  side emits would fail;
+- `plan-schema.json` gained a day's `snacks` and new descriptions for `extra` and
+  `alongside`, by hand, so the schema is no longer what the generator would write
+  and a byte comparison against it would fail;
+- `fuelling.md` gained the daily targets and the snack rules, and moved food
+  served with a dish every time into its recipe;
+- `render.py`, `plan.css`, the example plan and its page, the no-page reply,
+  `SKILL.md` and the README changed with them.
+
+Copying the folder back unchanged would fail the old repository's checks in more
+than one place; copying the other way would undo all of it.
 
 # Until it is answered
 

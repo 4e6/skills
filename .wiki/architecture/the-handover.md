@@ -102,7 +102,7 @@ them:
 - **A top of four lines at most**, what shows before the first scroll:
   `week_label` and `training_overview.total`, the biggest fuel day and why, the
   restriction, and what was assumed.
-- **A day's snacks are one short line after its meals** — the range and the
+- **A day's snacks are one short line after its meals** — the guidance and the
   example.
 - **Each day whole, with the recipe where the dish is first cooked** — one line
   of ingredients with quantities, then the steps; a one-sitting dish of four

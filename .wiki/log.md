@@ -1,6 +1,9 @@
 # Wiki Update Log
 
 ## 2026-09-30
+* **Update**: A review of the snacks change: food served with a dish every time moves into its recipe, `extra` is estimated and a range's middle taken in the snack arithmetic, a shortfall that rounds to nothing gets no line, figures and page citations corrected, and every inference listed ([carb periodization](/domain/carb-periodization.md), [the daily targets question](/questions/daily-carbohydrate-targets.md), [which copy is the source](/questions/which-copy-is-the-source.md)).
+* **Update**: A day's hours count only its sessions at moderate intensity or harder, after two rounds of simulated hosts read an hour's hard swim with an easy run both ways ([carb periodization](/domain/carb-periodization.md)).
+* **Update**: An easy session of about an hour or less is the light band, after the first round of simulated hosts split two and two ([carb periodization](/domain/carb-periodization.md)).
 * **Update**: A snack line appears only on a day short of its target, as `at least` the shortfall `up to` the top, with example food for the first figure; an optional *up to* line read as an instruction ([carb periodization](/domain/carb-periodization.md)).
 * **Update**: Days carry a line of snacks that tops them up to a published daily carbohydrate target, treated as a session's fuel lines are ([carb periodization](/domain/carb-periodization.md), [printable page](/architecture/the-printable-page.md)); [the daily targets question](/questions/daily-carbohydrate-targets.md) is answered.
 * **Update**: The host is told to use the skill's own figures and not look up others ([carb periodization](/domain/carb-periodization.md)). The published daily carbohydrate and protein targets were checked against the open-access text and recorded rather than shipped: [they are whole-day intake, and the plan has no snacks](/questions/daily-carbohydrate-targets.md).

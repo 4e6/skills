@@ -6,4 +6,4 @@
 
 ## No longer current
 
-* [Should the plan be sized to daily carbohydrate targets?](daily-carbohydrate-targets.md) - Answered with a line of snacks per day. Published daily bands are whole-day intake, and three meals came to about half the band on the example's training days. The measurement and the options weighed are kept here.
+* [Should the plan be sized to daily carbohydrate targets?](daily-carbohydrate-targets.md) - Answered with a line of snacks per day. Published daily bands are whole-day intake, and the example's meals came to between half and nine-tenths of each day's band. The measurement and the options weighed are kept here.

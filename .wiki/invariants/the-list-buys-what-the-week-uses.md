@@ -139,9 +139,10 @@ a sum:
   off the list.
 - **Days that are wrong** — the checker says `day-order` and nothing else, or the
   list would be told to buy less for the day it is being asked to put back.
-- **A food named in a meal's prose** — `with sourdough` in `extra` — takes that
+- **A food named in a meal's prose** — `with a lemon wedge` in `extra` — takes that
   row out of the comparison **for the whole week**, since prose states no amount,
-  and tags the row for that day. That is why the *container you open* note may
+  and tags the row for that day. That is one reason food served with a dish every
+  time is an ingredient in its recipe, where its amount is compared. That is why the *container you open* note may
   name no food. A session's fuel lines and a day's snacks are not prose: their food is an
   example, and it is not on the list.
 

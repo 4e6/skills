@@ -324,7 +324,11 @@ def days(plan) -> str:
             out.append("</ul>")
             # After the meals, because it is what the day needs beyond them. Not
             # on a day the athlete is away: the reason stands alone there.
+            # A bare string is taken as the guidance rather than dropped: the
+            # line is an instruction, and a plan nothing validated still prints.
             snacks = day.get("snacks")
+            if isinstance(snacks, str) and snacks.strip():
+                snacks = {"guidance": snacks}
             if isinstance(snacks, dict):
                 out.append('<ul class="fuel snacks">' + fuel_line("Snacks", snacks) + "</ul>")
         out.append("</section>")
