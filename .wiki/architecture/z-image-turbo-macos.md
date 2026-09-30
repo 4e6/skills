@@ -1,16 +1,16 @@
 ---
 type: Module
 title: Z-Image Turbo on macOS
-description: One model on one kind of machine, and no fallback. The one skill here whose substance is a download, so its network use is fenced into a setup the user agrees to, pinned to what was tested, and drawing stays offline.
+description: One model on one kind of machine, and no fallback. The one skill here whose substance is a download, so its network use is fenced into a setup the user agrees to, pinned to what was tested, and generating stays offline.
 tags: [architecture, images, distribution]
-timestamp: 2026-09-30T15:00:00Z
+timestamp: 2026-09-30T16:00:00Z
 sources: [skills/z-image-turbo-macos/**]
 source_commit: 60984927c08b2927285a9aca5f832877c13b332c
 ---
 
 # What it is, and what it refuses to be
 
-`z-image-turbo-macos` draws images from prompts with **Z-Image Turbo** — the
+`z-image-turbo-macos` generates images from prompts with **Z-Image Turbo** — the
 8-bit MLX build `mflux-community/z-image-turbo-mflux-q8` — run by mflux on an
 Apple Silicon Mac's GPU. It came out of a meal-plan skill in the private codebase
 the [overview](/overview.md) mentions, where it was the first of four image
@@ -27,30 +27,37 @@ here*, and step 1 tells the host not to substitute anything.
 
 [The payload](/architecture/the-payload.md) keeps a skill's own files off the
 network and its scripts on Python 3.9's standard library. Neither can hold here:
-the model is 11 GB, far too big to ship in the folder, and mflux needs Python
-3.10 or newer, which macOS does not provide. What the skill keeps instead:
+the model is 11 GB, far too big to ship in the folder, and the packages need a
+Python macOS does not provide. What the skill keeps instead:
 
 - **The network is fenced into `setup`.** `check` reads the machine and the
   cache and downloads nothing, and prints the figure the host must put to the
-  user before setup runs. `generate` switches the Hugging Face hub offline
-  before mflux is imported, so a missing file is an exit 3 rather than an 11 GB
-  download nobody agreed to.
-- **What is downloaded is what was tested.** mflux is pinned to a version and
-  the model to a revision. The revision's file sizes are written into the script,
-  so the standard library can tell a complete download from a partial one
-  without the environment and without asking the hub. That pin mattered at once:
-  the repository's head moved while the skill was being written, adding only a
-  model card.
-- **It names what it installs, and nothing else.** The model, mflux and the
-  cache locations appear because the skill cannot be described without them. The
-  README links the model's page and mflux's repository; the payload's rule
-  against naming anything outside the folder still holds for everything else.
+  user before setup runs. `generate` switches the Hugging Face hub offline, so a
+  missing file is an exit 3 rather than an 11 GB download nobody agreed to.
+- **What is installed is what was tested.** The model is pinned to a revision,
+  and every package to the version in a working environment, not mflux alone:
+  mflux leaves its dependencies loose, and a new `huggingface_hub` or
+  `transformers` is exactly what changes how a model is found or a tokenizer
+  loaded. The revision's file sizes are written into the script, so the standard
+  library tells a complete download from a partial one without the environment
+  and without asking the hub. The pin mattered at once: the repository's head
+  moved while the skill was being written, adding only a model card.
+- **The pins decide the Python, not the other way round.** The frozen set
+  resolves from wheels alone on Python 3.12 to 3.14 and not on 3.10 or 3.11, so
+  setup accepts exactly that range. MLX's wheels need macOS 14. Setup installs
+  wheels only, so a missing one fails in seconds instead of a doomed source
+  build — the failure the next Python release would otherwise bring.
+- **It names what it installs, and Homebrew.** The model, mflux and the cache
+  locations appear because the skill cannot be described without them. Homebrew
+  appears too: its folder is where a native Python is usually found and a host's
+  PATH often lacks it, and `brew install python` is the one-line answer to the
+  commonest blocker. Nothing else outside the folder is named.
 
-The script itself stays on Python 3.9 until it needs the model: `check`,
-`setup` and all of `generate`'s input checks run on the system `python3`, and
-only then does it re-run itself under the environment's Python. Hosts type
-`python3`; a skill that needs them to find `python3.14` first fails on the first
-run of every host that doesn't.
+The script stays on Python 3.9 until it needs the model: `check`, `setup` and
+all of `generate`'s input checks run on the system `python3`, and only then does
+it re-run itself under the environment's Python. Hosts type `python3`; a skill
+that needs them to find `python3.14` first fails on the first run of every host
+that doesn't.
 
 # Why the pieces are shaped so
 
@@ -58,17 +65,31 @@ run of every host that doesn't.
   Installing or updating a skill replaces its folder, which would throw away a
   1.2 GB environment each time; and a folder symlinked from a checkout would put
   it inside the repository.
-- **A seed follows its prompt**, not its place in the list. The predecessor used
-  base seed plus index, so reordering a batch redrew every image. Now the same
-  prompt redraws the same picture, and a different picture needs a new seed —
-  which is why step 5 redraws one image alone rather than `--force` on the list.
-- **An image is written aside and renamed.** `generate` skips any path that
-  exists, so a half-written file left by an interrupt would pass as finished.
+- **Setup deletes only what it made.** It rebuilds a broken environment, and the
+  path can be moved with an environment variable, so a user naming a folder they
+  own would have had it emptied. A marker file written at creation is the only
+  licence to delete; any other non-empty folder is a refusal.
+- **A seed follows the prompt and the file's name**, not the job's place in the
+  list. The predecessor used base seed plus index, so reordering a batch redrew
+  every image; a seed from the prompt alone made four jobs asking for four takes
+  on one prompt come out identical. A job that would still repeat another is
+  refused before anything is generated.
+- **The drawing size follows the final shape.** Asked for a 1200×630 header, a
+  host had to guess a drawing size; now `--resize` alone picks about one
+  megapixel in its shape, so the crop throws little away.
+- **The MLX buffer cache is capped at 1 GB.** Uncapped, MLX keeps freed buffers
+  until memory runs short, and one image showed a 34 GB peak on a 48 GB Mac. The
+  cap is mflux's own low-memory value.
+- **Output is checked before the model loads.** A folder that cannot be written
+  would otherwise cost a minute per image to discover. An image is written
+  aside, flushed and renamed, because a file that exists is skipped as done.
 - **A MacBook on battery stops at 10%.** mflux registers its battery cut-off only
   in its own command line; the predecessor drove the Python API and documented a
-  cut-off it never had. This script registers one.
-- **mflux's progress bars are off.** One bar per step buried the one line per
-  image that the host actually reads.
+  cut-off it never had.
+- **Exit 1 always means a re-run can help, and an unexpected error is 4.**
+  Python reports any uncaught exception as 1, which the skill tells the host to
+  retry; a fault in the script would have been retried forever. Retries are also
+  capped at one in `SKILL.md`, since a battery stop or a Ctrl-C repeats.
 
 # How it meets the meal-plan skill
 
@@ -76,18 +97,29 @@ run of every host that doesn't.
 tool that makes a picture from a description. On a Mac with this skill
 installed, it has one. Neither skill names the other. The meal plan's photo —
 square, 480 px, JPEG at about quality 80, at most 150 KB — is
-`--size 1024x1024 --resize 480x480 --quality 80`, which came to 31 KB for a
-bowl of porridge.
+`--resize 480x480 --quality 80`, which came to 31 KB for a bowl of porridge.
 
 # Measured, 2026-09-30
 
-On an M5 Pro with 48 GB: about 40 s per one-megapixel image at 9 steps, whether
-square or 1344×768, and the model's load folded into the first image. Three
-images in 128 s. An interrupt stopped the batch mid-image, kept the finished
-one, left no partial file and exited 1, and the re-run redrew the same picture
-byte for byte. `setup` built the environment in 25 s, with pip's cache warm and
-the model already downloaded.
+On an M5 Pro with 48 GB, at 9 steps:
 
-**Not measured:** a first `setup` that downloads the model, a 16 GB Mac, any M1
-to M4 timing, sizes much above one megapixel, and the prompt guidance in step 3
-beyond a handful of images.
+| Size | Time | Peak memory footprint |
+|---|---|---|
+| 768×768 | 21 s | 26 GB uncapped |
+| 1024×1024 | 38–40 s | 34 GB uncapped, 18 GB capped |
+| 1536×1536 | 109–120 s | 39 GB uncapped, 24 GB capped |
+
+Three images in about 130 s, the model's load folded into the first. An
+interrupt or a SIGTERM stopped the batch mid-image, kept the finished ones, left
+no partial file and exited 1; a re-run made only the missing ones. `setup` built
+the environment in under a minute with pip's cache warm and the model already
+downloaded.
+
+**A host run.** Sonnet, given only the skill folder and a user asking for three
+1200×630 blog headers, asked before setup, set up, generated the batch, saw one
+image miss *steep*, and redrew that one with a new seed. It could not tell where
+to run the script from or which drawing size to pick; both were fixed.
+
+**Not measured:** a first `setup` that downloads the model, a Mac with less than
+48 GB, any M1 to M4 timing, and Haiku or Opus as the host. No evaluation suite
+exists, the same known gap as the [meal-plan skill](/conventions/editing-a-skill.md#where-the-skill-knowingly-differs-from-the-guidance).

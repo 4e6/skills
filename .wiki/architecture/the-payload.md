@@ -4,7 +4,7 @@ title: The skill is a payload
 description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. One skill bends the last two.
 tags: [architecture, distribution]
 timestamp: 2026-09-30T15:00:00Z
-sources: [skills/training-week-meal-plan/**]
+sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py]
 source_commit: 4757fa27aade35d4ca5a676123a3c9c0eb45d9e3
 ---
 
@@ -115,3 +115,12 @@ agrees to, pinned to what was tested, and drawing offline
 ([Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md#it-is-not-a-pure-payload-and-where-it-bends)).
 Everything above still holds for `training-week-meal-plan`, and for any skill
 that can hold it.
+
+Its one script's own fact, in the same terms as the others:
+
+- `z_image_turbo.py` runs `sysctl` and the Pythons it finds, to learn what the
+  machine is. Under Python 3.9's standard library it reads the environment and
+  the model cache and writes nothing but a lock file and, in `setup`, the
+  environment. Only under the environment's Python, which it builds, does it
+  import `huggingface_hub` (in `setup`, the one network call), `mlx`, `mflux` and
+  `PIL`; it writes the images it is told to, and nothing else.
