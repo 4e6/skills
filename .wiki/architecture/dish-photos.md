@@ -5,7 +5,7 @@ description: Where the host can draw, each dish gets a square photo beside its r
 tags: [architecture, rendering, photos]
 timestamp: 2026-09-30T16:44:20Z
 sources: [skills/training-week-meal-plan/references/photos.md, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css]
-source_commit: 1c1d9a36aac47b4739677fcb729f5866ec790568
+source_commit: 1fe8e50b9c494a943c7577be596b0680ea2425dc
 ---
 
 # Why the renderer does it

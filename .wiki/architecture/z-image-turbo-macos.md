@@ -5,7 +5,7 @@ description: One model on one kind of machine, and no fallback. The one skill he
 tags: [architecture, images, distribution]
 timestamp: 2026-09-30T16:44:20Z
 sources: [skills/z-image-turbo-macos/**]
-source_commit: 1c1d9a36aac47b4739677fcb729f5866ec790568
+source_commit: 1fe8e50b9c494a943c7577be596b0680ea2425dc
 ---
 
 # What it is, and what it refuses to be
