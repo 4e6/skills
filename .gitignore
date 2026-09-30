@@ -6,3 +6,5 @@ plan-[0-9]*.json
 plan-[0-9]*.html
 photos.json
 photos/
+# What tools/release.py builds.
+/dist/

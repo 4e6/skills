@@ -3,7 +3,7 @@ type: Convention
 title: Editing a skill
 description: Re-read the two upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone, and a change to behaviour or to the page is judged by running it.
 tags: [skills, authoring, review]
-timestamp: 2026-09-30T17:40:49Z
+timestamp: 2026-09-30T21:38:47Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
 source_commit: bae027044545122fadf81e46fed4acac4f6b0a62
 ---
@@ -21,9 +21,10 @@ upstream without notice, and a copy is right the day it is written and silently
 wrong afterwards. A paraphrase drifts even when its source does not: a summary of
 a list once quietly lost several of its items.
 
-`skills-ref validate ./skills/<name>` (<https://github.com/agentskills/agentskills>)
-is the authoritative check against the specification. Run it by hand before a
-release.
+`agentskills validate ./skills/<name>`, from the `skills-ref` package
+(<https://github.com/agentskills/agentskills>), is the authoritative check
+against the specification. CI runs it on every skill, on every pull request
+([the zip release](/architecture/the-zip-release.md#what-ci-checks-and-on-what)).
 
 # The skill states the rule; this bundle carries the argument
 
@@ -51,8 +52,8 @@ On top of what the guides say, and not a restatement of them:
   name, its `description`, its `compatibility` and its first paragraph
   ([why](/architecture/z-image-turbo-macos.md#what-it-is-and-what-it-refuses-to-be)).
 
-Nothing in this repository checks any of it yet
-([which copy is the source](/questions/which-copy-is-the-source.md)).
+Nothing in this repository checks any of it yet, though CI now has a place for
+it ([which copy is the source](/questions/which-copy-is-the-source.md)).
 
 # Where the skill knowingly differs from the guidance
 
