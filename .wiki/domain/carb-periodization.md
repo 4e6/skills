@@ -187,10 +187,17 @@ and an 82 kg lactose-intolerant cyclist planning Thursday to Sunday.
   45-minute run was read as moderate in this round and as high in the first,
   about 20–60 g between a line and none, so the rows now count only sessions at
   moderate intensity or harder.
+- **Third round**, after the review's fixes: every plan clean, one after a
+  repair round for shopping rounding; no web search; every line reproducing from
+  the host's own meals and fuel, taking a range's middle. The hard swim with an
+  easy run went to the moderate band in both runs that met it. The protein-only
+  line appeared for the first time, on three days of the marathoner's week. No
+  host wrote an `extra` at all, so moving served-every-time food into recipes was
+  not exercised. One host gave a one-hour hard swim no fuel lines, a miss in the
+  fuel rules rather than the snacks, which the snack line then made up.
 - **Not measured**: a real host; Haiku; a host without Python, whose reply prints
-  the line; a race week; the rules added after the second round — hours counted
-  only at intensity, `extra` estimated, the middle of a range, and food served
-  with a dish moved into its recipe; and whether any athlete eats to the line.
+  the line; a race week; a plan whose meals carry an `extra`; and whether any
+  athlete eats to the line.
 
 **Inferences, and they need a professional:**
 
