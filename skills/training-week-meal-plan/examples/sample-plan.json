@@ -1,0 +1,1395 @@
+{
+  "week_label": "Training week",
+  "week_load": [
+    {
+      "day": "Monday",
+      "entries": [
+        {
+          "hours": 1,
+          "zone": 2,
+          "load": 49
+        }
+      ],
+      "day_load": 49
+    },
+    {
+      "day": "Tuesday",
+      "entries": [
+        {
+          "hours": 1.5,
+          "zone": 4,
+          "load": 135
+        },
+        {
+          "hours": 0.33,
+          "zone": 2,
+          "load": 16
+        }
+      ],
+      "day_load": 151
+    },
+    {
+      "day": "Wednesday",
+      "entries": [
+        {
+          "hours": 1.42,
+          "zone": 5,
+          "load": 157
+        },
+        {
+          "hours": 0.33,
+          "zone": 2,
+          "load": 16
+        }
+      ],
+      "day_load": 173
+    },
+    {
+      "day": "Thursday",
+      "entries": [
+        {
+          "hours": 1,
+          "zone": 5,
+          "load": 110
+        }
+      ],
+      "day_load": 110
+    },
+    {
+      "day": "Friday",
+      "entries": [],
+      "day_load": 0
+    },
+    {
+      "day": "Saturday",
+      "entries": [
+        {
+          "hours": 2.67,
+          "zone": 4,
+          "load": 241
+        },
+        {
+          "hours": 0.5,
+          "zone": 2,
+          "load": 25
+        }
+      ],
+      "day_load": 266
+    },
+    {
+      "day": "Sunday",
+      "entries": [
+        {
+          "hours": 1.5,
+          "zone": 4,
+          "load": 135
+        },
+        {
+          "hours": 1,
+          "zone": 2,
+          "load": 49
+        }
+      ],
+      "day_load": 184
+    }
+  ],
+  "training_overview": {
+    "total": "6 training days, 1 rest day",
+    "hard_days": "Sat (TT bike + brick run), Sun (threshold run + swim), Wed (VO2max intervals), Tue (bike threshold + brick)",
+    "easy_days": "Mon (aerobic run), Thu (swim set), Fri (rest day)",
+    "summary": "Saturday's TT ride and brick run make it the biggest fuel day, and Friday is fed for it rather than as a rest day. Sunday, Wednesday and Tuesday follow; Monday's easy run and Thursday's swim set get the lightest meals."
+  },
+  "days": [
+    {
+      "name": "Monday",
+      "session": "Run Z2 60' aerobic",
+      "sessions": [
+        {
+          "name": "Run 60' aerobic"
+        }
+      ],
+      "meals": [
+        {
+          "slot": "breakfast",
+          "label": "Breakfast",
+          "dish": "Porridge with banana, walnuts and honey"
+        },
+        {
+          "slot": "lunch",
+          "label": "Lunch",
+          "dish": "Chicken and rice bowl with roasted peppers"
+        },
+        {
+          "slot": "dinner",
+          "label": "Dinner",
+          "dish": "Lentil soup",
+          "note": "cook 2 — eat 1, reserve 1",
+          "extra": "with sourdough"
+        }
+      ]
+    },
+    {
+      "name": "Tuesday",
+      "session": "Bike Z4 6x6' + brick run 20'",
+      "sessions": [
+        {
+          "name": "Bike threshold 6x6', 1h30",
+          "before": {
+            "guidance": "small and carbohydrate-led, in about the last hour",
+            "example": "1 banana, black coffee"
+          },
+          "during": {
+            "guidance": "past 90 minutes to 2½ h, the top of 30–60 g an hour",
+            "example": "1 bottle of isotonic drink, 1 energy bar"
+          },
+          "after": {
+            "guidance": "carbohydrate with protein within about 2 hours of the brick run",
+            "example": "1 bottle of chocolate milk *(use what's in fridge)*"
+          }
+        },
+        {
+          "name": "Brick run 20'"
+        }
+      ],
+      "meals": [
+        {
+          "slot": "breakfast",
+          "label": "Breakfast",
+          "dish": "Eggs on toast with avocado"
+        },
+        {
+          "slot": "lunch",
+          "label": "Lunch",
+          "dish": "Tuna pasta salad"
+        },
+        {
+          "slot": "dinner",
+          "label": "Dinner",
+          "dish": "Salmon fillet with sweet potato and green beans"
+        }
+      ]
+    },
+    {
+      "name": "Wednesday",
+      "session": "Run Z5 VO2max 12x500m + strength",
+      "sessions": [
+        {
+          "name": "Run VO2max 12x500m, 1h25",
+          "before": {
+            "guidance": "small and carbohydrate-led, in about the last hour",
+            "example": "2 dates, espresso"
+          },
+          "during": {
+            "guidance": "past about 45 minutes of hard work, small amounts or a mouth rinse",
+            "example": "water, 1 energy gel"
+          },
+          "after": {
+            "guidance": "carbohydrate with protein within about 2 hours",
+            "example": "1 bottle of chocolate milk *(use what's in fridge)*"
+          }
+        },
+        {
+          "name": "Strength 20'"
+        }
+      ],
+      "meals": [
+        {
+          "slot": "breakfast",
+          "label": "Breakfast",
+          "dish": "Porridge with banana, walnuts and honey"
+        },
+        {
+          "slot": "lunch",
+          "label": "Lunch",
+          "dish": "Lentil soup",
+          "note": "leftover from Mon",
+          "extra": "with sourdough"
+        },
+        {
+          "slot": "dinner",
+          "label": "Dinner",
+          "dish": "Spaghetti bolognese",
+          "note": "cook 3 — eat 1, reserve 2"
+        }
+      ]
+    },
+    {
+      "name": "Thursday",
+      "session": "Swim Z5 12x50",
+      "sessions": [
+        {
+          "name": "Swim 12x50 Z5, 1h",
+          "before": {
+            "guidance": "small and carbohydrate-led, in about the last hour",
+            "example": "1 banana"
+          },
+          "during": {
+            "guidance": "past about 45 minutes, small amounts taken at the wall",
+            "example": "isotonic drink at the wall"
+          },
+          "after": {
+            "guidance": "carbohydrate with protein within about 2 hours",
+            "example": "Greek yogurt with honey"
+          }
+        }
+      ],
+      "meals": [
+        {
+          "slot": "breakfast",
+          "label": "Breakfast",
+          "dish": "Greek yogurt with oats, berries and honey"
+        },
+        {
+          "slot": "lunch",
+          "label": "Lunch",
+          "dish": "Chickpea and roasted vegetable salad"
+        },
+        {
+          "slot": "dinner",
+          "label": "Dinner",
+          "dish": "Omelette with potatoes and side salad"
+        }
+      ]
+    },
+    {
+      "name": "Friday",
+      "session": "Day off",
+      "sessions": [],
+      "meals": [
+        {
+          "slot": "breakfast",
+          "label": "Breakfast",
+          "dish": "Eggs on toast with avocado"
+        },
+        {
+          "slot": "lunch",
+          "label": "Lunch",
+          "dish": "Chickpea and roasted vegetable salad"
+        },
+        {
+          "slot": "dinner",
+          "label": "Dinner",
+          "dish": "Grilled mackerel with boiled potatoes and tomato salad"
+        }
+      ]
+    },
+    {
+      "name": "Saturday",
+      "session": "Bike Z4 TT 4x10' + 30' Z3, brick run 30'",
+      "sessions": [
+        {
+          "name": "Bike TT 4x10' Z4 + 30' Z3, 2h40",
+          "before": {
+            "guidance": "a meal 1–4 hours before, not heavy or fatty",
+            "example": "2 slices of sourdough with honey, coffee"
+          },
+          "during": {
+            "guidance": "30–60 g of carbohydrate an hour; past about 2½ hours, 60–90 g",
+            "example": "2 bottles of isotonic drink, 2 bananas, 1 energy bar"
+          },
+          "after": {
+            "guidance": "carbohydrate with protein within about 2 hours of the brick run",
+            "example": "1 bottle of chocolate milk"
+          }
+        },
+        {
+          "name": "Brick run 30'"
+        }
+      ],
+      "meals": [
+        {
+          "slot": "breakfast",
+          "label": "Breakfast",
+          "dish": "Porridge with banana, walnuts and honey"
+        },
+        {
+          "slot": "lunch",
+          "label": "Lunch",
+          "dish": "Spaghetti bolognese",
+          "note": "leftover from Wed"
+        },
+        {
+          "slot": "dinner",
+          "label": "Dinner",
+          "dish": "Chicken and rice bowl with roasted peppers"
+        }
+      ]
+    },
+    {
+      "name": "Sunday",
+      "session": "Run Z4 4x8' threshold + open water swim 2000m",
+      "sessions": [
+        {
+          "name": "Run threshold 4x8', 1h30",
+          "before": {
+            "guidance": "small and carbohydrate-led, in about the last hour",
+            "example": "1 banana, espresso"
+          },
+          "during": {
+            "guidance": "past 90 minutes to 2½ h, the top of 30–60 g an hour",
+            "example": "1 bottle of isotonic drink, 1 banana"
+          },
+          "after": {
+            "guidance": "carbohydrate with protein within about 2 hours",
+            "example": "1 bottle of chocolate milk"
+          }
+        },
+        {
+          "name": "Open-water swim 2000m, 1h"
+        }
+      ],
+      "meals": [
+        {
+          "slot": "breakfast",
+          "label": "Breakfast",
+          "dish": "Porridge with banana, walnuts and honey"
+        },
+        {
+          "slot": "lunch",
+          "label": "Lunch",
+          "dish": "Spaghetti bolognese",
+          "note": "leftover from Wed"
+        },
+        {
+          "slot": "dinner",
+          "label": "Dinner",
+          "dish": "Salmon fillet with sweet potato and green beans"
+        }
+      ]
+    }
+  ],
+  "fridge": [
+    {
+      "name": "Chocolate milk",
+      "qty": "2 bottles"
+    },
+    {
+      "name": "Greek yogurt",
+      "qty": "500 g"
+    },
+    {
+      "name": "Eggs",
+      "qty": "6"
+    },
+    {
+      "name": "Half a jar of honey"
+    }
+  ],
+  "shopping": [
+    {
+      "category": "Fruit & Vegetables",
+      "items": [
+        {
+          "name": "Sweet potato",
+          "qty": "600 g",
+          "pack": {
+            "qty": "200 g"
+          },
+          "days": [
+            "Tue",
+            "Sun"
+          ]
+        },
+        {
+          "name": "Potatoes",
+          "qty": "750 g",
+          "pack": {
+            "qty": "150 g"
+          },
+          "days": [
+            "Thu",
+            "Fri"
+          ]
+        },
+        {
+          "name": "Bananas",
+          "qty": "480 g",
+          "days": [
+            "Mon",
+            "Wed",
+            "Sat",
+            "Sun"
+          ],
+          "pack": {
+            "qty": "120 g"
+          }
+        },
+        {
+          "name": "Avocado",
+          "qty": "1",
+          "days": [
+            "Tue",
+            "Fri"
+          ]
+        },
+        {
+          "name": "Lemon",
+          "qty": "1",
+          "days": [
+            "Tue"
+          ]
+        },
+        {
+          "name": "Red peppers",
+          "qty": "5.5",
+          "days": [
+            "Mon",
+            "Tue",
+            "Thu",
+            "Fri",
+            "Sat"
+          ]
+        },
+        {
+          "name": "Green beans",
+          "qty": "400 g",
+          "days": [
+            "Tue",
+            "Sun"
+          ]
+        },
+        {
+          "name": "Tomatoes",
+          "qty": "3",
+          "days": [
+            "Fri"
+          ]
+        },
+        {
+          "name": "Onions",
+          "qty": "4",
+          "days": [
+            "Mon",
+            "Wed",
+            "Thu",
+            "Sat"
+          ]
+        },
+        {
+          "name": "Carrots",
+          "qty": "3",
+          "days": [
+            "Mon",
+            "Wed"
+          ]
+        },
+        {
+          "name": "Courgette",
+          "qty": "2",
+          "days": [
+            "Thu",
+            "Fri"
+          ]
+        },
+        {
+          "name": "Mixed salad leaves",
+          "qty": "1 bag",
+          "days": [
+            "Thu",
+            "Fri"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Bakery",
+      "items": [
+        {
+          "name": "Sourdough loaf",
+          "qty": "2",
+          "days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Fri"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Rice, Pasta & Dry Goods",
+      "items": [
+        {
+          "name": "Rolled oats",
+          "qty": "360 g",
+          "days": [
+            "Mon",
+            "Wed",
+            "Thu",
+            "Sat",
+            "Sun"
+          ]
+        },
+        {
+          "name": "Rice",
+          "qty": "210 g",
+          "days": [
+            "Mon",
+            "Sat"
+          ]
+        },
+        {
+          "name": "Spaghetti",
+          "qty": "270 g",
+          "days": [
+            "Wed"
+          ]
+        },
+        {
+          "name": "Pasta, short",
+          "qty": "130 g",
+          "days": [
+            "Tue"
+          ]
+        },
+        {
+          "name": "Walnuts",
+          "qty": "80 g",
+          "days": [
+            "Mon",
+            "Wed",
+            "Sat",
+            "Sun"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Tins, Jars & Seasonings",
+      "items": [
+        {
+          "name": "Tinned tuna",
+          "qty": "120 g",
+          "pack": {
+            "qty": "120 g",
+            "one": "tin",
+            "many": "tins"
+          },
+          "days": [
+            "Tue"
+          ]
+        },
+        {
+          "name": "Brown lentils",
+          "qty": "200 g",
+          "days": [
+            "Mon"
+          ]
+        },
+        {
+          "name": "Tinned chickpeas",
+          "qty": "480 g",
+          "pack": {
+            "qty": "240 g",
+            "one": "tin",
+            "many": "tins"
+          },
+          "days": [
+            "Thu",
+            "Fri"
+          ]
+        },
+        {
+          "name": "Tinned tomatoes",
+          "qty": "800 g",
+          "pack": {
+            "qty": "400 g",
+            "one": "tin",
+            "many": "tins"
+          },
+          "days": [
+            "Wed"
+          ]
+        },
+        {
+          "name": "Olive oil",
+          "qty": "bottle",
+          "note": "top up if low"
+        },
+        {
+          "name": "Stock cubes",
+          "qty": "refill"
+        },
+        {
+          "name": "Honey",
+          "qty": "1 jar",
+          "note": "top up if low"
+        }
+      ]
+    },
+    {
+      "category": "Meat & Fish",
+      "items": [
+        {
+          "name": "Chicken breasts",
+          "qty": "450 g",
+          "pack": {
+            "qty": "150 g"
+          },
+          "days": [
+            "Mon",
+            "Sat"
+          ]
+        },
+        {
+          "name": "Salmon fillets",
+          "qty": "400 g",
+          "days": [
+            "Tue",
+            "Sun"
+          ]
+        },
+        {
+          "name": "Ground beef",
+          "qty": "500 g",
+          "days": [
+            "Wed"
+          ],
+          "note": "bolognese"
+        },
+        {
+          "name": "Mackerel",
+          "qty": "1 fillet",
+          "days": [
+            "Fri"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Dairy, Eggs & Chilled",
+      "items": [
+        {
+          "name": "Eggs",
+          "qty": "1",
+          "days": [
+            "Fri"
+          ]
+        },
+        {
+          "name": "Milk",
+          "qty": "1.2 L",
+          "days": [
+            "Mon",
+            "Wed",
+            "Sat",
+            "Sun"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Frozen",
+      "items": [
+        {
+          "name": "Berries, frozen",
+          "qty": "100 g",
+          "days": [
+            "Thu"
+          ]
+        }
+      ]
+    }
+  ],
+  "recipes": [
+    {
+      "day": "Monday",
+      "title": "Porridge with banana, walnuts and honey",
+      "kind": "origin",
+      "meal": "Breakfast",
+      "nutrition": {
+        "kcal": 750,
+        "protein": 25,
+        "fat": 24,
+        "carbs": 108,
+        "fibre": 12
+      },
+      "time": {
+        "prep": 3,
+        "cook": 7
+      },
+      "servings": [
+        {
+          "day": "Monday",
+          "meal": "Breakfast"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Rolled oats",
+          "qty": "80 g"
+        },
+        {
+          "item": "Milk",
+          "qty": "300 ml"
+        },
+        {
+          "item": "Banana",
+          "qty": "120 g, sliced"
+        },
+        {
+          "item": "Walnuts",
+          "qty": "20 g, roughly chopped"
+        },
+        {
+          "item": "Honey",
+          "qty": "20 g"
+        }
+      ],
+      "steps": [
+        "Bring the oats and milk to a gentle simmer, stirring.",
+        "Cook 5–7 minutes until thick, adding a splash more milk if needed.",
+        "Top with banana, walnuts and honey."
+      ],
+      "yields": 1,
+      "plates": [
+        {
+          "eater": 0,
+          "portions": 0.5
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "title": "Chicken and rice bowl with roasted peppers",
+      "kind": "origin",
+      "meal": "Lunch",
+      "nutrition": {
+        "kcal": 580,
+        "protein": 44,
+        "fat": 16,
+        "carbs": 63,
+        "fibre": 4
+      },
+      "time": {
+        "prep": 10,
+        "cook": 25
+      },
+      "servings": [
+        {
+          "day": "Monday",
+          "meal": "Lunch"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Chicken breast",
+          "qty": "150 g"
+        },
+        {
+          "item": "Rice",
+          "qty": "70 g dry"
+        },
+        {
+          "item": "Red pepper",
+          "qty": "1, sliced"
+        },
+        {
+          "item": "Onion",
+          "qty": "half, sliced"
+        },
+        {
+          "item": "Olive oil",
+          "qty": "1 tbsp"
+        }
+      ],
+      "steps": [
+        "Roast the pepper and onion with the oil at 200°C for 20 minutes.",
+        "Cook the rice.",
+        "Season and pan-fry the chicken 5–6 minutes per side, then rest and slice.",
+        "Combine in a bowl."
+      ],
+      "yields": 1
+    },
+    {
+      "day": "Monday",
+      "title": "Lentil soup",
+      "kind": "origin",
+      "meal": "Dinner",
+      "nutrition": {
+        "kcal": 480,
+        "protein": 24,
+        "fat": 9,
+        "carbs": 68,
+        "fibre": 16
+      },
+      "time": {
+        "prep": 10,
+        "cook": 35
+      },
+      "servings": [
+        {
+          "day": "Monday",
+          "meal": "Dinner"
+        },
+        {
+          "day": "Wednesday",
+          "meal": "Lunch"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Brown lentils",
+          "qty": "200 g"
+        },
+        {
+          "item": "Onion",
+          "qty": "1, diced"
+        },
+        {
+          "item": "Carrots",
+          "qty": "2, diced"
+        },
+        {
+          "item": "Stock",
+          "qty": "1 L"
+        },
+        {
+          "item": "Olive oil",
+          "qty": "1 tbsp"
+        }
+      ],
+      "steps": [
+        "Soften the onion and carrot in the oil, 8 minutes.",
+        "Add lentils and stock, simmer 30 minutes until tender.",
+        "Season, and blend half for body if you prefer it thicker.",
+        "Cool the reserved portion quickly and refrigerate."
+      ],
+      "yields": 2
+    },
+    {
+      "day": "Tuesday",
+      "title": "Eggs on toast with avocado",
+      "kind": "origin",
+      "meal": "Breakfast",
+      "nutrition": {
+        "kcal": 620,
+        "protein": 27,
+        "fat": 30,
+        "carbs": 68,
+        "fibre": 9
+      },
+      "time": {
+        "prep": 5,
+        "cook": 5
+      },
+      "servings": [
+        {
+          "day": "Tuesday",
+          "meal": "Breakfast"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Eggs",
+          "qty": "2"
+        },
+        {
+          "item": "Sourdough",
+          "qty": "4 slices"
+        },
+        {
+          "item": "Avocado",
+          "qty": "half"
+        },
+        {
+          "item": "Olive oil",
+          "qty": "1 tsp"
+        }
+      ],
+      "steps": [
+        "Toast the sourdough.",
+        "Fry or poach the eggs to your preference.",
+        "Mash the avocado onto the toast, season, and top with the eggs."
+      ],
+      "yields": 1
+    },
+    {
+      "day": "Tuesday",
+      "title": "Tuna pasta salad",
+      "kind": "origin",
+      "meal": "Lunch",
+      "nutrition": {
+        "kcal": 750,
+        "protein": 42,
+        "fat": 19,
+        "carbs": 102,
+        "fibre": 8
+      },
+      "time": {
+        "prep": 5,
+        "cook": 12
+      },
+      "servings": [
+        {
+          "day": "Tuesday",
+          "meal": "Lunch"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Short pasta",
+          "qty": "130 g dry"
+        },
+        {
+          "item": "Tinned tuna, drained",
+          "qty": "120 g"
+        },
+        {
+          "item": "Red pepper",
+          "qty": "half, diced"
+        },
+        {
+          "item": "Olive oil",
+          "qty": "1 tbsp"
+        },
+        {
+          "item": "Lemon",
+          "qty": "half"
+        }
+      ],
+      "steps": [
+        "Cook the pasta, drain and cool briefly under cold water.",
+        "Flake in the tuna and add the pepper.",
+        "Dress with oil and lemon, season well."
+      ],
+      "yields": 1
+    },
+    {
+      "day": "Tuesday",
+      "title": "Salmon fillet with sweet potato and green beans",
+      "kind": "origin",
+      "meal": "Dinner",
+      "nutrition": {
+        "kcal": 620,
+        "protein": 40,
+        "fat": 26,
+        "carbs": 52,
+        "fibre": 8
+      },
+      "time": {
+        "prep": 10,
+        "cook": 30
+      },
+      "servings": [
+        {
+          "day": "Tuesday",
+          "meal": "Dinner"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Salmon fillet",
+          "qty": "200 g"
+        },
+        {
+          "item": "Sweet potato",
+          "qty": "300 g, cubed"
+        },
+        {
+          "item": "Green beans",
+          "qty": "200 g"
+        },
+        {
+          "item": "Olive oil",
+          "qty": "1 tbsp"
+        }
+      ],
+      "steps": [
+        "Roast the sweet potato with oil at 200°C for 25 minutes.",
+        "Add the salmon for the last 12 minutes.",
+        "Steam the green beans 5 minutes and serve alongside."
+      ],
+      "yields": 1
+    },
+    {
+      "day": "Wednesday",
+      "title": "Porridge with banana, walnuts and honey",
+      "kind": "repeat",
+      "meal": "Breakfast",
+      "time": {
+        "prep": 3,
+        "cook": 7
+      },
+      "origin_day": "Monday"
+    },
+    {
+      "day": "Wednesday",
+      "title": "Lentil soup",
+      "kind": "leftover",
+      "meal": "Lunch",
+      "time": {
+        "prep": 0,
+        "cook": 5,
+        "cook_label": "reheat"
+      },
+      "origin_day": "Monday"
+    },
+    {
+      "day": "Wednesday",
+      "title": "Spaghetti bolognese",
+      "kind": "origin",
+      "meal": "Dinner",
+      "nutrition": {
+        "kcal": 680,
+        "protein": 38,
+        "fat": 22,
+        "carbs": 84,
+        "fibre": 7
+      },
+      "time": {
+        "prep": 15,
+        "cook": 40
+      },
+      "servings": [
+        {
+          "day": "Wednesday",
+          "meal": "Dinner"
+        },
+        {
+          "day": "Saturday",
+          "meal": "Lunch"
+        },
+        {
+          "day": "Sunday",
+          "meal": "Lunch"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Ground beef",
+          "qty": "500 g"
+        },
+        {
+          "item": "Tinned tomatoes",
+          "qty": "800 g"
+        },
+        {
+          "item": "Onion",
+          "qty": "1, diced"
+        },
+        {
+          "item": "Carrot",
+          "qty": "1, diced"
+        },
+        {
+          "item": "Spaghetti, dry",
+          "qty": "270 g"
+        }
+      ],
+      "steps": [
+        "Brown the beef in a wide pan, breaking it up as it colours.",
+        "Add the onion and carrot, cook 8 minutes.",
+        "Add the tomatoes, simmer 30 minutes, season.",
+        "Cook spaghetti for the portion you are eating now; cool and refrigerate the rest of the sauce."
+      ],
+      "yields": 3
+    },
+    {
+      "day": "Thursday",
+      "title": "Greek yogurt with oats, berries and honey",
+      "kind": "origin",
+      "meal": "Breakfast",
+      "nutrition": {
+        "kcal": 430,
+        "protein": 24,
+        "fat": 11,
+        "carbs": 58,
+        "fibre": 6
+      },
+      "time": {
+        "prep": 5,
+        "cook": 0
+      },
+      "servings": [
+        {
+          "day": "Thursday",
+          "meal": "Breakfast"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Greek yogurt",
+          "qty": "250 g"
+        },
+        {
+          "item": "Rolled oats",
+          "qty": "40 g"
+        },
+        {
+          "item": "Frozen berries",
+          "qty": "100 g"
+        },
+        {
+          "item": "Honey",
+          "qty": "1 tbsp"
+        }
+      ],
+      "steps": [
+        "Thaw the berries briefly, or use them frozen for a thicker result.",
+        "Layer yogurt, oats and berries.",
+        "Finish with honey."
+      ],
+      "yields": 1
+    },
+    {
+      "day": "Thursday",
+      "title": "Chickpea and roasted vegetable salad",
+      "kind": "origin",
+      "meal": "Lunch",
+      "nutrition": {
+        "kcal": 520,
+        "protein": 18,
+        "fat": 20,
+        "carbs": 62,
+        "fibre": 14
+      },
+      "time": {
+        "prep": 10,
+        "cook": 25
+      },
+      "servings": [
+        {
+          "day": "Thursday",
+          "meal": "Lunch"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Tinned chickpeas, drained",
+          "qty": "240 g"
+        },
+        {
+          "item": "Courgette",
+          "qty": "1, sliced"
+        },
+        {
+          "item": "Red pepper",
+          "qty": "1, sliced"
+        },
+        {
+          "item": "Salad leaves",
+          "qty": "handful"
+        },
+        {
+          "item": "Olive oil",
+          "qty": "1 tbsp"
+        }
+      ],
+      "steps": [
+        "Roast the courgette and pepper with oil at 200°C for 25 minutes.",
+        "Warm the chickpeas through with the roasted vegetables.",
+        "Serve over the leaves, dressed with the pan oil."
+      ],
+      "yields": 1
+    },
+    {
+      "day": "Thursday",
+      "title": "Omelette with potatoes and side salad",
+      "kind": "origin",
+      "meal": "Dinner",
+      "nutrition": {
+        "kcal": 560,
+        "protein": 26,
+        "fat": 30,
+        "carbs": 44,
+        "fibre": 6
+      },
+      "time": {
+        "prep": 10,
+        "cook": 20
+      },
+      "servings": [
+        {
+          "day": "Thursday",
+          "meal": "Dinner"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Eggs",
+          "qty": "3"
+        },
+        {
+          "item": "Potatoes, thinly sliced",
+          "qty": "250 g"
+        },
+        {
+          "item": "Onion",
+          "qty": "half, sliced"
+        },
+        {
+          "item": "Salad leaves",
+          "qty": "handful"
+        },
+        {
+          "item": "Olive oil",
+          "qty": "2 tbsp"
+        }
+      ],
+      "steps": [
+        "Soften the potato and onion in the oil over low heat, 12 minutes.",
+        "Beat the eggs, season, and pour over.",
+        "Cook gently until set, turning once.",
+        "Serve with the dressed leaves."
+      ],
+      "yields": 1
+    },
+    {
+      "day": "Friday",
+      "title": "Eggs on toast with avocado",
+      "kind": "repeat",
+      "meal": "Breakfast",
+      "time": {
+        "prep": 5,
+        "cook": 5
+      },
+      "origin_day": "Tuesday"
+    },
+    {
+      "day": "Friday",
+      "title": "Chickpea and roasted vegetable salad",
+      "kind": "repeat",
+      "meal": "Lunch",
+      "time": {
+        "prep": 10,
+        "cook": 25
+      },
+      "origin_day": "Thursday"
+    },
+    {
+      "day": "Friday",
+      "title": "Grilled mackerel with boiled potatoes and tomato salad",
+      "kind": "origin",
+      "meal": "Dinner",
+      "nutrition": {
+        "kcal": 680,
+        "protein": 28,
+        "fat": 19,
+        "carbs": 95,
+        "fibre": 10
+      },
+      "time": {
+        "prep": 10,
+        "cook": 25
+      },
+      "servings": [
+        {
+          "day": "Friday",
+          "meal": "Dinner"
+        }
+      ],
+      "ingredients": [
+        {
+          "item": "Mackerel",
+          "qty": "1 fillet"
+        },
+        {
+          "item": "Potatoes",
+          "qty": "500 g"
+        },
+        {
+          "item": "Tomatoes",
+          "qty": "3, sliced"
+        },
+        {
+          "item": "Olive oil",
+          "qty": "1 tsp"
+        }
+      ],
+      "steps": [
+        "Boil the potatoes until tender, 20 minutes.",
+        "Grill the mackerel 5 minutes per side.",
+        "Dress the tomatoes with oil and salt, and serve everything together."
+      ],
+      "yields": 1
+    },
+    {
+      "day": "Saturday",
+      "title": "Porridge with banana, walnuts and honey",
+      "kind": "repeat",
+      "meal": "Breakfast",
+      "time": {
+        "prep": 3,
+        "cook": 7
+      },
+      "origin_day": "Monday",
+      "plates": [
+        {
+          "eater": 0,
+          "portions": 1.25
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "title": "Spaghetti bolognese",
+      "kind": "leftover",
+      "meal": "Lunch",
+      "time": {
+        "prep": 0,
+        "cook": 12,
+        "cook_label": "reheat"
+      },
+      "origin_day": "Wednesday"
+    },
+    {
+      "day": "Saturday",
+      "title": "Chicken and rice bowl with roasted peppers",
+      "kind": "repeat",
+      "meal": "Dinner",
+      "time": {
+        "prep": 10,
+        "cook": 25
+      },
+      "origin_day": "Monday",
+      "plates": [
+        {
+          "eater": 0,
+          "portions": 2
+        }
+      ]
+    },
+    {
+      "day": "Sunday",
+      "title": "Porridge with banana, walnuts and honey",
+      "kind": "repeat",
+      "meal": "Breakfast",
+      "time": {
+        "prep": 3,
+        "cook": 7
+      },
+      "origin_day": "Monday",
+      "plates": [
+        {
+          "eater": 0,
+          "portions": 1.25
+        }
+      ]
+    },
+    {
+      "day": "Sunday",
+      "title": "Spaghetti bolognese",
+      "kind": "leftover",
+      "meal": "Lunch",
+      "time": {
+        "prep": 0,
+        "cook": 12,
+        "cook_label": "reheat"
+      },
+      "origin_day": "Wednesday"
+    },
+    {
+      "day": "Sunday",
+      "title": "Salmon fillet with sweet potato and green beans",
+      "kind": "repeat",
+      "meal": "Dinner",
+      "time": {
+        "prep": 10,
+        "cook": 30
+      },
+      "origin_day": "Tuesday"
+    }
+  ],
+  "closing_note": "Pingo Doce, Continente and Lidl all cover this list. Lidl tends to be cheapest for oats, nuts and frozen fish."
+}

@@ -1,0 +1,637 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "week_label": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A label for the days this plan covers — `Fri 25–Sun 27 September`, `Mon 28 September–Sun 4 October`, or `Sun 27 September` for one day. The dates come from today's date or from the athlete, never a guess; where you know neither, the days alone — `Friday to Sunday`, or `Training week` for a whole one."
+    },
+    "week_load": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "enum": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "hours": {
+                  "type": "number",
+                  "description": "The duration they stated, in hours — 75 minutes is 1.25. 0 where they stated none: never estimate one here, because nothing afterwards can tell your estimate from their figure."
+                },
+                "zone": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5,
+                  "description": "The hardest intensity they described, as a zone: the highest `Z1`–`Z5` they named; otherwise threshold 4, work above it 5, tempo 3, easy or not described 2, recovery 1."
+                },
+                "load": {
+                  "type": "number",
+                  "description": "`hours x IF^2 x 100`, rounded, with IF by zone: Z1 0.55, Z2 0.7, Z3 0.85, Z4 0.95, Z5 1.05. An entry with no duration scores 0 — that means unmeasured, not easy."
+                }
+              },
+              "required": [
+                "hours",
+                "zone",
+                "load"
+              ],
+              "additionalProperties": false
+            },
+            "description": "One per session the athlete described for this day, in their order. Empty where the day holds none."
+          },
+          "day_load": {
+            "type": "number",
+            "description": "The sum of this day's entry loads."
+          }
+        },
+        "required": [
+          "day",
+          "entries",
+          "day_load"
+        ],
+        "additionalProperties": false
+      },
+      "description": "**Work this out before the ranking and before any day or meal** — it comes ahead of them in the document for that reason. One row per day of the plan, in day order, scoring each session the athlete described. The hours are theirs and the zones and loads are your reading of what they wrote; nothing prints the table. A 0 means nobody stated a duration — unmeasured, not easy — and where rows are 0 the order comes from the athlete's own words instead. Say in `training_overview.hard_days` what the order came to, and let it drive the carbohydrate in `days`.",
+      "minItems": 1,
+      "maxItems": 7
+    },
+    "training_overview": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "string",
+          "description": "The week's overall load in a few words, and only what the athlete's own account supports — `~9h, 5 sessions`, or just `5 sessions`. Never state an hours or training-load figure they did not give you."
+        },
+        "hard_days": {
+          "type": "string",
+          "description": "Day list with session type, hardest day first, e.g. Sat (TT bike + brick run), Sun (threshold run). The order is printed as a ranking, so put them in the order you fuelled them. Name the session in three or four words, not the whole prescription. Only days this plan covers."
+        },
+        "easy_days": {
+          "type": "string",
+          "description": "The same, for the days that are not hard. Only days this plan covers."
+        },
+        "summary": {
+          "type": "string",
+          "description": "One line on how the meal plan tracks training load. Name the day you made the biggest fuel day and what led you to it — the session, the race, or what the athlete told you. This is the first time they see which day you chose. **It is printed, not sent**: where you had to assume something, say what you assumed and stop — never ask the reader to confirm anything or offer to change the plan, because there is nobody to answer and no way to reply. **Keep it under 450 characters.**"
+        }
+      },
+      "required": [
+        "total",
+        "hard_days",
+        "easy_days",
+        "summary"
+      ],
+      "additionalProperties": false
+    },
+    "days": {
+      "minItems": 1,
+      "maxItems": 7,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          },
+          "session": {
+            "type": "string",
+            "description": "The day's training **in English**, or \"Recovery\" / \"Day off\"."
+          },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The session in a few words **in English**, as the week names it — `Swim 2.6 km`, `Bike threshold 1h52`. Under about 40 characters. A length or an intensity only where the week states one. A race says in its name that it is one."
+                },
+                "before": {
+                  "description": "On a session that carries fuel, and on a race whatever its length. Its `guidance` says the size of what is eaten and when, never a figure in grams; its `example` may still weigh a food.",
+                  "type": "object",
+                  "properties": {
+                    "guidance": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The range or timing that applies here, from the fuelling ranges. Names no food; any quantity is a range. About 60 characters."
+                    },
+                    "example": {
+                      "description": "Example food that roughly fits `guidance`, with amounts. Not a purchase: never on the shopping list. Omit only where nothing is eaten.",
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "guidance"
+                  ],
+                  "additionalProperties": false
+                },
+                "during": {
+                  "description": "On a session that carries fuel; never on an open-water swim.",
+                  "type": "object",
+                  "properties": {
+                    "guidance": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The range or timing that applies here, from the fuelling ranges. Names no food; any quantity is a range. About 60 characters."
+                    },
+                    "example": {
+                      "description": "Example food that roughly fits `guidance`, with amounts. Not a purchase: never on the shopping list. Omit only where nothing is eaten.",
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "guidance"
+                  ],
+                  "additionalProperties": false
+                },
+                "after": {
+                  "description": "On a session that carries fuel. Where the day holds another session, say what to do if it follows soon.",
+                  "type": "object",
+                  "properties": {
+                    "guidance": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The range or timing that applies here, from the fuelling ranges. Names no food; any quantity is a range. About 60 characters."
+                    },
+                    "example": {
+                      "description": "Example food that roughly fits `guidance`, with amounts. Not a purchase: never on the shopping list. Omit only where nothing is eaten.",
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "guidance"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Each session this day's training holds, one entry each, in the order the week describes them; empty on a day with none. A session carries its own fuel lines. Neither this nor `meals` says when in the day anything happens."
+          },
+          "excluded": {
+            "description": "Set ONLY when the athlete has explicitly said they need no meals on this day — travelling, away, eating out. The value is the short reason in their own terms and **in English**, printed on the day in place of the meals, e.g. \"Away for work — no meals planned\". A day they simply did not describe is NOT a reason to set this: an undescribed day is planned as easy. When this is set, `meals` must be empty and no recipe may name this day. Its `sessions` stay.",
+            "type": "string",
+            "minLength": 1
+          },
+          "meals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slot": {
+                  "type": "string",
+                  "enum": [
+                    "breakfast",
+                    "lunch",
+                    "dinner"
+                  ],
+                  "description": "Which meal this is; each gets a recipe entry unless excluded."
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Displayed label: Breakfast, Lunch or Dinner."
+                },
+                "dish": {
+                  "description": "The main dish — the one this meal is named for. Must match a recipe title for this day exactly. Omitted when `excluded` is set.",
+                  "type": "string"
+                },
+                "alongside": {
+                  "description": "Every other dish cooked for this meal, each matching exactly a recipe title for this day and meal. A dish has quantities and a method; a slice of bread from the shopping list is `extra`. Omit when the meal is one dish, and never repeat `dish` here.",
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "excluded": {
+                  "description": "Set ONLY when the athlete has said they eat this meal elsewhere — at work, out, with family. The value is the short reason in their own terms and **in English**, printed in place of the dish, e.g. \"at work\". The meal entry still appears so the row is there; it simply has no dish, no recipe and nothing bought for it. Never set together with `dish` or `alongside`.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "note": {
+                  "description": "Portion bookkeeping shown in parentheses, e.g. \"cook 2 — eat 1, reserve 1\" or \"leftover from Mon\".",
+                  "type": "string"
+                },
+                "extra": {
+                  "description": "Anything on the table that needs no recipe, e.g. \"with sourdough\". If it has quantities and a method it is a dish in `alongside`, never here.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "slot",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Exactly one breakfast, one lunch and one dinner, with no time of day implied, here or against `sessions`. Empty if and only if `excluded` is set."
+          }
+        },
+        "required": [
+          "name",
+          "session",
+          "sessions",
+          "meals"
+        ],
+        "additionalProperties": false
+      },
+      "description": "The days this plan covers, in calendar order, ending on Sunday — a run of Monday…Sunday with nothing missing in the middle: seven for a whole week, fewer when it starts mid-week, one for Sunday alone. Exactly the days agreed with the athlete: never add one, never drop one. A day inside the run they need no meals for stays, with `excluded` set."
+    },
+    "fridge": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "What is already there. Where the shopping list carries the same food, write it as that row's `name`, word for word — anything after a comma is read as how it differs, as in `Eggs, large`. A different food keeps the name it is sold under, `Peanut butter` — never `Butter` and never `Butter, peanut` — and a recipe line that cooks with it starts with that whole name."
+          },
+          "qty": {
+            "description": "How much, as one number and at most one unit. Where the recipes measure it, in their measure — \"6\" for eggs the recipes count, \"500 g\" — never \"6 eggs\" or \"half a bag\": an amount in the recipes' measure is what lets the list take it off both the quantity and the days it buys for, and the fridge is eaten first, from the plan's first day. Anything the recipes do not measure keeps the unit it comes in — \"2 bottles\", \"1 tube\" — because the page prints this line.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      },
+      "description": "What the athlete said is already in the fridge. May be empty."
+    },
+    "shopping": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "Fruit & Vegetables",
+              "Bakery",
+              "Rice, Pasta & Dry Goods",
+              "Tins, Jars & Seasonings",
+              "Meat & Fish",
+              "Dairy, Eggs & Chilled",
+              "Frozen"
+            ],
+            "description": "The part of the shop the item is picked up in, never what it does nutritionally: potatoes are Fruit & Vegetables, tuna in a tin or can is Tins, Jars & Seasonings, butter is Dairy, Eggs & Chilled, walnuts and dried fruit are Rice, Pasta & Dry Goods. Where a zone differs by country, follow that country's shops."
+          },
+          "items": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The item's name, **in English** — the shelf where the athlete shops may be labelled in another language; this row is not. This is the name the reader shops by, and the one a recipe's `item` must match. **A tinned or jarred food says so in its name** — `Tinned chickpeas`, `Tinned tuna`, the container word in English too — because the count the page prints comes after the name and a bare `Chickpeas` has been read as fresh by then; say what one tin holds in `pack`, and start every recipe line that uses it with this whole name — `Tinned chickpeas, drained`. How it is cut goes in `note` — `chopped` — never in the name: a recipe line writes its preparation after its comma, so a fresh `Tomato, chopped` resolves to a row called `Chopped tomatoes`. **One food, one row**: potatoes the week boils, bakes and roasts are one `Potatoes` row, and a second kind has a row of its own only where it changes what gets cooked."
+                },
+                "qty": {
+                  "type": "string",
+                  "description": "How much of this item the week actually uses: the sum of it across every recipe that cooks with it, less anything already in `fridge`. Write it as **one number and at most one unit** — `600 g`, `1.3 lb`, `4` — because that is the shape the check reads; a compound like `1 lb 5 oz` is not. A decimal takes a point — `1.5` — and there is never a thousands separator: `1,000 g` could be either and is read as neither, so the row goes unchecked. **Never a pack size where a recipe measures the item**: write `200 g` of frozen peas, not `1 bag` and not `1 bag (750 g)`, even though no shop sells 200 g — the athlete reads what the week needs and picks a bag that covers it, and this is checked against the recipes. **The one exception is a staple** topped up rather than bought — oil, salt, a jar of honey or mustard the recipes take by the spoonful — which carries no `days` and is written as the unit bought: `1 jar`, never `5 tbsp`. Where the week's total is otherwise not what anyone buys — a bag of salad leaves a recipe takes a handful from — write the unit they actually buy too. Either way **in English**: `1 jar`, `1 bag`, `1 tub`, `1 bottle`. **Butter is never a staple**, even where the recipes measure it in spoons: its row is dated and its `qty` is their total in their own unit — `60 g`, or `5 tbsp` where they use spoons."
+                },
+                "pack": {
+                  "description": "The standard purchase this item is sold in, so the page can count it. **Never printed as written** — the reader is shown a count worked out from it and `qty`, so this is not a second amount of food on the row and `qty` stays the one number the week is checked against.",
+                  "type": "object",
+                  "properties": {
+                    "qty": {
+                      "type": "string",
+                      "description": "How much of this item **one standard purchase provides**, in the same measure this row's `qty` uses — `240 g` beside a `qty` in grams, `1 L` beside one in litres. It is what the shopper picks up once: a tin, a carton, a loose piece. **It is the part that reaches a recipe, not the size printed on the tin.** Recipes measure tinned food drained, so a 400 g tin of chickpeas that drains to 240 g is written `240 g` here — a gross weight makes the count wrong for every week that needs more than one tin. Same shape as `qty` and read by the same parser: **one number and at most one unit**, a decimal point — `1.5` — and never a thousands separator: `1,000 g` could be either and is read as neither, and a row written that way silently loses its count. Leave the whole `pack` object out on anything with no standard purchase to count — rice, oats, mince, oil, spices — and on any row whose `qty` already counts pieces (`Eggs — 5`)."
+                    },
+                    "one": {
+                      "description": "What one of them is called, **in English** — 'tin', 'can', 'jar', 'carton', 'loaf'. For anything sold in a container whose contents a recipe measures out. **Leave both this and `many` out for loose countable pieces** — onions, oranges, peppers — where the bare number is what a shopper reads.",
+                      "type": "string",
+                      "maxLength": 24
+                    },
+                    "many": {
+                      "description": "The plural of 'one', **in English** too — 'tins', 'jars'. Given together with `one` or not at all; the page prints whichever the computed count calls for.",
+                      "type": "string",
+                      "maxLength": 24
+                    }
+                  },
+                  "required": [
+                    "qty"
+                  ],
+                  "additionalProperties": false
+                },
+                "days": {
+                  "description": "Three-letter abbreviations of the days that eat what this row buys. Every day named must actually use it, and a day whose use the fridge covers is not named — the fridge is eaten first, from the plan's first day. Omit on a staple.",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "Mon",
+                      "Tue",
+                      "Wed",
+                      "Thu",
+                      "Fri",
+                      "Sat",
+                      "Sun"
+                    ]
+                  }
+                },
+                "note": {
+                  "description": "What the row is for, or how to buy it — \"bolognese\", \"chopped\", \"top up if low\". **Never how much, in any form** — no weight or volume, no pack size, no count, not even of what is already in the fridge: `qty` is the one amount on a row, and it has already taken off what is in `fridge`.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "qty"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "category",
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Grouped by where each item is picked up in the shop, in the order the categories are listed. Omit any category this week does not need."
+    },
+    "recipes": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "enum": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          },
+          "meal": {
+            "type": "string",
+            "enum": [
+              "Breakfast",
+              "Lunch",
+              "Dinner"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "The plain dish name, **in English** whatever country the athlete lives in — where they live picks the dish, never the words for it. No meal-slot prefix. Identical on every day the dish appears — the pointer link resolves by matching it."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "repeat",
+              "leftover"
+            ],
+            "description": "origin: cooked here, full recipe. repeat: cooked fresh again from an earlier day's recipe. leftover: eating a portion from an earlier batch."
+          },
+          "nutrition": {
+            "type": "object",
+            "properties": {
+              "kcal": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "protein": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "fat": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "carbs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "fibre": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "kcal",
+              "protein",
+              "fat",
+              "carbs",
+              "fibre"
+            ],
+            "additionalProperties": false,
+            "description": "**origin entries only: one reference portion of this dish** — one plate at `portions: 1`. A repeat or a leftover of it states no figures of its own: its plate is this times its `portions`, so a bigger Saturday bowl of Monday's porridge is `portions: 1.25`, not bigger numbers."
+          },
+          "yields": {
+            "description": "origin entries only: how many reference portions `ingredients` makes, as you would write a recipe — `4` for a pot for four. The code scales the list to the plates this batch actually feeds, every sitting in `servings` included, so the pot and the shopping list follow the plates rather than the other way round.",
+            "type": "number",
+            "minimum": 0.25
+          },
+          "portion_size": {
+            "description": "origin entries only: what one reference portion is, in a unit a cook can multiply — a weight or a count, e.g. \"150 g cooked rice\" or \"2 eggs\", never \"a ladle\". Printed beside each person's number of portions.",
+            "type": "string",
+            "minLength": 1
+          },
+          "plates": {
+            "description": "How much the athlete eats at this sitting, where it is not one reference portion: a single `{ eater: 0, portions: 1.25 }` for Saturday's bigger bowl of Monday's porridge. Omit it where the plate is one portion.",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "eater": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 0,
+                  "description": "Always 0."
+                },
+                "portions": {
+                  "type": "number",
+                  "minimum": 0.25,
+                  "maximum": 4,
+                  "description": "How many reference portions this person eats here, in quarters — 1, 1.25, 0.75. The page prints it beside the reference portion and the code multiplies the batch by it."
+                },
+                "note": {
+                  "description": "Only where this plate is sized for a reason worth a word, e.g. \"long ride\" — none on a plate at the table's usual size. No amounts: an amount is what `portions` says.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "eater",
+                "portions"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "time": {
+            "type": "object",
+            "properties": {
+              "prep": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "cook": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "cook_label": {
+                "description": "Defaults to cook. Leftovers use reheat.",
+                "type": "string",
+                "enum": [
+                  "cook",
+                  "reheat"
+                ]
+              }
+            },
+            "required": [
+              "prep",
+              "cook"
+            ],
+            "additionalProperties": false
+          },
+          "servings": {
+            "description": "origin entries only. Every portion this recipe yields, mapped to the meal slot that eats it — including this one. A single-serving dish lists exactly one. Cooked food nothing is scheduled to eat spoils, so every portion has to land somewhere.",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "string",
+                  "enum": [
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday"
+                  ]
+                },
+                "meal": {
+                  "type": "string",
+                  "enum": [
+                    "Breakfast",
+                    "Lunch",
+                    "Dinner"
+                  ]
+                }
+              },
+              "required": [
+                "day",
+                "meal"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "ingredients": {
+            "description": "**origin entries only**: 4–8 items, quantities for the `yields` reference portions. A repeat is the same dish cooked again, and its pot is this list at its own size — a bigger bowl is more `portions` on its plate, not a list of its own. Never on a leftover, which eats food that already exists.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "item": {
+                  "type": "string",
+                  "description": "The ingredient, **in English** — including one that came out of the athlete's own fridge, however they phrased it. Where it is on the shopping list, write it as that item's `name` — the same words, a container word included, as in `Tinned chickpeas, drained` — optionally followed by a preparation after a comma, as in `Onion, chopped`. Where it comes out of `fridge` instead, write it as that entry's `name` the same way. The two lists are checked against each other."
+                },
+                "qty": {
+                  "type": "string",
+                  "description": "How much — **for the `yields` reference portions this list is written for**, as a recipe for two lists what goes in a pot for two. It is multiplied to the pot actually eaten, every sitting in `servings` included, so never write it per plate. One number and at most one unit, with a decimal point — `1.5` — and never a thousands separator: `1,000 g` could be either and is read as neither. Weigh what a plate's size changes — rice, potatoes, bread, bananas — and count only what is cooked whole."
+                }
+              },
+              "required": [
+                "item",
+                "qty"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "steps": {
+            "description": "origin entries only. 3–7 steps. A repeat is cooked the same way, in different amounts.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "origin_day": {
+            "description": "repeat and leftover entries only: the day carrying the method.",
+            "type": "string",
+            "enum": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          }
+        },
+        "required": [
+          "day",
+          "meal",
+          "title",
+          "kind",
+          "time"
+        ],
+        "additionalProperties": false
+      },
+      "description": "One entry per dish per meal — at least three per day the plan covers, none for a day that is excluded, and one more for each dish a meal names in `alongside`. Grouped by day in day order and within a day as breakfast, lunch, dinner. A dish eaten more than once gets a full entry on the day it is first cooked and a pointer entry every other time."
+    },
+    "closing_note": {
+      "description": "One line on where to shop.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "week_label",
+    "week_load",
+    "training_overview",
+    "days",
+    "fridge",
+    "shopping",
+    "recipes"
+  ],
+  "additionalProperties": false,
+  "description": "A week's meal plan for one endurance athlete, built from the training week they described."
+}

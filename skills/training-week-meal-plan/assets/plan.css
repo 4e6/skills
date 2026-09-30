@@ -1,0 +1,856 @@
+/* The printable page.
+ *
+ * Print is the target, and a phone is the other reader. This is deliberately
+ * plain — one typeface, no cover, no colour fills, and no picture but a dish's
+ * photo: a square beside its recipe's title, only
+ * where the host that ran the skill could draw one, and never on the first
+ * page — and the plainness is the point rather than a shortfall.
+ *
+ * Two rules everything else follows from:
+ *
+ *   1. Nothing here may reach the network. No web font, no remote asset, no
+ *      import. The document is one file and it has to print on a machine that
+ *      has never been online.
+ *   2. No background fills. Browsers drop backgrounds when printing unless the
+ *      reader has turned that on, so a design made of tints is a design the
+ *      commonest printer throws away. This one is made of rules, weight and
+ *      space, which survive.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* A4 with generous margins. The measure below does not depend on this rule
+ * being honoured: an engine that ignores the page size falls back to the
+ * reader's default paper, and US Letter is 6mm narrower, so capping the
+ * measure is what makes that a different amount of white space rather than a
+ * different document. */
+@page {
+  size: A4 portrait;
+  margin: 16mm 15mm 14mm;
+}
+
+html {
+  font-size: 11pt;
+}
+
+body {
+  margin: 0;
+  color: #000;
+  background: #fff;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  line-height: 1.42;
+  /* Hyphenation off: quantities and dish names read badly broken. */
+  hyphens: none;
+}
+
+/* 176mm, not the 180mm that A4 less those margins gives exactly. Filling the
+ * page area to the millimetre leaves nothing for a border or a stray wide
+ * token, and the printer clips the overflow silently. */
+.sheet {
+  max-width: 176mm;
+  margin: 0 auto;
+  padding: 0;
+}
+
+p {
+  margin: 0 0 0.5em;
+  orphans: 3;
+  widows: 3;
+}
+
+li {
+  orphans: 3;
+  widows: 3;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 700;
+  margin: 0;
+  /* A heading at the foot of a page is a heading on the wrong page. */
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+h1 {
+  font-size: 20pt;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: 13pt;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding-bottom: 2mm;
+  border-bottom: 0.6pt solid #000;
+  margin: 0 0 4mm;
+}
+
+h3,
+h4 {
+  font-size: 11.5pt;
+}
+
+/* ---- The masthead ---------------------------------------------------- */
+
+.masthead {
+  padding-bottom: 4mm;
+  border-bottom: 1.6pt solid #000;
+  margin-bottom: 6mm;
+}
+
+.overview {
+  margin: 3mm 0 0;
+  font-size: 9.5pt;
+}
+
+.overview div {
+  display: flex;
+  gap: 2mm;
+  padding: 0.6mm 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.overview dt {
+  flex: 0 0 22mm;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  color: #333;
+}
+
+.overview dd {
+  margin: 0;
+  flex: 1 1 auto;
+}
+
+/* The three parts of the page, under the title. On a phone the page is one
+ * long scroll with the list at the bottom; on paper the pages are turned
+ * instead, so print hides it. */
+.jump {
+  margin: 2mm 0 0;
+  font-size: 10pt;
+}
+
+/* Two inks: a link is in the text's black rather than the engine's blue —
+ * which also prints. */
+.glance a,
+.jump a,
+.pointer a {
+  color: inherit;
+}
+
+.summary {
+  margin: 3mm 0 0;
+  font-size: 10pt;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ---- The week at a glance ------------------------------------------- */
+
+/* The sheet for the fridge: a row per day, and the whole week on page one. A
+ * table, because a week is days against meals and a reader runs a finger along
+ * one or down the other. Rules and weight like the rest of the page, no fills,
+ * one typeface.
+ *
+ * Nothing holds the table together. A glance longer than a page — dish names
+ * past a line each, two sides on every meal — then splits between rows and the
+ * engine repeats the header row, where `break-inside: avoid` on the whole of it
+ * moved it off page one entirely and left the masthead alone there. */
+/* Paper puts the week on the next page; a wide screen has no page to turn,
+ * so the week needs the same space under the table the masthead leaves. */
+.glance {
+  margin-bottom: 6mm;
+}
+
+.glance-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 10.5pt;
+  line-height: 1.3;
+}
+
+/* 27mm fits Wednesday in bold at 10.5pt with room to spare; 22mm ran it into
+ * the training beside it. The meals share what is left. */
+.glance-day {
+  width: 27mm;
+}
+
+.glance-when {
+  width: 34mm;
+}
+
+/* A fixed column is narrow — a meal cell is about 36mm of text — and a word
+ * longer than that printed over the cell beside it: a workout title joined
+ * with underscores, copied from a calendar, is ordinary input. The same defence
+ * .qty-hint has, for the same reason. */
+.glance-table th,
+.glance-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 1.8mm 2.5mm 1.8mm 0;
+  border-bottom: 0.4pt solid #bbb;
+  overflow-wrap: anywhere;
+}
+
+/* The same reference register as .slot: small capitals, a shade lighter. */
+.glance-table thead th {
+  font-size: 9pt;
+  font-weight: 400;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  color: #333;
+  border-bottom: 0.6pt solid #000;
+}
+
+.glance-table tbody th {
+  font-weight: 700;
+}
+
+.glance-training {
+  font-size: 9.5pt;
+  font-style: italic;
+  color: #333;
+}
+
+.glance-table tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* ---- The week -------------------------------------------------------- */
+
+/* The week starts a page, so page one is the masthead and the glance and
+ * nothing else: pinning it to the fridge takes nothing out of the stack, and
+ * Monday's fuel lines do not go on the fridge with it. */
+.week {
+  break-before: page;
+  page-break-before: always;
+}
+
+.day {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  margin-bottom: 5mm;
+  padding-bottom: 4mm;
+  border-bottom: 0.4pt solid #bbb;
+}
+
+.day:last-child {
+  border-bottom: 0;
+}
+
+.day-head {
+  display: flex;
+  align-items: baseline;
+  gap: 3mm;
+  margin-bottom: 2mm;
+}
+
+.session {
+  font-size: 9.5pt;
+  font-weight: 400;
+  font-style: italic;
+  color: #333;
+}
+
+.meals {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.meal {
+  display: flex;
+  gap: 3mm;
+  padding: 0.8mm 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.slot {
+  flex: 0 0 26mm;
+  font-size: 9pt;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  color: #333;
+  padding-top: 0.4mm;
+}
+
+.meal-body {
+  flex: 1 1 auto;
+}
+
+/* A day's sessions sit above its meals and are never mixed into them. The
+ * example food is an aside to the range, so it is the quieter of the two. */
+.sessions {
+  list-style: none;
+  margin: 0 0 2mm;
+  padding: 0;
+}
+
+.training-name {
+  display: block;
+  font-size: 9.5pt;
+  font-weight: 600;
+  padding: 0.8mm 0 0.4mm;
+}
+
+.fuel {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fuel li {
+  display: flex;
+  gap: 3mm;
+  padding: 0.4mm 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.fuel-body {
+  flex: 1 1 auto;
+}
+
+.example {
+  font-style: italic;
+  color: #444;
+}
+
+.note,
+.extra {
+  font-size: 9.5pt;
+  color: #444;
+}
+
+.excluded {
+  font-style: italic;
+  color: #444;
+}
+
+/* ---- Recipes --------------------------------------------------------- */
+
+/* Grouped under the day that cooks them. A key belongs above the thing it
+ * opens and set heavier than it; before this the day was the first token of a
+ * 9pt caption *under* the dish title, so the navigational half of the block was
+ * set weaker than the content half and twenty-one of them ran together.
+ *
+ * The group is a landmark, not a container, and there is deliberately no
+ * `break-inside: avoid` on it. Printed, the recipes run in two columns (the
+ * print block at the end), each 84mm wide — .sheet's 176mm less the 8mm gap,
+ * halved — and 267.0mm tall, which is A4 less the 16mm and 14mm of @page. The
+ * tallest recipe of examples/sample-plan.html runs to 98.4mm at that width,
+ * and nothing bounds a day: it is three sittings of up to eight ingredients and
+ * seven steps each, a sitting may be several dishes, and titles wrap in longer
+ * languages. Held together, a day longer than a column would move to a fresh
+ * one, fail to fit there either, and split anyway, having spent the hole.
+ *
+ * To take the figure again, print the sample from Chrome to a file and read each
+ * recipe's height off `pdftotext -bbox-layout`, from its title to its last
+ * line in the same column. Not from the page on a screen: the columns and the
+ * tighter spacing are print-only, so a screen measures a recipe 176mm wide and
+ * reads it short — and before the columns, overriding the screen rules one by
+ * one read 3mm high on every day, because .day-band's screen-only padding
+ * survived. The figure moves whenever anything inside a recipe block does.
+ *
+ * What is guaranteed instead is that the band never ends a page or a column,
+ * and that a split can only ever fall between two recipes. */
+
+.recipes > h2 {
+  margin-bottom: 6mm;
+}
+
+.recipe-day + .recipe-day {
+  margin-top: 9mm;
+}
+
+/* Larger than the section head above it, on purpose: RECIPES is a label read
+ * once, and the seven bands are what the section is flicked through for. Size
+ * and case carry the hierarchy, so this stays one weight of one typeface. */
+.day-band {
+  font-size: 14pt;
+  line-height: 1.2;
+  margin: 0 0 4mm;
+  padding-bottom: 1.5mm;
+  border-bottom: 0.8pt solid #000;
+  /* Inherited from the heading rule above, and repeated because this is the one
+   * place where losing it is the whole feature failing. Both spellings, because
+   * engines differ over which they implement in paged mode. */
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+/* The same constraint from the other side. The first recipe is itself atomic,
+ * so band and recipe move to the next page or column together or not at all —
+ * and band plus the tallest measured recipe is about 110mm of a 267.0mm
+ * column, always placeable.
+ *
+ * The third selector is the case that has a paragraph in the middle. When
+ * kept_recipes holds an origin on an excluded day for a leftover that still
+ * points at it, render.py puts the day's reason between the band and the first
+ * recipe — and pinning the band to the *notice* then leaves the recipe free to
+ * fall to the next page without it, which is the filing failure the grouping
+ * exists to prevent, walked back in by the one shape that separates the
+ * two. All three of band, notice and recipe move together or none does. */
+.day-band + .recipe,
+.day-band + .excluded,
+.recipe-day > .excluded + .recipe {
+  break-before: avoid;
+  page-break-before: avoid;
+}
+
+.recipe-day > .excluded {
+  font-size: 10pt;
+  margin: 0 0 4mm;
+  /* Stated from both sides, as the band is: engines differ over which of the
+   * two constraints they honour, and here they must agree. */
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+.recipe {
+  /* The one rule the page cannot do without: a recipe is read while cooking,
+   * so it may not be split across a page — or, printed, across a column. An
+   * avoid rather than a guarantee: a recipe taller than a column still splits. */
+  break-inside: avoid;
+  page-break-inside: avoid;
+  margin-bottom: 6mm;
+  padding-bottom: 5mm;
+  border-bottom: 0.4pt solid #bbb;
+}
+
+/* Once per day now, rather than once per page. A recipe is the last child of
+ * its own .recipe-day, so this reads per group and every day closes on white
+ * space with the next band's rule beneath it. That is the right meaning and it
+ * is why the selector was left alone: the hairline separates recipes inside a
+ * day, and between days the band already does it. */
+.recipe:last-child {
+  border-bottom: 0;
+}
+
+/* A recipe's meta line and its figures are one statement — this sitting's
+ * portions and what they come to — so they are held together by space alone:
+ * half a millimetre between them, three and a half after. A tinted panel
+ * was tried and taken out; it drew the eye to the one line nobody acts on. */
+.recipe-meta {
+  font-size: 9pt;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  color: #333;
+  margin: 1mm 0 0.5mm;
+}
+
+/* Figures to check against, not a line to scan — and the second line of the
+ * caption above them, so they take its voice: the same size, small caps,
+ * letterspacing and ink. Black roman at 9.5pt used to outweigh that caption,
+ * which is the line you navigate by. */
+.macros {
+  font-size: 9pt;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  color: #333;
+  margin: 0 0 3.5mm;
+}
+
+.serves {
+  font-size: 9.5pt;
+  font-style: italic;
+  color: #444;
+  margin: 0 0 2mm;
+}
+
+.pointer {
+  font-size: 10pt;
+  font-style: italic;
+  margin: 0 0 2mm;
+}
+
+/* A dish's photo, where the host could draw one: a square floated at the
+ * start of the card, with the title, the day and the times, the figures, the
+ * Makes line and the ingredients beside it, and the method the full width
+ * beneath it. Square because a dish is drawn on a plate from above, and a wide
+ * strip crops the rim of the plate away.
+ *
+ * As large as it can be while two lines beside it stay on one line each: the
+ * day, meal and times, and the figures. The figures run to about 85mm at their
+ * longest, and a card on a wide screen is 151mm, so 60mm; the same size on every
+ * card. In print a column is 84mm and a 390px phone leaves 360px, which the
+ * figures fill alone, so there the tile shrinks beside the title and those two
+ * lines run the full width beneath it. None of this matches anything
+ * unless the renderer was handed photos. */
+.pictured {
+  display: flow-root;
+}
+
+.recipe-photo {
+  display: block;
+  float: left;
+  width: 60mm;
+  height: 60mm;
+  margin: 1mm 5mm 3mm 0;
+  object-fit: cover;
+}
+
+/* Held on one line only where they were measured to fit beside the photo: a
+ * wide screen gives them 91mm against the figures' 85mm at their longest. In
+ * print and on a phone they sit under the photo, where they fit as they are,
+ * and wrap rather than run into the next column if a plan ever makes them
+ * longer -- the page defends itself against the text it is given. */
+@media screen and (min-width: 184.01mm) {
+  .pictured .nb,
+  .pictured .macros {
+    white-space: nowrap;
+  }
+}
+
+/* Beside the photo the list is one column and a box of its own, so it narrows
+ * beside the float rather than running under it, and the method always starts
+ * beneath the photo. */
+.pictured .ingredients {
+  display: flow-root;
+  columns: auto;
+}
+
+.pictured .steps {
+  clear: left;
+}
+
+.ingredients {
+  list-style: none;
+  margin: 0 0 3mm;
+  padding: 0;
+  columns: 2;
+  column-gap: 8mm;
+  font-size: 10pt;
+}
+
+.ingredients li {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  padding: 0.4mm 0;
+}
+
+.qty {
+  color: #333;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 5mm;
+  font-size: 10pt;
+}
+
+.steps li {
+  padding: 0.6mm 0;
+}
+
+/* ---- The shopping page ----------------------------------------------- */
+
+/* The break goes on the wrapper, not on the list: the fridge is read in the
+ * kitchen before leaving, so it belongs at the top of the page you carry to
+ * the shop rather than orphaned at the foot of the recipes. */
+.shop-sheet {
+  break-before: page;
+  page-break-before: always;
+}
+
+.fridge-list,
+.shop-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 10pt;
+}
+
+.fridge-list li,
+.shop-list li {
+  padding: 0.7mm 0;
+  border-bottom: 0.3pt dotted #999;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.fridge {
+  margin-bottom: 6mm;
+}
+
+.shop-cols {
+  columns: 2;
+  column-gap: 10mm;
+}
+
+/* A category taller than a column still breaks. That is accepted: forcing a
+ * block taller than its column to stay whole makes engines overflow instead,
+ * which is worse than a split. */
+.shop-cat {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  margin-bottom: 4mm;
+}
+
+.shop-cat h3 {
+  font-size: 9.5pt;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  padding-bottom: 1mm;
+  border-bottom: 0.5pt solid #000;
+  margin-bottom: 1mm;
+}
+
+/* The box to tick is part of the row, and a row that wraps hangs under its
+ * text rather than under the box: 3.5mm of box and 1.5mm of gap are the 5mm of
+ * hang. Sized in every medium, because a box with its appearance removed for
+ * print has no size of its own and prints as a dot. */
+.shop-list label {
+  display: block;
+  padding-left: 5mm;
+  text-indent: -5mm;
+}
+
+.shop-list input {
+  width: 3.5mm;
+  height: 3.5mm;
+  margin: 0 1.5mm 0 0;
+  vertical-align: -0.5mm;
+}
+
+.when {
+  font-size: 9pt;
+  color: #555;
+}
+
+/* The count beside the weight — on a shopping row, and on a recipe line, whose
+ * own count sits beside its own quantity. A shade quieter than .qty at the same size:
+ * this page is one typeface with no fills, so its register is ink and space
+ * rather than a second size.
+ *
+ * No `white-space: nowrap` binding the count to its weight: this list is two
+ * columns, about 83mm each. The box to tick takes 5mm of that, so
+ * the longest rows can wrap once, and they hang under their text; binding the
+ * count to its weight would not stop that, only move where it breaks. The
+ * ingredient list is two columns at the sheet's measure on a wide screen, and
+ * one on paper, where each recipe is itself a column. On a phone both lists
+ * are one column. */
+.qty-hint {
+  color: #555;
+  /* Nothing caps this field — validate.py checks arithmetic, not shapes — so
+   * the page defends itself. A 400-character hint with no space in it is one
+   * unbreakable token, and it crossed two columns before this line. `note`
+   * reaches the same surface and is left alone. */
+  overflow-wrap: anywhere;
+}
+
+.closing {
+  margin-top: 5mm;
+  font-size: 10pt;
+  font-style: italic;
+}
+
+/* ---- Screen ---------------------------------------------------------- */
+
+@media screen {
+  body {
+    background: #f4f2ee;
+    padding: 8mm 4mm 16mm;
+  }
+
+  .sheet {
+    background: #fff;
+    padding: 12mm;
+    border: 0.5pt solid #ddd;
+  }
+
+  /* The band is a landmark, and on screen there are no pages to flick through
+   * to reach one — the recipes run to several screens of continuous scroll, so
+   * the day you are reading under would otherwise leave the top of the window
+   * and take the answer with it. Sticky holds it there until its own day ends,
+   * where the next band pushes it off; `.recipe-day` bounds it, so no band ever
+   * outstays its recipes. Screen only — print has pages, and there the
+   * guarantee is the opposite one, that a band never ends a page or a column. */
+  .day-band {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    padding-top: 3mm;
+  }
+
+  /* On screen there are no pages, so the page-break rule above has nothing to
+   * act on. A rule keeps the shopping list from running into the recipes. */
+  .shop-sheet {
+    margin-top: 8mm;
+    padding-top: 6mm;
+    border-top: 1.6pt solid #000;
+  }
+
+  /* A jump lands below the band that is stuck to the top, not under it. */
+  .recipe {
+    scroll-margin-top: 14mm;
+  }
+
+  /* A target a thumb can hit. */
+  .jump a {
+    display: inline-block;
+    padding: 3.5mm 0;
+  }
+
+  .shop-list input {
+    accent-color: #000;
+  }
+
+  /* Opacity rather than a colour, because the quantity, the count and the days
+   * each set their own ink and a colour would grey only the name. */
+  .shop-list label:has(input:checked) {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+}
+
+/* ---- A phone --------------------------------------------------------- */
+
+/* Whenever the sheet cannot be shown at its full width: .sheet's 176mm plus
+ * the 4mm and 4mm of body padding the screen block adds. Above that the page is
+ * the wide screen's, as it always was. Below it the two columns would shrink
+ * with the window — on a phone to about 115px, where every row wraps mid-row —
+ * so it is one column, and each label goes above its value rather than beside it — a
+ * label is plan text of any length, and a fixed column beside it left the value
+ * about 160px at 390. After the block above, because at equal specificity the
+ * later rule wins. Screen only, so printing from a phone is still A4. */
+@media screen and (max-width: 184mm) {
+  body {
+    padding: 0;
+  }
+
+  .sheet {
+    padding: 5mm 4mm 10mm;
+    border: 0;
+  }
+
+  .overview div,
+  .meal,
+  .fuel li {
+    display: block;
+  }
+
+  .overview dt,
+  .slot {
+    display: block;
+    padding-top: 0;
+  }
+
+  /* auto, not 1: one column is still a multi-column container. */
+  .ingredients,
+  .shop-cols {
+    columns: auto;
+  }
+
+  .day-head {
+    flex-wrap: wrap;
+  }
+
+  /* About 98px beside the title; the day and the figures go under it. */
+  .recipe-photo {
+    width: 26mm;
+    height: 26mm;
+    margin: 1mm 4mm 2mm 0;
+  }
+
+  .pictured .recipe-meta,
+  .pictured .macros {
+    clear: left;
+  }
+
+  /* Five columns do not fit a phone, and the phone page was designed without
+   * it; the fridge is paper's. What a phone loses is the week as one grid and
+   * a link per dish — the links under the title reach the three sections only. */
+  .glance {
+    display: none;
+  }
+}
+
+@media print {
+  .sheet {
+    padding: 0;
+    border: 0;
+  }
+
+  .jump {
+    display: none;
+  }
+
+  /* The pointer prints as it always did: the same words, in the same ink. So
+   * does a dish on the glance. */
+  .glance a,
+  .pointer a {
+    text-decoration: none;
+  }
+
+  /* The recipes flow down one column, then the next, then onto the next page.
+   * A recipe still does not split, across a column as well as a page, so the
+   * foot of a column that a long recipe could not use is taken by the next
+   * short one — a leftover's pointer, a repeat — rather than left white. The
+   * limit is a column's height: a recipe taller than 267mm at 84mm wide splits
+   * anyway. The example's bolognese given seven steps of 260 characters did,
+   * where one column across the page held it; the longest method in any plan
+   * measured is 475 characters, and nothing bounds it.
+   * Print only: on a screen the recipes are one scroll, and on a phone one
+   * column already.
+   *
+   * The whole section flows rather than each day on its own: a day balanced by
+   * itself left uneven holes and stranded a band at the foot of a page. And the
+   * engine packs rather than render.py, which cannot measure a recipe and must
+   * not reorder them — every recipe sits under the day that eats it. */
+  .recipe-cols {
+    columns: 2;
+    column-gap: 8mm;
+    /* Half the measure the recipes had, so half the word that overflows. */
+    overflow-wrap: anywhere;
+  }
+
+  /* An ingredient row in two columns of an 84mm column breaks mid-row. auto,
+   * not 1: one column is still a multi-column container. */
+  .recipe-cols .ingredients {
+    columns: auto;
+  }
+
+  .recipe {
+    margin-bottom: 4mm;
+    padding-bottom: 3mm;
+  }
+
+  .recipe-day + .recipe-day {
+    margin-top: 6mm;
+  }
+
+  /* An 84mm column: the tile beside the title, and the day and the figures
+   * under it, where a line of either fits. */
+  .recipe-photo {
+    width: 26mm;
+    height: 26mm;
+    margin: 0.5mm 4mm 2mm 0;
+  }
+
+  .pictured .recipe-meta,
+  .pictured .macros {
+    clear: left;
+  }
+
+  /* An empty ruled square for a pen, whatever was ticked on screen. A ruled
+   * box rather than a fill, because fills do not print. */
+  .shop-list input {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0.6pt solid #000;
+    border-radius: 0;
+  }
+}
