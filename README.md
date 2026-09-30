@@ -16,15 +16,23 @@ With the [`skills`](https://github.com/vercel-labs/skills) CLI:
 npx skills add 4e6/skills
 ```
 
-Or by hand: copy the skill's folder into your assistant's skills directory —
+Or by hand: link each skill's folder into your assistant's skills directory —
 for Claude Code, `~/.claude/skills/`:
 
 ```sh
 git clone https://github.com/4e6/skills
-cp -r skills/skills/training-week-meal-plan ~/.claude/skills/
+cd skills
+mkdir -p ~/.claude/skills
+ln -s "$PWD"/skills/* ~/.claude/skills/
 ```
 
-Keep the folder's name as it is. The format requires it to match the skill's
+Each skill gets its own link, so the skills you already have stay where they
+are, and a `git pull` updates the linked skills in place. Run the `ln` again when
+a new skill appears; the ones already linked answer `File exists` and are left
+alone. To pick one skill rather than all of them, link that folder alone, or
+copy it with `cp -r`.
+
+Keep each folder's name as it is. The format requires it to match the skill's
 `name`.
 
 ## Licence
