@@ -39,6 +39,8 @@ biggest session at 4.3 g/kg. Then:
   no source read states it outside race loading, and *not heavy or fatty* is a
   pre-event row, which is one to four hours before, not the evening before.
 - **Fuel belongs to a session**, not to a meal ([below](#fuel-is-guidance-for-a-session)).
+- **Snacks top each day up to its daily target**, as guidance with example food
+  ([below](#daily-targets-and-the-snacks-that-reach-them)).
 
 `week_load` is the model's reasoning and **is never printed**.
 
@@ -118,12 +120,11 @@ published.
 hour, 30–60 g an hour, the top past 90 minutes* — and the figure is never supplied
 ([nothing about the athlete is invented](/invariants/nothing-about-the-athlete-is-invented.md)).
 
-## Daily targets: checked, and not shipped
+## Daily targets, and the snacks that reach them
 
-The skill ranks the days and sizes meals by that ranking; it states **no daily
-carbohydrate or protein target** outside race week. The published daily figures
-were checked against T16's open-access Dietitians of Canada edition on
-2026-09-30:
+Each day has a carbohydrate target by what it holds, in g/kg across the whole
+day. The figures were checked against T16's open-access Dietitians of Canada
+edition on 2026-09-30:
 
 | Day | Situation | Carbohydrate | Source |
 |---|---|---|---|
@@ -137,11 +138,26 @@ or reduced energy intake, spread in moderate amounts across the day and after
 hard sessions — about 0.3 g/kg after key sessions and every 3–5 hours
 (DC edition p. 16).
 
-The carbohydrate bands are for when training quality matters, to be fine-tuned
-to the individual, and they are **whole-day intake**. They were not added because
-the plan is three meals and session fuel with no snacks, and meals sized to reach
-them would be a different plan from the one the skill writes today
-([open](/questions/daily-carbohydrate-targets.md)).
+The bands are **whole-day intake**, for days where training quality matters, to
+be fine-tuned to the individual. Three meals rarely reach them — the example's
+meals sat at about half the band on training days
+([the measurement](/questions/daily-carbohydrate-targets.md)) — so a day carries
+a line of **snacks** that closes the gap:
+
+- **Treated as a fuel line is**: `guidance`, a range of carbohydrate in grams, and
+  an `example` of food that roughly adds up to it. Never on the shopping list,
+  never checked, and no time of day.
+- **The range is arithmetic**: the day's band at the athlete's stated weight, less
+  the meals' carbohydrate and the fuel lines' food, rounded to 10 g; `up to` where
+  the bottom falls below zero; no line where the meals and fuel reach the top.
+  `and some protein` where the meals are under 1.2 g/kg.
+- **The meals still carry the ranking.** Check 10 compares meals alone, so snacks
+  top a day up and never stand in for a hard day's bigger plates.
+
+**Inferences, and they need a professional:** a day between two rows takes the
+lower; a rest day, and every day of an undescribed week, takes the light row
+(T16's light row is *low intensity or skill-based*, and it gives no rest-day
+row); the day before the week's biggest session takes that session's row.
 
 ## What an example's food adds up to
 

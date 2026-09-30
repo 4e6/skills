@@ -323,6 +323,12 @@ h4 {
   flex: 1 1 auto;
 }
 
+/* A day's snacks follow its meals, as a line of the same kind as a session's
+ * fuel: what the day needs beyond the meals, and food that roughly meets it. */
+.snacks {
+  margin-top: 0.8mm;
+}
+
 .example {
   font-style: italic;
   color: #444;

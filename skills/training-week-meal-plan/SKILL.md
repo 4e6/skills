@@ -24,7 +24,8 @@ metadata:
 
 One week of endurance training in, one week of meals out: every day from the
 first the athlete needs through to Sunday — the rest of this week, or all of
-next — three meals a day, every recipe written with quantities, and a shopping
+next — three meals a day and what to snack on beyond them, every recipe written
+with quantities, and a shopping
 list grouped by where things are picked up in the shop.
 
 The plan is built as a JSON document so that every portion can be accounted for

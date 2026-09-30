@@ -256,6 +256,21 @@ def meal_line(meal) -> str:
 FUEL_PARTS = (("before", "Before"), ("during", "During"), ("after", "After"))
 
 
+def fuel_line(label: str, line) -> str:
+    """One line of guidance with its example food, under a small-caps label.
+
+    A session's fuel and a day's snacks print alike, because they are alike:
+    a range to meet and food that roughly meets it, never bought.
+    """
+    example = ""
+    if line.get("example"):
+        example = ' <span class="example">e.g. ' + prose(line["example"]) + "</span>"
+    return (
+        '<li><span class="slot">' + label + "</span>"
+        + '<span class="fuel-body">' + prose(line.get("guidance", "")) + example + "</span></li>"
+    )
+
+
 def sessions(day) -> str:
     """A day's sessions, each named, with its fuel lines under it.
 
@@ -274,13 +289,7 @@ def sessions(day) -> str:
         if lines:
             out.append('<ul class="fuel">')
             for label, line in lines:
-                example = ""
-                if line.get("example"):
-                    example = ' <span class="example">e.g. ' + prose(line["example"]) + "</span>"
-                out.append(
-                    '<li><span class="slot">' + label + "</span>"
-                    + '<span class="fuel-body">' + prose(line.get("guidance", "")) + example + "</span></li>"
-                )
+                out.append(fuel_line(label, line))
             out.append("</ul>")
         out.append("</li>")
     out.append("</ul>")
@@ -313,6 +322,11 @@ def days(plan) -> str:
             for meal in day["meals"]:
                 out.append(meal_line(meal))
             out.append("</ul>")
+            # After the meals, because it is what the day needs beyond them. Not
+            # on a day the athlete is away: the reason stands alone there.
+            snacks = day.get("snacks")
+            if isinstance(snacks, dict):
+                out.append('<ul class="fuel snacks">' + fuel_line("Snacks", snacks) + "</ul>")
         out.append("</section>")
     out.append("</section>")
     return "\n".join(out)

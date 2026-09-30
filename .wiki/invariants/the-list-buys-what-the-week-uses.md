@@ -142,8 +142,8 @@ a sum:
 - **A food named in a meal's prose** — `with sourdough` in `extra` — takes that
   row out of the comparison **for the whole week**, since prose states no amount,
   and tags the row for that day. That is why the *container you open* note may
-  name no food. A session's fuel lines are not prose: sports nutrition is not on
-  the list.
+  name no food. A session's fuel lines and a day's snacks are not prose: their food is an
+  example, and it is not on the list.
 
 # What it takes on trust
 

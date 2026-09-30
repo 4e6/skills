@@ -1,22 +1,30 @@
 ---
 type: Open Question
 title: Should the plan be sized to daily carbohydrate targets?
-description: Published daily bands are whole-day intake — 5–7 g/kg on a moderate day, 6–10 on a high one — and the skill plans three meals with no snacks. Its own example's meals come to about half the band. Add snacks, state the gap, or leave it.
+description: Answered with a line of snacks per day. Published daily bands are whole-day intake, and three meals came to about half the band on the example's training days. The measurement and the options weighed are kept here.
 tags: [nutrition, product]
 timestamp: 2026-09-30T16:00:00Z
-status: open
+status: answered
 sources: [skills/training-week-meal-plan/references/fuelling.md, skills/training-week-meal-plan/examples/sample-plan.json]
 source_commit: 4757fa27aade35d4ca5a676123a3c9c0eb45d9e3
 ---
+
+# The answer
+
+**A line of snacks per day**, treated as a session's fuel lines are: guidance
+and example food, never bought and never checked, printed in the day card after
+the meals ([daily targets](/domain/carb-periodization.md#daily-targets-and-the-snacks-that-reach-them)).
+It is the first option below, without the ledger, list, glance or validator
+work a slot of food to buy would have needed.
 
 # The question
 
 The skill periodises by ranking: hard days get the largest carbohydrate portions,
 easy days less, and [check 10](/architecture/the-validator.md#check-10-the-plan-against-its-own-ranking)
-holds the meals to that order. It states no daily target. The published daily
+holds the meals to that order. It stated no daily target. The published daily
 bands ([carb periodization](/domain/carb-periodization.md#daily-targets-checked-and-not-shipped))
 would give one — but they count everything eaten in a day, and the plan holds
-breakfast, lunch, dinner and session fuel, and no snacks.
+breakfast, lunch, dinner and session fuel, and had no snacks.
 
 # What the numbers say
 

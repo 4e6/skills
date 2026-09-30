@@ -126,7 +126,11 @@
           "note": "cook 2 — eat 1, reserve 1",
           "extra": "with sourdough"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "about 140–270 g of carbohydrate, over two or three snacks",
+        "example": "2 bagels with jam, 1 banana, 1 fruit yoghurt"
+      }
     },
     {
       "name": "Tuesday",
@@ -167,7 +171,11 @@
           "label": "Dinner",
           "dish": "Salmon fillet with sweet potato and green beans"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "about 20–280 g of carbohydrate, over one to three snacks",
+        "example": "1 bagel with honey, 1 banana, a handful of dried apricots"
+      }
     },
     {
       "name": "Wednesday",
@@ -211,7 +219,11 @@
           "dish": "Spaghetti bolognese",
           "note": "cook 3 — eat 1, reserve 2"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "about 40–300 g of carbohydrate, over one to three snacks",
+        "example": "2 slices of toast with jam, 1 banana"
+      }
     },
     {
       "name": "Thursday",
@@ -249,7 +261,11 @@
           "label": "Dinner",
           "dish": "Omelette with potatoes and side salad"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "about 90–220 g of carbohydrate, and some protein",
+        "example": "1 bagel with peanut butter, 1 banana, 1 glass of milk"
+      }
     },
     {
       "name": "Friday",
@@ -271,7 +287,11 @@
           "label": "Dinner",
           "dish": "Grilled mackerel with boiled potatoes and tomato salad"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "about 170–430 g of carbohydrate, and some protein",
+        "example": "2 bagels with jam, 2 bananas, 1 rice pudding, 1 glass of milk"
+      }
     },
     {
       "name": "Saturday",
@@ -313,7 +333,11 @@
           "label": "Dinner",
           "dish": "Chicken and rice bowl with roasted peppers"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "up to about 50 g of carbohydrate",
+        "example": "1 banana, 1 cereal bar"
+      }
     },
     {
       "name": "Sunday",
@@ -355,7 +379,11 @@
           "label": "Dinner",
           "dish": "Salmon fillet with sweet potato and green beans"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "up to about 250 g of carbohydrate",
+        "example": "2 slices of toast with honey, 1 banana, 1 fruit yoghurt"
+      }
     }
   ],
   "fridge": [

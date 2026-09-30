@@ -12,6 +12,8 @@ contradicts itself.
 - The one rule that makes this worth doing
 - A dietary restriction outranks everything here
 - Fuel belongs to a session
+- Snacks top each day up to its target
+
 - The days this plan covers
 - What you have, and what you must not invent
 - Body weight is the number every target is built from
@@ -194,7 +196,61 @@ measures nothing they did: it is published sports-nutrition guidance, the same
 kind of figure as the g/kg targets under *Race weeks*, and printing it claims only
 that the guidance says so.
 
+## Snacks top each day up to its target
+
+Three meals rarely carry a training day's carbohydrate, so a day gets a line of
+**snacks**: guidance with example food, exactly as a session's fuel lines are. It
+is not a meal, it is not bought, nothing checks it, and it says nothing about
+when in the day it is eaten.
+
+**Each day has a target, by what it holds**, in grams per kilogram of their body
+weight across the whole day — everything eaten, meals, fuel and snacks:
+
+| day | carbohydrate |
+|---|---|
+| rest, or only easy or skill-based training | 3–5 g/kg |
+| about an hour of training | 5–7 g/kg |
+| one to three hours at moderate to high intensity | 6–10 g/kg |
+| more than about four hours at moderate to high intensity | 8–12 g/kg |
+
+A day between two rows takes the lower. The day before the week's biggest
+session takes that session's row, as the one rule already feeds it. Days under
+*Race weeks* take its g/kg figure instead of this table. A day with no training,
+and every day of a week they chose to leave undescribed, takes the first row.
+
+**Protein is 1.2–2.0 g/kg across the day**, spread over it rather than in one
+sitting.
+
+**The snacks carry what the meals and the fuel do not:**
+
+1. Add up the day's meal carbohydrate — for each dish, its origin's
+   `nutrition.carbs` times the plate's `portions`.
+2. Add the food on the day's fuel lines, from the table under *Fuel belongs to a
+   session*, and anything not on it from what its label would say.
+3. Take both from the day's target, at their body weight. What is left is the
+   snacks' range: round it to 10 g, and where its bottom is below zero write
+   `up to` its top. Where the meals and the fuel already reach the top, the day
+   has no `snacks`.
+4. Where the meals' protein is under 1.2 g/kg, the guidance adds `and some
+   protein`, and the example carries it.
+
+**The meals still carry the ranking.** Hard days get the biggest plates, and the
+check compares the meals alone; snacks top a day up and never stand in for the
+bigger bowl a hard day needs.
+
+- `guidance` is the range, and never a food: `about 140–270 g of carbohydrate,
+  over two or three snacks`. About 60 characters.
+- `example` is food that roughly adds up to it, with amounts: `2 bagels with jam,
+  1 banana, 1 fruit yoghurt`. Ordinary food, no brand, nothing that needs
+  cooking. Nothing in it is on the shopping list.
+- A day the athlete is away has no `snacks`; a meal eaten elsewhere changes
+  nothing here.
+
+These targets are general, for days where the training's quality matters, and
+their right place in the band is the athlete's and their coach's to fine-tune.
+
 ## The days this plan covers
+
 
 The plan covers exactly the days agreed with the athlete in step 1, in order,
 ending on Sunday — seven for a whole week, fewer when it starts mid-week. **Never
@@ -230,7 +286,8 @@ may read `5 sessions`, or `~9h, 5 sessions` if they said nine hours — and must
 never carry an hours figure, a distance or a training-load score they did not
 state. A number you made up is indistinguishable, on the page, from one their
 coach gave them, and it is the one thing here they cannot check. That is a rule
-about their week: the ranges on a session's fuel lines are published guidance,
+about their week: the ranges on a session's fuel lines and the targets behind a
+day's snacks are published guidance,
 not a fact about them, as the section above says. **Their sessions come out of
 what they wrote**, one entry each in `sessions`, and none gets a length or an
 intensity they did not state.
@@ -505,8 +562,9 @@ beside the chicken.
   volume, no pack size, no count, not even of what is already in the fridge:
   `qty` is the one amount on a row, and it has already taken off what is in
   `fridge`.
-- **The list buys the meals.** Nothing on a session's fuel lines is on it or
-  changes it: that food is an example, and a day's tags and a row's quantity come
+- **The list buys the meals.** Nothing on a session's fuel lines or a day's
+  snacks is on it or changes it: that food is an example, and a day's tags and
+  a row's quantity come
   from the recipes alone.
 - **Everything a recipe uses must be on the list or in the fridge.** Walk every
   recipe and check, including herbs, spices and condiments.
@@ -581,7 +639,7 @@ something unremarkable and widely available rather than guessing at a cuisine.
 chooses the food and never the words: everything the athlete reads is in
 English — the dish names, the recipe steps, the ingredient names, the shopping
 items, the quantity hints beside both, the meal notes and anything served
-alongside, every session's name and its fuel lines, `week_label`, the training overview and its summary, any reason a day or a meal
+alongside, every session's name and its fuel lines, each day's snacks, `week_label`, the training overview and its summary, any reason a day or a meal
 is skipped, and the closing note. A Portuguese week is Portuguese food under English names —
 `Grilled mackerel with boiled potatoes and tomato salad` — and never the dish's
 own name in their own language. Where a dish has no ordinary English name, say
@@ -637,9 +695,9 @@ If the week contains a race, the **distance** drives it. A race under about 90
 minutes — a 10K for almost anybody — takes roughly 7–10 g/kg carbohydrate the day
 before; a half marathon or longer takes roughly 10–12 g/kg on each of the two days
 before, unless the week says they run it in under about 90 minutes. That
-carbohydrate is in the meals of those days; the race itself is a session, with its
-lines under *Fuel belongs to a session*. Do that arithmetic against their stated
-body weight.
+carbohydrate is in the meals and the snacks of those days; the race itself is a
+session, with its lines under *Fuel belongs to a session*. Do that arithmetic
+against their stated body weight.
 
 If you have not been told the distance, **do not infer it**. Plan the week
 conservatively and say in the training summary that the race-day fuelling assumes

@@ -42,8 +42,9 @@ Nothing in this repository runs any of it.
 
 On 2026-09-30 this repository changed the skill on its own: `validate.py` gained
 `origin-without-ingredients`, a finding the reference implementation does not
-emit, and the frontmatter `description` and `README.md` stopped promising seven
-days. Copying the folder back unchanged would fail a parity suite that refuses a
+emit, and the frontmatter `description` and `README.md` stopped promising seven days.
+Then `plan-schema.json` gained a day's `snacks`, by hand, so the schema is no
+longer what the generator would write. Copying the folder back unchanged would fail a parity suite that refuses a
 code only one side emits.
 
 # Until it is answered

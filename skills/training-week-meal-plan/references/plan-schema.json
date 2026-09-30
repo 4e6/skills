@@ -255,6 +255,26 @@
               "additionalProperties": false
             },
             "description": "Exactly one breakfast, one lunch and one dinner, with no time of day implied, here or against `sessions`. Empty if and only if `excluded` is set."
+          },
+          "snacks": {
+            "description": "What this day needs beyond its meals and its sessions' fuel lines to reach its daily carbohydrate target, from the targets in the fuelling rules. Omit where the meals and the fuel already reach it, and on a day the athlete is away. Guidance with example food, as a fuel line is: not a meal, never on the shopping list, and says nothing about when it is eaten.",
+            "type": "object",
+            "properties": {
+              "guidance": {
+                "type": "string",
+                "minLength": 1,
+                "description": "How much the snacks carry: a range of carbohydrate in grams, and `and some protein` where the meals leave the day short of it. Names no food. About 60 characters, in English."
+              },
+              "example": {
+                "description": "Example food that roughly adds up to `guidance`, with amounts, in English. Ordinary food, no brand. Not a purchase: never on the shopping list.",
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "guidance"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
