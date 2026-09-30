@@ -23,7 +23,8 @@ made inside the checkout -- and `git archive` takes only what is tracked. Every
 file is stamped with the time of the last commit that touched the skill, since
 archiving a folder rather than a commit stamps the time it was built instead;
 so an unchanged skill rebuilds to the same bytes. That needs `--mtime`, which
-arrived in git 2.45.
+arrived in git 2.45. Zip keeps that time in the builder's local zone, so the
+build runs in UTC, as CI does, and a zip made on a laptop matches the release.
 
 Python 3.9, standard library only. It runs git, and writes only under dist/.
 """
@@ -48,9 +49,10 @@ VERSION = re.compile(r"^[ \t]+version:\s*[\"']?([^\"'\s]+)[\"']?\s*$", re.M)
 MTIME_GIT = (2, 45)
 
 
-def git(*args: str) -> str:
+def git(*args: str, env: dict[str, str] | None = None) -> str:
     return subprocess.run(
-        ["git", *args], check=True, capture_output=True, text=True
+        ["git", *args], check=True, capture_output=True, text=True,
+        env={**os.environ, **env} if env else None,
     ).stdout.strip()
 
 
@@ -108,6 +110,7 @@ def build(skill: str) -> str:
         "-c", "core.autocrlf=false",
         "archive", "--format=zip", f"--prefix={skill}/", f"--mtime={mtime}",
         "-o", out, f"HEAD:skills/{skill}",
+        env={"TZ": "UTC"},
     )
     return out
 
