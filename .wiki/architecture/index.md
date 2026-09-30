@@ -1,0 +1,9 @@
+# Module
+
+* [Dish photos](dish-photos.md) - Where the host can draw, each dish gets a square photo beside its recipe's title. The renderer lists the dishes, names each photo for what it shows, embeds the bytes, and never lets a bad photo cost the page.
+* [Each week's files, and last week's dishes](last-weeks-plan.md) - A run writes plan-<first day>.json and .html, so weekly runs from one folder never overwrite each other. From those names last_week.py finds last week's plan and hands back its lunch and dinner names, and nothing else is kept.
+* [The handover, and what the athlete reads along the way](the-handover.md) - The progress checklist is the host's and never the athlete's. The athlete is handed the page — published or as a file where the host can, opened and pointed at where it cannot — and, with no page, a reply designed as one for a phone.
+* [The intake](the-intake.md) - Step 1 asks for the week, the weight, three optional things and which days — on a menu where the host has one, in one message where it does not. Why each row is the row it is, and how the days are settled.
+* [The printable page](the-printable-page.md) - render.py writes one self-contained HTML file for print and a phone. A plain design made of rules, weight and space, the week at a glance first, recipes that never split, and a byte-compared example whose determinism is engineered.
+* [The skill is a payload](the-payload.md) - A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9's standard library.
+* [The validator](the-validator.md) - validate.py is the one part of the skill that checks rather than instructs. Three exits, a line on success, findings that name their repair, and tolerance chosen so a malformed plan is described rather than hidden.

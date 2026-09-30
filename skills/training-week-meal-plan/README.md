@@ -10,8 +10,9 @@ do.
 
 ## What you get
 
-- **Seven days**, breakfast, lunch and dinner, plus in-session and post-session
-  fuel on the days that need it.
+- **Every day from the first you need through to Sunday** — the rest of this
+  week, or all of next — breakfast, lunch and dinner, plus in-session and
+  post-session fuel on the days that need it.
 - **Recipes with quantities** — 4–8 ingredients, 3–7 steps, written as a kitchen
   reference rather than a cookbook.
 - **A shopping list** grouped by aisle, with each item tagged with the days that
@@ -31,7 +32,7 @@ Two things, and it will not invent either:
 - **your training week, in your own words** — paste a coach's week, or describe
   it roughly. Hours, zones or a planned load score against each session make the
   plan sharper, if you have them. If you have no week to give, say so and it
-  plans seven easy days and says on the plan that it did — it will not invent a
+  plans easy days and says on the plan that it did — it will not invent a
   week for you;
 - **your body weight**, which is what the carbohydrate targets are built from.
   There is no fallback for this one.

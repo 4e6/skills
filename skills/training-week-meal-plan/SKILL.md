@@ -3,8 +3,9 @@ name: training-week-meal-plan
 description: >-
   Builds a week of training-aligned meals from a training week described in the
   athlete's own words, with carbohydrate periodised across the week so the
-  hardest days are fuelled hardest. Produces a seven-day meal plan, recipes with
-  quantities, and a shopping list grouped by aisle. Use when someone asks for a
+  hardest days are fuelled hardest. Produces a meal plan for every day from the
+  first the athlete needs through to Sunday, recipes with quantities, and a
+  shopping list grouped by aisle. Use when someone asks for a
   weekly meal plan around their training, endurance fuelling, carbohydrate
   periodisation, race-week nutrition, or what to eat on hard and easy days.
 license: MIT

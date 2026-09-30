@@ -841,6 +841,17 @@ def check_day_meal_completeness(plan: dict) -> list:
                         where,
                     )
                 )
+            if not recipe.get("ingredients"):
+                findings.append(
+                    finding(
+                        3,
+                        "origin-without-ingredients",
+                        "'" + title + "' is an origin entry with no `ingredients`; write the"
+                        + " list its `yields` portions are cooked from, since every repeat of it"
+                        + " and the shopping list are sized from that list",
+                        where,
+                    )
+                )
             continue
         origin_day = recipe.get("origin_day")
         if not origin_day:
@@ -1895,10 +1906,9 @@ def ingredient_usage(plan: dict, names: list, shopping_names: list) -> dict:
     for recipe in plan["recipes"]:
         if recipe["kind"] == "leftover":
             continue
-        # An origin with no ingredient block is a fault this file has no check
-        # for at all — so adding up
-        # what is there would make *buy less* the only advice an agent ever got
-        # for a forgotten recipe.
+        # An origin with no ingredient block is the completeness check's
+        # `origin-without-ingredients`, which answers *write the list*; adding up
+        # what is there would answer *buy less* for a forgotten recipe.
         if recipe["kind"] == "origin" and not recipe.get("ingredients"):
             return None
         # A pot is the origin's list at this pot's size, and the code sizes it.

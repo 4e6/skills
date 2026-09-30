@@ -1,0 +1,107 @@
+---
+type: Module
+title: The skill is a payload
+description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9's standard library.
+tags: [architecture, distribution]
+timestamp: 2026-09-30T14:00:00Z
+sources: [skills/training-week-meal-plan/**]
+source_commit: e71d6a4eac78ebe897dd9abea3f82f6815e160b5
+---
+
+# The boundary
+
+`skills/training-week-meal-plan/` is copied out whole — by `npx skills`, by a
+symlink, by a zip uploaded to a host — and runs in a stranger's session
+([what this repository is](/overview.md)). Every
+install path takes the folder alone, never the repository around it. Three
+consequences look like restrictions and are the design.
+
+## Nothing of its own reaches the network
+
+Not for a font, not for a renderer, not for telemetry. That covers the markup —
+no `@import`, `<link`, `<script`, remote `url()` or `src` — **and the verbs**:
+no `curl`, `wget`, install command, fetch call or networking import. The second
+half matters more, because what the skill ships is instructions an agent
+executes, and prose reaches the network as easily as markup does.
+
+The host may still publish the finished page with its own tool, kept private
+([the handover](/architecture/the-handover.md)). That is the host's network, not
+the payload's, and `compatibility` says so.
+
+It follows that **the payload cannot measure anything**. There is no link on the
+page and nothing to count arrivals with. Evidence about how the skill behaves
+comes from running it, never from telemetry.
+
+## Its scripts are Python 3.9, standard library only
+
+Python 3 is on every macOS and Linux box and in the common sandboxes; almost
+nothing else is. `compatibility` names that runtime **exactly when a script is
+present**, because it is the field a client parses: a runtime claimed that the
+host lacks can make it refuse a skill that is in fact pure instructions.
+
+Python is **optional**. Without it the plan is still written, into the reply,
+and the reply says it was not checked
+([the handover](/architecture/the-handover.md#when-there-is-no-page)).
+
+What each script may import is a per-script fact, not a shared list: in the 3.9
+standard library, reaching neither the network nor any path it was not handed.
+A shared list stops meaning anything once there are two scripts, because one
+satisfies it on the other's behalf.
+
+- `validate.py` reads the one file it is given.
+- `render.py` imports `validate.py` beside it, so the rounding and the dish
+  counting have one Python copy, not two. It also reads the photos it is
+  handed — each a relative path inside its own folder, no `..`, not a link out —
+  and admits `base64` and `hashlib` for them alone.
+- `last_week.py` reads the folder it is given, one level deep.
+
+**Neither importing script leaves byte-code behind.** Both switch the import
+cache off before importing `validate.py`, because a cache write into the skill's
+own folder on every run is a write both docstrings say never happens.
+
+## It names nothing outside itself
+
+No file under the skill names anything it could be read as promoting, and no
+repository, issue number, absolute path or module outside the folder. A reader
+who has only the skill cannot follow any of those. A host's own tool may still be
+named as an example — Claude Code's `AskUserQuestion` for a menu — because that
+is an instruction about the host, never a pointer away from it.
+
+Two lessons stand behind the rule, and both argue for thinking before any
+sentence goes back in that the host is told to pass on: a host restating a
+paragraph to the athlete personalises it, and a feature list typed by hand goes
+stale when a feature ships.
+
+The scripts' and the stylesheet's comments state their behaviour and their own
+reason. The comparison with anything else lives in this bundle, if anywhere.
+
+# Frontmatter the host reads
+
+- **`allowed-tools` is deliberately absent.** It is experimental and support
+  varies, and narrowing what the host hands over would make the skill ask for a
+  tool that is not there. So whether the agent can run anything, draw anything
+  or publish anything is the host's decision, and every step has a path for the
+  host that cannot ([a missing capability is announced](/architecture/the-validator.md#a-missing-capability-is-announced)).
+- **`disable-model-invocation` is absent**, because the skill exists to be found.
+- **The name is a noun phrase**, `training-week-meal-plan`, which the guidance
+  allows beside its preferred gerund. It is chosen for the words somebody types
+  into a search box.
+
+# Vocabulary the payload must not use
+
+A single word list cannot express the rules, so there are several:
+
+| Rule | Applies to |
+|---|---|
+| **Machinery the skill does not have** — a computed load field, a calendar brief, *the coach* as a party the skill hears from (a coach's week the athlete pastes is fine), a choice of plan language, localisation fields | the files the host reads as instructions: `SKILL.md`, `references/`, `scripts/`, `examples/` |
+| **Anything outside the folder** — a product it could be read as promoting, repositories, issue numbers, absolute paths, `webcal://` | everything under the folder |
+
+`calendar` is on neither: the fuelling rules have to be able to say there is no
+calendar, and that clause is what stops the model looking for one. The page's
+feature is called a *photo*, one word used everywhere; *photographs* is avoided.
+
+# The authoring guides bind harder here
+
+The specification is what a stranger's client parses, so getting it wrong is
+visible outside this repository. How the skill is edited is
+[a convention of its own](/conventions/editing-a-skill.md).

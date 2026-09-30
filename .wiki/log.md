@@ -1,0 +1,5 @@
+# Wiki Update Log
+
+## 2026-09-30
+* **Update**: Every page checked against the skill and its sources by four reviewers; corrected figures, measurements and rules they found wrong, and recorded three faults in the skill, fixed in the same change: `origin-without-ingredients` in the [validator](/architecture/the-validator.md) and the [list invariant](/invariants/the-list-buys-what-the-week-uses.md), `.gitattributes` for the [printable page](/architecture/the-printable-page.md)'s example, and the seven-day wording in the [intake](/architecture/the-intake.md). The copies [have diverged](/questions/which-copy-is-the-source.md).
+* **Initialization**: Bundle created from the knowledge about `training-week-meal-plan` kept in the private codebase it was developed in, rewritten for a repository that holds only the skill. Decision records were not carried over, and neither were the mechanics of the old repository's tests, schema generator and reference checker; [which copy is the source](/questions/which-copy-is-the-source.md) records what that leaves open.

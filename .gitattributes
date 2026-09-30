@@ -1,0 +1,3 @@
+# The committed example is compared byte for byte with what render.py writes,
+# which is always LF. Never let a checkout convert it.
+skills/*/examples/*.html text eol=lf
