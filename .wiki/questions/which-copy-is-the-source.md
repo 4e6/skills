@@ -6,7 +6,7 @@ tags: [process, distribution]
 timestamp: 2026-09-30T14:00:00Z
 status: open
 sources: [skills/training-week-meal-plan/**]
-source_commit: 01265d60524785eee06f6acb56fc010adb69359b
+source_commit: 1c1d9a36aac47b4739677fcb729f5866ec790568
 ---
 
 # The question
