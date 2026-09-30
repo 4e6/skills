@@ -13,8 +13,13 @@ the format.
 With the [`skills`](https://github.com/vercel-labs/skills) CLI:
 
 ```sh
-npx skills add 4e6/skills
+npx skills add 4e6/skills                                    # every skill
+npx skills add 4e6/skills --list                             # see what is here
+npx skills add 4e6/skills --skill training-week-meal-plan    # just this one
 ```
+
+It installs into the project you run it in; add `-g` to install for your user
+instead — for Claude Code, `~/.claude/skills/`.
 
 Or by hand: link each skill's folder into your assistant's skills directory —
 for Claude Code, `~/.claude/skills/`:
