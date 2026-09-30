@@ -176,14 +176,16 @@ fresh copies: every plan checked clean on the first run, no web search, no line
 led with *up to*, and snack lines went only to days short of their band's
 bottom — 6 of 25 days, each `at least` figure reproducing from the host's own
 meals and fuel, each example making up that minimum. The easy hour went to the
-light band in every run. **One judgement stays open**: a day of an hour's hard
-swim and an easy 45-minute run was read as moderate by both hosts that met it,
-where the first round read it as high, which is about 20–60 g of carbohydrate
-between a line and none. Not measured: a real host, a host without Python, or
+light band in every run. **One judgement was left to the host**: a day of an
+hour's hard swim and an easy 45-minute run was read as moderate in the second
+round and as high in the first — about 20–60 g of carbohydrate between a line
+and none. The rows now count only sessions at moderate intensity or harder, as
+T16's own rows are hours *at* intensity, so that day is moderate. Not measured: a real host, a host without Python, or
 whether athletes eat to the line.
 
 **Inferences, and they need a professional:** an easy session of about an hour
-or less is light, not moderate; a day between two rows takes the lower; a rest day, and every day of an undescribed week, takes the light row
+or less is light, not moderate; an easy session does not add to a day's hours;
+a day between two rows takes the lower; a rest day, and every day of an undescribed week, takes the light row
 (T16's light row is *low intensity or skill-based*, and it gives no rest-day
 row); the day before the week's biggest session takes that session's row.
 

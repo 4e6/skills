@@ -213,7 +213,9 @@ weight across the whole day — everything eaten, meals, fuel and snacks:
 | one to three hours at moderate to high intensity | 6–10 g/kg |
 | more than about four hours at moderate to high intensity | 8–12 g/kg |
 
-An easy session of about an hour or less is the first row, not the second. A day
+An easy session of about an hour or less is the first row, not the second. The
+hours count only sessions at moderate intensity or harder; an easy session on
+the same day does not move the day up a row. A day
 between two rows takes the lower. The day before the week's biggest
 session takes that session's row, as the one rule already feeds it. Days under
 *Race weeks* take its g/kg figure instead of this table. A day with no training,
