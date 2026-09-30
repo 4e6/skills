@@ -7,6 +7,7 @@ the format.
 | Skill | What it does |
 |---|---|
 | [training-week-meal-plan](skills/training-week-meal-plan/) | Turns one week of endurance training, described in your own words, into a week of meals that tracks it: recipes, a shopping list by aisle, and a printable page. |
+| [z-image-turbo-macos](skills/z-image-turbo-macos/) | Draws images from text prompts on your own Apple Silicon Mac, with one model — Z-Image Turbo — on the Mac's GPU. Offline after a one-time setup of about 12 GB; Apple Silicon only. |
 
 ## Installing
 

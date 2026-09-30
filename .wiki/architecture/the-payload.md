@@ -1,9 +1,9 @@
 ---
 type: Module
 title: The skill is a payload
-description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9's standard library.
+description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. One skill bends the last two.
 tags: [architecture, distribution]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-09-30T15:00:00Z
 sources: [skills/training-week-meal-plan/**]
 source_commit: 4757fa27aade35d4ca5a676123a3c9c0eb45d9e3
 ---
@@ -105,3 +105,13 @@ feature is called a *photo*, one word used everywhere; *photographs* is avoided.
 The specification is what a stranger's client parses, so getting it wrong is
 visible outside this repository. How the skill is edited is
 [a convention of its own](/conventions/editing-a-skill.md).
+
+# The skill that cannot be a pure payload
+
+`z-image-turbo-macos` is an 11 GB model and a runtime that needs Python 3.10, so
+it cannot ship its substance or run on the standard library. It keeps the
+boundary's purpose rather than its letter: the network only in a setup the user
+agrees to, pinned to what was tested, and drawing offline
+([Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md#it-is-not-a-pure-payload-and-where-it-bends)).
+Everything above still holds for `training-week-meal-plan`, and for any skill
+that can hold it.

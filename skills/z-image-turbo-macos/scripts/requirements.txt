@@ -1,0 +1,4 @@
+# The environment z_image_turbo.py `setup` builds. mflux brings MLX, torch,
+# transformers, huggingface_hub and Pillow with it: about 1.2 GB installed.
+# Keep the version equal to MFLUX_VERSION in z_image_turbo.py.
+mflux==0.19.0
