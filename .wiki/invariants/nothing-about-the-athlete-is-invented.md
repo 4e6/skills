@@ -53,7 +53,8 @@ score stated session by session totals the same way. This is the likeliest place
 for a later edit to over-tighten the rule.
 
 **A published range is not an invented figure.** A carbohydrate or fluid range
-per hour, or a g/kg race target, measures nothing the athlete did; it is sourced
+per hour, a daily or race-week g/kg target, and a snack range worked from one at
+their stated weight measure nothing the athlete did; it is sourced
 guidance, and printing it claims only that the guidance says so
 ([carb periodization](/domain/carb-periodization.md#a-published-range-is-not-an-invented-figure)).
 

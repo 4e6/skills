@@ -687,8 +687,9 @@ def items_named_in(text: str, item_names: list) -> set:
 def day_prose(plan: dict) -> dict:
     """A day's prose: every meal's `note` and `extra`, and nothing else.
 
-    `extra` is load-bearing: `with sourdough` beside a dinner is what tags the
-    bread that day, and no recipe lists it. `note` is read whole, because
+    The schema has no `extra` now — bread served with a dish is in its recipe —
+    but a plan written before that may carry one, and there `with sourdough`
+    beside a dinner is what tags the bread that day. `note` is read whole, because
     `cook 2 — eat 1` is one statement and not two halves. A session's fuel lines
     are never read: their food is an example, not a purchase.
     """
