@@ -3,7 +3,7 @@ type: Module
 title: The printable page
 description: render.py writes one self-contained HTML file for print, a phone and a wide screen. Plain rules, weight and space; the glance first; one column that never splits a recipe; a byte-compared example.
 tags: [architecture, rendering]
-timestamp: 2026-09-30T17:59:25Z
+timestamp: 2026-09-30T20:29:41Z
 sources: [skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css, skills/training-week-meal-plan/examples/**]
 source_commit: 36cd180908e7f0820c5f9881c1f3ddf776de7eb9
 ---
@@ -19,8 +19,9 @@ document on arrival. Photos, where there are any, are data URIs for the same
 reason ([dish photos](/architecture/dish-photos.md)).
 
 HTML gains one thing over paper: a link is live. Three links under the title jump
-to the week, the recipes and the shopping list; a repeat's *where the method is*
-links to the recipe that has it; every dish on the glance with a recipe links to
+to the week, the recipes and the shopping list; a leftover's *Leftover from
+Monday Dinner* links to the card that cooked it, whose band reads the same words;
+every dish on the glance with a recipe links to
 it, and a side with none prints plain. On a wide screen the rail beside the page
 carries the same links and the glance's again ([a wide screen](#a-wide-screen-is-the-paper-with-the-week-beside-it)).
 **An id is a position or a fixed word, never plan text**: `recipe-<n>` and `day-<n>`, and the parts' own `glance`, `week`, `recipes` and `shopping`.
@@ -53,7 +54,7 @@ Print is the target:
 - **A dot before each ingredient**, so the list reads as one: a character, since
   the list's own marker hangs in the gap of a two-column list and a drawn circle
   is a fill. Screen readers are given empty text for it.
-- **No break directly after a day band**, and deliberately no rule keeping a
+- **No break directly after a sitting's band**, and deliberately no rule keeping a
   day's recipes together — nothing bounds their height, so the rule would buy a
   hole and the split as well.
 - **A day's snacks print after its meals**, as a line of the same kind as a
@@ -117,11 +118,14 @@ the page prints now.
 
 Printed from Chrome, the sample:
 
-| | Two columns | One column |
-|---|---|---|
-| without photos | 9 pages | 10 |
-| with photos, 60 mm on screen, 26 mm on paper | 10 | — |
-| with photos, 80 mm everywhere | — | 15 |
+| | Two columns | One column | One column, a band per sitting |
+|---|---|---|---|
+| without photos | 9 pages | 10 | 12 |
+| with photos, 60 mm on screen, 26 mm on paper | 10 | — | — |
+| with photos, 80 mm everywhere | — | 15 | 15 |
+
+A page without photos also prints every repeat whole now, which costs it nothing
+more; the bands cost the two pages.
 
 A card with an 80 mm photo is about 105 mm tall, so a 267 mm page holds two; the
 method under the photo is what sets that height. Tried and turned down for the
@@ -152,20 +156,66 @@ layout and one element from `render.py`:
   under the shorter card, and the athlete wanted the recipes as one column
   under the week.
 
+# Every sitting has a band
+
+Scrolling through the recipes, an athlete could not tell breakfast from dinner:
+the day had a band, and the meal was the second word of a 9 pt caption under the
+title. Four designs were rendered and compared — the meal as a label above the
+title, as headings under the day's band, in front of the title, and a band for
+every sitting — and the athlete chose the last: **the day on the left, the meal
+on the right, one band per sitting**, stuck to the top of the window until the
+next sitting's band pushes it off.
+
+- **Why one line**: only a band that sticks keeps the answer on screen while the
+  method is being read, and one line does it where the day-and-meal headings
+  took two, a fifth of a phone's screen.
+- **What it costs**: the day repeats on every sitting, and two pages on a page
+  without photos ([what one column costs](#what-one-column-costs)).
+- **The line under the title keeps only the times**, and a size only where the
+  Makes line cannot say it: the band says the day and the meal.
+- **A main and its side share one band.**
+- **A day away repeats its reason under each of its bands**, where a dish is
+  kept on it for a later leftover: each band is read on its own, stuck to the
+  top of the window or heading a printed page.
+
+# A repeat reads as a first cook
+
+A repeat is the plan's word, not the page's. In the plan it stays: it cooks and
+buys again where a leftover does neither, and it points at its first cook so the
+model writes a recipe once ([origin, repeat and leftover](/domain/origin-repeat-and-leftover.md)).
+On the page it prints whole — its own amounts, the first cook's method, its own
+Makes line — so Friday's eggs and Tuesday's are the same card. Until then only a
+page with photos did that, and a page without one sent a repeat back to its first
+cook; the athlete asked for the two pages to match. A repeat whose first cook has
+no method falls back to the pointer, *Cooked again from Tuesday Breakfast*.
+
 # The Makes line is the pot, counted in portions
 
 A batch's card used to say where it was eaten and not how much, and an athlete
-asked why the recipe said 200 g and the list bought 600. It now leads with the
-pot: `Makes 6 portions: Friday Lunch (2); Saturday Lunch (2); Sunday Dinner (2)`.
-Only an origin carries it. Shares print as decimals, matching the meta line.
+asked why the recipe said 200 g and the list bought 600. It leads with the
+pot: `Makes 6 portions: Friday Lunch (2), Saturday Lunch (2), Sunday Dinner (2)`.
+Shares print as decimals, matching the meta line.
 `one portion: …` prints only where the shares are uneven.
+
+**Every card that cooks carries it**, an origin and a repeat alike, wherever
+its total can be stated (below), and a leftover, which cooks nothing, carries
+its pointer instead. A pot eaten only
+where it is cooked says `Makes 1 portion.` and names no sitting, because the band
+above already does; its size is then said there and not on the line under the
+title. A batch's card keeps its plate on that line, beside the figures it comes
+to: split from its size by a pot of six, the figures once read as the pot's.
 
 **The total is withheld whenever it would be anything but the pot the list is
 scaled to** — a missing pot, the origin's own sitting absent from its servings, a
 sitting named twice or excluded, or a plate that is not a positive whole number
-of quarters (which binary floating point adds exactly). Withheld, it falls back
-to `Makes: A; B` with its brackets. The list's scale and the line read one
-function's pot, so they cannot disagree.
+of quarters (which binary floating point adds exactly). Withheld, a batch falls
+back to `Makes: A, B` with its brackets, and a pot eaten only where it is cooked
+prints no line at all, whether origin or repeat: its sitting alone would repeat
+the band, and its size stays on the line under the title. A review caught the
+first version printing `Makes: Tuesday Breakfast (0.3)` under a band reading
+Tuesday … BREAKFAST, with 0.3 on the line above it as well. An origin kept on a
+day away, for a leftover's sake, lists no sitting and so has no line either. The
+list's scale and the line read one function's pot, so they cannot disagree.
 
 # Emphasis is the one markup that travels
 
