@@ -1,0 +1,8 @@
+# What training-week-meal-plan writes when it is run from inside this checkout:
+# the plan, its printable page, and the dish photos. The examples are tracked.
+plan.json
+plan.html
+plan-[0-9]*.json
+plan-[0-9]*.html
+photos.json
+photos/
