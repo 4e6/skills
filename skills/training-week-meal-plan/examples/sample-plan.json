@@ -123,8 +123,7 @@
           "slot": "dinner",
           "label": "Dinner",
           "dish": "Lentil soup",
-          "note": "cook 2 — eat 1, reserve 1",
-          "extra": "with sourdough"
+          "note": "cook 2 — eat 1, reserve 1"
         }
       ]
     },
@@ -167,7 +166,11 @@
           "label": "Dinner",
           "dish": "Salmon fillet with sweet potato and green beans"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "at least about 20 g of carbohydrate, up to 280 g",
+        "example": "1 banana"
+      }
     },
     {
       "name": "Wednesday",
@@ -202,8 +205,7 @@
           "slot": "lunch",
           "label": "Lunch",
           "dish": "Lentil soup",
-          "note": "leftover from Mon",
-          "extra": "with sourdough"
+          "note": "leftover from Mon"
         },
         {
           "slot": "dinner",
@@ -211,7 +213,11 @@
           "dish": "Spaghetti bolognese",
           "note": "cook 3 — eat 1, reserve 2"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "at least about 20 g of carbohydrate, up to 280 g",
+        "example": "1 banana"
+      }
     },
     {
       "name": "Thursday",
@@ -249,7 +255,11 @@
           "label": "Dinner",
           "dish": "Omelette with potatoes and side salad"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "at least about 90 g of carbohydrate, up to 220 g, and some protein",
+        "example": "1 bagel with peanut butter, 1 banana, 1 glass of milk"
+      }
     },
     {
       "name": "Friday",
@@ -271,7 +281,11 @@
           "label": "Dinner",
           "dish": "Grilled mackerel with boiled potatoes and tomato salad"
         }
-      ]
+      ],
+      "snacks": {
+        "guidance": "at least about 170 g of carbohydrate, up to 430 g, and some protein",
+        "example": "2 bagels with jam, 1 banana, 1 glass of milk"
+      }
     },
     {
       "name": "Saturday",
@@ -500,7 +514,6 @@
           "days": [
             "Mon",
             "Tue",
-            "Wed",
             "Fri"
           ]
         }
@@ -807,11 +820,11 @@
       "kind": "origin",
       "meal": "Dinner",
       "nutrition": {
-        "kcal": 480,
-        "protein": 24,
-        "fat": 9,
-        "carbs": 68,
-        "fibre": 16
+        "kcal": 610,
+        "protein": 29,
+        "fat": 10,
+        "carbs": 93,
+        "fibre": 18
       },
       "time": {
         "prep": 10,
@@ -847,13 +860,17 @@
         {
           "item": "Olive oil",
           "qty": "1 tbsp"
+        },
+        {
+          "item": "Sourdough",
+          "qty": "2 slices"
         }
       ],
       "steps": [
         "Soften the onion and carrot in the oil, 8 minutes.",
         "Add lentils and stock, simmer 30 minutes until tender.",
         "Season, and blend half for body if you prefer it thicker.",
-        "Cool the reserved portion quickly and refrigerate."
+        "Serve with a slice of sourdough; cool the reserved portion quickly and refrigerate."
       ],
       "yields": 2
     },

@@ -39,6 +39,8 @@ biggest session at 4.3 g/kg. Then:
   no source read states it outside race loading, and *not heavy or fatty* is a
   pre-event row, which is one to four hours before, not the evening before.
 - **Fuel belongs to a session**, not to a meal ([below](#fuel-is-guidance-for-a-session)).
+- **Snacks top each day up to its daily target**, as guidance with example food
+  ([below](#daily-targets-and-the-snacks-that-reach-them)).
 
 `week_load` is the model's reasoning and **is never printed**.
 
@@ -118,30 +120,105 @@ published.
 hour, 30–60 g an hour, the top past 90 minutes* — and the figure is never supplied
 ([nothing about the athlete is invented](/invariants/nothing-about-the-athlete-is-invented.md)).
 
-## Daily targets: checked, and not shipped
+## Daily targets, and the snacks that reach them
 
-The skill ranks the days and sizes meals by that ranking; it states **no daily
-carbohydrate or protein target** outside race week. The published daily figures
-were checked against T16's open-access Dietitians of Canada edition on
-2026-09-30:
+Each day has a carbohydrate target by what it holds, in g/kg across the whole
+day. The figures were checked against T16's open-access Dietitians of Canada
+edition on 2026-09-30:
 
-| Day | Situation | Carbohydrate | Source |
+| Day | Situation, as T16 words it | Carbohydrate | Source |
 |---|---|---|---|
-| Light | low intensity or skill-based | 3–5 g/kg/day | T16, DC edition Table 1, p. 14 |
-| Moderate | a moderate programme, ~1 h a day | 5–7 g/kg/day | the same |
+| Light | low intensity or skill-based activities | 3–5 g/kg/day | T16, DC edition Table 1, p. 15 |
+| Moderate | a moderate exercise programme, ~1 h a day | 5–7 g/kg/day | the same |
 | High | endurance, 1–3 h a day at moderate to high intensity | 6–10 g/kg/day | the same |
 | Very high | more than 4–5 h a day at moderate to high intensity | 8–12 g/kg/day | the same |
 
 **Protein: 1.2–2.0 g/kg/day**, higher for short periods of intensified training
 or reduced energy intake, spread in moderate amounts across the day and after
 hard sessions — about 0.3 g/kg after key sessions and every 3–5 hours
-(DC edition p. 16).
+(DC edition p. 17). Page numbers are the edition's printed ones.
 
-The carbohydrate bands are for when training quality matters, to be fine-tuned
-to the individual, and they are **whole-day intake**. They were not added because
-the plan is three meals and session fuel with no snacks, and meals sized to reach
-them would be a different plan from the one the skill writes today
-([open](/questions/daily-carbohydrate-targets.md)).
+The bands are **whole-day intake**, to be fine-tuned to the individual. Three
+meals rarely reach them — on the example as it stood before snacks, training
+days' meals came to between half and nine-tenths of the band's bottom
+([the measurement](/questions/daily-carbohydrate-targets.md)) — so a day carries
+a line of **snacks** that closes the gap:
+
+- **Treated as a fuel line is**: `guidance` and an `example` of food. Never on
+  the shopping list, never checked, and no time of day.
+- **A line is an instruction, so it appears only on a day that falls short.** The
+  day's band at the athlete's stated weight, less the meals' carbohydrate — each
+  dish's — and the fuel lines'
+  food, taking the middle of a table range, gives `at least` the shortfall to the
+  band's bottom and `up to` its top, rounded to 10 g; the example food makes up
+  the first figure. A day that already reaches the bottom, or falls short by less
+  than rounds to 10 g, has no carbohydrate line. `and some protein` where the
+  meals are under 1.2 g/kg, and a day short of protein alone says `some protein;
+  the carbohydrate is covered`.
+
+  **An *up to* line was tried and taken out**: `up to about 80 g of carbohydrate,
+  e.g. 1 apple, 1 pot of fruit yoghurt, a handful of pretzels` meant the day was
+  already fed and snacks were optional, and it read as *eat these*. A small-caps
+  label and concrete food make any line an instruction, so the only honest
+  optional line is none.
+- **Everything on the plate is in a recipe.** Bread with the soup is an
+  ingredient line, so its carbohydrate is in the dish's `nutrition` and the
+  arithmetic counts it exactly. A meal used to carry an `extra` — food on the
+  table with no recipe and no amount — and a review found the example's Monday
+  snack line existed only because its soup's sourdough, an `extra` then, was
+  never counted. Moving such food into recipes was first kept beside `extra` for
+  food that varied between sittings; no simulated host wrote one, so the field
+  went, and the scripts still read one in an older plan.
+- **The meals still carry the ranking.** Check 10 compares meals alone, so snacks
+  top a day up and never stand in for a hard day's bigger plates.
+
+**Measured, 2026-09-30, twice**, on four simulated hosts — three Opus, one
+Sonnet — each with its own copy of the skill and an athlete whose opening message
+answered everything: a 70 kg UK triathlete twice, a 58 kg vegetarian marathoner,
+and an 82 kg lactose-intolerant cyclist planning Thursday to Sunday.
+
+- **First round**, with a line on every day: every plan checked clean on the first
+  run, no host searched the web, no snack food reached a shopping list, and every
+  day's range reproduced from that host's own meals and fuel. Two hosts put a
+  one-hour easy run in the moderate band and two in the light one; the rows now
+  say an easy hour or less is light.
+- **Second round**, minimum-first and only on short days: every plan clean on the
+  first run, no web search, no line led with *up to*, and lines went only to days
+  short of their band's bottom — 7 of 25 days, each `at least` figure reproducing
+  from the host's own meals and fuel, each example making up that minimum. The
+  easy hour went to the light band in every run. An hour's hard swim with an easy
+  45-minute run was read as moderate in this round and as high in the first,
+  about 20–60 g between a line and none, so the rows now count only sessions at
+  moderate intensity or harder.
+- **Third round**, after the review's fixes: every plan clean, one after a
+  repair round for shopping rounding; no web search; every line reproducing from
+  the host's own meals and fuel, taking a range's middle. The hard swim with an
+  easy run went to the moderate band in both runs that met it. The protein-only
+  line appeared for the first time, on three days of the marathoner's week. No
+  host wrote an `extra` at all. One host gave a one-hour hard swim no fuel lines, a miss in the
+  fuel rules rather than the snacks, which the snack line then made up.
+- **Not measured**: a real host; Haiku; a host without Python, whose reply prints
+  the line; a race week; a plan with bread or sides served with a dish, since `extra` went;
+  and whether any
+  athlete eats to the line.
+
+**Inferences, and they need a professional:**
+
+- T16's rows describe a training *programme*; the skill applies them day by day,
+  to what each day holds.
+- The moderate row is T16's *moderate exercise programme, ~1 h a day*, which
+  states no intensity. The skill reads it as an hour at moderate intensity or
+  harder, puts an easy hour or less in the light row, and counts only sessions at
+  moderate intensity or harder toward a day's hours. An hour of hard work could
+  equally be read as the bottom of the high row.
+- A day between two rows takes the lower; a rest day, and every day of an
+  undescribed week, takes the light row, since T16 gives no rest-day row; the day
+  before the week's biggest session takes that session's row.
+- The protein test counts the meals alone; fuel food such as a yoghurt after a
+  swim is not counted toward it.
+- T16 notes that when a session's quality or intensity matters less, reaching
+  these targets matters less. The skill applies them to every day, easy days
+  included, and leaves the fine-tuning to the athlete and their coach.
 
 ## What an example's food adds up to
 

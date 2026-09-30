@@ -48,6 +48,10 @@ Print is the target:
 - **No break directly after a day band**, and deliberately no rule keeping a
   day's recipes together — nothing bounds their height, so the rule would buy a
   hole and the split as well.
+- **A day's snacks print after its meals**, as a line of the same kind as a
+  session's fuel — a small-caps label, the range, then *e.g.* and the food.
+  They cost the example a page: the week runs onto a third, and the example
+  prints nine pages where it printed eight.
 - **The shopping page starts a page of its own**, and opens with the fridge,
   which is read before leaving.
 

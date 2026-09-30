@@ -226,7 +226,7 @@
                   "type": "string"
                 },
                 "alongside": {
-                  "description": "Every other dish cooked for this meal, each matching exactly a recipe title for this day and meal. A dish has quantities and a method; a slice of bread from the shopping list is `extra`. Omit when the meal is one dish, and never repeat `dish` here.",
+                  "description": "Every other dish cooked for this meal, each matching exactly a recipe title for this day and meal. A dish has quantities and a method; anything served with it — bread with the soup, a lemon wedge — is an ingredient line in that dish's recipe, so its amount is bought and its figures counted. Omit when the meal is one dish, and never repeat `dish` here.",
                   "minItems": 1,
                   "type": "array",
                   "items": {
@@ -242,10 +242,6 @@
                 "note": {
                   "description": "Portion bookkeeping shown in parentheses, e.g. \"cook 2 — eat 1, reserve 1\" or \"leftover from Mon\".",
                   "type": "string"
-                },
-                "extra": {
-                  "description": "Anything on the table that needs no recipe, e.g. \"with sourdough\". If it has quantities and a method it is a dish in `alongside`, never here.",
-                  "type": "string"
                 }
               },
               "required": [
@@ -255,6 +251,26 @@
               "additionalProperties": false
             },
             "description": "Exactly one breakfast, one lunch and one dinner, with no time of day implied, here or against `sessions`. Empty if and only if `excluded` is set."
+          },
+          "snacks": {
+            "description": "What this day needs beyond its meals and its sessions' fuel lines to reach the bottom of its daily carbohydrate target, or its protein, from the targets in the fuelling rules. Omit where the meals and the fuel already reach both, and on a day the athlete is away. Guidance with example food, as a fuel line is: not a meal, never on the shopping list, and says nothing about when it is eaten.",
+            "type": "object",
+            "properties": {
+              "guidance": {
+                "type": "string",
+                "minLength": 1,
+                "description": "How much the snacks carry: `at least` the grams of carbohydrate the day is short of its target, then `up to` the grams that reach its top; `and some protein` where the meals leave the day short of it; `some protein; the carbohydrate is covered` on a day short of protein alone. Names no food. About 60 characters, in English."
+              },
+              "example": {
+                "description": "Example food that makes up the `at least` figure, or the protein, with amounts, in English. Ordinary food, no brand. Not a purchase: never on the shopping list.",
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "guidance"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [

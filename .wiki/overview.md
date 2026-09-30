@@ -25,6 +25,8 @@ rough words — and gives their body weight. The skill turns that into:
 
 - a plan from the first day they need through to Sunday, breakfast, lunch and dinner, with
   fuel lines on the sessions that need them;
+- a line of snacks on each day the meals fall short of its carbohydrate or
+  protein target — how much, and example food, never on the list;
 - recipes with quantities, where every cooked portion is eaten by a named meal;
 - a shopping list grouped by aisle, which buys what the week uses;
 - where the host can run Python, a checked plan and a single printable HTML page.
