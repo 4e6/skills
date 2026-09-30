@@ -3,9 +3,9 @@ type: Convention
 title: Editing a skill
 description: Re-read the two upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone, and a change to behaviour or to the page is judged by running it.
 tags: [skills, authoring, review]
-timestamp: 2026-09-30T14:00:00Z
-sources: [skills/training-week-meal-plan/SKILL.md]
-source_commit: 4757fa27aade35d4ca5a676123a3c9c0eb45d9e3
+timestamp: 2026-09-30T15:00:00Z
+sources: [skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
+source_commit: b87cbd9f148a0a03d13ada92b45b2100f60c2bda
 ---
 
 # Read the guides, and point at them
@@ -45,8 +45,11 @@ On top of what the guides say, and not a restatement of them:
 - `license`, a `LICENSE` file, `metadata.author` and `metadata.version` are set;
   `allowed-tools` and `disable-model-invocation` are absent
   ([the payload](/architecture/the-payload.md#frontmatter-the-host-reads));
-- `compatibility` names the absence of the network, and names a runtime exactly
-  when a script needs one.
+- `compatibility` says whether the skill uses the network — and when it does, for
+  what and how much — and names a runtime exactly when a script needs one;
+- a skill that only works with one model or one kind of machine says so in its
+  name, its `description`, its `compatibility` and its first paragraph
+  ([why](/architecture/z-image-turbo-macos.md#what-it-is-and-what-it-refuses-to-be)).
 
 Nothing in this repository checks any of it yet
 ([which copy is the source](/questions/which-copy-is-the-source.md)).

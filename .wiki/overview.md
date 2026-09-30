@@ -1,11 +1,11 @@
 ---
 type: Overview
 title: What this repository is
-description: Agent Skills that run in somebody else's session. Today there is one, training-week-meal-plan, which turns a training week described in the athlete's own words into a week of meals, a shopping list and a printable page.
+description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a described training week into meals, a shopping list and a printable page; z-image-turbo-macos draws images on an Apple Silicon Mac.
 tags: [overview]
-timestamp: 2026-09-30T14:00:00Z
-sources: [README.md, skills/training-week-meal-plan/SKILL.md]
-source_commit: 4757fa27aade35d4ca5a676123a3c9c0eb45d9e3
+timestamp: 2026-09-30T15:00:00Z
+sources: [/README.md, skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
+source_commit: b87cbd9f148a0a03d13ada92b45b2100f60c2bda
 ---
 
 # What it is
@@ -16,7 +16,10 @@ A collection of [Agent Skills](https://agentskills.io), one folder each under
 their tokens and on whatever that host happens to provide
 ([the payload](/architecture/the-payload.md)).
 
-There is one skill so far, `training-week-meal-plan`.
+There are two. `training-week-meal-plan`, below, is the one most of this bundle
+is about. `z-image-turbo-macos` draws images from prompts with one model on one
+kind of machine, and is the one skill here that is not a pure payload
+([Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md)).
 
 # What the meal-plan skill does
 
