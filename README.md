@@ -42,4 +42,5 @@ Keep each folder's name as it is. The format requires it to match the skill's
 
 ## Licence
 
-Each skill carries its own `LICENSE`.
+MIT — see [LICENSE](LICENSE). Each skill carries its own copy, so the licence
+travels with it when it is installed on its own.
