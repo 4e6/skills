@@ -154,8 +154,20 @@ a line of **snacks** that closes the gap:
 - **The meals still carry the ranking.** Check 10 compares meals alone, so snacks
   top a day up and never stand in for a hard day's bigger plates.
 
-**Inferences, and they need a professional:** a day between two rows takes the
-lower; a rest day, and every day of an undescribed week, takes the light row
+**Measured, 2026-09-30**, on four simulated hosts — three Opus, one Sonnet —
+each with its own copy of the skill and an athlete whose opening message answered
+everything: a 70 kg UK triathlete twice, a 58 kg vegetarian marathoner, and an
+82 kg lactose-intolerant cyclist planning Thursday to Sunday. Every plan checked
+clean on the first run; no host searched the web; no snack food reached a
+shopping list; every day's snack range reproduced from that host's own meals and
+fuel lines, including the days that correctly got none. **One ambiguity
+surfaced**: two hosts put a one-hour easy run in the moderate band and two put an
+easy hour in the light one. T16's light row is *low intensity*, so the rows now
+say an easy hour or less is light. Not measured: a real host, a host without
+Python, or whether athletes eat to the line.
+
+**Inferences, and they need a professional:** an easy session of about an hour
+or less is light, not moderate; a day between two rows takes the lower; a rest day, and every day of an undescribed week, takes the light row
 (T16's light row is *low intensity or skill-based*, and it gives no rest-day
 row); the day before the week's biggest session takes that session's row.
 

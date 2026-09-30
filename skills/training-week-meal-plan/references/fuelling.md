@@ -208,12 +208,13 @@ weight across the whole day — everything eaten, meals, fuel and snacks:
 
 | day | carbohydrate |
 |---|---|
-| rest, or only easy or skill-based training | 3–5 g/kg |
-| about an hour of training | 5–7 g/kg |
+| rest, or only low-intensity or skill-based training | 3–5 g/kg |
+| about an hour at moderate intensity or harder | 5–7 g/kg |
 | one to three hours at moderate to high intensity | 6–10 g/kg |
 | more than about four hours at moderate to high intensity | 8–12 g/kg |
 
-A day between two rows takes the lower. The day before the week's biggest
+An easy session of about an hour or less is the first row, not the second. A day
+between two rows takes the lower. The day before the week's biggest
 session takes that session's row, as the one rule already feeds it. Days under
 *Race weeks* take its g/kg figure instead of this table. A day with no training,
 and every day of a week they chose to leave undescribed, takes the first row.
