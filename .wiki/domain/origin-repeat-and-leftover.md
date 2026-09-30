@@ -5,7 +5,7 @@ description: The three kinds of recipe entry. A repeat cooks the dish again and 
 tags: [domain, plan]
 timestamp: 2026-09-30T14:00:00Z
 sources: [skills/training-week-meal-plan/references/fuelling.md, skills/training-week-meal-plan/references/plan-schema.json]
-source_commit: e71d6a4eac78ebe897dd9abea3f82f6815e160b5
+source_commit: 1f41649dff4c57ee0c8d53a9acaf33cd44d247fc
 ---
 
 Every main meal of every day gets its own recipe entry, so a dish eaten more than

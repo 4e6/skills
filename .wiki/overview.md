@@ -5,7 +5,7 @@ description: Agent Skills that run in somebody else's session. Today there is on
 tags: [overview]
 timestamp: 2026-09-30T14:00:00Z
 sources: [README.md, skills/training-week-meal-plan/SKILL.md]
-source_commit: e71d6a4eac78ebe897dd9abea3f82f6815e160b5
+source_commit: 1f41649dff4c57ee0c8d53a9acaf33cd44d247fc
 ---
 
 # What it is
