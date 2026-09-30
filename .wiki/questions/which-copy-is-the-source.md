@@ -3,7 +3,7 @@ type: Open Question
 title: Which copy of a skill is the one to edit?
 description: Two skills here have a second copy elsewhere. training-week-meal-plan's stayed with its tests and schema generator; llm-wiki's is the one its author's assistant loads. Until one side of each is the source, the copies drift.
 tags: [process, distribution]
-timestamp: 2026-09-30T21:57:09Z
+timestamp: 2026-09-30T22:00:50Z
 status: open
 sources: [skills/training-week-meal-plan/**, skills/llm-wiki/**]
 source_commit: d2e959842d2f175a45c0d098e42338b69645360d
@@ -69,7 +69,10 @@ way in, so nothing false went out with it:
   folder a `LICENSE`;
 - the scope note no longer says where the skill is kept or linked from, and the
   script's path is an example rather than one machine's;
-- two references to skills that are not here were cut.
+- two references to skills that are not here were cut;
+- two faults a review found were fixed here only: a setup that failed halfway
+  was never retried, and its venv was not ignored; and `okf.py` let a leading
+  `/` in `sources` match at any depth.
 
 A copy either way has to keep those. Until one side is the source, edit it in
 one place and carry the change across.

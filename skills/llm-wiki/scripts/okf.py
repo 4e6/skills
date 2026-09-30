@@ -222,7 +222,10 @@ def normalize_sources(patterns: list[str], repo: Path, gitlinks: frozenset[str] 
     """
     out = []
     for raw in patterns:
-        pattern = str(raw).strip().strip("/")
+        pattern = str(raw).strip()
+        # A leading slash anchors a pattern to the root in gitignore syntax.
+        anchored = pattern.startswith("/")
+        pattern = pattern.strip("/")
         if not pattern:
             continue
         if pattern in gitlinks:
@@ -230,6 +233,10 @@ def normalize_sources(patterns: list[str], repo: Path, gitlinks: frozenset[str] 
             continue
         if not GLOB_CHARS.search(pattern) and (repo / pattern).is_dir():
             pattern = f"{pattern}/**"
+        elif "/" not in pattern and anchored:
+            # Kept, since a slash-less pattern without it matches at any depth.
+            # A pattern with a slash inside is anchored either way.
+            pattern = f"/{pattern}"
         elif "/" not in pattern:
             # gitignore syntax matches a slash-less pattern (`Makefile`,
             # `*.sql`) at any depth, but git's `:(glob)` pathspec anchors it to
@@ -546,7 +553,8 @@ def stale(bundle: Bundle) -> dict:
             )
             continue
 
-        pathspecs = [f":(glob){p}" for p in patterns]
+        # git reads a leading slash as the filesystem root, not the repository's.
+        pathspecs = [f":(glob){p.lstrip('/')}" for p in patterns]
         recorded = str(doc.meta.get("source_commit") or "").strip()
 
         # Uncommitted edits in the concept's sources.

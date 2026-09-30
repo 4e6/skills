@@ -3,8 +3,8 @@ type: Module
 title: The skill is a payload
 description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. Two skills bend the last two.
 tags: [architecture, distribution]
-timestamp: 2026-09-30T21:57:09Z
-sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py]
+timestamp: 2026-09-30T22:00:50Z
+sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**]
 source_commit: d2e959842d2f175a45c0d098e42338b69645360d
 ---
 
@@ -119,7 +119,8 @@ that can hold it.
 
 `llm-wiki` bends less. Its one script parses YAML and gitignore patterns with
 two packages from PyPI, installed once into a venv in its own `scripts/` folder:
-the only network use, and the only write into the folder. It needs `git`, since
+the only network use, and the only write into the folder. The venv ignores
+itself, because the folder may sit inside the repository the skill documents. It needs `git`, since
 staleness is read from history. Its instructions name Claude Code's own paths
 and files, as instructions about the host.
 

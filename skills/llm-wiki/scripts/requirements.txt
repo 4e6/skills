@@ -1,8 +1,7 @@
 # Python dependencies for okf.py (the LLM-wiki / OKF bundle checker).
-# Install into a local venv so the skill never depends on a system/user Python:
-#   python3 -m venv .venv
-#   .venv/bin/pip install -r requirements.txt
-# Then invoke the script with .venv/bin/python (see SKILL.md, "Scripts").
+# Installed into a venv beside this file, so the skill never depends on a
+# system/user Python, by the setup in SKILL.md, "Scripts"; the script is then
+# run with .venv/bin/python.
 #
 # NOTE: `git` is a system binary the script shells out to for staleness and
 # coverage — it is not a Python package and cannot live in this venv.

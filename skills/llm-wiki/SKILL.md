@@ -171,11 +171,17 @@ OKF=<this skill's folder>/scripts      # e.g. ~/.claude/skills/llm-wiki/scripts
 WIKI=wiki                               # check first — some projects use .wiki
 ```
 
-`okf.py` needs a venv, created on first use from `requirements.txt`; never
-commit `.venv/`. Create it only if `"$OKF/.venv/bin/python"` is missing:
+`okf.py` needs a venv beside it, built from `requirements.txt`. Build it whenever
+it cannot import both packages, which covers a first run and a setup that failed
+halfway. The venv ignores itself, since the skill may be installed inside the
+very repository it documents:
 
 ```bash
-python3 -m venv "$OKF/.venv" && "$OKF/.venv/bin/pip" install -r "$OKF/requirements.txt"
+"$OKF/.venv/bin/python" -c 'import yaml, pathspec' 2>/dev/null || {
+  python3 -m venv --clear "$OKF/.venv" &&
+  printf '*\n' > "$OKF/.venv/.gitignore" &&
+  "$OKF/.venv/bin/pip" install -r "$OKF/requirements.txt"
+}
 ```
 
 Always invoke as `"$OKF/.venv/bin/python" "$OKF/okf.py"` — never a system Python.
