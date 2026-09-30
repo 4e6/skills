@@ -228,22 +228,25 @@ sitting.
    `nutrition.carbs` times the plate's `portions`.
 2. Add the food on the day's fuel lines, from the table under *Fuel belongs to a
    session*, and anything not on it from what its label would say.
-3. Take both from the day's target, at their body weight. What is left is the
-   snacks' range: round it to 10 g, and where its bottom is below zero write
-   `up to` its top. Where the meals and the fuel already reach the top, the day
-   has no `snacks`.
+3. Take both from the bottom of the day's target and from its top, at their body
+   weight, and round each to 10 g. **A snack line is an instruction, so a day
+   gets one only where it falls short of the bottom.** Where the meals and the
+   fuel already reach it, the day has no `snacks`: never a line saying *up to*,
+   which reads as *eat this* on a day that needs nothing.
 4. Where the meals' protein is under 1.2 g/kg, the guidance adds `and some
-   protein`, and the example carries it.
+   protein`, and the example carries it. A day short only of protein gets a line
+   saying so: `some protein; the carbohydrate is covered`.
 
 **The meals still carry the ranking.** Hard days get the biggest plates, and the
 check compares the meals alone; snacks top a day up and never stand in for the
 bigger bowl a hard day needs.
 
-- `guidance` is the range, and never a food: `about 140–270 g of carbohydrate,
-  over two or three snacks`. About 60 characters.
-- `example` is food that roughly adds up to it, with amounts: `2 bagels with jam,
-  1 banana, 1 fruit yoghurt`. Ordinary food, no brand, nothing that needs
-  cooking. Nothing in it is on the shopping list.
+- `guidance` is the shortfall first and the room above it second, and never a
+  food: `at least about 60 g of carbohydrate, up to 290 g`. The first figure is
+  what the day needs; the second is how far it may go. About 60 characters.
+- `example` is food that makes up **the first figure**, with amounts: `1 bagel with
+  jam, 1 banana`. Ordinary food, no brand, nothing that needs cooking. Nothing
+  in it is on the shopping list.
 - A day the athlete is away has no `snacks`; a meal eaten elsewhere changes
   nothing here.
 

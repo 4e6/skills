@@ -147,10 +147,18 @@ a line of **snacks** that closes the gap:
 - **Treated as a fuel line is**: `guidance`, a range of carbohydrate in grams, and
   an `example` of food that roughly adds up to it. Never on the shopping list,
   never checked, and no time of day.
-- **The range is arithmetic**: the day's band at the athlete's stated weight, less
-  the meals' carbohydrate and the fuel lines' food, rounded to 10 g; `up to` where
-  the bottom falls below zero; no line where the meals and fuel reach the top.
-  `and some protein` where the meals are under 1.2 g/kg.
+- **A line is an instruction, so it appears only on a day that falls short.** The
+  day's band at the athlete's stated weight, less the meals' carbohydrate and the
+  fuel lines' food, gives `at least` the shortfall to the band's bottom and `up
+  to` its top, rounded to 10 g; the example food makes up the first figure. A
+  day that already reaches the bottom has no line. `and some protein` where the
+  meals are under 1.2 g/kg.
+
+  **An *up to* line was tried and taken out**: `up to about 80 g of carbohydrate,
+  e.g. 1 apple, 1 pot of fruit yoghurt, a handful of pretzels` meant the day was
+  already fed and snacks were optional, and it read as *eat these*. A small-caps
+  label and concrete food make any line an instruction, so the only honest
+  optional line is none.
 - **The meals still carry the ranking.** Check 10 compares meals alone, so snacks
   top a day up and never stand in for a hard day's bigger plates.
 
