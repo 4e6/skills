@@ -3,7 +3,7 @@ type: Module
 title: Dish photos
 description: Where the host can draw, each dish gets a square photo beside its recipe's title. The renderer lists the dishes, names each photo for what it shows, embeds the bytes, and never lets a bad photo cost the page.
 tags: [architecture, rendering, photos]
-timestamp: 2026-09-30T17:59:25Z
+timestamp: 2026-09-30T20:29:41Z
 sources: [skills/training-week-meal-plan/references/photos.md, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css]
 source_commit: 36cd180908e7f0820c5f9881c1f3ddf776de7eb9
 ---
@@ -75,14 +75,23 @@ drawn again. Nothing is deleted or dated.
 # The layout
 
 The photo floats at the start of the card; the title sits beside it, then the
-day and times, the figures, the Makes line and the ingredients; the method starts
-beneath, full width. **Two lines are kept whole where there is room** — day · meal · times, and the
-figures — and that sizes the tile: **as large as it can be with both beside it on
+times, the figures, the Makes line and the ingredients; the method starts
+beneath, full width. **Two lines are kept whole where there is room** — the
+times, and the figures — and that sizes the tile: **as large as it can be with both beside it on
 one line**, the same on every card. At the paper's 176 mm measure — in print,
 and on any screen wide enough for it — that is 80 mm; on a screen between that
-and a phone, 60 mm; on a phone, 26 mm, with both lines running full width
-beneath. They are held on one line only on a screen, where the room was
+and a phone, 60 mm. A phone has no room beside it, so there the photo heads the
+card at the same 60 mm, the title under it and everything else running full
+width. They are held on one line only on a screen, where the room was
 measured, and may wrap in print rather than run off the card.
+
+**A phone's photo was 26 mm beside the title until the athlete asked for it
+larger.** Three were rendered at 390 px: 40 mm beside the title, 50 mm with the
+times beside it too, and the full width of the card above the title. Beside
+the title, 50 mm left a column narrow enough to break a title into four lines;
+the full width, 360 px, made the recipes 20.4 screens long against 12.6. The
+full-width layout capped at 60 mm, the tile the next screen size up shows, was
+chosen: 227 px, and 16.9 screens.
 
 Paper had 26 mm tiles in 84 mm columns until 2026-09-30, when the recipes went to
 one column so the PDF would look like the screen. The athlete then asked for the
@@ -96,10 +105,10 @@ it again and larger. An `<img>`, never a background, because print drops
 backgrounds; `alt` is empty, because the title is beside it and plan text never
 goes in an attribute. A card without a photo keeps exactly the markup it had.
 
-**Every card, and a repeat printed whole.** The dish's photo is on its first
-cook, every repeat and every leftover. On a page with photos a repeat prints its
-own amounts and the first cook's method, so the card cooked from on the day is
-complete. A page without photos keeps its repeats as pointers.
+**Every card.** The dish's photo is on its first cook, every repeat and every
+leftover. A repeat prints whole, with or without photos
+([a repeat reads as a first cook](/architecture/the-printable-page.md#a-repeat-reads-as-a-first-cook));
+it once did only on a page with photos.
 
 # What the skill tells the host
 

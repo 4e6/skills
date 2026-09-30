@@ -119,6 +119,9 @@ DAY_ABBR_OF = {
     "Sunday": "Sun",
 }
 
+# The line that sends a card to the one carrying the method. A leftover always
+# has it; a repeat prints the method itself, and falls back to the line only
+# where its origin has no steps to print.
 KIND_LEAD = {
     "repeat": "Cooked again from ",
     "leftover": "Leftover from ",
@@ -620,32 +623,50 @@ def _in_quarters(entry) -> bool:
     return True
 
 
-def makes_line(plan, recipe, skip) -> str:
-    """Where a batch is eaten and how much of it each sitting takes, or "".
+def makes_line(plan, recipe, skip):
+    """(line, plate): what a card's pot makes, and where it is eaten when that
+    is anywhere else, or ""; and whether the line's number is this card's own
+    plate, which the meta line then need not state again.
+
+    Every card that cooks carries it: an origin, and a repeat, which cooks its
+    own pot at its own plate's size. A pot eaten only where it is cooked says
+    how much and nothing more -- `Makes 1 portion.` -- because the band above
+    the card already names that sitting. A batch eaten at more than one names
+    every sitting it feeds, so the reader sees where the rest goes.
 
     The total leads when it is the pot the ingredient list below is scaled to,
     and only then — a number the list does not back is the contradiction this
-    line exists to remove. So it is withheld unless the entry is an
-    origin with a positive pot; the origin's own sitting is among the servings,
-    or the pot would leave out a plate that eats from it; every sitting is named
-    once and found; none was dropped as excluded, which leaves the line and
-    stays in the pot; and every plate is a positive whole number of quarters.
-    The last is what keeps the sum exact: quarters add without rounding in
-    binary floating point, where 1.1 + 2.2 prints 3.3000000000000003. The schema
-    says quarters and nothing checks it.
+    line exists to remove. On an origin it is withheld unless the pot is
+    positive; the origin's own sitting is among the servings, or the pot would
+    leave out a plate that eats from it; every sitting is named once and found;
+    none was dropped as excluded, which leaves the line and stays in the pot;
+    and every plate is a positive whole number of quarters. The last is what
+    keeps the sum exact: quarters add without rounding in binary floating
+    point, where 1.1 + 2.2 prints 3.3000000000000003. The schema says quarters
+    and nothing checks it. A repeat's total is its own plate, under the two
+    conditions that apply to one plate: a positive pot and whole quarters.
 
-    A share is bracketed unless it is 1, or the line states a total over one
-    sitting, which already says it. Without a total, a lone sitting keeps its
-    bracket: otherwise nothing on the card would say how big its plate is. A
-    bracket prints its share to two places, because a share is itself a sum of
-    plates and two plates of 0.1 and 0.2 would print 0.30000000000000004.
+    Without a total, a pot eaten only where it is cooked has no line at all, a
+    repeat's and an origin's alike: the band already names the sitting, and the
+    meta line keeps the plate's size. Otherwise a share is bracketed unless it
+    is 1, and a lone sitting elsewhere keeps its bracket, or nothing on the
+    card would say how big its plate is. A bracket prints its share to two
+    places, because a share is itself a sum of plates and two plates of 0.1 and
+    0.2 would print 0.30000000000000004.
     """
+    # A repeat's pot is its own plate, eaten where it is cooked, and its list is
+    # scaled to it. The same conditions as an origin's total: a pot the list is
+    # scaled to, and plates in whole quarters.
+    if recipe["kind"] == "repeat":
+        if batch_factor(plan, recipe) is None or not _in_quarters(recipe):
+            return "", False
+        return '<p class="serves">Makes ' + portions_phrase(portions_at(recipe)) + ".</p>", True
     # Only an origin lists where its batch goes: servings belong to origins, and
     # a repeat or leftover that copied its origin's would list the batch twice.
     # Its sittings are the pot's own, read through servings_of, so an origin
     # whose servings are absent or malformed still says what its list cooks.
     if recipe["kind"] != "origin":
-        return ""
+        return "", False
     sittings = [
         (slot, entry, share)
         for slot, entry, share in sittings_of(plan, recipe)
@@ -657,7 +678,7 @@ def makes_line(plan, recipe, skip) -> str:
     # is right too — an empty "Makes:" would read as a defect in the recipe.
     listed = [t for t in sittings if (t[0]["day"], t[0]["meal"]) not in skip]
     if not listed:
-        return ""
+        return "", False
 
     keys = [(slot["day"], slot["meal"]) for slot, _entry, _share in sittings]
     total = None
@@ -671,15 +692,24 @@ def makes_line(plan, recipe, skip) -> str:
     ):
         total = pot_of(plan, recipe)
 
+    # With a total, the one sitting listed is the origin's own: the conditions
+    # above put it among the servings and drop nothing.
+    if total is not None and len(listed) == 1:
+        return '<p class="serves">Makes ' + portions_phrase(total) + ".</p>", True
+    # Without one, the origin's own sitting alone would only repeat the band.
+    if len(listed) == 1 and (listed[0][0]["day"], listed[0][0]["meal"]) == (recipe["day"], recipe["meal"]):
+        return "", False
+
     parts = []
     for slot, _entry, share in listed:
         part = prose(slot["day"]) + " " + prose(slot["meal"])
-        lone = total is not None and len(listed) == 1
-        if share is not None and share != 1.0 and not lone:
+        if share is not None and share != 1.0:
             part += " (" + number(round(share, 2)) + ")"
         parts.append(part)
     lead = "Makes: " if total is None else "Makes " + portions_phrase(total) + ": "
-    return '<p class="serves">' + lead + "; ".join(parts) + "</p>"
+    # Commas between the sittings: a day and a meal are fixed words, so none
+    # can hold one.
+    return '<p class="serves">' + lead + ", ".join(parts) + "</p>", False
 
 
 def plate_nutrition(plan, recipe):
@@ -706,7 +736,7 @@ def portion_size_to_print(plan, recipe, skip):
     turns a share into an amount — or None.
 
     That is a batch whose sittings eat unequal shares, on its origin and its
-    leftovers: `Monday Dinner (0.75); Tuesday Lunch (1.25)` with one portion at
+    leftovers: `Monday Dinner (0.75), Tuesday Lunch (1.25)` with one portion at
     400 g cooked is 300 g now and 500 g boxed, and nothing else on either card
     says so. Everywhere else the list already does. A single sitting's list is
     scaled to its plate, a repeat cooks its own, and an even batch is its list
@@ -745,21 +775,26 @@ def recipe_anchor(plan, recipe) -> str:
     raise ValueError("a recipe that is not in the plan")
 
 
-def recipe_block(plan, recipe, skip, packs, photo=None, full_repeats=False) -> str:
+def recipe_block(plan, recipe, skip, packs, photo=None) -> str:
     time = recipe["time"]
     nutrition = plate_nutrition(plan, recipe)
     cook_label = time.get("cook_label", "cook")
+    # The times alone: the band above the card names the day and the meal.
     meta = [
-        prose(recipe["day"]),
-        prose(recipe["meal"]),
         "prep " + number(time["prep"]) + " min",
         esc(cook_label) + " " + number(time["cook"]) + " min",
     ]
+    makes, plate_said = makes_line(plan, recipe, skip)
     # A bigger bowl says how much bigger, in the unit its figures are counted in,
-    # and what one of those is where the recipe says.
+    # and what one of those is where the recipe says. A lone plate with no
+    # reason, on a card whose pot is that plate and whose Makes line says so,
+    # is said there once. A batch's plate stays here, beside the figures it
+    # comes to, rather than only in a bracket under them.
     plates = recipe.get("plates")
     if isinstance(plates, list):
         for plate in plates:
+            if plate_said and len(plates) == 1 and isinstance(plate, dict) and "note" not in plate:
+                continue
             if isinstance(plate, dict) and "portions" in plate:
                 why = " (" + prose(plate["note"]) + ")" if "note" in plate else ""
                 meta.append(portions_phrase(plate["portions"]) + why)
@@ -788,18 +823,19 @@ def recipe_block(plan, recipe, skip, packs, photo=None, full_repeats=False) -> s
         out.append('<img class="recipe-photo" src="' + photo + '" alt="">')
     out.append("<h4>" + prose(recipe["title"]) + "</h4>")
 
-    # Beside a photo, the day, the meal and the two times are one unit the
-    # stylesheet keeps on one line; what follows them may wrap.
+    # Beside a photo, the two times are one unit the stylesheet keeps on one
+    # line; what follows them may wrap.
     if photo is not None:
-        head = '<span class="nb">' + " &middot; ".join(meta[:4]) + "</span>"
-        out.append('<p class="recipe-meta">' + " &middot; ".join([head] + meta[4:]) + "</p>")
+        head = '<span class="nb">' + " &middot; ".join(meta[:2]) + "</span>"
+        out.append('<p class="recipe-meta">' + " &middot; ".join([head] + meta[2:]) + "</p>")
     else:
         out.append('<p class="recipe-meta">' + " &middot; ".join(meta) + "</p>")
 
     # The macros are this sitting's plate — the origin's portion times this
-    # entry's portions — so on every card they are the second line, directly
-    # under the meta line that states the plate, and every card reads the same
-    # way: the plate and what it comes to, then what to do about it.
+    # entry's portions — so on every card they are the second line, and every
+    # card reads the same way: the plate and what it comes to, then what to do
+    # about it. A batch's plate is stated on the meta line directly above them;
+    # a pot that is the plate, by the Makes line directly below.
     # They used to follow the pointer and the Makes line, which split
     # `2 portions` from its kcal by a pot of six and made the figures read as
     # the pot's. A leftover's pointer, which is the whole of its block, is now
@@ -807,39 +843,42 @@ def recipe_block(plan, recipe, skip, packs, photo=None, full_repeats=False) -> s
     # than the pointer leading.
     out.append('<p class="macros">' + " &middot; ".join(macros) + "</p>")
 
-    # On a repeat, which carries rescaled ingredients and no steps, arriving at
-    # the pointer before the ingredients is the difference between "this is
-    # Monday's again, here is this morning's amount" and a recipe with its
-    # method missing.
+    # Where a card points at another, it does so before its ingredients: on a
+    # repeat whose origin has no method, arriving at the pointer first is the
+    # difference between "this is Monday's again, here is this morning's
+    # amount" and a recipe with its method missing.
     #
-    # The pointer's closing words link to the origin's block, so on a phone
-    # "where the method is" is a tap rather than a scroll back through the week.
-    # No check that the origin is on the page, because one found always is:
+    # The pointer names the sitting that cooked the dish, and those words link
+    # to its card, whose band reads the same: "Leftover from Monday Dinner" is
+    # a tap on a phone rather than a scroll back through the week. No check
+    # that the origin is on the page, because one found always is:
     # kept_recipes keeps every origin a surviving entry names by (title,
     # origin_day), which is the key origin_of matches, and recipe_days prints
     # every kept entry. An origin not found is a broken plan, and the sentence
-    # prints as it always did, without a link.
+    # names the day alone, without a link.
     #
-    # On a page with photos a repeat is printed whole instead: its own amounts,
-    # the first cook's method, and no pointer, so the card you cook from on the
-    # day is complete. A leftover cooks nothing and
-    # keeps its pointer. A page without photos keeps every line it always had.
+    # A repeat is printed whole instead: its own amounts, the first cook's
+    # method, and no pointer, so the card you cook from on the day is complete
+    # and reads exactly as the first cook's does. A leftover cooks nothing and
+    # keeps its pointer.
     origin = origin_of(plan, recipe)
     lead = KIND_LEAD.get(recipe["kind"])
-    whole = full_repeats and recipe["kind"] == "repeat" and origin is not None and "steps" in origin
+    whole = recipe["kind"] == "repeat" and origin is not None and "steps" in origin
     if lead is not None and "origin_day" in recipe and not whole:
-        where = "where the method is"
         if origin is not None:
-            where = '<a href="#' + recipe_anchor(plan, origin) + '">' + where + "</a>"
-        out.append(
-            '<p class="pointer">' + lead + prose(recipe["origin_day"])
-            + ", " + where + ".</p>"
-        )
+            sitting = (
+                '<a href="#' + recipe_anchor(plan, origin) + '">'
+                + prose(origin["day"]) + " " + prose(origin["meal"]) + "</a>"
+            )
+        else:
+            sitting = prose(recipe["origin_day"])
+        out.append('<p class="pointer">' + lead + sitting + ".</p>")
 
     # The Makes line is the pot, so it sits on the list the pot is cooked from.
-    # It never shares a card with the pointer — only an origin carries the one,
-    # and only a repeat or a leftover the other.
-    makes = makes_line(plan, recipe, skip)
+    # A leftover carries the pointer and no Makes line, since it cooks nothing.
+    # A repeat carries both only where its origin has no method to print: it
+    # still cooks its own pot, and the pointer says where the method was meant
+    # to be.
     if makes:
         out.append(makes)
 
@@ -968,6 +1007,24 @@ def recipe_days(plan):
     return [group for group in groups if group[1]]
 
 
+def sittings_in(group):
+    """[(meal, [recipe])]: one day's recipes gathered under the meal that eats them.
+
+    In the order the plan first names each meal, and a list rather than a dict
+    or a sort, for the same reason as recipe_days: the page is compared byte
+    for byte. A main and its side at one sitting share one band.
+    """
+    sittings = []
+    for recipe in group:
+        for meal, dishes in sittings:
+            if meal == recipe["meal"]:
+                dishes.append(recipe)
+                break
+        else:
+            sittings.append((recipe["meal"], [recipe]))
+    return sittings
+
+
 def away_reasons(plan):
     """Day name -> the reason the week gives for planning no meals on it."""
     return {day["name"]: day["excluded"] for day in plan["days"] if "excluded" in day}
@@ -983,21 +1040,33 @@ def recipes(plan, photos=None) -> str:
     out = ['<section class="recipes">', section_heading("recipes")]
     for name, group in recipe_days(plan):
         out.append('<section class="recipe-day">')
-        out.append('<h3 class="day-band">' + prose(name) + "</h3>")
-        # The exclusion rule reaches one site further once the recipes are
-        # grouped. kept_recipes keeps an origin on an excluded day when a
-        # surviving leftover still points at its method, so without this the
-        # band would print a day name over a day the week says has no meals.
-        # The day's own reason goes under it, worded exactly as the week words
-        # it — the method survives the exclusion; the meal does not.
-        if name in away:
-            out.append('<p class="excluded">' + prose(away[name]) + "</p>")
-        for recipe in group:
-            # Only a string can be a key: this renders plans that failed the
-            # check, and a title of any other shape must still print.
-            title = recipe["title"]
-            photo = photos.get(title) if photos and recipe["kind"] in PHOTO_KINDS and isinstance(title, str) else None
-            out.append(recipe_block(plan, recipe, skip, packs, photo, bool(photos)))
+        for meal, dishes in sittings_in(group):
+            # A band for each sitting, the day on the left and the meal on the
+            # right: scrolled to the middle of a method, the band stuck to the
+            # top of the window still says which meal this is.
+            out.append('<section class="sitting">')
+            out.append(
+                '<h3 class="sitting-band"><span class="band-day">' + prose(name) + "</span> "
+                + '<span class="band-meal">' + prose(meal) + "</span></h3>"
+            )
+            # The exclusion rule reaches one site further once the recipes are
+            # grouped. kept_recipes keeps an origin on an excluded day when a
+            # surviving leftover still points at its method, so without this the
+            # band would print a day name over a day the week says has no meals.
+            # The day's own reason goes under it, worded exactly as the week
+            # words it — the method survives the exclusion; the meal does not.
+            # Under every band of the day, not only the first: each band is
+            # read on its own, stuck to the top of the window or at the head
+            # of a printed page, and each of its recipes needs the reason.
+            if name in away:
+                out.append('<p class="excluded">' + prose(away[name]) + "</p>")
+            for recipe in dishes:
+                # Only a string can be a key: this renders plans that failed the
+                # check, and a title of any other shape must still print.
+                title = recipe["title"]
+                photo = photos.get(title) if photos and recipe["kind"] in PHOTO_KINDS and isinstance(title, str) else None
+                out.append(recipe_block(plan, recipe, skip, packs, photo))
+            out.append("</section>")
         out.append("</section>")
     out.append("</section>")
     return "\n".join(out)

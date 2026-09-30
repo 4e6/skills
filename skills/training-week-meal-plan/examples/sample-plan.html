@@ -354,10 +354,14 @@ h4 {
 
 /* ---- Recipes --------------------------------------------------------- */
 
-/* Grouped under the day that cooks them. A key belongs above the thing it
- * opens and set heavier than it; before this the day was the first token of a
- * 9pt caption *under* the dish title, so the navigational half of the block was
- * set weaker than the content half and twenty-one of them ran together.
+/* Grouped under the day that cooks them, and within it under the sitting that
+ * eats them. A key belongs above the thing it opens and set heavier than it;
+ * before this the day was the first token of a 9pt caption *under* the dish
+ * title, so the navigational half of the block was set weaker than the content
+ * half and twenty-one of them ran together. Later the day had a band of its
+ * own and the meal was still the caption's second word: scrolling through the
+ * recipes, breakfast, lunch and dinner were hard to tell apart. So every
+ * sitting has the band, with the day on the left and the meal on the right.
  *
  * The group is a landmark, not a container, and there is deliberately no
  * `break-inside: avoid` on it. Printed, the recipes run in one column, 176mm
@@ -375,7 +379,7 @@ h4 {
  * recipe's height off `pdftotext -bbox-layout`, from its title to its last
  * line. Not from the page on a screen: the screen's own padding and sticky band
  * are not the page's, and overriding the screen rules one by one once read 3mm
- * high on every day, because .day-band's screen-only padding survived. The
+ * high on every day, because the band's screen-only padding survived. The
  * figure moves whenever anything inside a recipe block does.
  *
  * What is guaranteed instead is that the band never ends a page, and that a
@@ -385,14 +389,30 @@ h4 {
   margin-bottom: 6mm;
 }
 
+/* A day's sittings sit a little closer than two days do, which is all that
+ * is left to mark where a day ends once every band names its day. */
 .recipe-day + .recipe-day {
   margin-top: 9mm;
 }
 
+.sitting + .sitting {
+  margin-top: 7mm;
+}
+
 /* Larger than the section head above it, on purpose: RECIPES is a label read
- * once, and the seven bands are what the section is flicked through for. Size
- * and case carry the hierarchy, so this stays one weight of one typeface. */
-.day-band {
+ * once, and the bands are what the section is flicked through for. Size and
+ * case carry the hierarchy, so this stays one weight of one typeface. The day
+ * repeats on every sitting of the day, which is the price of one line that
+ * answers both questions; a day band with the meals as headings under it was
+ * tried, and on a phone its two stuck lines took a fifth of the screen. The
+ * meal wraps under the day rather than squeezing it, if a day is named at
+ * length. */
+.sitting-band {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  column-gap: 4mm;
   font-size: 14pt;
   line-height: 1.2;
   margin: 0 0 4mm;
@@ -403,6 +423,14 @@ h4 {
    * engines differ over which they implement in paged mode. */
   break-after: avoid;
   page-break-after: avoid;
+}
+
+/* Capitals set smaller, and spaced: the heading's own weight, in a second
+ * voice, so the meal reads apart from the day at a glance. */
+.band-meal {
+  font-size: 10.5pt;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 /* The same constraint from the other side. The first recipe is itself atomic,
@@ -417,14 +445,14 @@ h4 {
  * fall to the next page without it, which is the filing failure the grouping
  * exists to prevent, walked back in by the one shape that separates the
  * two. All three of band, notice and recipe move together or none does. */
-.day-band + .recipe,
-.day-band + .excluded,
-.recipe-day > .excluded + .recipe {
+.sitting-band + .recipe,
+.sitting-band + .excluded,
+.sitting > .excluded + .recipe {
   break-before: avoid;
   page-break-before: avoid;
 }
 
-.recipe-day > .excluded {
+.sitting > .excluded {
   font-size: 10pt;
   margin: 0 0 4mm;
   /* Stated from both sides, as the band is: engines differ over which of the
@@ -450,18 +478,17 @@ h4 {
   overflow-wrap: anywhere;
 }
 
-/* Once per day now, rather than once per page. A recipe is the last child of
- * its own .recipe-day, so this reads per group and every day closes on white
- * space with the next band's rule beneath it. That is the right meaning and it
- * is why the selector was left alone: the hairline separates recipes inside a
- * day, and between days the band already does it. */
+/* Once per sitting. A recipe is the last child of its own .sitting, so every
+ * sitting closes on white space with the next band's rule beneath it: the
+ * hairline separates the dishes of one sitting, a main and its side, and
+ * between sittings the band already does it. */
 .recipe:last-child {
   border-bottom: 0;
 }
 
 /* A recipe's meta line and its figures are one statement — this sitting's
- * portions and what they come to — so they are held together by space alone:
- * half a millimetre between them, three and a half after. A tinted panel
+ * times and portions, and what they come to — so they are held together by
+ * space alone: half a millimetre between them, three and a half after. A tinted panel
  * was tried and taken out; it drew the eye to the one line nobody acts on. */
 .recipe-meta {
   font-size: 9pt;
@@ -497,18 +524,18 @@ h4 {
 }
 
 /* A dish's photo, where the host could draw one: a square floated at the
- * start of the card, with the title, the day and the times, the figures, the
- * Makes line and the ingredients beside it, and the method the full width
- * beneath it. Square because a dish is drawn on a plate from above, and a wide
- * strip crops the rim of the plate away.
+ * start of the card, with the title, the times, the figures, the Makes line
+ * and the ingredients beside it, and the method the full width beneath it.
+ * Square because a dish is drawn on a plate from above, and a wide strip crops
+ * the rim of the plate away.
  *
  * As large as it can be while two lines beside it stay on one line each: the
- * day, meal and times, and the figures. The figures run to about 85mm at their
- * longest. On paper, and on a screen wide enough for the paper's measure, the
- * card is 176mm, so 80mm, leaving 91mm beside it; on a screen between that and a
- * phone the card is 152mm, so 60mm. A 390px phone leaves 360px, which the
- * figures fill alone, so there the tile shrinks beside the title and those two
- * lines run the full width beneath it. None of this matches anything
+ * times, and the figures. The figures run to about 85mm at their longest. On
+ * paper, and on a screen wide enough for the paper's measure, the card is
+ * 176mm, so 80mm, leaving 91mm beside it; on a screen between that and a phone
+ * the card is 152mm, so 60mm. A 390px phone leaves 360px, which the figures
+ * fill alone, so there nothing goes beside it: the photo heads the card at the
+ * same 60mm, and the card reads down from it. None of this matches anything
  * unless the renderer was handed photos. */
 .pictured {
   display: flow-root;
@@ -711,12 +738,12 @@ h4 {
 
   /* The band is a landmark, and on screen there are no pages to flick through
    * to reach one — the recipes run to several screens of continuous scroll, so
-   * the day you are reading under would otherwise leave the top of the window
-   * and take the answer with it. Sticky holds it there until its own day ends,
-   * where the next band pushes it off; `.recipe-day` bounds it, so no band ever
-   * outstays its recipes. Screen only — print has pages, and there the
-   * guarantee is the opposite one, that a band never ends a page. */
-  .day-band {
+   * the sitting you are reading under would otherwise leave the top of the
+   * window and take the answer with it. Sticky holds it there until its own
+   * sitting ends, where the next band pushes it off; `.sitting` bounds it, so
+   * no band ever outstays its recipes. Screen only — print has pages, and
+   * there the guarantee is the opposite one, that a band never ends a page. */
+  .sitting-band {
     position: sticky;
     top: 0;
     background: #fff;
@@ -928,16 +955,19 @@ h4 {
     flex-wrap: wrap;
   }
 
-  /* About 98px beside the title; the day and the figures go under it. */
+  /* At the head of the card, with the title under it, at the 60mm the
+   * screen between a phone and the paper shows: about 227px, two-thirds of a
+   * 390px phone. It was 26mm beside the title, about 98px, and the athlete
+   * asked for it larger; the full width of the card was tried and doubled
+   * the recipes' scroll. Never wider than the card, on a phone narrower than
+   * 60mm. */
   .recipe-photo {
-    width: 26mm;
-    height: 26mm;
-    margin: 1mm 4mm 2mm 0;
-  }
-
-  .pictured .recipe-meta,
-  .pictured .macros {
-    clear: left;
+    float: none;
+    width: 60mm;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin: 0 0 3mm;
   }
 
   /* Five columns do not fit a phone, and the phone page was designed without
@@ -1165,12 +1195,13 @@ h4 {
 <section class="recipes">
 <h2 id="recipes">Recipes</h2>
 <section class="recipe-day">
-<h3 class="day-band">Monday</h3>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Monday</span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe origin" id="recipe-1">
 <h4>Porridge with banana, walnuts and honey</h4>
-<p class="recipe-meta">Monday &middot; Breakfast &middot; prep 3 min &middot; cook 7 min &middot; 0.5 portions</p>
+<p class="recipe-meta">prep 3 min &middot; cook 7 min</p>
 <p class="macros">375 kcal &middot; 54 g carbs &middot; 13 g protein &middot; 12 g fat &middot; 6 g fibre</p>
-<p class="serves">Makes 0.5 portions: Monday Breakfast</p>
+<p class="serves">Makes 0.5 portions.</p>
 <ul class="ingredients">
 <li>Rolled oats <span class="qty">40 g</span></li>
 <li>Milk <span class="qty">150 ml</span></li>
@@ -1184,11 +1215,14 @@ h4 {
 <li>Top with banana, walnuts and honey.</li>
 </ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Monday</span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe origin" id="recipe-2">
 <h4>Chicken and rice bowl with roasted peppers</h4>
-<p class="recipe-meta">Monday &middot; Lunch &middot; prep 10 min &middot; cook 25 min</p>
+<p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
 <p class="macros">580 kcal &middot; 63 g carbs &middot; 44 g protein &middot; 16 g fat &middot; 4 g fibre</p>
-<p class="serves">Makes 1 portion: Monday Lunch</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Chicken breast <span class="qty">150 g</span> <span class="qty-hint">(1)</span></li>
 <li>Rice <span class="qty">70 g dry</span></li>
@@ -1203,11 +1237,14 @@ h4 {
 <li>Combine in a bowl.</li>
 </ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Monday</span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-3">
 <h4>Lentil soup</h4>
-<p class="recipe-meta">Monday &middot; Dinner &middot; prep 10 min &middot; cook 35 min</p>
+<p class="recipe-meta">prep 10 min &middot; cook 35 min</p>
 <p class="macros">610 kcal &middot; 93 g carbs &middot; 29 g protein &middot; 10 g fat &middot; 18 g fibre</p>
-<p class="serves">Makes 2 portions: Monday Dinner; Wednesday Lunch</p>
+<p class="serves">Makes 2 portions: Monday Dinner, Wednesday Lunch</p>
 <ul class="ingredients">
 <li>Brown lentils <span class="qty">200 g</span></li>
 <li>Onion <span class="qty">1, diced</span></li>
@@ -1224,13 +1261,15 @@ h4 {
 </ol>
 </article>
 </section>
+</section>
 <section class="recipe-day">
-<h3 class="day-band">Tuesday</h3>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Tuesday</span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe origin" id="recipe-4">
 <h4>Eggs on toast with avocado</h4>
-<p class="recipe-meta">Tuesday &middot; Breakfast &middot; prep 5 min &middot; cook 5 min</p>
+<p class="recipe-meta">prep 5 min &middot; cook 5 min</p>
 <p class="macros">620 kcal &middot; 68 g carbs &middot; 27 g protein &middot; 30 g fat &middot; 9 g fibre</p>
-<p class="serves">Makes 1 portion: Tuesday Breakfast</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Eggs <span class="qty">2</span></li>
 <li>Sourdough <span class="qty">4 slices</span></li>
@@ -1243,11 +1282,14 @@ h4 {
 <li>Mash the avocado onto the toast, season, and top with the eggs.</li>
 </ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Tuesday</span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe origin" id="recipe-5">
 <h4>Tuna pasta salad</h4>
-<p class="recipe-meta">Tuesday &middot; Lunch &middot; prep 5 min &middot; cook 12 min</p>
+<p class="recipe-meta">prep 5 min &middot; cook 12 min</p>
 <p class="macros">750 kcal &middot; 102 g carbs &middot; 42 g protein &middot; 19 g fat &middot; 8 g fibre</p>
-<p class="serves">Makes 1 portion: Tuesday Lunch</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Short pasta <span class="qty">130 g dry</span></li>
 <li>Tinned tuna, drained <span class="qty">120 g</span> <span class="qty-hint">(1 tin)</span></li>
@@ -1261,11 +1303,14 @@ h4 {
 <li>Dress with oil and lemon, season well.</li>
 </ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Tuesday</span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-6">
 <h4>Salmon fillet with sweet potato and green beans</h4>
-<p class="recipe-meta">Tuesday &middot; Dinner &middot; prep 10 min &middot; cook 30 min</p>
+<p class="recipe-meta">prep 10 min &middot; cook 30 min</p>
 <p class="macros">620 kcal &middot; 52 g carbs &middot; 40 g protein &middot; 26 g fat &middot; 8 g fibre</p>
-<p class="serves">Makes 1 portion: Tuesday Dinner</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Salmon fillet <span class="qty">200 g</span></li>
 <li>Sweet potato <span class="qty">300 g, cubed</span> <span class="qty-hint">(2)</span></li>
@@ -1279,13 +1324,15 @@ h4 {
 </ol>
 </article>
 </section>
+</section>
 <section class="recipe-day">
-<h3 class="day-band">Wednesday</h3>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Wednesday</span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe repeat" id="recipe-7">
 <h4>Porridge with banana, walnuts and honey</h4>
-<p class="recipe-meta">Wednesday &middot; Breakfast &middot; prep 3 min &middot; cook 7 min</p>
+<p class="recipe-meta">prep 3 min &middot; cook 7 min</p>
 <p class="macros">750 kcal &middot; 108 g carbs &middot; 25 g protein &middot; 24 g fat &middot; 12 g fibre</p>
-<p class="pointer">Cooked again from Monday, <a href="#recipe-1">where the method is</a>.</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Rolled oats <span class="qty">80 g</span></li>
 <li>Milk <span class="qty">300 ml</span></li>
@@ -1293,18 +1340,29 @@ h4 {
 <li>Walnuts <span class="qty">20 g, roughly chopped</span></li>
 <li>Honey <span class="qty">20 g</span></li>
 </ul>
+<ol class="steps">
+<li>Bring the oats and milk to a gentle simmer, stirring.</li>
+<li>Cook 5–7 minutes until thick, adding a splash more milk if needed.</li>
+<li>Top with banana, walnuts and honey.</li>
+</ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Wednesday</span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe leftover" id="recipe-8">
 <h4>Lentil soup</h4>
-<p class="recipe-meta">Wednesday &middot; Lunch &middot; prep 0 min &middot; reheat 5 min</p>
+<p class="recipe-meta">prep 0 min &middot; reheat 5 min</p>
 <p class="macros">610 kcal &middot; 93 g carbs &middot; 29 g protein &middot; 10 g fat &middot; 18 g fibre</p>
-<p class="pointer">Leftover from Monday, <a href="#recipe-3">where the method is</a>.</p>
+<p class="pointer">Leftover from <a href="#recipe-3">Monday Dinner</a>.</p>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Wednesday</span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-9">
 <h4>Spaghetti bolognese</h4>
-<p class="recipe-meta">Wednesday &middot; Dinner &middot; prep 15 min &middot; cook 40 min</p>
+<p class="recipe-meta">prep 15 min &middot; cook 40 min</p>
 <p class="macros">680 kcal &middot; 84 g carbs &middot; 38 g protein &middot; 22 g fat &middot; 7 g fibre</p>
-<p class="serves">Makes 3 portions: Wednesday Dinner; Saturday Lunch; Sunday Lunch</p>
+<p class="serves">Makes 3 portions: Wednesday Dinner, Saturday Lunch, Sunday Lunch</p>
 <ul class="ingredients">
 <li>Ground beef <span class="qty">500 g</span></li>
 <li>Tinned tomatoes <span class="qty">800 g</span> <span class="qty-hint">(2 tins)</span></li>
@@ -1320,13 +1378,15 @@ h4 {
 </ol>
 </article>
 </section>
+</section>
 <section class="recipe-day">
-<h3 class="day-band">Thursday</h3>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Thursday</span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe origin" id="recipe-10">
 <h4>Greek yogurt with oats, berries and honey</h4>
-<p class="recipe-meta">Thursday &middot; Breakfast &middot; prep 5 min &middot; cook 0 min</p>
+<p class="recipe-meta">prep 5 min &middot; cook 0 min</p>
 <p class="macros">430 kcal &middot; 58 g carbs &middot; 24 g protein &middot; 11 g fat &middot; 6 g fibre</p>
-<p class="serves">Makes 1 portion: Thursday Breakfast</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Greek yogurt <span class="qty">250 g</span></li>
 <li>Rolled oats <span class="qty">40 g</span></li>
@@ -1339,11 +1399,14 @@ h4 {
 <li>Finish with honey.</li>
 </ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Thursday</span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe origin" id="recipe-11">
 <h4>Chickpea and roasted vegetable salad</h4>
-<p class="recipe-meta">Thursday &middot; Lunch &middot; prep 10 min &middot; cook 25 min</p>
+<p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
 <p class="macros">520 kcal &middot; 62 g carbs &middot; 18 g protein &middot; 20 g fat &middot; 14 g fibre</p>
-<p class="serves">Makes 1 portion: Thursday Lunch</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Tinned chickpeas, drained <span class="qty">240 g</span> <span class="qty-hint">(1 tin)</span></li>
 <li>Courgette <span class="qty">1, sliced</span></li>
@@ -1357,11 +1420,14 @@ h4 {
 <li>Serve over the leaves, dressed with the pan oil.</li>
 </ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Thursday</span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-12">
 <h4>Omelette with potatoes and side salad</h4>
-<p class="recipe-meta">Thursday &middot; Dinner &middot; prep 10 min &middot; cook 20 min</p>
+<p class="recipe-meta">prep 10 min &middot; cook 20 min</p>
 <p class="macros">560 kcal &middot; 44 g carbs &middot; 26 g protein &middot; 30 g fat &middot; 6 g fibre</p>
-<p class="serves">Makes 1 portion: Thursday Dinner</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Eggs <span class="qty">3</span></li>
 <li>Potatoes, thinly sliced <span class="qty">250 g</span> <span class="qty-hint">(2)</span></li>
@@ -1377,25 +1443,35 @@ h4 {
 </ol>
 </article>
 </section>
+</section>
 <section class="recipe-day">
-<h3 class="day-band">Friday</h3>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Friday</span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe repeat" id="recipe-13">
 <h4>Eggs on toast with avocado</h4>
-<p class="recipe-meta">Friday &middot; Breakfast &middot; prep 5 min &middot; cook 5 min</p>
+<p class="recipe-meta">prep 5 min &middot; cook 5 min</p>
 <p class="macros">620 kcal &middot; 68 g carbs &middot; 27 g protein &middot; 30 g fat &middot; 9 g fibre</p>
-<p class="pointer">Cooked again from Tuesday, <a href="#recipe-4">where the method is</a>.</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Eggs <span class="qty">2</span></li>
 <li>Sourdough <span class="qty">4 slices</span></li>
 <li>Avocado <span class="qty">half</span></li>
 <li>Olive oil <span class="qty">1 tsp</span></li>
 </ul>
+<ol class="steps">
+<li>Toast the sourdough.</li>
+<li>Fry or poach the eggs to your preference.</li>
+<li>Mash the avocado onto the toast, season, and top with the eggs.</li>
+</ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Friday</span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe repeat" id="recipe-14">
 <h4>Chickpea and roasted vegetable salad</h4>
-<p class="recipe-meta">Friday &middot; Lunch &middot; prep 10 min &middot; cook 25 min</p>
+<p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
 <p class="macros">520 kcal &middot; 62 g carbs &middot; 18 g protein &middot; 20 g fat &middot; 14 g fibre</p>
-<p class="pointer">Cooked again from Thursday, <a href="#recipe-11">where the method is</a>.</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Tinned chickpeas, drained <span class="qty">240 g</span> <span class="qty-hint">(1 tin)</span></li>
 <li>Courgette <span class="qty">1, sliced</span></li>
@@ -1403,12 +1479,20 @@ h4 {
 <li>Salad leaves <span class="qty">handful</span></li>
 <li>Olive oil <span class="qty">1 tbsp</span></li>
 </ul>
+<ol class="steps">
+<li>Roast the courgette and pepper with oil at 200°C for 25 minutes.</li>
+<li>Warm the chickpeas through with the roasted vegetables.</li>
+<li>Serve over the leaves, dressed with the pan oil.</li>
+</ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Friday</span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-15">
 <h4>Grilled mackerel with boiled potatoes and tomato salad</h4>
-<p class="recipe-meta">Friday &middot; Dinner &middot; prep 10 min &middot; cook 25 min</p>
+<p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
 <p class="macros">680 kcal &middot; 95 g carbs &middot; 28 g protein &middot; 19 g fat &middot; 10 g fibre</p>
-<p class="serves">Makes 1 portion: Friday Dinner</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Mackerel <span class="qty">1 fillet</span></li>
 <li>Potatoes <span class="qty">500 g</span> <span class="qty-hint">(3)</span></li>
@@ -1422,13 +1506,15 @@ h4 {
 </ol>
 </article>
 </section>
+</section>
 <section class="recipe-day">
-<h3 class="day-band">Saturday</h3>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Saturday</span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe repeat" id="recipe-16">
 <h4>Porridge with banana, walnuts and honey</h4>
-<p class="recipe-meta">Saturday &middot; Breakfast &middot; prep 3 min &middot; cook 7 min &middot; 1.25 portions</p>
+<p class="recipe-meta">prep 3 min &middot; cook 7 min</p>
 <p class="macros">938 kcal &middot; 135 g carbs &middot; 31 g protein &middot; 30 g fat &middot; 15 g fibre</p>
-<p class="pointer">Cooked again from Monday, <a href="#recipe-1">where the method is</a>.</p>
+<p class="serves">Makes 1.25 portions.</p>
 <ul class="ingredients">
 <li>Rolled oats <span class="qty">100 g</span></li>
 <li>Milk <span class="qty">375 ml</span></li>
@@ -1436,18 +1522,29 @@ h4 {
 <li>Walnuts <span class="qty">25 g, roughly chopped</span></li>
 <li>Honey <span class="qty">25 g</span></li>
 </ul>
+<ol class="steps">
+<li>Bring the oats and milk to a gentle simmer, stirring.</li>
+<li>Cook 5–7 minutes until thick, adding a splash more milk if needed.</li>
+<li>Top with banana, walnuts and honey.</li>
+</ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Saturday</span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe leftover" id="recipe-17">
 <h4>Spaghetti bolognese</h4>
-<p class="recipe-meta">Saturday &middot; Lunch &middot; prep 0 min &middot; reheat 12 min</p>
+<p class="recipe-meta">prep 0 min &middot; reheat 12 min</p>
 <p class="macros">680 kcal &middot; 84 g carbs &middot; 38 g protein &middot; 22 g fat &middot; 7 g fibre</p>
-<p class="pointer">Leftover from Wednesday, <a href="#recipe-9">where the method is</a>.</p>
+<p class="pointer">Leftover from <a href="#recipe-9">Wednesday Dinner</a>.</p>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Saturday</span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe repeat" id="recipe-18">
 <h4>Chicken and rice bowl with roasted peppers</h4>
-<p class="recipe-meta">Saturday &middot; Dinner &middot; prep 10 min &middot; cook 25 min &middot; 2 portions</p>
+<p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
 <p class="macros">1160 kcal &middot; 126 g carbs &middot; 88 g protein &middot; 32 g fat &middot; 8 g fibre</p>
-<p class="pointer">Cooked again from Monday, <a href="#recipe-2">where the method is</a>.</p>
+<p class="serves">Makes 2 portions.</p>
 <ul class="ingredients">
 <li>Chicken breast <span class="qty">300 g</span> <span class="qty-hint">(2)</span></li>
 <li>Rice <span class="qty">140 g dry</span></li>
@@ -1455,15 +1552,23 @@ h4 {
 <li>Onion <span class="qty">1, sliced</span></li>
 <li>Olive oil <span class="qty">2 tbsp</span></li>
 </ul>
+<ol class="steps">
+<li>Roast the pepper and onion with the oil at 200°C for 20 minutes.</li>
+<li>Cook the rice.</li>
+<li>Season and pan-fry the chicken 5–6 minutes per side, then rest and slice.</li>
+<li>Combine in a bowl.</li>
+</ol>
 </article>
 </section>
+</section>
 <section class="recipe-day">
-<h3 class="day-band">Sunday</h3>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Sunday</span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe repeat" id="recipe-19">
 <h4>Porridge with banana, walnuts and honey</h4>
-<p class="recipe-meta">Sunday &middot; Breakfast &middot; prep 3 min &middot; cook 7 min &middot; 1.25 portions</p>
+<p class="recipe-meta">prep 3 min &middot; cook 7 min</p>
 <p class="macros">938 kcal &middot; 135 g carbs &middot; 31 g protein &middot; 30 g fat &middot; 15 g fibre</p>
-<p class="pointer">Cooked again from Monday, <a href="#recipe-1">where the method is</a>.</p>
+<p class="serves">Makes 1.25 portions.</p>
 <ul class="ingredients">
 <li>Rolled oats <span class="qty">100 g</span></li>
 <li>Milk <span class="qty">375 ml</span></li>
@@ -1471,25 +1576,42 @@ h4 {
 <li>Walnuts <span class="qty">25 g, roughly chopped</span></li>
 <li>Honey <span class="qty">25 g</span></li>
 </ul>
+<ol class="steps">
+<li>Bring the oats and milk to a gentle simmer, stirring.</li>
+<li>Cook 5–7 minutes until thick, adding a splash more milk if needed.</li>
+<li>Top with banana, walnuts and honey.</li>
+</ol>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Sunday</span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe leftover" id="recipe-20">
 <h4>Spaghetti bolognese</h4>
-<p class="recipe-meta">Sunday &middot; Lunch &middot; prep 0 min &middot; reheat 12 min</p>
+<p class="recipe-meta">prep 0 min &middot; reheat 12 min</p>
 <p class="macros">680 kcal &middot; 84 g carbs &middot; 38 g protein &middot; 22 g fat &middot; 7 g fibre</p>
-<p class="pointer">Leftover from Wednesday, <a href="#recipe-9">where the method is</a>.</p>
+<p class="pointer">Leftover from <a href="#recipe-9">Wednesday Dinner</a>.</p>
 </article>
+</section>
+<section class="sitting">
+<h3 class="sitting-band"><span class="band-day">Sunday</span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe repeat" id="recipe-21">
 <h4>Salmon fillet with sweet potato and green beans</h4>
-<p class="recipe-meta">Sunday &middot; Dinner &middot; prep 10 min &middot; cook 30 min</p>
+<p class="recipe-meta">prep 10 min &middot; cook 30 min</p>
 <p class="macros">620 kcal &middot; 52 g carbs &middot; 40 g protein &middot; 26 g fat &middot; 8 g fibre</p>
-<p class="pointer">Cooked again from Tuesday, <a href="#recipe-6">where the method is</a>.</p>
+<p class="serves">Makes 1 portion.</p>
 <ul class="ingredients">
 <li>Salmon fillet <span class="qty">200 g</span></li>
 <li>Sweet potato <span class="qty">300 g, cubed</span> <span class="qty-hint">(2)</span></li>
 <li>Green beans <span class="qty">200 g</span></li>
 <li>Olive oil <span class="qty">1 tbsp</span></li>
 </ul>
+<ol class="steps">
+<li>Roast the sweet potato with oil at 200°C for 25 minutes.</li>
+<li>Add the salmon for the last 12 minutes.</li>
+<li>Steam the green beans 5 minutes and serve alongside.</li>
+</ol>
 </article>
+</section>
 </section>
 </section>
 <section class="shop-sheet">

@@ -3,7 +3,7 @@ type: Glossary Term
 title: Origin, repeat and leftover
 description: The three kinds of recipe entry. A repeat cooks the dish again and buys it again; a leftover eats a portion already cooked and buys nothing. Getting that backwards is silent in both directions.
 tags: [domain, plan]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-09-30T20:29:56Z
 sources: [skills/training-week-meal-plan/references/fuelling.md, skills/training-week-meal-plan/references/plan-schema.json]
 source_commit: 01265d60524785eee06f6acb56fc010adb69359b
 ---
@@ -45,6 +45,12 @@ day. That one difference drives three checks and is easy to get backwards:
 Some dishes are not worth batching — eggs on toast is faster to make twice than
 to store. Collapsing repeat into leftover would mean either buying twice for a
 reheat or under-buying for a second cook.
+
+Collapsing it into a second origin was asked about too, and kept apart: the
+model would write the list and the method twice, and two copies of one dish can
+disagree about its figures. The distinction is the plan's alone — **the page
+prints a repeat as a first cook**, whole, with its own Makes line
+([the printable page](/architecture/the-printable-page.md#a-repeat-reads-as-a-first-cook)).
 
 # In the validator
 
