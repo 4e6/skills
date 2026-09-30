@@ -1,9 +1,9 @@
 ---
 type: Open Question
 title: Which copy of a skill is the one to edit?
-description: Two skills here have a second copy elsewhere. training-week-meal-plan's stayed with its tests and schema generator; llm-wiki's is the one its author's assistant loads. Until one side of each is the source, the copies drift.
+description: Two skills here have a second copy elsewhere. training-week-meal-plan's stayed with its tests and schema generator; llm-wiki's is where it was developed, though the author's assistant now loads this one. Until one side of each is the source, the copies drift.
 tags: [process, distribution]
-timestamp: 2026-09-30T22:00:50Z
+timestamp: 2026-09-30T22:02:50Z
 status: open
 sources: [skills/training-week-meal-plan/**, skills/llm-wiki/**]
 source_commit: d2e959842d2f175a45c0d098e42338b69645360d
@@ -61,9 +61,8 @@ than one place; copying the other way would undo all of it.
 # llm-wiki has the same question
 
 `skills/llm-wiki/` was copied on 2026-09-30 from the author's own collection of
-Claude Code skills, where it is developed and where the copy their assistant
-loads lives. It came without tests to leave behind, and it was changed on the
-way in, so nothing false went out with it:
+Claude Code skills, where it was developed. It came without tests to leave
+behind, and it was changed on the way in, so nothing false went out with it:
 
 - the frontmatter gained `license`, `compatibility` and `metadata`, and the
   folder a `LICENSE`;
@@ -74,8 +73,11 @@ way in, so nothing false went out with it:
   was never retried, and its venv was not ignored; and `okf.py` let a leading
   `/` in `sources` match at any depth.
 
-A copy either way has to keep those. Until one side is the source, edit it in
-one place and carry the change across.
+The same day, the author's assistant was pointed at this copy, so the other is
+loaded by nothing and has none of the fixes. That leans toward this side being
+the source, but the other copy still exists. A copy either way has to keep the
+changes above. Until one side is the source, edit it in one place and carry the
+change across.
 
 # Until it is answered
 
