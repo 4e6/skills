@@ -53,8 +53,8 @@ That is the only time the skill uses the network. Generating is offline.
 
 About 40 seconds for a one-megapixel image on an M5 Pro, measured, and about
 10 seconds for a 512×512 one, which is drawn at that size rather than drawn
-larger and shrunk; earlier and base chips are slower. A batch loads the model once, so twenty images take about
-twenty times as long as one.
+larger and shrunk; earlier and base chips are slower. A batch loads the model
+once, so twenty images take about twenty times as long as one.
 
 ## Removing it
 

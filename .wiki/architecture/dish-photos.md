@@ -52,7 +52,8 @@ drawn again. Nothing is deleted or dated.
   size from the header. Anything else, the plan named by mistake included, is
   never embedded in a page that may be published.
 - **150 KB a photo, 2 MB a page, every card counted.** A 512 px square JPEG at
-  quality 80 is 35–80 KB. The page cap has no measured basis beyond one preview
+  quality 80 is about 35–90 KB: 35–38 KB measured, the top
+  scaled from the 80 KB once seen at 480 px. The page cap has no measured basis beyond one preview
   opening 1.2 MB and refusing 48 MB. `photos.md` specifies the photo — square, 512 px, about
   quality 80, asked for at that size rather than drawn larger and shrunk — and
   does not teach resizing: the standard library cannot, and a

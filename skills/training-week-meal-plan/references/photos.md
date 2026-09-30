@@ -51,7 +51,7 @@ error, stop drawing and render with what you have.
 - **Square, 512 by 512 pixels**, cropped to the plate's centre if it was drawn
   another shape. Ask for that size where the tool takes one, rather than a
   larger picture shrunk afterwards.
-- **A JPEG at about quality 80**, which comes to 35 to 80 KB. PNG and WebP are
+- **A JPEG at about quality 80**, which comes to about 35 to 90 KB. PNG and WebP are
   read too, but a photo saved as PNG is usually over the cap.
 - **At most 150 KB each, and 2 MB together**, a photo counted once for every card
   that shows it: the page is one file, and a heavy one will not open in a
