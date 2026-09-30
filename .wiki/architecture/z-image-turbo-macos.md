@@ -81,16 +81,18 @@ that doesn't.
   one prompt come out identical, and one from the file name alone made
   `a/hero.jpg` and `b/hero.jpg` collide. `out` relative to `--out-dir` keeps a
   jobs file's images the same from any folder; normalised and without its
-  extension, `./fox.jpg`, `fox.jpg` and `fox.png` are one image. Every `made`
-  line prints the seed, so any image can be made again elsewhere. A job that
-  would still repeat another is refused before anything is generated.
+  extension, `./fox.jpg`, `fox.jpg` and `fox.png` are one image, so a logo asked
+  for in two formats is drawn alike twice. Every `made` line prints the seed, so
+  any image can be made again under another name. Two names that would still
+  draw one image are refused before anything is generated.
 - **The drawing size follows the final size.** Asked for a 1200×630 header, a
   host had to guess a drawing size; asked for a 1200×1800 print, a one-megapixel
   drawing was enlarged 1.4 times. Now `--resize` alone sets the drawing to its
-  shape and size, at least one megapixel and within the sides' bounds, so the
-  crop throws little away and a print is drawn near its own size. A note says
-  when the final image is enlarged more than 1.5 times, below which it is hard
-  to see.
+  shape and, as its size asks, from about one megapixel up to 1024×1536's area,
+  so the crop throws little away and a print is drawn near its own size. Not
+  further: 1536×1536 peaked at 24 GB, which would swap the 24 GB Mac the check
+  calls enough. A note says when the final image is enlarged more than 1.5
+  times, below which it is hard to see.
 - **The MLX buffer cache is capped at 1 GB.** Uncapped, MLX keeps freed buffers
   until memory runs short, and one image showed a 34 GB peak on a 48 GB Mac. The
   cap is mflux's own low-memory value.

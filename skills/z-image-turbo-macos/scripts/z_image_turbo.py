@@ -269,6 +269,18 @@ def packages_ready(deep: bool = False) -> bool:
     return out.stdout.strip() == MFLUX_VERSION
 
 
+def probe_error() -> str:
+    """The last line the environment's Python prints when the model's imports
+    fail: the reason to show when setup's own check of its work fails."""
+    try:
+        out = subprocess.run([str(venv_python()), "-c", "from mflux.models.z_image import ZImage"],
+                             capture_output=True, text=True, timeout=VENV_PROBE_TIMEOUT)
+    except (OSError, subprocess.SubprocessError) as exc:
+        return str(exc)
+    lines = out.stderr.strip().splitlines()
+    return lines[-1] if lines else "no detail"
+
+
 def model_missing_bytes() -> int:
     """Bytes of the model not yet in the cache at the pinned revision; 0 when
     it is complete. A file of the wrong size counts as missing."""
@@ -451,8 +463,11 @@ def cmd_setup(args: argparse.Namespace) -> int:
                # A package with no wheel for this Mac fails here in seconds,
                # rather than after a long, doomed build from source.
                "--only-binary=:all:", "-r", str(REQUIREMENTS), "-c", str(CONSTRAINTS)]
-        if subprocess.run(pip).returncode != 0 or not packages_ready(deep=True):
+        if subprocess.run(pip).returncode != 0:
             print("[setup] failed: the packages did not install; the lines above say why", file=sys.stderr)
+            return EXIT_PARTIAL
+        if not packages_ready(deep=True):
+            print(f"[setup] failed: the packages installed but do not load: {probe_error()}", file=sys.stderr)
             return EXIT_PARTIAL
         print(f"[setup] mflux {MFLUX_VERSION} installed", flush=True)
 
@@ -503,6 +518,9 @@ RESIZE_MAX = 4 * SIDE_MAX
 # times flatter than that crops the drawing to a sliver.
 RESIZE_RATIO_MAX = 4 * SIDE_MAX / SIDE_MIN
 DEFAULT_PIXELS = 1024 * 1024
+# The default drawing grows toward a larger --resize only this far: 1024x1536
+# peaked at 19 GB, where 1536x1536 took 24 GB and would swap a 24 GB Mac.
+MAX_DEFAULT_PIXELS = 1024 * 1536
 # Seeds are 32-bit: what the prompt hash gives, and far below MLX's own limit.
 SEED_MAX = 2**32 - 1
 # The turbo model is tuned for single-digit step counts; the bound catches typos.
@@ -537,11 +555,12 @@ def parse_size(text: str, flag: str, model_side: bool) -> tuple[int, int]:
 
 def size_for(shape: tuple[int, int]) -> tuple[int, int]:
     """The drawing size for a final size: its shape, so --resize crops away as
-    little as it can, and at least one megapixel, where the model is at its best.
-    Larger when the final size is larger, as far as the sides allow, so a print
-    is drawn at its own size rather than enlarged. Each side a multiple of 16."""
+    little as it can, and about one megapixel, where the model is at its best.
+    Larger when the final size is larger, up to MAX_DEFAULT_PIXELS, so a print
+    is drawn near its own size rather than enlarged. Each side a multiple of 16,
+    within the sides' bounds, which make very wide shapes a little smaller."""
     ratio = shape[0] / shape[1]
-    pixels = max(DEFAULT_PIXELS, shape[0] * shape[1])
+    pixels = min(MAX_DEFAULT_PIXELS, max(DEFAULT_PIXELS, shape[0] * shape[1]))
     def side(x: float) -> int:
         return min(SIDE_MAX, max(SIDE_MIN, SIDE_STEP * round(x / SIDE_STEP)))
     w, h = math.sqrt(pixels * ratio), math.sqrt(pixels / ratio)
@@ -626,10 +645,14 @@ def load_jobs(args: argparse.Namespace) -> list[dict]:
             seed = default_seed(prompt, out.strip())
         elif not isinstance(seed, int) or isinstance(seed, bool) or not 0 <= seed <= SEED_MAX:
             raise UsageError(f"{where}: \"seed\" must be a whole number from 0 to {SEED_MAX}")
-        if (prompt, seed) in seen_images:
-            raise UsageError(f"{where} would draw the same image as job {seen_images[(prompt, seed)]}: "
+        stem = os.path.splitext(os.path.normpath(out.strip()))[0]
+        earlier = seen_images.get((prompt, seed))
+        # One name in two formats is one image asked for twice, and is drawn
+        # twice alike; two names with one prompt and seed are a mistake.
+        if earlier and earlier[1] != stem:
+            raise UsageError(f"{where} would draw the same image as job {earlier[0]}: "
                              "same prompt, same seed; give one of them another seed")
-        seen_images[(prompt, seed)] = i
+        seen_images.setdefault((prompt, seed), (i, stem))
         jobs.append({"prompt": prompt, "path": path, "seed": seed})
     return jobs
 
@@ -876,8 +899,8 @@ def main() -> int:
     g.add_argument("--seed", type=int, help="one image: its seed (default: from the prompt and file name)")
     g.add_argument("--jobs", help="many images: a JSON list of {\"prompt\", \"out\", optional \"seed\"}")
     g.add_argument("--out-dir", default=".", help="where relative \"out\" paths land (default: here)")
-    g.add_argument("--size", help="size the model draws at (default: --resize's shape and size, "
-                                  "at least 1 megapixel and at most 1536 a side; else 1024x1024)")
+    g.add_argument("--size", help="size the model draws at (default: --resize's shape, about 1 to "
+                                  "1.6 megapixels as its size asks; else 1024x1024)")
     g.add_argument("--resize", help="centre-crop and scale each image to WIDTHxHEIGHT before saving")
     g.add_argument("--quality", type=int, default=85, help="JPEG and WebP quality (default: 85)")
     # mflux's own default for this model, and what its publishers recommend.

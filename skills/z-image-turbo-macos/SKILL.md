@@ -112,8 +112,9 @@ file names.
 
 **Seeds.** A job without a `seed` gets one from its prompt and its `out` name,
 and every `made` line prints it. So several jobs with one prompt and different
-names give different images, the same job gives the same image every time, and
-the same image in another format or place needs that seed passed on.
+names give different images, and the same job gives the same image every time.
+One name in two formats, `logo.png` and `logo.jpg`, is one image; the same image
+under another name needs its seed passed on.
 
 ```json
 [
@@ -129,14 +130,16 @@ python3 SKILL_DIR/scripts/z_image_turbo.py generate --jobs jobs.json --out-dir i
 | Option | Default | What it does |
 |---|---|---|
 | `--resize WxH` | none | the final size, such as `1200x630`, `1200x1800` or `480x480`: centre-crops to its shape and scales to it |
-| `--size WxH` | `--resize`'s shape and size, at least one megapixel and at most 1536 a side; else `1024x1024` | the size the model draws at. Leave it out |
+| `--size WxH` | `--resize`'s shape, about 1 to 1.6 megapixels as its size asks; else `1024x1024` | the size the model draws at, which `--dry-run` shows. Leave it out |
 | `--quality N` | `85` | JPEG and WebP quality |
 | `--steps N` | `9` | what the model is tuned for; leave it |
 | `--force` | off | redraws images that already exist |
 | `--dry-run` | off | checks the jobs and lists what would be made |
 
-**It takes about 40 seconds a megapixel**, measured on an M5 Pro — a
-1200×1800 print takes about a minute — and longer on earlier and base chips. Tell the user roughly how long a batch will take, and
+**It takes about 40 seconds for each megapixel the model draws** — not the
+final size: a thumbnail is drawn at 1024×1024 and takes 40 seconds, a 1200×1800
+print is drawn at 1024×1536 and takes about a minute. Measured on an M5 Pro;
+earlier and base chips are slower. Tell the user roughly how long a batch will take, and
 run `generate` in the background where your host can: many hosts stop a command
 at two minutes. A line appears only as each image finishes, so wait for the
 command to exit rather than reading its output over and over.
