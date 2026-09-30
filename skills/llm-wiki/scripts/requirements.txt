@@ -1,0 +1,9 @@
+# Python dependencies for okf.py (the LLM-wiki / OKF bundle checker).
+# Installed into a venv beside this file, so the skill never depends on a
+# system/user Python, by the setup in SKILL.md, "Scripts"; the script is then
+# run with .venv/bin/python.
+#
+# NOTE: `git` is a system binary the script shells out to for staleness and
+# coverage — it is not a Python package and cannot live in this venv.
+PyYAML==6.0.3
+pathspec==0.12.1

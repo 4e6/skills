@@ -3,7 +3,7 @@ type: Module
 title: The zip release
 description: Web hosts install a skill from an uploaded zip. Each skill is released on its own when its version changes, as a zip built from the commit, and README.md's download link is both the offer and the list of skills that get one.
 tags: [distribution, release, ci]
-timestamp: 2026-09-30T21:38:47Z
+timestamp: 2026-09-30T21:57:09Z
 sources: [tools/release.py, .github/workflows/release.yml, /README.md, /.gitignore]
 source_commit: ea7f6298478cd9c23b755800ddd3edab26f32348
 ---
@@ -48,6 +48,9 @@ merge, the new link is dead.
 Linux sandbox, and the skill works only on the user's Mac
 ([why](/architecture/z-image-turbo-macos.md)); a zip would install and then fail
 every time.
+
+`llm-wiki` has none either: it works on a project's git checkout, which a web
+app's chat does not have.
 
 # Built from the commit, not the folder
 

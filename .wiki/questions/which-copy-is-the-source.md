@@ -1,11 +1,11 @@
 ---
 type: Open Question
-title: Which copy of the skill is the one to edit?
-description: The skill moved here on 2026-09-30 and a copy stayed in the private codebase it was developed in, with its tests, its schema generator and the reference its checks were ported from. Until one side is the source, the two will drift.
+title: Which copy of a skill is the one to edit?
+description: Two skills here have a second copy elsewhere. training-week-meal-plan's stayed with its tests and schema generator; llm-wiki's is where it was developed, though the author's assistant now loads this one. Until one side of each is the source, the copies drift.
 tags: [process, distribution]
-timestamp: 2026-09-30T21:38:47Z
+timestamp: 2026-09-30T22:02:50Z
 status: open
-sources: [skills/training-week-meal-plan/**]
+sources: [skills/training-week-meal-plan/**, skills/llm-wiki/**]
 source_commit: d2e959842d2f175a45c0d098e42338b69645360d
 ---
 
@@ -58,6 +58,27 @@ has moved:
 Copying the folder back unchanged would fail the old repository's checks in more
 than one place; copying the other way would undo all of it.
 
+# llm-wiki has the same question
+
+`skills/llm-wiki/` was copied on 2026-09-30 from the author's own collection of
+Claude Code skills, where it was developed. It came without tests to leave
+behind, and it was changed on the way in, so nothing false went out with it:
+
+- the frontmatter gained `license`, `compatibility` and `metadata`, and the
+  folder a `LICENSE`;
+- the scope note no longer says where the skill is kept or linked from, and the
+  script's path is an example rather than one machine's;
+- two references to skills that are not here were cut;
+- two faults a review found were fixed here only: a setup that failed halfway
+  was never retried, and its venv was not ignored; and `okf.py` let a leading
+  `/` in `sources` match at any depth.
+
+The same day, the author's assistant was pointed at this copy, so the other is
+loaded by nothing and has none of the fixes. That leans toward this side being
+the source, but the other copy still exists. A copy either way has to keep the
+changes above. Until one side is the source, edit it in one place and carry the
+change across.
+
 # Until it is answered
 
-Edit the skill in one place only, and say which in the commit.
+Edit each skill in one place only, and say which in the commit.
