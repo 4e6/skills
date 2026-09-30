@@ -5,7 +5,7 @@ description: render.py writes one self-contained HTML file for print, a phone an
 tags: [architecture, rendering]
 timestamp: 2026-09-30T17:59:25Z
 sources: [skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css, skills/training-week-meal-plan/examples/**]
-source_commit: bae027044545122fadf81e46fed4acac4f6b0a62
+source_commit: 36cd180908e7f0820c5f9881c1f3ddf776de7eb9
 ---
 
 # One file, and Cmd-P
