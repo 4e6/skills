@@ -3,7 +3,7 @@ type: Convention
 title: Editing a skill
 description: Re-read the two upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone, and a change to behaviour or to the page is judged by running it.
 tags: [skills, authoring, review]
-timestamp: 2026-09-30T15:00:00Z
+timestamp: 2026-09-30T17:40:49Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
 source_commit: bae027044545122fadf81e46fed4acac4f6b0a62
 ---
@@ -97,8 +97,9 @@ screenshot:
   headless Chrome will not lay a window out narrower than 500 — and compared **at
   full height**: a one-screen screenshot once passed a change that altered the
   recipes below it;
-- **the wide screen** too: a tick box once wrapped the longest shopping rows only
-  there;
+- **the wide screen** too, on both sides of its two thresholds (about 790 px for
+  the paper's measure, 1180 px for the rail): a tick box once wrapped the longest
+  shopping rows only there, and the rail at 1100 px scrolled the page sideways;
 - then **a reader**, blind where the change is a matter of taste — files named
   identically in both arms, with the key kept outside anything the reader can
   list, since a tool's file naming once revealed which arm a reader held.

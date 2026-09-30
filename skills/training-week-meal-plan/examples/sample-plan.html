@@ -360,25 +360,26 @@ h4 {
  * set weaker than the content half and twenty-one of them ran together.
  *
  * The group is a landmark, not a container, and there is deliberately no
- * `break-inside: avoid` on it. Printed, the recipes run in two columns (the
- * print block at the end), each 84mm wide — .sheet's 176mm less the 8mm gap,
- * halved — and 267.0mm tall, which is A4 less the 16mm and 14mm of @page. The
- * tallest recipe of examples/sample-plan.html runs to 98.4mm at that width,
- * and nothing bounds a day: it is three sittings of up to eight ingredients and
- * seven steps each, a sitting may be several dishes, and titles wrap in longer
- * languages. Held together, a day longer than a column would move to a fresh
- * one, fail to fit there either, and split anyway, having spent the hole.
+ * `break-inside: avoid` on it. Printed, the recipes run in one column, 176mm
+ * wide and 267.0mm tall, which is A4 less the 16mm and 14mm of @page — the
+ * page the reader sees on a wide screen, rather than the two 84mm columns it
+ * printed in before, which read differently from the screen and wrapped a
+ * method line twice as often. A card with an 80mm photo is about 105mm tall,
+ * so a page holds two, and nothing bounds a day: it is three sittings of up to
+ * eight ingredients and seven steps each, a sitting may be several dishes, and
+ * titles wrap in longer languages. Held together, a day longer than a page
+ * would move to a fresh one, fail to fit there either, and split anyway,
+ * having spent the hole.
  *
  * To take the figure again, print the sample from Chrome to a file and read each
  * recipe's height off `pdftotext -bbox-layout`, from its title to its last
- * line in the same column. Not from the page on a screen: the columns and the
- * tighter spacing are print-only, so a screen measures a recipe 176mm wide and
- * reads it short — and before the columns, overriding the screen rules one by
- * one read 3mm high on every day, because .day-band's screen-only padding
- * survived. The figure moves whenever anything inside a recipe block does.
+ * line. Not from the page on a screen: the screen's own padding and sticky band
+ * are not the page's, and overriding the screen rules one by one once read 3mm
+ * high on every day, because .day-band's screen-only padding survived. The
+ * figure moves whenever anything inside a recipe block does.
  *
- * What is guaranteed instead is that the band never ends a page or a column,
- * and that a split can only ever fall between two recipes. */
+ * What is guaranteed instead is that the band never ends a page, and that a
+ * split can only ever fall between two recipes. */
 
 .recipes > h2 {
   margin-bottom: 6mm;
@@ -405,9 +406,9 @@ h4 {
 }
 
 /* The same constraint from the other side. The first recipe is itself atomic,
- * so band and recipe move to the next page or column together or not at all —
- * and band plus the tallest measured recipe is about 110mm of a 267.0mm
- * column, always placeable.
+ * so band and recipe move to the next page together or not at all — and band
+ * plus the tallest measured recipe is well under half of a 267.0mm page,
+ * always placeable.
  *
  * The third selector is the case that has a paragraph in the middle. When
  * kept_recipes holds an origin on an excluded day for a leftover that still
@@ -434,13 +435,19 @@ h4 {
 
 .recipe {
   /* The one rule the page cannot do without: a recipe is read while cooking,
-   * so it may not be split across a page — or, printed, across a column. An
-   * avoid rather than a guarantee: a recipe taller than a column still splits. */
+   * so it may not be split across a page. An avoid rather than a guarantee: a
+   * recipe taller than a page still splits. */
   break-inside: avoid;
   page-break-inside: avoid;
   margin-bottom: 6mm;
   padding-bottom: 5mm;
   border-bottom: 0.4pt solid #bbb;
+  /* A word longer than the line -- a link pasted into a method, a title
+   * copied from a calendar -- breaks rather than running off the page, where
+   * the printer clips it without a word. In every medium: the two print
+   * columns carried this, and without them a 150-character address lost 47
+   * characters past the page's edge. */
+  overflow-wrap: anywhere;
 }
 
 /* Once per day now, rather than once per page. A recipe is the last child of
@@ -497,8 +504,9 @@ h4 {
  *
  * As large as it can be while two lines beside it stay on one line each: the
  * day, meal and times, and the figures. The figures run to about 85mm at their
- * longest, and a card on a wide screen is 151mm, so 60mm; the same size on every
- * card. In print a column is 84mm and a 390px phone leaves 360px, which the
+ * longest. On paper, and on a screen wide enough for the paper's measure, the
+ * card is 176mm, so 80mm, leaving 91mm beside it; on a screen between that and a
+ * phone the card is 152mm, so 60mm. A 390px phone leaves 360px, which the
  * figures fill alone, so there the tile shrinks beside the title and those two
  * lines run the full width beneath it. None of this matches anything
  * unless the renderer was handed photos. */
@@ -516,10 +524,10 @@ h4 {
 }
 
 /* Held on one line only where they were measured to fit beside the photo: a
- * wide screen gives them 91mm against the figures' 85mm at their longest. In
- * print and on a phone they sit under the photo, where they fit as they are,
- * and wrap rather than run into the next column if a plan ever makes them
- * longer -- the page defends itself against the text it is given. */
+ * wide screen gives them 87mm, and 91mm at the paper's measure, against the
+ * figures' 85mm at their longest. In print they may wrap beside the photo, and
+ * on a phone they sit under it, rather than run off the card if a plan ever
+ * makes them longer -- the page defends itself against the text it is given. */
 @media screen and (min-width: 184.01mm) {
   .pictured .nb,
   .pictured .macros {
@@ -548,10 +556,27 @@ h4 {
   font-size: 10pt;
 }
 
+/* A dot before each row, so the list reads as one. A character rather than the
+ * list's own marker, which sits outside the box and in the second column would
+ * hang in the gap; and a character rather than a drawn circle, which is a fill
+ * and does not print. A row that wraps hangs under its text, as a shopping row
+ * does under its box. The second `content` gives the dot empty alternative
+ * text, so a screen reader does not say "bullet" before every ingredient; an
+ * engine that cannot read it keeps the first. */
 .ingredients li {
   break-inside: avoid;
   page-break-inside: avoid;
-  padding: 0.4mm 0;
+  padding: 0.4mm 0 0.4mm 3.5mm;
+  text-indent: -3.5mm;
+}
+
+.ingredients li::before {
+  content: "\2022";
+  content: "\2022" / "";
+  display: inline-block;
+  width: 3.5mm;
+  text-indent: 0;
+  color: #555;
 }
 
 .qty {
@@ -652,9 +677,9 @@ h4 {
  * columns, about 83mm each. The box to tick takes 5mm of that, so
  * the longest rows can wrap once, and they hang under their text; binding the
  * count to its weight would not stop that, only move where it breaks. The
- * ingredient list is two columns at the sheet's measure on a wide screen, and
- * one on paper, where each recipe is itself a column. On a phone both lists
- * are one column. */
+ * ingredient list is two columns at the sheet's measure, on a wide screen and
+ * on paper alike, and one beside a photo. On a phone both lists are one
+ * column. */
 .qty-hint {
   color: #555;
   /* Nothing caps this field — validate.py checks arithmetic, not shapes — so
@@ -690,7 +715,7 @@ h4 {
    * and take the answer with it. Sticky holds it there until its own day ends,
    * where the next band pushes it off; `.recipe-day` bounds it, so no band ever
    * outstays its recipes. Screen only — print has pages, and there the
-   * guarantee is the opposite one, that a band never ends a page or a column. */
+   * guarantee is the opposite one, that a band never ends a page. */
   .day-band {
     position: sticky;
     top: 0;
@@ -726,6 +751,138 @@ h4 {
   .shop-list label:has(input:checked) {
     opacity: 0.5;
     text-decoration: line-through;
+  }
+}
+
+/* ---- A wide screen --------------------------------------------------- */
+
+/* Whenever the window has room for the paper's measure: 176mm of text inside
+ * the sheet's 12mm and 12mm of padding, plus the 4mm and 4mm of body padding.
+ * The page is then the printed page, card for card, tile and all. Below it,
+ * down to a phone, the sheet stays 176mm across its padding and the tile 60mm,
+ * as they always were. */
+@media screen and (min-width: 208.01mm) {
+  .sheet {
+    max-width: 200mm;
+  }
+
+  .recipe-photo {
+    width: 80mm;
+    height: 80mm;
+  }
+}
+
+/* The rail: the week beside the page, and in view however far down it the
+ * reader is. Built by render.py for every page and shown only here, where the
+ * window holds it beside the sheet: 72mm of rail and 8mm of gap beside 200mm
+ * of sheet is 1088px with the body's padding, and 1180 leaves room for a
+ * scrollbar that takes space. The side opposite is empty up to 52mm, so the
+ * sheet sits near the middle of a wide window rather than pushed right.
+ *
+ * Nowhere else: a narrower window has the links under the title, a phone
+ * scrolls, and paper turns pages. So it is hidden everywhere by default, print
+ * included, and the links under the title are hidden where it shows. */
+.rail {
+  display: none;
+}
+
+@media screen and (min-width: 1180px) {
+  body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 80mm 200mm minmax(0, 52mm) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .sheet {
+    grid-column: 3;
+    grid-row: 1;
+    width: 100%;
+  }
+
+  /* Its own scroll when the week is taller than the window, as it is on a
+   * laptop's 800px. */
+  .rail {
+    display: block;
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 8mm;
+    max-height: calc(100vh - 16mm);
+    overflow-y: auto;
+    padding-right: 8mm;
+    font-size: 10pt;
+    line-height: 1.35;
+  }
+
+  .masthead .jump {
+    display: none;
+  }
+
+  .rail a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .rail a:hover {
+    text-decoration: underline;
+  }
+
+  .rail-title {
+    font-weight: 700;
+    font-size: 12pt;
+    margin: 0 0 3mm;
+    padding-bottom: 2mm;
+    border-bottom: 1.2pt solid #000;
+  }
+
+  .rail-parts {
+    list-style: none;
+    margin: 0 0 3mm;
+    padding: 0;
+    font-size: 9.5pt;
+  }
+
+  .rail-parts a {
+    text-decoration: underline;
+  }
+
+  .rail-week {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .rail-week > li {
+    padding: 1.5mm 0 2mm;
+    border-bottom: 0.4pt solid #ccc;
+  }
+
+  .rail-day {
+    font-weight: 700;
+  }
+
+  .rail-training {
+    display: block;
+    font-size: 8.5pt;
+    font-style: italic;
+    color: #444;
+  }
+
+  .rail-dishes {
+    list-style: none;
+    margin: 0.8mm 0 0;
+    padding: 0;
+    font-size: 9pt;
+    color: #222;
+  }
+
+  .rail-dishes li {
+    padding: 0.2mm 0;
+  }
+
+  .rail-week .excluded {
+    font-size: 9pt;
+    margin: 0.8mm 0 0;
   }
 }
 
@@ -808,54 +965,14 @@ h4 {
     text-decoration: none;
   }
 
-  /* The recipes flow down one column, then the next, then onto the next page.
-   * A recipe still does not split, across a column as well as a page, so the
-   * foot of a column that a long recipe could not use is taken by the next
-   * short one — a leftover's pointer, a repeat — rather than left white. The
-   * limit is a column's height: a recipe taller than 267mm at 84mm wide splits
-   * anyway. The example's bolognese given seven steps of 260 characters did,
-   * where one column across the page held it; the longest method in any plan
-   * measured is 475 characters, and nothing bounds it.
-   * Print only: on a screen the recipes are one scroll, and on a phone one
-   * column already.
-   *
-   * The whole section flows rather than each day on its own: a day balanced by
-   * itself left uneven holes and stranded a band at the foot of a page. And the
-   * engine packs rather than render.py, which cannot measure a recipe and must
-   * not reorder them — every recipe sits under the day that eats it. */
-  .recipe-cols {
-    columns: 2;
-    column-gap: 8mm;
-    /* Half the measure the recipes had, so half the word that overflows. */
-    overflow-wrap: anywhere;
-  }
-
-  /* An ingredient row in two columns of an 84mm column breaks mid-row. auto,
-   * not 1: one column is still a multi-column container. */
-  .recipe-cols .ingredients {
-    columns: auto;
-  }
-
-  .recipe {
-    margin-bottom: 4mm;
-    padding-bottom: 3mm;
-  }
-
-  .recipe-day + .recipe-day {
-    margin-top: 6mm;
-  }
-
-  /* An 84mm column: the tile beside the title, and the day and the figures
-   * under it, where a line of either fits. */
+  /* The recipes print as a wide screen shows them, one to the width of the
+   * page, and so does the tile: nothing above this changes for paper but the
+   * tile's size. The price is paper: two photo cards to a page where there were
+   * three, and the sample with photos prints fifteen pages where it printed
+   * ten in two columns. */
   .recipe-photo {
-    width: 26mm;
-    height: 26mm;
-    margin: 0.5mm 4mm 2mm 0;
-  }
-
-  .pictured .recipe-meta,
-  .pictured .macros {
-    clear: left;
+    width: 80mm;
+    height: 80mm;
   }
 
   /* An empty ruled square for a pen, whatever was ticked on screen. A ruled
@@ -871,6 +988,33 @@ h4 {
 </style>
 </head>
 <body>
+<nav class="rail" aria-label="Contents">
+<p class="rail-title">Training week</p>
+<ul class="rail-parts"><li><a href="#glance">The week at a glance</a></li><li><a href="#week">The week</a></li><li><a href="#recipes">Recipes</a></li><li><a href="#shopping">Shopping list</a></li></ul>
+<ol class="rail-week">
+<li><a class="rail-day" href="#day-1">Monday</a><span class="rail-training">Run Z2 60&#x27; aerobic</span>
+<ul class="rail-dishes"><li><a href="#recipe-1">Porridge with banana, walnuts and honey</a></li><li><a href="#recipe-2">Chicken and rice bowl with roasted peppers</a></li><li><a href="#recipe-3">Lentil soup</a></li></ul>
+</li>
+<li><a class="rail-day" href="#day-2">Tuesday</a><span class="rail-training">Bike Z4 6x6&#x27; + brick run 20&#x27;</span>
+<ul class="rail-dishes"><li><a href="#recipe-4">Eggs on toast with avocado</a></li><li><a href="#recipe-5">Tuna pasta salad</a></li><li><a href="#recipe-6">Salmon fillet with sweet potato and green beans</a></li></ul>
+</li>
+<li><a class="rail-day" href="#day-3">Wednesday</a><span class="rail-training">Run Z5 VO2max 12x500m + strength</span>
+<ul class="rail-dishes"><li><a href="#recipe-7">Porridge with banana, walnuts and honey</a></li><li><a href="#recipe-8">Lentil soup</a></li><li><a href="#recipe-9">Spaghetti bolognese</a></li></ul>
+</li>
+<li><a class="rail-day" href="#day-4">Thursday</a><span class="rail-training">Swim Z5 12x50</span>
+<ul class="rail-dishes"><li><a href="#recipe-10">Greek yogurt with oats, berries and honey</a></li><li><a href="#recipe-11">Chickpea and roasted vegetable salad</a></li><li><a href="#recipe-12">Omelette with potatoes and side salad</a></li></ul>
+</li>
+<li><a class="rail-day" href="#day-5">Friday</a><span class="rail-training">Day off</span>
+<ul class="rail-dishes"><li><a href="#recipe-13">Eggs on toast with avocado</a></li><li><a href="#recipe-14">Chickpea and roasted vegetable salad</a></li><li><a href="#recipe-15">Grilled mackerel with boiled potatoes and tomato salad</a></li></ul>
+</li>
+<li><a class="rail-day" href="#day-6">Saturday</a><span class="rail-training">Bike Z4 TT 4x10&#x27; + 30&#x27; Z3, brick run 30&#x27;</span>
+<ul class="rail-dishes"><li><a href="#recipe-16">Porridge with banana, walnuts and honey</a></li><li><a href="#recipe-17">Spaghetti bolognese</a></li><li><a href="#recipe-18">Chicken and rice bowl with roasted peppers</a></li></ul>
+</li>
+<li><a class="rail-day" href="#day-7">Sunday</a><span class="rail-training">Run Z4 4x8&#x27; threshold + open water swim 2000m</span>
+<ul class="rail-dishes"><li><a href="#recipe-19">Porridge with banana, walnuts and honey</a></li><li><a href="#recipe-20">Spaghetti bolognese</a></li><li><a href="#recipe-21">Salmon fillet with sweet potato and green beans</a></li></ul>
+</li>
+</ol>
+</nav>
 <main class="sheet">
 <header class="masthead">
 <h1>Training week</h1>
@@ -882,7 +1026,7 @@ h4 {
 </dl>
 <p class="summary">Saturday&#x27;s TT ride and brick run make it the biggest fuel day, and Friday is fed for it rather than as a rest day. Sunday, Wednesday and Tuesday follow; Monday&#x27;s easy run and Thursday&#x27;s swim set get the lightest meals.</p>
 </header>
-<section class="glance">
+<section class="glance" id="glance">
 <h2>The week at a glance</h2>
 <table class="glance-table">
 <colgroup><col class="glance-day"><col class="glance-when"><col><col><col></colgroup>
@@ -900,7 +1044,7 @@ h4 {
 </section>
 <section class="week">
 <h2 id="week">The week</h2>
-<section class="day">
+<section class="day" id="day-1">
 <div class="day-head"><h3>Monday</h3><span class="session">Run Z2 60&#x27; aerobic</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Run 60&#x27; aerobic</span>
@@ -912,7 +1056,7 @@ h4 {
 <li class="meal dinner"><span class="slot">Dinner</span><span class="meal-body">Lentil soup <span class="note">(cook 2 — eat 1, reserve 1)</span></span></li>
 </ul>
 </section>
-<section class="day">
+<section class="day" id="day-2">
 <div class="day-head"><h3>Tuesday</h3><span class="session">Bike Z4 6x6&#x27; + brick run 20&#x27;</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Bike threshold 6x6&#x27;, 1h30</span>
@@ -932,7 +1076,7 @@ h4 {
 </ul>
 <ul class="fuel snacks"><li><span class="slot">Snacks</span><span class="fuel-body">at least about 20 g of carbohydrate, up to 280 g <span class="example">e.g. 1 banana</span></span></li></ul>
 </section>
-<section class="day">
+<section class="day" id="day-3">
 <div class="day-head"><h3>Wednesday</h3><span class="session">Run Z5 VO2max 12x500m + strength</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Run VO2max 12x500m, 1h25</span>
@@ -952,7 +1096,7 @@ h4 {
 </ul>
 <ul class="fuel snacks"><li><span class="slot">Snacks</span><span class="fuel-body">at least about 20 g of carbohydrate, up to 280 g <span class="example">e.g. 1 banana</span></span></li></ul>
 </section>
-<section class="day">
+<section class="day" id="day-4">
 <div class="day-head"><h3>Thursday</h3><span class="session">Swim Z5 12x50</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Swim 12x50 Z5, 1h</span>
@@ -970,7 +1114,7 @@ h4 {
 </ul>
 <ul class="fuel snacks"><li><span class="slot">Snacks</span><span class="fuel-body">at least about 90 g of carbohydrate, up to 220 g, and some protein <span class="example">e.g. 1 bagel with peanut butter, 1 banana, 1 glass of milk</span></span></li></ul>
 </section>
-<section class="day">
+<section class="day" id="day-5">
 <div class="day-head"><h3>Friday</h3><span class="session">Day off</span></div>
 <ul class="meals">
 <li class="meal breakfast"><span class="slot">Breakfast</span><span class="meal-body">Eggs on toast with avocado</span></li>
@@ -979,7 +1123,7 @@ h4 {
 </ul>
 <ul class="fuel snacks"><li><span class="slot">Snacks</span><span class="fuel-body">at least about 170 g of carbohydrate, up to 430 g, and some protein <span class="example">e.g. 2 bagels with jam, 1 banana, 1 glass of milk</span></span></li></ul>
 </section>
-<section class="day">
+<section class="day" id="day-6">
 <div class="day-head"><h3>Saturday</h3><span class="session">Bike Z4 TT 4x10&#x27; + 30&#x27; Z3, brick run 30&#x27;</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Bike TT 4x10&#x27; Z4 + 30&#x27; Z3, 2h40</span>
@@ -998,7 +1142,7 @@ h4 {
 <li class="meal dinner"><span class="slot">Dinner</span><span class="meal-body">Chicken and rice bowl with roasted peppers</span></li>
 </ul>
 </section>
-<section class="day">
+<section class="day" id="day-7">
 <div class="day-head"><h3>Sunday</h3><span class="session">Run Z4 4x8&#x27; threshold + open water swim 2000m</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Run threshold 4x8&#x27;, 1h30</span>
@@ -1020,7 +1164,6 @@ h4 {
 </section>
 <section class="recipes">
 <h2 id="recipes">Recipes</h2>
-<div class="recipe-cols">
 <section class="recipe-day">
 <h3 class="day-band">Monday</h3>
 <article class="recipe origin" id="recipe-1">
@@ -1348,7 +1491,6 @@ h4 {
 </ul>
 </article>
 </section>
-</div>
 </section>
 <section class="shop-sheet">
 <section class="fridge">

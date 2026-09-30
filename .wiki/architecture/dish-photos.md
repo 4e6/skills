@@ -3,7 +3,7 @@ type: Module
 title: Dish photos
 description: Where the host can draw, each dish gets a square photo beside its recipe's title. The renderer lists the dishes, names each photo for what it shows, embeds the bytes, and never lets a bad photo cost the page.
 tags: [architecture, rendering, photos]
-timestamp: 2026-09-30T16:44:20Z
+timestamp: 2026-09-30T17:59:25Z
 sources: [skills/training-week-meal-plan/references/photos.md, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css]
 source_commit: bae027044545122fadf81e46fed4acac4f6b0a62
 ---
@@ -51,10 +51,16 @@ drawn again. Nothing is deleted or dated.
 - **The bytes decide the type** — JPEG, PNG or WebP, read from the first bytes,
   size from the header. Anything else, the plan named by mistake included, is
   never embedded in a page that may be published.
-- **150 KB a photo, 2 MB a page, every card counted.** A 512 px square JPEG at
-  quality 80 is about 35–90 KB: 35–38 KB measured, the top
-  scaled from the 80 KB once seen at 480 px. The page cap has no measured basis beyond one preview
-  opening 1.2 MB and refusing 48 MB. `photos.md` specifies the photo — square, 512 px, about
+- **400 KB a photo, 10 MB a page, every card counted.** A 640 px square JPEG at
+  quality 80 was 55–68 KB for the sample's eleven dishes, whose twenty-one cards
+  came to 1.26 MB; scaled from the 80 KB once seen at 480 px, another tool's could
+  reach 140 KB. The caps were 150 KB and 2 MB, which a week of those would have
+  passed, dropping photos from a page that would have opened: a false alarm. The
+  failure they guard against is the 48 MB page of raw PNGs a preview refused, so
+  they are set to refuse that and nothing sized as asked — 21 cards at 400 KB is
+  8.4 MB, and the cap a page of about 13.5 MB, under the 16 MB a Claude artifact
+  may be. Where between 1.2 MB, which opened, and 48 MB a preview gives up is
+  still unmeasured. `photos.md` specifies the photo — square, 640 px, about
   quality 80, asked for at that size rather than drawn larger and shrunk — and
   does not teach resizing: the standard library cannot, and a
   host that draws usually sizes its pictures too. The host that cannot is caught
@@ -72,10 +78,17 @@ The photo floats at the start of the card; the title sits beside it, then the
 day and times, the figures, the Makes line and the ingredients; the method starts
 beneath, full width. **Two lines are kept whole where there is room** — day · meal · times, and the
 figures — and that sizes the tile: **as large as it can be with both beside it on
-one line**, the same on every card. On a wide screen that is 60 mm; in print and
-on a phone, 26 mm, with both lines running full width beneath. They are held on
-one line only on a wide screen, where the room was measured, and wrap in print
-and on a phone rather than run into the next column.
+one line**, the same on every card. At the paper's 176 mm measure — in print,
+and on any screen wide enough for it — that is 80 mm; on a screen between that
+and a phone, 60 mm; on a phone, 26 mm, with both lines running full width
+beneath. They are held on one line only on a screen, where the room was
+measured, and may wrap in print rather than run off the card.
+
+Paper had 26 mm tiles in 84 mm columns until 2026-09-30, when the recipes went to
+one column so the PDF would look like the screen. The athlete then asked for the
+photos larger, 66 mm and on to 80 mm; 80 mm keeps both lines whole beside it
+(91 mm against the figures' 85 mm), and costs pages — see
+[what one column costs](/architecture/the-printable-page.md#what-one-column-costs).
 
 It got there in steps, each on a rendered page: beside the title at 30 mm (three
 blind readers found titles wrapping to four lines), under the title, then beside
@@ -122,8 +135,16 @@ skipped it.
 [Z-Image Turbo](/architecture/z-image-turbo-macos.md) on an M5 Pro: seven dishes
 at 480 px took 279 s, each drawn at 1024×1024 and shrunk, plus 47 s to redraw one
 whose count of bread rolls was wrong. That is why the photo became 512 px: drawn
-at its own size it takes about 9 s. The page came to about 620 KB.
+at its own size it takes about 9 s. The page came to about 620 KB. The same day
+the tile grew to 80 mm, which a Retina screen shows at about 600 device pixels and
+paper at 200 dpi from 640, so the photo became 640 px: eleven dishes in 161 s,
+about 14 s each, and the sample's page with them 1.75 MB.
+
+**A smaller photo carries forward.** `have` tests a file's bytes and type, not
+its size, so a dish drawn at 480 or 512 px for an earlier week is kept rather
+than redrawn at 640, and is softer at 80 mm until its title or ingredients
+change.
 
 **Still open:** a dish cooked again repeats its photo on every card, and a page
 where only some dishes got a photo looks uneven. Not measured: any other image
-tool's output, and a whole week drawn at 512 px.
+tool's output, and where between 1.2 MB and 48 MB a preview gives up.

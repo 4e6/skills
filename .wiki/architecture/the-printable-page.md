@@ -1,9 +1,9 @@
 ---
 type: Module
 title: The printable page
-description: render.py writes one self-contained HTML file for print and a phone. A plain design made of rules, weight and space, the week at a glance first, recipes that never split, and a byte-compared example whose determinism is engineered.
+description: render.py writes one self-contained HTML file for print, a phone and a wide screen. Plain rules, weight and space; the glance first; one column that never splits a recipe; a byte-compared example.
 tags: [architecture, rendering]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-09-30T17:59:25Z
 sources: [skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css, skills/training-week-meal-plan/examples/**]
 source_commit: bae027044545122fadf81e46fed4acac4f6b0a62
 ---
@@ -21,7 +21,9 @@ reason ([dish photos](/architecture/dish-photos.md)).
 HTML gains one thing over paper: a link is live. Three links under the title jump
 to the week, the recipes and the shopping list; a repeat's *where the method is*
 links to the recipe that has it; every dish on the glance with a recipe links to
-it, and a side with none prints plain.
+it, and a side with none prints plain. On a wide screen the rail beside the page
+carries the same links and the glance's again ([a wide screen](#a-wide-screen-is-the-paper-with-the-week-beside-it)).
+**An id is a position or a fixed word, never plan text**: `recipe-<n>` and `day-<n>`, and the parts' own `glance`, `week`, `recipes` and `shopping`.
 
 # A plain design, and why plain is load-bearing
 
@@ -37,14 +39,20 @@ Print is the target:
   amount of white space rather than a different document.
 - **Page one is the masthead and the glance, nothing else**; the week starts a
   page.
-- **Recipes print in two flowing columns** — on a screen they are one scroll.
-  The whole section flows, because each day on its own was measured worse, and
-  the engine packs rather than `render.py`, which cannot measure a recipe and
-  must not reorder them. **The RECIPES heading sits outside the column box**:
-  spanning it across columns stranded it at the foot of a page, because Chrome
-  does not carry `break-after: avoid` across a spanning element.
+- **Recipes print in one column, as a wide screen shows them** — the full
+  176 mm, the ingredients in two columns, a photo at 80 mm with the method
+  beneath it. They printed in two flowing 84 mm columns until 2026-09-30, which
+  saved paper and read differently from the screen; an athlete asked for the PDF
+  to look like the page. See [what one column costs](#what-one-column-costs).
 - **No break inside a recipe**, in both the modern and the legacy spelling. It is
-  an avoid, not a guarantee: a recipe taller than a column splits anyway.
+  an avoid, not a guarantee: a recipe taller than a page splits anyway.
+- **A long word breaks anywhere in a recipe**, in every medium. The two print
+  columns carried the rule, and when they went it went with them: a review
+  caught a 150-character address in a method losing 47 characters past the
+  page's edge, clipped without a word.
+- **A dot before each ingredient**, so the list reads as one: a character, since
+  the list's own marker hangs in the gap of a two-column list and a drawn circle
+  is a fill. Screen readers are given empty text for it.
 - **No break directly after a day band**, and deliberately no rule keeping a
   day's recipes together — nothing bounds their height, so the rule would buy a
   hole and the split as well.
@@ -90,16 +98,59 @@ day, the day's training and its breakfast, lunch and dinner by name.
   it *is* page one.
 - **Hidden on a phone**, where five columns do not fit. That is a loss: a phone
   gets neither the grid nor its links.
+- **Shown on a wide screen as well as in the rail.** The rail was first built to
+  replace it there, and the athlete asked for it back: it is page one of the
+  paper, and the screen is the paper.
 
-Measured over eleven plans printed from Chrome, the glance costs about a page and
-the columns pay it back, with one or two pages to spare on nine of the eleven;
-the example went from ten to eight. Four simulated readers, reading blind, all
+Measured over eleven plans printed from Chrome, the glance costs about a page, and
+the two-column recipes of the time paid it back, with one or two pages to spare
+on nine of the eleven; the example went from ten to eight. Four simulated readers, reading blind, all
 found Thursday's dinner and training on page one (one of four before), and rated
 the sheet to pin 4.0 against 2.75. **What they said against it:** all four wanted
 the batch notes on the glance, three the session fuelling, and three asked for
 page numbers. Two judges found one wide column easier at the stove, since a
 method line wraps more in an 84 mm column, and columns end unevenly, with a hole
-up to one recipe tall — the price of never splitting a recipe.
+up to one recipe tall — the price of never splitting a recipe. One column is what
+the page prints now.
+
+# What one column costs
+
+Printed from Chrome, the sample:
+
+| | Two columns | One column |
+|---|---|---|
+| without photos | 9 pages | 10 |
+| with photos, 60 mm on screen, 26 mm on paper | 10 | — |
+| with photos, 80 mm everywhere | — | 15 |
+
+A card with an 80 mm photo is about 105 mm tall, so a 267 mm page holds two; the
+method under the photo is what sets that height. Tried and turned down for the
+screen's sake: the method **beside** the photo (66 mm, 12 pages, a card reads as
+one block but the method runs narrower than the screen's) and a 52 mm photo on
+paper only (12 pages, paper and screen differ). The athlete chose paper that is
+the screen, at three more sheets.
+
+# A wide screen is the paper, with the week beside it
+
+A page that fitted a phone and an artifact panel was a narrow strip on a desktop.
+The fix keeps the one column and spends the width on two things, CSS for the
+layout and one element from `render.py`:
+
+- **The paper's measure wherever it fits**, from about 790 px: the sheet grows
+  to 176 mm of text, and the card is the printed card, photo at 80 mm. Between a
+  phone and that, nothing changed — laid out element by element at 390 px and
+  700 px, the old and new pages were identical, before the ingredient dots
+  below were added at every width.
+- **A rail beside the sheet from 1180 px**, sticky, with its own scroll when the
+  week is taller than the window: the parts of the page, then each day with its
+  training and dishes, the day linking into the week and a dish to its recipe.
+  It is built from the glance's own cells, so the two cannot name a meal
+  differently. It hides the links under the title; it is hidden in print and
+  on narrower screens. 1100 px was tried first and scrolled sideways.
+- **Kept to one column.** Wider layouts were built and shown first — recipes two
+  or three across, day cards in a grid — and turned down: a grid leaves holes
+  under the shorter card, and the athlete wanted the recipes as one column
+  under the week.
 
 # The Makes line is the pot, counted in portions
 

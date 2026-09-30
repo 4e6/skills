@@ -80,16 +80,17 @@ CSS_PATH = Path(__file__).resolve().parent.parent / "assets" / "plan.css"
 
 # A dish's photo, where the host that ran the skill could draw one.
 #
-# One file may be 150 KB: a 512 px square JPEG at quality 80 is about 35-90 KB, and an
-# image tool's own output, a PNG of about 2.4 MB, is refused until it is shrunk.
-# The page's photos together may be 2 MB, every card counted, because each card
-# embeds its bytes again: the sample week's twenty-one cards at 80 KB come to
-# about 1.7 MB, a page of about 2.3 MB once the bytes are base64, and the cap
-# itself is a page of about 2.8 MB. The page is one file and
-# a preview will refuse a heavy one -- a page of 48 MB was refused where the same
-# page at 1.2 MB opened.
-PHOTO_MAX_BYTES = 150 * 1024
-PHOTOS_MAX_BYTES = 2 * 1024 * 1024
+# One file may be 400 KB: a 640 px square JPEG at quality 80 is about 55-70 KB where
+# measured, and could reach 140 KB by the 80 KB once seen at 480 px, so the cap
+# is there to refuse an image tool's own output -- a PNG of about 2.4 MB -- and
+# not a photo sized as asked. The page's photos together may be 10 MB, every card
+# counted, because each card embeds its bytes again: the sample week's
+# twenty-one cards at 400 KB each would come to 8.4 MB, and the cap itself is a
+# page of about 13.5 MB once the bytes are base64 -- under the 16 MB a Claude
+# artifact may be, and far from the 48 MB page a preview refused. Tighter caps
+# than these refused photos from pages that would have opened.
+PHOTO_MAX_BYTES = 400 * 1024
+PHOTOS_MAX_BYTES = 10 * 1024 * 1024
 
 # The cards that carry the dish's photo: every one. A leftover is the same
 # plate, and a card you eat from is a card you look for.
@@ -130,6 +131,10 @@ KIND_LEAD = {
 # stop being text.
 SECTIONS = (("week", "The week"), ("recipes", "Recipes"), ("shopping", "Shopping list"))
 HEADING = dict(SECTIONS)
+
+# The glance is a fourth place to jump to, from the rail only: under the title
+# it is the first thing after the links, so a link to it would go nowhere.
+GLANCE = ("glance", "The week at a glance")
 
 
 def section_heading(key) -> str:
@@ -301,8 +306,8 @@ def days(plan) -> str:
     # No block stating the fuel ranges above Monday: each session's own lines
     # carry what applies to it, and the plan has no field restating the ranges.
     out = ['<section class="week">', section_heading("week")]
-    for day in plan["days"]:
-        out.append('<section class="day">')
+    for n, day in enumerate(plan["days"], 1):
+        out.append('<section class="day" id="' + day_anchor(n) + '">')
         out.append(
             '<div class="day-head"><h3>' + prose(day["name"]) + "</h3>"
             + '<span class="session">' + prose(day["session"]) + "</span></div>"
@@ -366,12 +371,7 @@ def glance(plan) -> str:
     plans nothing validated: a title that is a list would be unhashable, and
     the page must still come out.
     """
-    targets = [
-        ((recipe["day"], recipe["meal"], recipe["title"]), recipe_anchor(plan, recipe))
-        for recipe in kept_recipes(plan)
-    ]
-
-    out = ['<section class="glance">', "<h2>The week at a glance</h2>", '<table class="glance-table">']
+    out = ['<section class="glance" id="' + GLANCE[0] + '">', "<h2>" + GLANCE[1] + "</h2>", '<table class="glance-table">']
     out.append('<colgroup><col class="glance-day"><col class="glance-when"><col><col><col></colgroup>')
     out.append(
         '<thead><tr><th scope="col">Day</th><th scope="col">Training</th>'
@@ -379,37 +379,99 @@ def glance(plan) -> str:
         + "</tr></thead>"
     )
     out.append("<tbody>")
-    for day in plan["days"]:
+    for day, cells in glance_days(plan):
         row = (
             '<tr><th scope="row">' + prose(day["name"]) + "</th>"
             + '<td class="glance-training">' + prose(day["session"]) + "</td>"
         )
-        if "excluded" in day:
+        if cells is None:
             row += '<td class="excluded" colspan="3">' + prose(day["excluded"]) + "</td>"
         else:
-            for slot in SLOT_TO_MEAL:
-                # The first meal in the slot. A second one is a plan the check
-                # would have questioned, and it still prints in full below.
-                meal = None
-                for candidate in day["meals"]:
-                    if candidate["slot"] == slot:
-                        meal = candidate
-                        break
-                if meal is None:
-                    row += "<td></td>"
-                    continue
-
-                def named(dish, sitting=(day["name"], SLOT_TO_MEAL[slot])):
-                    for key, anchor in targets:
-                        if key == sitting + (dish,):
-                            return '<a href="#' + anchor + '">' + prose(dish) + "</a>"
-                    return prose(dish)
-
-                row += "<td>" + meal_body(meal, name=named, bookkeeping=False) + "</td>"
+            row += "".join("<td>" + cell + "</td>" for cell in cells)
         out.append(row + "</tr>")
     out.append("</tbody>")
     out.append("</table>")
     out.append("</section>")
+    return "\n".join(out)
+
+
+def glance_days(plan):
+    """[(day, cells)]: a day and what the glance prints for each of its slots.
+
+    cells is None on a day the athlete is away, and otherwise one string per
+    slot, "" for a slot with no meal. The glance and the rail both print from
+    here, so the two can never name a day's meals differently.
+    """
+    targets = [
+        ((recipe["day"], recipe["meal"], recipe["title"]), recipe_anchor(plan, recipe))
+        for recipe in kept_recipes(plan)
+    ]
+    result = []
+    for day in plan["days"]:
+        if "excluded" in day:
+            result.append((day, None))
+            continue
+        cells = []
+        for slot in SLOT_TO_MEAL:
+            # The first meal in the slot. A second one is a plan the check
+            # would have questioned, and it still prints in full below.
+            meal = None
+            for candidate in day["meals"]:
+                if candidate["slot"] == slot:
+                    meal = candidate
+                    break
+            if meal is None:
+                cells.append("")
+                continue
+
+            def named(dish, sitting=(day["name"], SLOT_TO_MEAL[slot])):
+                for key, anchor in targets:
+                    if key == sitting + (dish,):
+                        return '<a href="#' + anchor + '">' + prose(dish) + "</a>"
+                return prose(dish)
+
+            cells.append(meal_body(meal, name=named, bookkeeping=False))
+        result.append((day, cells))
+    return result
+
+
+def day_anchor(n) -> str:
+    """The id a day of the week carries: its position, from one, as recipe_anchor's is."""
+    return "day-" + str(n)
+
+
+def rail(plan) -> str:
+    """The week beside the page on a wide screen: each day, its training and its dishes.
+
+    The glance again, down the side and always in view, so any day or dish is
+    one click away however far down the page the reader is. A day's name links
+    to it in the week, and a dish to its recipe, exactly as on the glance. Above
+    them, the four parts of the page, named as they name themselves.
+
+    Screen only, and only where the window is wide enough for it beside the
+    sheet: the stylesheet hides it everywhere else, and in print.
+    """
+    parts = (GLANCE,) + SECTIONS
+    out = ['<nav class="rail" aria-label="Contents">']
+    out.append('<p class="rail-title">' + prose(plan["week_label"]) + "</p>")
+    out.append(
+        '<ul class="rail-parts">'
+        + "".join('<li><a href="#' + key + '">' + label + "</a></li>" for key, label in parts)
+        + "</ul>"
+    )
+    out.append('<ol class="rail-week">')
+    for n, (day, cells) in enumerate(glance_days(plan), 1):
+        out.append(
+            '<li><a class="rail-day" href="#' + day_anchor(n) + '">' + prose(day["name"]) + "</a>"
+            + '<span class="rail-training">' + prose(day["session"]) + "</span>"
+        )
+        if cells is None:
+            out.append('<p class="excluded">' + prose(day["excluded"]) + "</p>")
+        elif any(cells):
+            out.append('<ul class="rail-dishes">' + "".join("<li>" + cell + "</li>" for cell in cells if cell) + "</ul>")
+        out.append("</li>")
+    out.append("</ol>")
+    out.append("</nav>")
     return "\n".join(out)
 
 
@@ -918,11 +980,7 @@ def recipes(plan, photos=None) -> str:
     # Built once for the whole section: a line's count needs its food's pack,
     # and the pack lives on the shopping row rather than on the line.
     packs = packs_by_name(plan)
-    # The heading stays outside the box the columns print in. Spanning it
-    # across them instead left it stranded at the foot of a page with its
-    # recipes on the next, because Chrome does not carry break-after: avoid
-    # across a spanning element — and a plain block before the columns does.
-    out = ['<section class="recipes">', section_heading("recipes"), '<div class="recipe-cols">']
+    out = ['<section class="recipes">', section_heading("recipes")]
     for name, group in recipe_days(plan):
         out.append('<section class="recipe-day">')
         out.append('<h3 class="day-band">' + prose(name) + "</h3>")
@@ -941,7 +999,6 @@ def recipes(plan, photos=None) -> str:
             photo = photos.get(title) if photos and recipe["kind"] in PHOTO_KINDS and isinstance(title, str) else None
             out.append(recipe_block(plan, recipe, skip, packs, photo, bool(photos)))
         out.append("</section>")
-    out.append("</div>")
     out.append("</section>")
     return "\n".join(out)
 
@@ -1374,6 +1431,7 @@ def document(plan, css, photos=None) -> str:
             "</style>",
             "</head>",
             "<body>",
+            rail(plan),
             '<main class="sheet">',
             head(plan),
             glance(plan),
