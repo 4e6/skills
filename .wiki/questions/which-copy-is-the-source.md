@@ -3,7 +3,7 @@ type: Open Question
 title: Which copy of the skill is the one to edit?
 description: The skill moved here on 2026-09-30 and a copy stayed in the private codebase it was developed in, with its tests, its schema generator and the reference its checks were ported from. Until one side is the source, the two will drift.
 tags: [process, distribution]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-09-30T21:38:47Z
 status: open
 sources: [skills/training-week-meal-plan/**]
 source_commit: d2e959842d2f175a45c0d098e42338b69645360d
@@ -26,7 +26,9 @@ that hold this one together stayed with it:
 - **the reference implementation** that `validate.py` is held to by a parity
   suite, with its divergences declared rather than accidental.
 
-Nothing in this repository runs any of it.
+Nothing in this repository runs any of it. CI now runs here
+([the zip release](/architecture/the-zip-release.md)), so tests that moved would
+have somewhere to run.
 
 # The options
 

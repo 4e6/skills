@@ -41,6 +41,24 @@ copy it with `cp -r`.
 Keep each folder's name as it is. The format requires it to match the skill's
 `name`.
 
+### In Claude or ChatGPT on the web
+
+The web apps install a skill from a zip you upload. Download it here:
+
+- [training-week-meal-plan.zip](https://github.com/4e6/skills/releases/download/training-week-meal-plan-v1.0/training-week-meal-plan.zip)
+
+and upload it as the app's own help describes:
+[Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude),
+[ChatGPT](https://help.openai.com/en/articles/20001066-skills-in-chatgpt).
+Upload the zip as it is; it holds the skill's folder, which is what both expect.
+
+An uploaded skill does not update itself. Each new version is a
+[release](https://github.com/4e6/skills/releases) with its own zip; to take it,
+upload that zip in place of the old one.
+
+`z-image-turbo-macos` has no zip. It runs on your own Mac, and a web app runs
+skills on its own servers.
+
 ## Licence
 
 MIT — see [LICENSE](LICENSE). Each skill carries its own copy, so the licence

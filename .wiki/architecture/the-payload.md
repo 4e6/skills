@@ -11,7 +11,8 @@ source_commit: d2e959842d2f175a45c0d098e42338b69645360d
 # The boundary
 
 `skills/training-week-meal-plan/` is copied out whole — by `npx skills`, by a
-symlink, by a zip uploaded to a host — and runs in a stranger's session
+symlink, by a zip uploaded to a web host
+([the zip release](/architecture/the-zip-release.md)) — and runs in a stranger's session
 ([what this repository is](/overview.md)). Every
 install path takes the folder alone, never the repository around it. Three
 consequences look like restrictions and are the design.

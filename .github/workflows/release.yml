@@ -1,0 +1,58 @@
+# Checks every skill against the specification and each zip the README offers,
+# and on main releases every linked skill whose version has no tag yet.
+# tools/release.py says why it works the way it does.
+name: Release
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      # The whole history and the tags: a zip is stamped with the last commit
+      # that touched its skill, and a release is due when its tag is missing.
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate against the Agent Skills specification
+        run: |
+          pip install skills-ref==0.1.1
+          for skill in skills/*/; do agentskills validate "$skill"; done
+      - name: Check the zips
+        run: python3 tools/release.py check
+
+  release:
+    needs: check
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    # Two pushes close together must not both find the same tag missing.
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Release each skill whose version is new
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/release.py pending | while read -r skill tag; do
+            zip=$(python3 tools/release.py build "$skill")
+            python3 tools/release.py notes "$skill" > "dist/$skill-notes.md"
+            gh release create "$tag" "$zip" \
+              --target "$GITHUB_SHA" \
+              --title "$skill ${tag#"$skill"-}" \
+              --notes-file "dist/$skill-notes.md"
+          done
