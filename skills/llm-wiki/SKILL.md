@@ -1,6 +1,15 @@
 ---
 name: llm-wiki
 description: Create and maintain an LLM-wiki — a durable, agent-readable knowledge base for a codebase, stored as an Open Knowledge Format (OKF v0.1) bundle of markdown + YAML frontmatter. Use when the user asks to "create a wiki", "set up an LLM-wiki", "start a knowledge base", "document this project", "sync/update the wiki", "is the wiki stale", "lint the wiki", "record this decision", "add an ADR", or asks a durable question the wiki should answer ("why do we do X", "what does Y mean here", "how do I deploy"). Also consider proactively when the user starts, scaffolds, or initializes a new project, and after any change that alters architecture, a decision, an invariant, a data model, or a third-party integration.
+license: MIT
+compatibility: >-
+  Needs git, and Python 3.9 or newer for its one script. The script's two
+  packages, PyYAML and pathspec, are installed once from PyPI into a venv inside
+  the skill's own scripts folder; that setup is the only network use, and the
+  bundle is read and written offline.
+metadata:
+  author: 4e6
+  version: "1.0"
 ---
 
 # LLM-wiki (Open Knowledge Format)
@@ -16,9 +25,8 @@ wiki *is* an OKF bundle: readable by any agent or human, diffable in git, no SDK
 Read [reference/okf-v0.1.md](reference/okf-v0.1.md) before writing any page. Read
 [reference/concept-types.md](reference/concept-types.md) before choosing a `type`.
 
-> **Scope note.** This skill is version-controlled in the `claude-skills` repo but
-> symlinked into `~/.claude/skills/llm-wiki`, so it loads globally and operates on
-> whatever project you are in. Always invoke the script by absolute path (see
+> **Scope note.** This skill operates on whatever project you are in, not on the
+> folder it is installed in. Always invoke the script by absolute path (see
 > [Scripts](#scripts)) — `$PWD` is the target project, not here.
 
 ## The half-life rule
@@ -159,13 +167,12 @@ you intend to write next is fine.
 explicitly. Set once per session:
 
 ```bash
-OKF=~/.claude/skills/llm-wiki/scripts   # symlink resolves fine
+OKF=<this skill's folder>/scripts      # e.g. ~/.claude/skills/llm-wiki/scripts
 WIKI=wiki                               # check first — some projects use .wiki
 ```
 
-`okf.py` needs a venv, created on first use from `requirements.txt` (same
-convention as `weekly-meal-plan`; `.venv/` is gitignored). Create it only if
-`"$OKF/.venv/bin/python"` is missing:
+`okf.py` needs a venv, created on first use from `requirements.txt`; never
+commit `.venv/`. Create it only if `"$OKF/.venv/bin/python"` is missing:
 
 ```bash
 python3 -m venv "$OKF/.venv" && "$OKF/.venv/bin/pip" install -r "$OKF/requirements.txt"
@@ -259,7 +266,7 @@ Then, per finding:
   ```bash
   git diff <source_commit>..HEAD -- <sources>
   ```
-  Then classify, exactly as `update-dependencies` classifies submodule bumps:
+  Then classify:
 
   - **Cosmetic** — renames, formatting, comments, test-only edits, changes that
     preserve responsibility and boundaries. **Touch, don't rewrite:** bump

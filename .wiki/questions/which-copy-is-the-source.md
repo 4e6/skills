@@ -1,11 +1,11 @@
 ---
 type: Open Question
-title: Which copy of the skill is the one to edit?
-description: The skill moved here on 2026-09-30 and a copy stayed in the private codebase it was developed in, with its tests, its schema generator and the reference its checks were ported from. Until one side is the source, the two will drift.
+title: Which copy of a skill is the one to edit?
+description: Two skills here have a second copy elsewhere. training-week-meal-plan's stayed with its tests and schema generator; llm-wiki's is the one its author's assistant loads. Until one side of each is the source, the copies drift.
 tags: [process, distribution]
-timestamp: 2026-09-30T21:38:47Z
+timestamp: 2026-09-30T21:57:09Z
 status: open
-sources: [skills/training-week-meal-plan/**]
+sources: [skills/training-week-meal-plan/**, skills/llm-wiki/**]
 source_commit: d2e959842d2f175a45c0d098e42338b69645360d
 ---
 
@@ -58,6 +58,22 @@ has moved:
 Copying the folder back unchanged would fail the old repository's checks in more
 than one place; copying the other way would undo all of it.
 
+# llm-wiki has the same question
+
+`skills/llm-wiki/` was copied on 2026-09-30 from the author's own collection of
+Claude Code skills, where it is developed and where the copy their assistant
+loads lives. It came without tests to leave behind, and it was changed on the
+way in, so nothing false went out with it:
+
+- the frontmatter gained `license`, `compatibility` and `metadata`, and the
+  folder a `LICENSE`;
+- the scope note no longer says where the skill is kept or linked from, and the
+  script's path is an example rather than one machine's;
+- two references to skills that are not here were cut.
+
+A copy either way has to keep those. Until one side is the source, edit it in
+one place and carry the change across.
+
 # Until it is answered
 
-Edit the skill in one place only, and say which in the commit.
+Edit each skill in one place only, and say which in the commit.

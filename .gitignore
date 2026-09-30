@@ -6,5 +6,7 @@ plan-[0-9]*.json
 plan-[0-9]*.html
 photos.json
 photos/
+# The venv llm-wiki's script is run from, when it runs from this checkout.
+.venv/
 # What tools/release.py builds.
 /dist/

@@ -1,9 +1,9 @@
 ---
 type: Module
 title: The skill is a payload
-description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. One skill bends the last two.
+description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. Two skills bend the last two.
 tags: [architecture, distribution]
-timestamp: 2026-09-30T15:00:00Z
+timestamp: 2026-09-30T21:57:09Z
 sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py]
 source_commit: d2e959842d2f175a45c0d098e42338b69645360d
 ---
@@ -107,7 +107,7 @@ The specification is what a stranger's client parses, so getting it wrong is
 visible outside this repository. How the skill is edited is
 [a convention of its own](/conventions/editing-a-skill.md).
 
-# The skill that cannot be a pure payload
+# The skills that cannot be pure payloads
 
 `z-image-turbo-macos` is an 11 GB model and a runtime that needs Python 3.12 to 3.14, so
 it cannot ship its substance or run on the standard library. It keeps the
@@ -117,8 +117,16 @@ agrees to, pinned to what was tested, and drawing offline
 Everything above still holds for `training-week-meal-plan`, and for any skill
 that can hold it.
 
-Its one script's own fact, in the same terms as the others:
+`llm-wiki` bends less. Its one script parses YAML and gitignore patterns with
+two packages from PyPI, installed once into a venv in its own `scripts/` folder:
+the only network use, and the only write into the folder. It needs `git`, since
+staleness is read from history. Its instructions name Claude Code's own paths
+and files, as instructions about the host.
 
+Their scripts' own facts, in the same terms as the others:
+
+- `okf.py` runs `git` in the repository it is pointed at and reads the bundle;
+  it writes nothing but `index.md` files, and only under `index --write`.
 - `z_image_turbo.py` runs `sysctl` and the Pythons it finds, to learn what the
   machine is. Under Python 3.9's standard library it reads the environment and
   the model cache and writes nothing but a lock file and, in `setup`, the
