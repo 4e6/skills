@@ -17,7 +17,7 @@ compatibility: >-
   without it you still get the plan. The plan is written in English.
 metadata:
   author: 4e6
-  version: "1.1.2"
+  version: "1.2.0"
 ---
 
 # A week of meals that tracks the training
@@ -97,8 +97,10 @@ Three are optional, and each is worth asking for in the same breath:
 
 - **Dietary restrictions** — allergies, vegetarian, anything they avoid.
 - **What is already in the fridge** — so it gets used before it spoils.
-- **Where they live.** This chooses the dishes and names the shops. It does not
-  change the language: the plan is written in English whatever the answer.
+- **Where they live.** This chooses the dishes, names the shops and sets the
+  units the food is weighed in — pounds and cups in the United States, Liberia
+  and Myanmar, metric everywhere else. It does not change the language: the plan
+  is written in English whatever the answer.
 
 And **which days** the plan covers, settled as *Which days* below says —
 usually without asking.
@@ -168,7 +170,7 @@ The first menu, all of it picked:
 
 | Ask | Offer |
 |---|---|
-| **Body weight** | `55 kg`, `65 kg`, `75 kg`, `85 kg`, and the free choice for an exact figure or for pounds. Say that the nearest is fine |
+| **Body weight** | `55 kg (121 lb)`, `65 kg (143 lb)`, `75 kg (165 lb)`, `85 kg (187 lb)`, and the free choice for an exact figure. Say that the nearest is fine |
 | **Dietary restrictions**, as many as apply | `No restrictions`, `Vegetarian`, `Vegan`, `Gluten-free` |
 | **Where do you live?** | `United Kingdom`, `United States`, `Canada`, `Australia`, and the free choice for anywhere else — a country or a city is enough |
 | **Which days?** — only where *Which days* says to ask | Its rows, each with its dates |
@@ -186,9 +188,18 @@ closest figure, and every portion in the week scales from this one number —
 So say the nearest is fine *and* that anyone outside roughly 50–90 kg should
 type theirs, and treat a figure off the end of the ladder as the question it is.
 
+**Each row names both units because the weight is the athlete's own unit, not
+their country's**, and the menu goes up before anyone has said where they live
+anyway. An American may know their weight in kilograms, and that changes
+nothing about the shop: the food is weighed in the country's units whatever the
+weight came in. A typed figure with no unit is read in the only unit it can be —
+`72` is not 72 lb — and is a question where both readings are an athlete:
+`100` is a 100 kg rower or a 45 kg runner, and the plan for one is more than
+twice the food of the other.
+
 **The place rows are countries, never regions, and they are named here so no
-host has to invent them.** The country picks the dishes and names the shops;
-*Europe* does neither.
+host has to invent them.** The country picks the dishes, names the shops and
+sets the units; *Europe* does none of it.
 
 The second menu, two questions, both of them usually typed:
 

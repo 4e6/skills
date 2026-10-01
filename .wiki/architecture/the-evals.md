@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T14:03:08Z
+timestamp: 2026-10-01T15:01:23Z
 sources: [evals/**]
 source_commit: 3f5066241fd3cdce46a20049b3b77fe7007c40ff
 ---
@@ -50,8 +50,10 @@ and in Manchester as the control, where the examples are at home. The week is
 ordinary rather than a race, with a threshold run and a long run, so the
 session lines and the snack lines every day are written, the short lines with a
 format to copy, where copying would show first. **The Denver athlete gives
-their weight in pounds**, as an American would, and the case also counts the
-units the plan weighs food in.
+their weight in pounds**, as an American would. Every country case also counts
+the units the plan weighs food in, against its country's system, and so does
+the gran fondo, whose American gives kilograms: the pair tells the country's
+unit from the athlete's.
 
 **A count of the examples is evidence, not a verdict.** Porridge is an ordinary
 breakfast in Poland and in Brazil, and chocolate milk sells everywhere. So the
@@ -208,6 +210,32 @@ The evals keep the isolated host and give up two things:
 
 # Measurements
 
+**2026-10-01, the country cases and the gran fondo three times each on Opus
+5.5**, skill 1.2.0, which says the country picks the units
+([#17](https://github.com/4e6/skills/issues/17)): 21 runs, 18 minutes, $34.
+**Every plan weighed in its country's system, and nothing else.**
+
+- **Both Americans got US units in every run**: Denver 54 of 54, 56 of 56 and
+  60 of 60 weights and volumes, and the gran fondo, whose athlete gives
+  kilograms, 62 of 62, 57 of 57 and 55 of 55. Before, the gran fondo had none in
+  three runs and Denver none in one of four. The judge said every shopping
+  list could be bought in the US as written, six of six.
+- **The five metric countries stayed metric**: not one US quantity in 15 runs.
+- **Carbohydrate stayed in grams and fluid went to fl oz** on the US fuel
+  lines (`60–90 g of carbohydrate an hour; 14–27 fl oz of fluid an hour`), and
+  every can was *canned*.
+- **What is left is odd precision.** A row adds its recipes up exactly, so
+  ounces summed into pounds came out as `1.625 lb` of rice or `1.063 lb`, which
+  the judge called odd and still buyable. Rounding the row would break
+  [the sum it is checked against](/invariants/the-list-buys-what-the-week-uses.md)
+  ([#18](https://github.com/4e6/skills/issues/18)).
+- The one `no` was the gran fondo's reply calling the race *tempo effort*, an
+  intensity the athlete never gave, under *nothing invented*. The example
+  foods were where they were in the first country run below — porridge or
+  oatmeal in every Kraków, São Paulo, Denver and Manchester week, chocolate
+  milk on their after-lines — except that no Osaka or Pune line had chocolate
+  milk this time.
+
 **2026-10-01, the country cases three times each on Opus 5.5**, skill 1.1.1:
 18 runs, $28: the first five cases in 14 minutes, Denver's three, added after
 review, in six more. **The examples did not pull the cooking back to
@@ -231,13 +259,13 @@ Britain; the after-session example was copied across.**
   Kraków, São Paulo and Denver, a third of Osaka's and Pune's, where the others
   were a rice ball with milk, flavoured milk or a sweet lassi. The judge found it
   ordinary everywhere.
-- **The units look like the athlete's, not the country's.** Denver's athlete,
-  in pounds, got ounces: 72 of 72, 54 of 58 and 65 of 65 weights and volumes.
-  The gran fondo's American, in kilograms, got grams in all three plans, 0 of
-  74, 66 and 81 in US units. The two cases differ in more than the unit, though:
-  a race week against an ordinary one, *the United States* against a city, and
-  skill 1.1 against 1.1.1, so the unit is the likely cause and not an isolated
-  one. Neither is wrong by the skill, which says nothing about units. The ounces
+- **The units were a coin toss.** Denver's athlete, in pounds, got ounces: 72
+  of 72, 54 of 58 and 65 of 65 weights and volumes. The gran fondo's American,
+  in kilograms, got grams in all three plans, 0 of 74, 66 and 81 in US units.
+  That looked like the athlete's unit deciding, until a fourth Denver run, on
+  1.1.2, weighed 0 of 65 in US units for the same athlete in pounds. The skill
+  said nothing about units, so the model chose
+  ([#17](https://github.com/4e6/skills/issues/17)). The ounces
   ran past a pound (`Potatoes 34 oz`), and Denver's own question, whether a
   shopper there could buy the list as written, was `no` once: milk in
   millilitres, `Butter 1 tbsp` and `Garlic 6.5 cloves`.

@@ -77,7 +77,7 @@ ANCHORS = re.compile(
 # neither: they read the same everywhere.
 UNITS = {
     "metric": re.compile(r"\d\s*(?:g|grams?|kg|kilos?|ml|l|litres?|liters?|cl|dl)\b", re.I),
-    "us": re.compile(r"\d\s*(?:lbs?|pounds?|oz|ounces?|fl\.? oz|cups?|pints?|quarts?|gallons?)\b", re.I),
+    "us": re.compile(r"\d\s*(?:lbs?|pounds?|oz|ounces?|fl\.? oz|cups?|pints?|quarts?|qts?|gallons?|gals?)\b", re.I),
 }
 
 
