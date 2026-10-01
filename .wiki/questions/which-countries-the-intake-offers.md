@@ -6,7 +6,7 @@ tags: [intake, product]
 timestamp: 2026-10-01T17:10:00Z
 status: open
 sources: [skills/training-week-meal-plan/SKILL.md]
-source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
+source_commit: 7c8225eb1bc1397f6b17cdb0e4b967a5dee883ed
 ---
 
 # The question

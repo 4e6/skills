@@ -5,7 +5,7 @@ description: Web hosts install a skill from an uploaded zip. Each skill is relea
 tags: [distribution, release, ci, versioning]
 timestamp: 2026-10-01T12:40:00Z
 sources: [tools/release.py, .github/workflows/release.yml, /README.md, /.gitignore]
-source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
+source_commit: 7c8225eb1bc1397f6b17cdb0e4b967a5dee883ed
 ---
 
 # Why there is a zip at all
