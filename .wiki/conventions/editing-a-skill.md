@@ -3,7 +3,7 @@ type: Convention
 title: Editing a skill
 description: Re-read the two upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone; a change to behaviour or to the page is judged by running it.
 tags: [skills, authoring, review]
-timestamp: 2026-10-01T12:40:00Z
+timestamp: 2026-10-01T21:38:33Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
 source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
 ---
@@ -53,7 +53,12 @@ On top of what the guides say, and not a restatement of them:
   what and how much — and names a runtime exactly when a script needs one;
 - a skill that only works with one model or one kind of machine says so in its
   name, its `description`, its `compatibility` and its first paragraph
-  ([why](/architecture/z-image-turbo-macos.md#what-it-is-and-what-it-refuses-to-be)).
+  ([why](/architecture/z-image-turbo-macos.md#what-it-is-and-what-it-refuses-to-be));
+- an example in the text is a default, not an illustration: a model copies it
+  into plans it was never meant for, so the text gives only examples it would
+  accept on every page, and none at all where the right answer depends on
+  the athlete, as a line's food depends on their country
+  ([the evals](/architecture/the-evals.md#measurements)).
 
 Nothing in this repository checks any of it yet, though CI now has a place for
 it ([which copy is the source](/questions/which-copy-is-the-source.md)).

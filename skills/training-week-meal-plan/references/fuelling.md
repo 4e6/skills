@@ -53,11 +53,11 @@ invent*).
   those lines is an **example**, not a prescription — see the next section before
   you write any of it down.
 - The same dish may appear on a hard day and an easy day at different sizes.
-  Saturday's porridge is a bigger bowl than Monday's, and its plate says so:
+  Saturday's breakfast may be Monday's dish, bigger, and its plate says so:
   `portions: 1.25`.
 - Quantities on the shopping list scale with the week's total load, because they
-  are the sum of what the recipes cook. A big aerobic week buys more oats, rice
-  and bread than a taper week.
+  are the sum of what the recipes cook. A big aerobic week buys more of its rice,
+  bread, noodles or potatoes than a taper week.
 
 A plan whose biggest fuel day is not the biggest training day **the week actually
 holds** has failed, however good the food is. Say which day you made the biggest
@@ -75,12 +75,12 @@ example in this file, without exception.** The foods named above and below are
 illustrations of a principle, and the principle survives the substitution while
 the example does not.
 
-- **Substitute the fuel, do not drop it.** Chocolate milk is there because it is
-  carbohydrate and protein within about two hours of a session that carries fuel;
-  a soy or pea-protein drink
-  does the same job. An energy bar with oats and dates does what a wheat-based
-  one does. Work out what the example was *for*, then find something that does
-  it and that they can eat.
+- **Substitute the fuel, do not drop it.** An `after` line's food is there
+  because it is carbohydrate and protein within about two hours of a session
+  that carries fuel; where it is a milk drink and milk is out, a soy or
+  pea-protein drink does the same job. An energy bar with oats and dates does
+  what a wheat-based one does. Work out what the example was *for*, then find
+  something that does it and that they can eat.
 - **An allergy is not a preference.** Where they have said allergy, the
   ingredient appears nowhere in the week — not in a recipe, not as a garnish,
   not on the shopping list, not in a shared batch. A preference can be
@@ -109,10 +109,14 @@ this is what their lines say.
   the range or the timing that applies, and never a food. `example` is food that
   roughly fits it, with amounts: an example rather than a prescription. On a
   `during` line the amounts are for the whole session — what to pack — and never
-  an hour's worth, so a longer session's example is bigger. Prefer food the week
-  already buys, name a sports product by what it is — an energy gel, an isotonic
-  drink — and never by brand. Nothing on a line is on the shopping list, and
-  nothing on a line says what a day uses.
+  an hour's worth, so a longer session's example is bigger. **Food on a line
+  is what people in the athlete's country have at that moment** — before a
+  session, after one, between meals. Take it from what the week already buys
+  where that is what they would have, and name a sports product by what it is
+  (an energy gel, an isotonic drink), never by brand. This file names no food
+  for the `before`, `after` and snack lines on purpose: whatever it named would
+  end up on every athlete's page, wherever they live. The list buys nothing for
+  a line, and nothing on a line says what a day uses.
 - **Name every session as the week names it, in a few words**, and give it a
   length or an intensity only where the week states one — never a sum of its
   intervals, which leaves out the warm-up and so invents a figure. **A race says
@@ -155,9 +159,9 @@ this is what their lines say.
 - **A race is a session.** It gets a `before` line whatever its length, and
   `during` and `after` lines by the same ranges where it carries fuel; where the
   week does not say how long it runs, those lines say what depends on that.
-- `before`: `small and carbohydrate-led, in about the last hour`, e.g. `1 banana, black coffee`
+- `before`: `small and carbohydrate-led, in about the last hour`
 - `during`: `roughly 30–60 g of carbohydrate an hour`, e.g. over 1h45, `2 bottles of isotonic drink, 1 energy gel`
-- `after`: `carbohydrate with protein, within about 2 hours`, e.g. `1 bottle of chocolate milk`
+- `after`: `carbohydrate with protein, within about 2 hours`
 
 **An example is the whole session's, so do the arithmetic.** The range is per
 hour and the food list is the total, and nothing downstream reconciles them —
@@ -250,9 +254,10 @@ bigger bowl a hard day needs.
 - `guidance` is the shortfall first and the room above it second, and never a
   food: `at least about 60 g of carbohydrate, up to 290 g`. The first figure is
   what the day needs; the second is how far it may go. About 60 characters.
-- `example` is food that makes up **the first figure**, with amounts: `1 bagel with
-  jam, 1 banana`. Ordinary food, no brand, nothing that needs cooking. Nothing
-  in it is on the shopping list.
+- `example` is food that makes up **the first figure**, with amounts: what
+  people in the athlete's country snack on, chosen as a fuel line's is.
+  Ordinary food, no brand, nothing that needs cooking. The list buys nothing
+  for it.
 - A day the athlete is away has no `snacks`; a meal eaten elsewhere changes
   nothing here.
 
@@ -460,7 +465,7 @@ beside the chicken.
   it is a dish in `alongside` with its own recipe.
 - **Everything on the plate is in a recipe.** Food served with a dish — bread
   with the soup, a lemon wedge with the fish — is an ingredient line in that
-  dish's recipe, `Sourdough — 2 slices`, and its carbohydrate is in the dish's
+  dish's recipe, `Bread — 2 slices`, and its carbohydrate is in the dish's
   `nutrition`. Then the list buys its amount, the plate scales it, and every
   figure counts it. A dish eaten again as a leftover or a repeat comes with the
   same things, so put in the recipe only what goes with it every time.

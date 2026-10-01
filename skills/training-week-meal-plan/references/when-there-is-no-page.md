@@ -125,12 +125,14 @@ checked.
 ## An example
 
 The `>` is how this file marks an example, not how the reply is formatted. The
-numbers are illustrative.
+numbers are illustrative, and the athlete lives in Turkey. The lines before and
+after a session say what goes there rather than naming a food, as in
+`fuelling.md`.
 
 > **Monday — rest day**
 >
-> - **Breakfast: Porridge with banana** — cook 1 — Mon breakfast.
->   80 g oats, 400 ml milk, 1 banana, 1 tbsp honey.
+> - **Breakfast: Eggs with tomatoes and peppers, with bread** — cook 1 — Mon breakfast.
+>   2 eggs, 2 tomatoes, 1 green pepper, 1 tsp butter, 100 g bread.
 > - **Dinner: Red lentil soup** — cook 2 — Mon dinner, Wed lunch.
 >   160 g red lentils, 1 onion, 2 carrots, 1 litre stock, 1 tsp cumin.
 >   1. Soften the chopped onion and carrots in a little oil, 8 minutes.
@@ -143,8 +145,10 @@ numbers are illustrative.
 >
 > **Saturday — long ride 3 h**
 >
-> - Before: 1 banana, in the last hour.
+> - Before: *what people in Turkey have before a ride, with amounts*, in the
+>   last hour.
 > - During: 2 bottles of sports drink and a bar.
-> - After: chocolate milk, within 2 hours.
-> - **Breakfast: Porridge with banana**, cooked fresh as on Monday (1¼ portions):
->   100 g oats, 500 ml milk, 1½ bananas, 1½ tbsp honey.
+> - After: *what people in Turkey have after one, with amounts*, within 2 hours.
+> - **Breakfast: Eggs with tomatoes and peppers, with bread**, cooked fresh as on
+>   Monday (1½ portions): 3 eggs, 3 tomatoes, 1½ green peppers, 1½ tsp butter,
+>   150 g bread.

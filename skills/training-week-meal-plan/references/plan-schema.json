@@ -140,7 +140,7 @@
                       "description": "The range or timing that applies here, from the fuelling ranges. Names no food; any quantity is a range. About 60 characters."
                     },
                     "example": {
-                      "description": "Example food that roughly fits `guidance`, with amounts. Not a purchase: never on the shopping list. Omit only where nothing is eaten.",
+                      "description": "Example food that roughly fits `guidance`, with amounts: what people in the athlete's country have at that moment, from what the week already buys where that is what they would have, or a sports product named by what it is. Not a purchase: the list buys nothing for it. Omit only where nothing is eaten.",
                       "type": "string",
                       "minLength": 1
                     }
@@ -160,7 +160,7 @@
                       "description": "The range or timing that applies here, from the fuelling ranges. Names no food; any quantity is a range. About 60 characters."
                     },
                     "example": {
-                      "description": "Example food that roughly fits `guidance`, with amounts. Not a purchase: never on the shopping list. Omit only where nothing is eaten.",
+                      "description": "Example food that roughly fits `guidance`, with amounts: what people in the athlete's country have at that moment, from what the week already buys where that is what they would have, or a sports product named by what it is. Not a purchase: the list buys nothing for it. Omit only where nothing is eaten.",
                       "type": "string",
                       "minLength": 1
                     }
@@ -180,7 +180,7 @@
                       "description": "The range or timing that applies here, from the fuelling ranges. Names no food; any quantity is a range. About 60 characters."
                     },
                     "example": {
-                      "description": "Example food that roughly fits `guidance`, with amounts. Not a purchase: never on the shopping list. Omit only where nothing is eaten.",
+                      "description": "Example food that roughly fits `guidance`, with amounts: what people in the athlete's country have at that moment, from what the week already buys where that is what they would have, or a sports product named by what it is. Not a purchase: the list buys nothing for it. Omit only where nothing is eaten.",
                       "type": "string",
                       "minLength": 1
                     }
@@ -262,7 +262,7 @@
                 "description": "How much the snacks carry: `at least` the grams of carbohydrate the day is short of its target, then `up to` the grams that reach its top; `and some protein` where the meals leave the day short of it; `some protein; the carbohydrate is covered` on a day short of protein alone. Names no food. About 60 characters, in English."
               },
               "example": {
-                "description": "Example food that makes up the `at least` figure, or the protein, with amounts, in English. Ordinary food, no brand. Not a purchase: never on the shopping list.",
+                "description": "Example food that makes up the `at least` figure, or the protein, with amounts, in English: what people in the athlete's country snack on. Ordinary food, no brand. Not a purchase: the list buys nothing for it.",
                 "type": "string",
                 "minLength": 1
               }
@@ -378,7 +378,7 @@
                   }
                 },
                 "note": {
-                  "description": "What the row is for, or how to buy it — \"bolognese\", \"chopped\", \"top up if low\". **Never how much, in any form** — no weight or volume, no pack size, no count, not even of what is already in the fridge: `qty` is the one amount on a row, and it has already taken off what is in `fridge`.",
+                  "description": "What the row is for, or how to buy it — \"for the soup\", \"chopped\", \"top up if low\". **Never how much, in any form** — no weight or volume, no pack size, no count, not even of what is already in the fridge: `qty` is the one amount on a row, and it has already taken off what is in `fridge`.",
                   "type": "string"
                 }
               },
@@ -474,7 +474,7 @@
               "fibre"
             ],
             "additionalProperties": false,
-            "description": "**origin entries only: one reference portion of this dish** — one plate at `portions: 1`. A repeat or a leftover of it states no figures of its own: its plate is this times its `portions`, so a bigger Saturday bowl of Monday's porridge is `portions: 1.25`, not bigger numbers."
+            "description": "**origin entries only: one reference portion of this dish** — one plate at `portions: 1`. A repeat or a leftover of it states no figures of its own: its plate is this times its `portions`, so a bigger Saturday plate of Monday's breakfast is `portions: 1.25`, not bigger numbers."
           },
           "yields": {
             "description": "origin entries only: how many reference portions `ingredients` makes, as you would write a recipe — `4` for a pot for four. The code scales the list to the plates this batch actually feeds, every sitting in `servings` included, so the pot and the shopping list follow the plates rather than the other way round.",
@@ -487,7 +487,7 @@
             "minLength": 1
           },
           "plates": {
-            "description": "How much the athlete eats at this sitting, where it is not one reference portion: a single `{ eater: 0, portions: 1.25 }` for Saturday's bigger bowl of Monday's porridge. Omit it where the plate is one portion.",
+            "description": "How much the athlete eats at this sitting, where it is not one reference portion: a single `{ eater: 0, portions: 1.25 }` for Saturday's bigger plate of Monday's breakfast. Omit it where the plate is one portion.",
             "minItems": 1,
             "type": "array",
             "items": {

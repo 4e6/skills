@@ -111,8 +111,10 @@ told once to go ahead, and the run records that it asked.
   questions are asked of every run (the summary, invented figures, restrictions,
   no claim to have varied on earlier weeks, the disclaimer), some of every race
   week, some of every case that names a country (would an ordinary household
-  there cook these breakfasts, these lunches and dinners, this fuel; do the
-  shops named trade there), and some by one case.
+  there cook these breakfasts, these lunches and dinners, this fuel; is the
+  food after a session and on a snack line what people there typically have,
+  not merely what sells there; do the shops named trade there), and some by one
+  case.
 
 `report` prints how often each check passed and each question was answered
 `yes`, per case. A run that says nothing about the skill is set aside in a row
