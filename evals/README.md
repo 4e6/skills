@@ -94,7 +94,10 @@ told once to go ahead, and the run records that it asked.
   pounds, ounces and cups in the US, grams and millilitres everywhere else,
   and render the plan with the skill's own `render.py` to read the shopping
   list's aisle headings: none British on a US list (*Tins*, *Chilled*), none
-  American on a metric one (*Canned*, *Refrigerated*).
+  American on a metric one (*Canned*, *Refrigerated*). The two US cases also
+  fail a list that writes pounds in anything but whole quarters (`1.625 lb`),
+  which the skill writes in ounces, and a row whose weight is in another unit
+  from its pack's, which the page cannot count.
 - **The judge** is an agent with no tools that reads the athlete's message, the
   plan and the reply, and answers each question `yes`, `no` or `unclear` with a
   reason. Some questions are asked of every run (the summary, invented figures,

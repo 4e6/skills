@@ -329,6 +329,67 @@ def check_units(ctx, spec):
         ", ".join("%s %d" % kv for kv in sorted(counts.items())))
 
 
+def check_round_pounds(ctx, spec):
+    """No figure on the list is in pounds unless it is a whole number of quarters.
+
+    Read from each row's `qty` and `pack.qty`, with the checker's own reading of
+    a quantity, so `1⅝ lb` and `1.625 lb (2 bags)` count as the validator reads
+    them. A total of ounces written in pounds comes out in sixteenths
+    (`1.625 lb`), which nobody shops by; the skill writes those in ounces.
+    """
+    v = ctx.validate
+    pound = v.MASS_UNITS["lb"]
+    odd = []
+    for group in ctx.plan.get("shopping", []):
+        for item in group.get("items", []):
+            pack = item.get("pack")
+            for field, qty in (("qty", item.get("qty")),
+                               ("pack", pack.get("qty") if isinstance(pack, dict) else None)):
+                if not isinstance(qty, str):
+                    continue
+                written = v.written_quantity(qty)
+                if written is None or written[1] is None:
+                    continue
+                if v.MASS_UNITS.get(v.singular(v.fold_for_matching(written[1]))) != pound:
+                    continue
+                quarters = written[0] * 4
+                if abs(quarters - round(quarters)) > 1e-9:
+                    odd.append("%s %s%s" % (item.get("name"), qty, " (pack)" if field == "pack" else ""))
+    return not odd, ", ".join(odd) if odd else "none"
+
+
+# The page's own reading of a quantity (`render.amount`): a number, then the
+# unit exactly as written. It counts packs only where the two units are the same
+# string, so `2 lbs` beside `1 lb`, or `20 oz` beside `4 OZ`, prints no count.
+PAGE_AMOUNT = re.compile(r"^\s*([0-9]+(?:\.[0-9]+)?)\s*([^\s,]*)")
+
+
+def check_pack_unit(ctx, spec):
+    """Every row weighed beside a weighed pack writes the two as the page can count.
+
+    The page counts packs only where the row and the pack are written in the
+    same unit, character for character, so `2 lb` of bananas beside a `4 oz`
+    banana prints no count.
+    """
+    v = ctx.validate
+    apart = []
+    for group in ctx.plan.get("shopping", []):
+        for item in group.get("items", []):
+            pack = item.get("pack")
+            if not isinstance(pack, dict):
+                continue
+            row, one = item.get("qty"), pack.get("qty")
+            if not isinstance(row, str) or not isinstance(one, str):
+                continue
+            weighed = [v.parse_amount(q) for q in (row, one)]
+            if any(w is None or w[1] != "g" for w in weighed):
+                continue
+            units = [PAGE_AMOUNT.match(q) for q in (row, one)]
+            if not all(units) or units[0].group(2) != units[1].group(2):
+                apart.append("%s %s / pack %s" % (item.get("name"), row, one))
+    return not apart, ", ".join(apart) if apart else "none"
+
+
 def shopping_headings(ctx) -> list:
     """The shopping list's aisle headings, as the skill's own renderer prints them."""
     with tempfile.TemporaryDirectory() as tmp:
@@ -372,6 +433,8 @@ CHECKS = {
     "not_printed": check_not_printed,
     "anchor_foods": check_anchor_foods,
     "units": check_units,
+    "round_pounds": check_round_pounds,
+    "pack_unit": check_pack_unit,
     "aisles": check_aisles,
 }
 

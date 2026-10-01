@@ -61,6 +61,12 @@
       "share": 0.8
     },
     {
+      "check": "round_pounds"
+    },
+    {
+      "check": "pack_unit"
+    },
+    {
       "check": "aisles",
       "system": "us",
       "absent": "Tins|Chilled|Fruit & Vegetables|Meat & Fish"
