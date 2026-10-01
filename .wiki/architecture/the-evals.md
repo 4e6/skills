@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T17:40:00Z
+timestamp: 2026-10-01T16:53:29Z
 sources: [evals/**]
 source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
 ---
@@ -218,9 +218,14 @@ The evals keep the isolated host and give up two things:
 
 # Measurements
 
-**2026-10-01, the two US cases three times each on Opus 5.5, twice**, for
-1.4.0 ([#18](https://github.com/4e6/skills/issues/18)): 6 runs, 7 minutes and
-$10 each time.
+**2026-10-01, the two US cases three times each on Opus 5.5, three times**,
+for 1.4.0 ([#18](https://github.com/4e6/skills/issues/18)): 6 runs, 7 minutes
+and $10 each time, the last on 1.4.0 merged with 1.3.0's aisle names. That
+last run passed every check but Denver's example-food counts, the aisles and
+the judge included: two rows in pounds, both whole quarters with no pack
+(`Potatoes 1.25 lb`), every other weight in ounces, all 52 rows beside a weighed
+pack in its unit, and every list under *Produce* and *Canned Goods, Jars &
+Seasonings*. The run before it is described below.
 
 **The rule as released weighs in ounces**, with a pound only for a whole
 quarter on a row with no pack, and a row with a pack in ounces like its pack.
