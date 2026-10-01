@@ -1,0 +1,54 @@
+{
+  "id": "race-half-sunday",
+  "title": "Sunday half marathon: Friday and Saturday at 10-12 g/kg",
+  "race": true,
+  "weight_kg": 62,
+  "message": [
+    "I need a meal plan for next week, {Mon} to {Sun}. Sunday is a half marathon, I'm hoping for about 1:55.",
+    "",
+    "Monday: 50 min easy run",
+    "Tuesday: 55 min with 4 x 6 min at threshold",
+    "Wednesday: rest",
+    "Thursday: 40 min easy",
+    "Friday: rest",
+    "Saturday: 20 min easy jog with 4 strides",
+    "Sunday: half marathon race",
+    "",
+    "I weigh 62 kg and live in Australia. No restrictions. I've got half a bag of spinach and some Greek yoghurt to use up.",
+    "That's everything — please go ahead and make the plan."
+  ],
+  "checks": [
+    {
+      "check": "covers",
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    {
+      "check": "ranked_first",
+      "day": "Sunday"
+    },
+    {
+      "check": "race_named",
+      "day": "Sunday"
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Friday",
+      "min": 10,
+      "max": 12
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Saturday",
+      "min": 10,
+      "max": 12
+    }
+  ]
+}

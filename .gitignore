@@ -8,3 +8,5 @@ photos.json
 photos/
 # What tools/release.py builds.
 /dist/
+# What the evals write: every run's plan, reply, transcript and grades.
+/evals/*/results/

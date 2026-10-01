@@ -1,0 +1,55 @@
+{
+  "id": "race-first-day",
+  "title": "A race on the plan's first day: the day before is outside the plan",
+  "race": true,
+  "weight_kg": 82,
+  "message": [
+    "Plan my meals for next week, {Mon} to {Sun}, please. Monday's a bank holiday and I'm racing a 10K that morning.",
+    "",
+    "Mon: 10K race",
+    "Tue: rest",
+    "Wed: 40 min easy run",
+    "Thu: 60 min turbo session, 3 x 12 min at threshold",
+    "Fri: rest",
+    "Sat: 1h45 easy long run",
+    "Sun: 45 min easy run",
+    "",
+    "I weigh 82 kg and live in the United Kingdom. Lactose intolerant. Fridge is empty.",
+    "That's everything — please go ahead and make the plan."
+  ],
+  "checks": [
+    {
+      "check": "covers",
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    {
+      "check": "ranked_first",
+      "day": "Monday"
+    },
+    {
+      "check": "race_named",
+      "day": "Monday"
+    }
+  ],
+  "skip_judge": [
+    "race-eve-dinner"
+  ],
+  "judge": [
+    {
+      "id": "race-morning-breakfast",
+      "question": "Is Monday's breakfast, on the morning of the race, carbohydrate-led, familiar and not heavy or fatty?"
+    },
+    {
+      "id": "no-loading-claimed",
+      "question": "The day before the race (the Sunday before this plan starts) is not in the plan. Does the plan avoid claiming that any of its own days does the race's carbohydrate loading?"
+    }
+  ]
+}

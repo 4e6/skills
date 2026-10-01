@@ -3,7 +3,7 @@ type: Glossary Term
 title: Carb periodization
 description: Carbohydrate scaled to each day's training, hardest days fed hardest, and fuel stated per session as sourced guidance with example food. What each figure is, where it comes from, and which need a professional.
 tags: [nutrition, domain]
-timestamp: 2026-10-01T10:38:00Z
+timestamp: 2026-10-01T11:43:32Z
 sources: [skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
 ---
@@ -209,7 +209,7 @@ and an 82 kg lactose-intolerant cyclist planning Thursday to Sunday.
   host wrote an `extra` at all. One host gave a one-hour hard swim no fuel lines, a miss in the
   fuel rules rather than the snacks, which the snack line then made up.
 - **Not measured**: a real host; Haiku; a host without Python, whose reply prints
-  the line; a race week; a plan with bread or sides served with a dish, since `extra` went;
+  the line; a plan with bread or sides served with a dish, since `extra` went;
   and whether any
   athlete eats to the line.
 
@@ -292,6 +292,14 @@ description makes it look like a long session. It is ranked first, the summary
 says so, and the day's `session` names the race — and
 [check 10](/architecture/the-validator.md#check-10-the-plan-against-its-own-ranking)
 then holds its meals to that.
+
+**Measured, 2026-10-01**, by [the evals](/architecture/the-evals.md#first-measurements),
+once per case on Opus 5.5: six race weeks and a control. Every race was ranked
+first and named as one, and the days before landed in their bands, the snack
+line making up the gap: 7.0 g/kg before a 10K, about 10 g/kg on each of the two
+days before a half marathon, vegan included, and the day before alone for a half
+run in under 90 minutes. A race given no distance had none assumed. One run per
+case is an anecdote, not a rate.
 
 # Sources
 

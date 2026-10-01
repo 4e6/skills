@@ -3,7 +3,7 @@ type: Module
 title: The validator
 description: validate.py is the one part of the skill that checks rather than instructs. Three exits, a line on success, findings that name their repair, and tolerance chosen so a malformed plan is described rather than hidden.
 tags: [architecture, validation]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-10-01T11:43:32Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/SKILL.md]
 source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
 ---
@@ -129,6 +129,14 @@ a blind spot in a week with no race. A day in neither list is never compared, so
 silences the check rather than anchoring it on the next part, which would have
 told an athlete to cut the days before a race. `Sat & Sun` reads as Saturday
 only: a part is one day.
+
+**A dish with no recipe is reported by nothing.** Check 10 skips a day whose
+meals do not match their recipes on the grounds that the day and portion checks
+already name the fault, but no check compares a meal's `dish` or `alongside`
+with the recipe titles at that sitting. The first eval run found a plan exiting
+0 with two meals naming dishes no recipe had: the page cannot link them to a
+method, and check 10 ignored both days. Not yet fixed; the
+[evals](/architecture/the-evals.md) check it themselves.
 
 # Tolerance is matched to what can be answered
 

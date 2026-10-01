@@ -1,0 +1,48 @@
+{
+  "id": "race-10k-saturday",
+  "title": "Saturday 10K: Friday at 7-10 g/kg",
+  "race": true,
+  "weight_kg": 70,
+  "message": [
+    "Can you make me a meal plan for next week, {Mon} to {Sun}? I'm racing a 10K on Saturday.",
+    "",
+    "Mon: rest",
+    "Tue: 45 min easy run",
+    "Wed: 50 min session, 6 x 800 m at 5K pace with 2 min jog recoveries",
+    "Thu: 40 min easy run",
+    "Fri: 20 min shakeout jog",
+    "Sat: 10K race",
+    "Sun: 60 min easy recovery run",
+    "",
+    "I weigh 70 kg and live in the United Kingdom. No dietary restrictions. Fridge is empty.",
+    "That's everything — please go ahead and make the plan."
+  ],
+  "checks": [
+    {
+      "check": "covers",
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    {
+      "check": "ranked_first",
+      "day": "Saturday"
+    },
+    {
+      "check": "race_named",
+      "day": "Saturday"
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Friday",
+      "min": 7,
+      "max": 10
+    }
+  ]
+}
