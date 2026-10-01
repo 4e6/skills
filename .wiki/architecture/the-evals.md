@@ -1,7 +1,7 @@
 ---
 type: Module
 title: The evals
-description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week; script checks and a tool-less judge grade it, as pass rates.
+description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
 timestamp: 2026-10-01T13:06:44Z
 sources: [evals/**]
@@ -37,6 +37,26 @@ a number:
 The first set held a race given no distance, one on the plan's first day, and a
 vegan half marathon. They went to keep the list short: the first two test rules
 the long events do not reach, and those are now untested.
+
+# Five countries, one week
+
+The skill says to cook what an ordinary household in the athlete's country
+cooks, while nearly every food its own text names as an example is British:
+porridge, a bagel with jam, chocolate milk, sourdough, bolognese, lentil soup.
+The `cuisine-*` cases ask whether those examples pull a plan back to Britain
+([#10](https://github.com/4e6/skills/issues/10)): the same training week, weight
+and empty fridge for an athlete in Osaka, São Paulo, Pune and Kraków, and in
+Manchester as the control, where the examples are at home. The week is ordinary
+rather than a race, with a threshold run and a long run, so the session lines
+and the snack lines every day are written, the short lines with a format to
+copy, where copying would show first.
+
+**A count of the examples is evidence, not a verdict.** Porridge is an ordinary
+breakfast in Poland and in Brazil, and chocolate milk sells everywhere. So the
+script counts the examples in the dishes and on the lines, a pass meaning none,
+and a judge answers whether an ordinary household there would make each
+breakfast, cook each lunch and dinner, and buy the line food without thinking
+it foreign, and whether the shops named trade there.
 
 # Outside the skill, and run by hand
 
@@ -135,6 +155,8 @@ go, and counting it would grade the account.
   - **Fuel-line food is counted** from the fuelling table's items at each
     range's middle; anything else on a line is not.
   - **Bounds are 5% wide either side**, since the rules say *roughly*.
+  - **The skill's example foods are counted** in a country case's dishes and
+    on its lines, by name.
   - **The vegan check reads only names of food** — dishes, ingredients, the
     list, fuel and snack examples — so `Dairy, Eggs & Chilled` and *no eggs or
     honey* in a summary do not fail it, and takes `oat milk`, `peanut butter`
@@ -148,7 +170,8 @@ go, and counting it would grade the account.
   that `yes` is right, and some are asked of every run. **A question that rests
   on one of the skill's rules quotes it**, since the judge never reads the
   skill: asked only whether a 10K's fuel lines fit the race, it answers from its
-  own idea of sports nutrition.
+  own idea of sports nutrition. A case that names the athlete's **country**
+  gets four more: breakfasts, lunches and dinners, the line food, and the shops.
 
 # Against the method the bundle used before
 
@@ -171,10 +194,30 @@ The evals keep the isolated host and give up two things:
 - Web search, which 1.1 stopped forbidding and which the evals take away.
 - Any agent but Claude Code. The adapter keeps the agent's command line apart
   from everything else, so another can be added.
-- Which country a plan cooks for, [an open issue](https://github.com/4e6/skills/issues/10)
-  these cases could carry.
+- An athlete who names no country, where the skill says to cook something
+  unremarkable rather than guess at a cuisine.
 
 # Measurements
+
+**2026-10-01, the five country cases three times each on Opus 5.5**, skill 1.1.1:
+15 runs, 20 minutes, $24. **The examples did not pull the cooking back to
+Britain.**
+
+- **Every check and every judge question passed in every run**, the four country
+  questions included. Osaka's weeks were natto rice, ginger pork and udon; Pune's
+  poha, upma, dal and rajma; Kraków's rye bread with curd cheese, buckwheat,
+  pierogi and kefir; São Paulo's bread rolls, tapioca crepes, rice and beans.
+  Every closing note named local chains: Gyomu Super, Assaí, DMart, Biedronka.
+- **The examples that turned up were the ones the country eats anyway.**
+  Porridge was a breakfast in every Kraków and São Paulo week, as *owsianka* and
+  *mingau*, and in none of Osaka's or Pune's; bolognese was a lunch and a dinner
+  in one São Paulo week. No bagel, sourdough or lentil soup appeared outside Manchester.
+- **The one example copied across was chocolate milk, after a session**: on
+  every after-line in Kraków and São Paulo, a third of Osaka's and Pune's, where
+  the others were a rice ball with milk, flavoured milk or a sweet lassi. The
+  judge found it ordinary in all four countries.
+- **The control is where the examples were**: porridge at 15 of 21 Manchester
+  breakfasts, a bagel or a crumpet with jam on the snack lines.
 
 **2026-10-01, the seven cases three times each on Opus 5.5**, skill 1.1: 21 runs, seven at
 a time, 20 minutes, $36. Each run took 4.3–6.6 minutes.

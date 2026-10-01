@@ -6,7 +6,9 @@ behaviour needs measuring. They are never run in CI, and never released: a
 skill's zip is built from its own folder, and nothing here is in it.
 
 Only `training-week-meal-plan` has them so far: six race weeks, from a 10K to
-an Ironman, and a control week with no race.
+an Ironman, and a control week with no race (`race-*`, `control-no-race`); and
+one ordinary training week for an athlete in Japan, Brazil, India, Poland and the
+UK, which asks whether the plan cooks what that country eats (`cuisine-*`).
 
 ## Running them
 
@@ -17,11 +19,13 @@ money, so start small:
 ```sh
 python3 evals/training-week-meal-plan/run.py list
 python3 evals/training-week-meal-plan/run.py run --case race-10k-saturday --runs 1
+python3 evals/training-week-meal-plan/run.py run --case 'cuisine-*'
 python3 evals/training-week-meal-plan/run.py run
 ```
 
-The last is every case three times, seven runs at once: about 20 minutes and
-$35 on Opus. `--jobs` changes how many run at once. The limit is your account's
+`--case` takes an id or a pattern, and repeats. Seven race-week cases three
+times each, seven runs at once, take about 20 minutes and $35 on Opus; the five
+country cases about 20 minutes and $25; the last command runs every case. `--jobs` changes how many run at once. The limit is your account's
 rate limit, not the machine (a run is one `claude` process of about 0.7 GB,
 mostly waiting on the model): much wider than seven and the runs slow each other
 down. A run the API turns away is started again, twice at most.
@@ -75,7 +79,9 @@ told once to go ahead, and the run records that it asked.
   has a recipe (which `validate.py` checks only from 1.1.1), it covers the right
   days, the race is ranked first and named as one, a loading day is fed in its
   band and an ordinary day is not, a long race's `during` line gives 60–90 g an
-  hour, and a vegan plan names no animal food. A day's band is read back from
+  hour, and a vegan plan names no animal food. A country case counts the
+  skill's own example foods (porridge, bagels, chocolate milk, sourdough,
+  bolognese, lentil soup) in the dishes and on the daily lines. A day's band is read back from
   its snack line: meals, fuel and the line's `at least` come to the band's
   bottom, and with its `up to` to its top. The total alone cannot tell 7–10 from
   10–12, because snacks top every day up to its band's bottom.
@@ -83,7 +89,9 @@ told once to go ahead, and the run records that it asked.
   plan and the reply, and answers each question `yes`, `no` or `unclear` with a
   reason. Some questions are asked of every run (the summary, invented figures,
   restrictions, no claim to have varied on earlier weeks, the disclaimer), some
-  of every race week, and some by one case.
+  of every race week, some of every case that names a country (would an
+  ordinary household there cook these breakfasts, these lunches and dinners,
+  this fuel; do the shops named trade there), and some by one case.
 
 `report` prints how often each check passed and each question was answered
 `yes`, per case. A run that says nothing about the skill is set aside in a row
@@ -102,9 +110,11 @@ A case is one JSON file in `evals/training-week-meal-plan/cases/`, named for its
   become next week's dates (`Monday 5 October`).
 - `weight_kg`: the weight the message gives, which the per-kilogram checks use.
 - `race`: whether the week holds a race, which adds the race-week questions.
+- `country`: where the athlete lives, as the judge's questions name it, which
+  adds the country questions.
 - `checks`: script checks from `checks.py`'s `CHECKS`, each with what it needs:
   a `day`; a `min` and `max` in g/kg for a band, or `below` for the band a day
-  must stay under; a `pattern`. An `id` names one where the default would
+  must stay under; a `pattern`; a `where`. An `id` names one where the default would
   repeat.
 - `judge`: the case's own questions, each with an `id`. Word them so that `yes`
   is the right answer.

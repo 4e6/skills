@@ -27,6 +27,10 @@ near me* on the four rows, while an invented *Europe* row had suited her.
 - Every athlete in the earlier runs typed a country anyway.
 - The plan is written in English whatever the country: country picks dishes and
   shops, never the language.
+- **A country the rows do not name is cooked for.** Given Japan, Brazil, India
+  or Poland, every eval run cooked that country's food and named its shops
+  ([the evals](/architecture/the-evals.md#measurements)). So the rows decide what
+  is quick to pick, not what the plan can do.
 
 # Open
 

@@ -70,6 +70,9 @@ NOT_ANIMAL_AFTER = re.compile(
 QUALIFIED_AFTER = re.compile(r"\s*[,(]\s*([a-z-]+)", re.I)
 JOINS = {"and", "with", "&", "or", "+"}
 RACE = re.compile(r"\brace\b", re.I)
+# The example foods in the skill's own text (issue #10).
+ANCHORS = re.compile(
+    r"\b(?:porridge|overnight oats|bagels?|chocolate milk|sourdough|bolognese|lentil soup)\b", re.I)
 
 
 def load_validate(skill: Path):
@@ -267,6 +270,34 @@ def check_race_during(ctx, spec):
     return ok, "during: %r" % lines
 
 
+def check_anchor_foods(ctx, spec):
+    """None of the skill's own example foods is named, in the dishes or on the daily lines.
+
+    These are the foods the skill's text uses as examples, nearly all British.
+    For an athlete elsewhere, one turning up suggests the example was copied
+    rather than the country's food chosen; the UK case is the control, where
+    they belong. `where` is `dishes` (each meal's dishes) or `lines` (the
+    session fuel lines and the snack line, short and written every day, where
+    copying would show first).
+    """
+    names = []
+    for entry in ctx.plan.get("days", []):
+        if spec["where"] == "dishes":
+            for meal in entry.get("meals", []):
+                names += [meal.get("dish") or ""] + list(meal.get("alongside") or [])
+        else:
+            for session in entry.get("sessions", []):
+                names += [(session.get(k) or {}).get("example") or "" for k in ("before", "during", "after")]
+            names.append((entry.get("snacks") or {}).get("example") or "")
+    counts = {}
+    for name in names:
+        for match in ANCHORS.finditer(name):
+            key = re.sub(r"^bagels$", "bagel", match.group(0).lower())
+            counts[key] = counts.get(key, 0) + 1
+    return not counts, (", ".join("%s x%d" % kv for kv in sorted(counts.items()))
+                        if counts else "none of them")
+
+
 def check_not_printed(ctx, spec):
     match = re.search(spec["pattern"], printed(ctx.plan), re.I)
     return match is None, ("prints %r" % match.group(0)) if match else "absent"
@@ -284,6 +315,7 @@ CHECKS = {
     "race_during": check_race_during,
     "vegan": check_vegan,
     "not_printed": check_not_printed,
+    "anchor_foods": check_anchor_foods,
 }
 
 
@@ -296,7 +328,7 @@ class Context:
 
 def check_id(spec: dict) -> str:
     return spec.get("id") or "-".join(
-        [spec["check"]] + [str(spec[k]) for k in ("day",) if k in spec]
+        [spec["check"]] + [str(spec[k]) for k in ("day", "where") if k in spec]
     )
 
 
