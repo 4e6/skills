@@ -3,7 +3,7 @@ type: Module
 title: The validator
 description: validate.py is the one part of the skill that checks rather than instructs. Three exits, a line on success, findings that name their repair, and tolerance chosen so a malformed plan is described rather than hidden.
 tags: [architecture, validation]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-10-01T12:19:17Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/SKILL.md]
 source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
 ---
@@ -87,6 +87,30 @@ Nothing in the checker knows which days were asked for, so a repair that obeys
 *drop Friday* would ship clean. `day-order`'s target is the earliest day named,
 through to Sunday: Thursday, Saturday, Sunday is told to put Friday back;
 Thursday through the next Wednesday is told to stop at Sunday.
+
+# A meal's dishes are its recipes' titles
+
+The page links a meal to its method by matching each name in `dish` and
+`alongside` to a recipe's `title` at that sitting, exactly. A near-miss leaves
+the week at a glance naming one breakfast while the recipe and the shopping list
+cook another. Check 3 holds the two sides to each other:
+
+- `dish-without-recipe` — a dish the meal names that no recipe at that sitting
+  has;
+- `recipe-without-dish` — a recipe entered at a sitting whose meal does not name
+  it.
+
+A renamed dish draws both, and the first names the other title, because giving
+both one title is the usual repair. Case counts: `Fruit Salad` is not
+`Fruit salad`.
+
+**Two checks lean on these.** Check 10 compares only days whose meals and
+recipes line up, and check 6 compares no quantity at all while one sitting's
+food cannot be added up; both leave the fault to check 3 to name. Until 1.1.1
+check 3 had no such finding, so both deferred to nothing. A Haiku 4.5 plan from
+the first eval run exited 0 with Friday breakfast — the day before its race —
+and Sunday lunch each naming a dish the recipe there was not. With the titles
+aligned, the same plan has 37 shopping-quantity findings.
 
 # Check 10: the plan against its own ranking
 
