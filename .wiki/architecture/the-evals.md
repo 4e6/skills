@@ -5,7 +5,7 @@ description: On-demand behavioural tests for training-week-meal-plan, outside th
 tags: [architecture, testing, evals]
 timestamp: 2026-10-01T12:30:57Z
 sources: [evals/**]
-source_commit: 33232960db0b6b842fe8db19340435f0b96a52a0
+source_commit: 7fb6472b4ab1212455f9834dc081fb9ac778e05c
 ---
 
 # What they are for
