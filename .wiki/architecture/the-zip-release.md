@@ -1,11 +1,11 @@
 ---
 type: Module
 title: The zip release
-description: Web hosts install a skill from an uploaded zip. Each skill is released on its own when its version changes, as a zip built from the commit, and README.md's download link is both the offer and the list of skills that get one.
-tags: [distribution, release, ci]
-timestamp: 2026-09-30T22:05:51Z
+description: Web hosts install a skill from an uploaded zip. Each skill is released alone when its MAJOR.MINOR.PATCH version changes, as a zip built from the commit; README.md's download link is the offer and the list.
+tags: [distribution, release, ci, versioning]
+timestamp: 2026-10-01T12:40:00Z
 sources: [tools/release.py, .github/workflows/release.yml, /README.md, /.gitignore]
-source_commit: 842198a385bb8965ec414740a88dddde8b8e5950
+source_commit: 88345cbfeda6e4e157884cf119b046edfdd0008e
 ---
 
 # Why there is a zip at all
@@ -34,6 +34,36 @@ to upload a new one. Everything below follows from that.
 - GitHub keeps one *latest* release for the whole repository, so with a release
   per skill, `releases/latest/download/...` would name whichever skill was
   released last. The README links each zip's own version instead.
+
+# What a version number says
+
+`MAJOR.MINOR.PATCH`, semver's shape, with meanings for a skill rather than a
+library. Nothing calls a skill, so semver's own test, *does a caller's code
+break*, has no subject. The reader a number is for is the person deciding
+whether to upload a zip again, and what they hold is the skill and what it
+wrote:
+
+- **PATCH**: the skill now does what its own files already said it did. A
+  validator finding for a rule `SKILL.md` already stated, a wrong figure put
+  right, a typo. Worth taking, and nothing about the week changes on purpose.
+- **MINOR**: the skill does something new or differently that the athlete would
+  notice. A step, a rule, a field, a target, the page's layout.
+- **MAJOR**: something already held stops working. A plan written by an earlier
+  version no longer validates or renders, a file the skill writes changes its
+  name, or the skill is renamed, which breaks every install.
+
+Neither upstream source prescribes a scheme: the specification's `metadata` is
+string to string, with `version: "1.0"` only as an example, and Claude Code's
+plugin `version` is *not checked against semver*. Two numbers were used until
+1.1, and they could not say *fix* apart from *change*. A third costs nothing
+here, since a tag is a string and nothing sorts them. `1.0` and `1.1` read as
+`1.0.0` and `1.1.0`; their tags stay as released, since links name them.
+`check` holds every offered skill to three numbers. A skill offered no zip is
+held to nothing, because its version triggers nothing, but takes three numbers
+the next time it changes.
+
+The first patch was 1.1.1: check 3 began naming a dish no recipe has, which
+step 3 of `SKILL.md` already required.
 
 # README.md's link is the list
 

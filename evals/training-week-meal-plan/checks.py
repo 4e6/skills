@@ -140,9 +140,9 @@ def check_validates(ctx, spec):
 def check_dishes_have_recipes(ctx, spec):
     """Every dish a meal names is a recipe's title at that sitting.
 
-    `validate.py` does not check this, and its ranking check skips a day where
-    it fails, so a plan can be clean with a meal the page cannot link to a
-    method.
+    `validate.py` checks this itself from 1.1.1 (`dish-without-recipe`). Before
+    that a plan could be clean with a meal the page cannot link to a method, and
+    `--skill-ref` can still run such a version.
     """
     titles = {(r.get("day"), r.get("meal"), r.get("title")) for r in ctx.plan.get("recipes", [])}
     missing = []

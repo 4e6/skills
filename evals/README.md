@@ -72,7 +72,7 @@ told once to go ahead, and the run records that it asked.
 
 - **Script checks** (`checks.py`) read the plan and give the same answer every
   time: the plan is the skill's own `validate.py` clean, every dish a meal names
-  has a recipe (which `validate.py` does not check), it covers the right
+  has a recipe (which `validate.py` checks only from 1.1.1), it covers the right
   days, the race is ranked first and named as one, a loading day is fed in its
   band and an ordinary day is not, a long race's `during` line gives 60–90 g an
   hour, and a vegan plan names no animal food. A day's band is read back from

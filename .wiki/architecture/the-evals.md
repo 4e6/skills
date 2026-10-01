@@ -120,8 +120,9 @@ go, and counting it would grade the account.
 - **Script checks**, the same answer every time. They reuse `validate.py` from
   the copy of the skill that ran, so a day's food is counted the way the skill's
   own checker counts it. Every plan must be clean under it, and must give every
-  dish a meal names a recipe, which
-  [the validator does not check](/architecture/the-validator.md#check-10-the-plan-against-its-own-ranking).
+  dish a meal names a recipe. The validator checks that itself from 1.1.1
+  (`dish-without-recipe`, after the first eval run found the gap), and the evals
+  keep their own check for runs of a skill from before it.
   - **A day's band is read back from its snack line.** The host works out the
     line as the gap from the day's meals and fuel to its band's bottom (`at
     least`) and top (`up to`). The first version took meals plus `at least` and
@@ -175,7 +176,7 @@ The evals keep the isolated host and give up two things:
 
 # Measurements
 
-**2026-10-01, the seven cases three times each on Opus 5.5**: 21 runs, seven at
+**2026-10-01, the seven cases three times each on Opus 5.5**, skill 1.1: 21 runs, seven at
 a time, 20 minutes, $36. Each run took 4.3–6.6 minutes.
 
 - **Every script check passed in every run.** Every plan passed the checker
@@ -201,7 +202,8 @@ Two things in it were the skill's and not the harness's:
 - **Vegetarian groceries:** a vegetarian's list bought plain parmesan (usually
   made with animal rennet) and refried beans (often made with lard in the US).
 - **Haiku 4.5, the 10K case once:** the plan checked clean with two meals naming
-  dishes no recipe had ([#13](https://github.com/4e6/skills/issues/13)), and the
+  dishes no recipe had ([#13](https://github.com/4e6/skills/issues/13), fixed in
+  1.1.1), and the
   reply said the lunches and dinners differ from recent weeks when there were
   none, which step 2 says never to do.
 

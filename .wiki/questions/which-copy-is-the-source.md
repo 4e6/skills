@@ -3,10 +3,10 @@ type: Open Question
 title: Which copy of a skill is the one to edit?
 description: Two skills here have a second copy elsewhere. training-week-meal-plan's kept its tests and schema generator; llm-wiki's is where it was developed, though the author's assistant now loads this one. Until one side is the source, they drift.
 tags: [process, distribution]
-timestamp: 2026-09-30T22:02:50Z
+timestamp: 2026-10-01T12:19:17Z
 status: open
 sources: [skills/training-week-meal-plan/**, skills/llm-wiki/**]
-source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
+source_commit: 88345cbfeda6e4e157884cf119b046edfdd0008e
 ---
 
 # The question
@@ -48,6 +48,10 @@ has moved:
 - `validate.py` gained `origin-without-ingredients`, a finding the reference
   implementation does not emit, which a parity suite that refuses a code only one
   side emits would fail;
+- on 2026-10-01 it gained `dish-without-recipe` and `recipe-without-dish`,
+  which the reference implementation does not emit either and which have no
+  test here: a meal naming a dish no recipe at its sitting has, the case to add
+  first wherever the tests end up;
 - `plan-schema.json` gained a day's `snacks` and lost a meal's `extra`, by hand, so the schema is no longer what the generator would write
   and a byte comparison against it would fail;
 - `fuelling.md` gained the daily targets and the snack rules, and moved food

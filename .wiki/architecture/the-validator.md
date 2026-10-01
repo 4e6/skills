@@ -3,9 +3,9 @@ type: Module
 title: The validator
 description: validate.py is the one part of the skill that checks rather than instructs. Three exits, a line on success, findings that name their repair, and tolerance chosen so a malformed plan is described rather than hidden.
 tags: [architecture, validation]
-timestamp: 2026-10-01T11:43:32Z
+timestamp: 2026-10-01T12:19:17Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/SKILL.md]
-source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
+source_commit: 88345cbfeda6e4e157884cf119b046edfdd0008e
 ---
 
 # Why it exists
@@ -88,6 +88,30 @@ Nothing in the checker knows which days were asked for, so a repair that obeys
 through to Sunday: Thursday, Saturday, Sunday is told to put Friday back;
 Thursday through the next Wednesday is told to stop at Sunday.
 
+# A meal's dishes are its recipes' titles
+
+The page links a meal to its method by matching each name in `dish` and
+`alongside` to a recipe's `title` at that sitting, exactly. A near-miss leaves
+the week at a glance naming one breakfast while the recipe and the shopping list
+cook another. Check 3 holds the two sides to each other:
+
+- `dish-without-recipe` — a dish the meal names that no recipe at that sitting
+  has;
+- `recipe-without-dish` — a recipe entered at a sitting whose meal does not name
+  it.
+
+A renamed dish draws both, and the first names the other title, because giving
+both one title is the usual repair. Case counts: `Fruit Salad` is not
+`Fruit salad`.
+
+**Two checks lean on these.** Check 10 compares only days whose meals and
+recipes line up, and check 6 compares no quantity at all while one sitting's
+food cannot be added up; both leave the fault to check 3 to name. Until 1.1.1
+check 3 had no such finding, so both deferred to nothing. A Haiku 4.5 plan from
+the first eval run exited 0 with Friday breakfast — the day before its race —
+and Sunday lunch each naming a dish the recipe there was not. With the titles
+aligned, the same plan has 37 shopping-quantity findings.
+
 # Check 10: the plan against its own ranking
 
 `training_overview.hard_days` is the plan's answer to *which days did you fuel
@@ -129,15 +153,6 @@ a blind spot in a week with no race. A day in neither list is never compared, so
 silences the check rather than anchoring it on the next part, which would have
 told an athlete to cut the days before a race. `Sat & Sun` reads as Saturday
 only: a part is one day.
-
-**A dish with no recipe is reported by nothing.** Check 10 skips a day whose
-meals do not match their recipes on the grounds that the day and portion checks
-already name the fault, but no check compares a meal's `dish` or `alongside`
-with the recipe titles at that sitting. The first eval run found a plan exiting
-0 with two meals naming dishes no recipe had: the page cannot link them to a
-method, and check 10 ignored both days. Not yet fixed
-([#13](https://github.com/4e6/skills/issues/13)); the
-[evals](/architecture/the-evals.md) check it themselves.
 
 # Tolerance is matched to what can be answered
 

@@ -17,6 +17,12 @@ under the tag `SKILL-vVERSION`, since a web host's copy updates only when its
 owner uploads it again, and a release that changed nothing would ask them to.
 `pending` names every linked skill whose tag does not exist yet.
 
+**A version is MAJOR.MINOR.PATCH**, and `check` fails on any other shape for a
+skill offered a zip, because the number is what tells its owner whether to
+upload again: PATCH makes the skill do what it already said, MINOR changes what
+it does, MAJOR stops something already held from working. The wiki's zip
+release page says why.
+
 **The zip is built from the last commit, never from the folder on disk.** A
 skill's folder collects files git ignores -- a plan and its photos from a run
 made inside the checkout -- and `git archive` takes only what is tracked. Every
@@ -46,6 +52,8 @@ FRONTMATTER = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 NAME = re.compile(r"^name:\s*(\S+)\s*$", re.M)
 METADATA = re.compile(r"^metadata:[ \t]*\n((?:[ \t]+.*\n?)+)", re.M)
 VERSION = re.compile(r"^[ \t]+version:\s*[\"']?([^\"'\s]+)[\"']?\s*$", re.M)
+# Three numbers, and no leading zero, which would make 1.01 and 1.1 two tags.
+SEMVER = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
 MTIME_GIT = (2, 45)
 
 
@@ -153,6 +161,11 @@ def check() -> int:
             faults.append(f"skills/{skill}/SKILL.md has no metadata.version")
         elif own != version:
             faults.append(f"README.md links {skill} v{version}; the skill is v{own}")
+        elif not SEMVER.fullmatch(own):
+            faults.append(
+                f"skills/{skill}/SKILL.md is v{own}; a version is MAJOR.MINOR.PATCH, "
+                f"so write it with three numbers"
+            )
         faults += layout_faults(skill, build(skill))
         released = tag(skill, version)
         if has_ref(f"refs/tags/{released}") and (

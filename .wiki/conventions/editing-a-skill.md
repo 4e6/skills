@@ -3,9 +3,9 @@ type: Convention
 title: Editing a skill
 description: Re-read the two upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone; a change to behaviour or to the page is judged by running it.
 tags: [skills, authoring, review]
-timestamp: 2026-10-01T11:43:32Z
+timestamp: 2026-10-01T12:40:00Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
-source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
+source_commit: 88345cbfeda6e4e157884cf119b046edfdd0008e
 ---
 
 # Read the guides, and point at them
@@ -46,6 +46,9 @@ On top of what the guides say, and not a restatement of them:
 - `license`, a `LICENSE` file, `metadata.author` and `metadata.version` are set;
   `allowed-tools` and `disable-model-invocation` are absent
   ([the payload](/architecture/the-payload.md#frontmatter-the-host-reads));
+- `metadata.version` is `MAJOR.MINOR.PATCH`, and a change raises the number
+  that says what it is: fix, change or break
+  ([what each means](/architecture/the-zip-release.md#what-a-version-number-says));
 - `compatibility` says whether the skill uses the network — and when it does, for
   what and how much — and names a runtime exactly when a script needs one;
 - a skill that only works with one model or one kind of machine says so in its

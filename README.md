@@ -46,7 +46,7 @@ Keep each folder's name as it is. The format requires it to match the skill's
 
 The web apps install a skill from a zip you upload. Download it here:
 
-- [training-week-meal-plan.zip](https://github.com/4e6/skills/releases/download/training-week-meal-plan-v1.1/training-week-meal-plan.zip)
+- [training-week-meal-plan.zip](https://github.com/4e6/skills/releases/download/training-week-meal-plan-v1.1.1/training-week-meal-plan.zip)
 
 and upload it as the app's own help describes:
 [Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude),
@@ -55,7 +55,9 @@ Upload the zip as it is; it holds the skill's folder, which is what both expect.
 
 An uploaded skill does not update itself. Each new version is a
 [release](https://github.com/4e6/skills/releases) with its own zip; to take it,
-upload that zip in place of the old one.
+upload that zip in place of the old one. A version is three numbers: the last
+moving alone is a fix, the middle one a change you would notice, the first one
+something that stops working as it did.
 
 ## Licence
 

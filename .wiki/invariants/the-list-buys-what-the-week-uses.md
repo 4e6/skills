@@ -3,9 +3,9 @@ type: Invariant
 title: The shopping list buys what the week uses
 description: Each row's quantity is what the recipes cook with, less what the fridge holds, and its days are the days that eat what it buys. One amount of food per row and never a pack size — except a staple, which is the jar and carries no days.
 tags: [plan-quality, shopping, validation]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-10-01T13:00:00Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
-source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
+source_commit: 88345cbfeda6e4e157884cf119b046edfdd0008e
 ---
 
 # Statement
@@ -122,7 +122,9 @@ with a list of its own, a pointer to nothing, an origin with no `yields` or no
 ingredient block. Each is a finding of its own, so the list is unchecked only
 while something else is being repaired. The last was once silent — the list went
 unchecked and nothing said why — until `origin-without-ingredients` was added.
-The schema cannot require the field, because only an origin carries one.
+The schema cannot require the field, because only an origin carries one. A meal
+or side naming a dish no recipe at its sitting has was silent the same way
+until 1.1.1 added `dish-without-recipe`.
 
 The rest are per row. Each is a place where comparing would be a claim rather than
 a sum:
