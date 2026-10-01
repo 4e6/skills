@@ -3,9 +3,9 @@ type: Glossary Term
 title: Carb periodization
 description: Carbohydrate scaled to each day's training, hardest days fed hardest, and fuel stated per session as sourced guidance with example food. What each figure is, where it comes from, and which need a professional.
 tags: [nutrition, domain]
-timestamp: 2026-10-01T13:06:44Z
+timestamp: 2026-10-01T21:39:05Z
 sources: [skills/training-week-meal-plan/references/fuelling.md]
-source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
+source_commit: e5ae3bf78ef71fa3efb195ca7b30307aea5865c5
 ---
 
 Rather than a constant daily diet, **carb periodization** scales carbohydrate to
@@ -58,6 +58,15 @@ each line is two fields:
   carbohydrate an hour`;
 - `example` — food that roughly fits it, with amounts: `1 bottle of isotonic
   drink, 1 energy bar`.
+
+**A `before`, `after` or snack line's food is what people in the athlete's
+country have at that moment**, from the week's own food where that is what they
+would have. The skill names no food for these lines: whatever it named, a
+British bottle of chocolate milk or a glass of milk and a banana fine anywhere,
+was copied onto lines in countries it did not suit. With none named, the judge
+found every plan's lines typical of the country, 18 of 18, a lean rather than
+proof, since the question is noisy
+([the evals](/architecture/the-evals.md#measurements)).
 
 Fuel used to be a meal, and a plan printed a pre-session snack before lunch and
 the bike's fuel after it — a timetable nobody gave, since a week in words has no

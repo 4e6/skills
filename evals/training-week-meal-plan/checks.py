@@ -84,7 +84,10 @@ NOT_ANIMAL_AFTER = re.compile(
 QUALIFIED_AFTER = re.compile(r"\s*[,(]\s*([a-z-]+)", re.I)
 JOINS = {"and", "with", "&", "or", "+"}
 RACE = re.compile(r"\brace\b", re.I)
-# The example foods in the skill's own text (issue #10).
+# The example foods in the skill's own text up to 1.5.0 (issue #10), nearly all
+# British. From 1.6.0 the text names no food for the before, after and snack
+# lines, so one of these there is the model's own choice; of the dishes, only the
+# no-page reply's red lentil soup is still in the text.
 ANCHORS = re.compile(
     r"\b(?:porridge|oatmeal|overnight oats|bagels?|chocolate milk|sourdough|bolognese|lentil soup)\b", re.I)
 # A weight or volume in each system. Spoons, counts, cloves and slices are in
@@ -293,12 +296,12 @@ def check_race_during(ctx, spec):
 def check_anchor_foods(ctx, spec):
     """None of the skill's own example foods is named, in the dishes or on the daily lines.
 
-    These are the foods the skill's text uses as examples, nearly all British.
-    For an athlete elsewhere, one turning up suggests the example was copied
-    rather than the country's food chosen; the UK case is the control, where
-    they belong. `where` is `dishes` (each meal's dishes) or `lines` (the
-    session fuel lines and the snack line, short and written every day, where
-    copying would show first).
+    These are the foods the skill's text used as examples up to 1.5.0, nearly
+    all British. For an athlete elsewhere, one turning up suggests the example
+    was copied, or the model's own default, rather than the country's food
+    chosen; the UK case is the control, where they belong. `where` is `dishes`
+    (each meal's dishes) or `lines` (the session fuel lines and the snack line,
+    short and written every day, where copying would show first).
     """
     if spec["where"] not in ("dishes", "lines"):
         raise ValueError("where is dishes or lines, not %r" % spec["where"])

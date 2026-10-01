@@ -6,7 +6,7 @@ tags: [process, distribution]
 timestamp: 2026-10-01T12:19:17Z
 status: open
 sources: [skills/training-week-meal-plan/**, skills/llm-wiki/**]
-source_commit: 1bf51193ea564f2482ab29e115b0181d95867222
+source_commit: e5ae3bf78ef71fa3efb195ca7b30307aea5865c5
 ---
 
 # The question

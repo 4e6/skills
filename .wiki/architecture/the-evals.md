@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T20:30:00Z
+timestamp: 2026-10-01T21:38:33Z
 sources: [evals/**]
 source_commit: d50e1524b262a45d4613b1900179681b7eda1d55
 ---
@@ -41,8 +41,10 @@ the long events do not reach, and those are now untested.
 # Six countries, one week
 
 The skill says to cook what an ordinary household in the athlete's country
-cooks, while nearly every food its own text names as an example is British:
-porridge, a bagel with jam, chocolate milk, sourdough, bolognese, lentil soup.
+cooks, while up to 1.5.0 nearly every food its own text named as an example
+was British: porridge, a bagel with jam, chocolate milk, sourdough, bolognese,
+lentil soup. From 1.6.0 it names no food for the `before`, `after` and snack
+lines, so what the count finds there is the model's own choice.
 The `cuisine-*` cases ask whether those examples pull a plan back to Britain
 ([#10](https://github.com/4e6/skills/issues/10)): the same training week, weight
 and empty fridge for an athlete in Osaka, São Paulo, Pune, Kraków and Denver,
@@ -70,6 +72,14 @@ skill's example is the count's question. Asked the Osaka questions of a
 Manchester week, and the Kraków ones of a Pune week, it answered `no` to all
 eight, each naming the dish or the shop, so a `yes` is not a judge that cannot
 say no.
+
+**A second line question asks what is typical, not what is foreign**: whether
+the food after a session and on a snack line is what people there typically
+have at that moment, not merely something on sale there. The first passed every
+plan of four versions of the lines; this one told them apart, naming kefir in
+Kraków and a rice ball in Osaka where a plan had chocolate milk. It is noisy:
+the same Kraków chocolate milk drew `no` in two of three runs of one pass and
+`yes` in another, so a difference of one or two runs in eighteen is not one.
 
 # Outside the skill, and run by hand
 
@@ -252,6 +262,53 @@ The evals keep the isolated host and give up two things:
   unremarkable rather than guess at a cuisine.
 
 # Measurements
+
+**2026-10-01, the country cases three times each on Opus 5.5, on four versions
+of the line examples** ([#10](https://github.com/4e6/skills/issues/10)): 72 runs,
+about $116, graded together once the second line question existed.
+
+- **1.4.0**: the British examples, `1 bottle of chocolate milk` on an `after`
+  line and `1 bagel with jam, 1 banana` on a snack line.
+- **Three countries**: each line's example in a British, a Mexican and a
+  Turkish version, and a line's food said to be the athlete's country's.
+- **From the week**: a line's food taken from what the week's meals use, with
+  examples fine anywhere, `1 glass of milk, 1 banana`.
+- **1.6.0**, this change: a line's food is what people in the athlete's country
+  have at that moment, from the week's food where that is what they would
+  have, and the text names no food for these lines at all.
+
+| 18 runs each | 1.4.0 | three countries | from the week | 1.6.0 |
+|---|---|---|---|---|
+| `after` lines with chocolate milk, of 36 | 26 | 17 | 0 | 21 |
+| `after` lines with milk and a banana, of 36 | 2 | 4 | 25 | 6 |
+| judge: the lines are what people there typically have | 14 | 16 | 14 | 18 |
+| judge: no line food is foreign there | 18 | 18 | 18 | 18 |
+| porridge or oatmeal breakfasts, of 126 | 50 | 43 | 40 | 48 |
+
+- **Whatever the text names spreads.** The three countries' `milk blended
+  with a banana` turned up word for word three times in São Paulo, and as
+  `milk blended with 1 banana` once in Pune. From the week's `1 glass of milk,
+  1 banana` was 25 of 36 `after` lines, every one in Manchester and Denver, and
+  pushed out the kefir, lassi and rice balls the other passes had.
+- **Most of 1.4.0's chocolate milk was the model's own.** With no food named,
+  it stayed on every São Paulo, Manchester and Denver `after` line, where the
+  judge called it typical (the achocolatado of São Paulo); on half of Kraków's,
+  the other half kefir with a sweet yeast bun or a bread roll; and on none of
+  Osaka's (a rice ball and a carton of milk, once drinking yoghurt) or Pune's
+  (milk and a banana, a sweet lassi).
+- **The breakfasts were the model's own in every version.** Porridge stayed at
+  11 to 14 of 21 Kraków breakfasts and 13 to 14 of Manchester's, and oatmeal at
+  10 to 14 of Denver's, whatever the text said. The dinners and the shops were
+  local throughout.
+- **A copy of a harmless example is still a copy**: while the text gave the
+  `before` line `1 banana, black coffee`, it came back word for word on 5, 6
+  and 1 of 36 lines in the three passes that had it.
+- A script check for the from-the-week rule, counting line food the week's
+  recipes and list name, passed 18 of 18 on that draft and 2 of 54 elsewhere,
+  and went with the rule.
+- One Osaka run on the three-country draft handed over a Pune plan through the
+  shared temporary folder (above), and was run again. Graded again with that
+  check, no run in the four passes had been reached by another.
 
 **2026-10-01, the country cases and the gran fondo once each on Opus 5.5**,
 skill 1.5.0, with the shared temporary folder closed
@@ -450,9 +507,9 @@ Britain; the after-session example was copied across.**
 
 **What this does not settle.** One model, one week, three runs a country, and
 the country typed into the message rather than picked from the intake's menu.
-#10's other half, the same cases on a skill whose examples say what each food
-is for, was not run: it is what would tell copying from the model's own habit,
-and the after-line is the place it would show.
+#10's other half, the same cases on other examples, is the measurement of four
+versions above: the lines copy what they are given, and the breakfasts were the
+model's own.
 
 **2026-10-01, the seven cases three times each on Opus 5.5**, skill 1.1: 21 runs, seven at
 a time, 20 minutes, $36. Each run took 4.3–6.6 minutes.

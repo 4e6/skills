@@ -133,6 +133,12 @@ COUNTRY_QUESTIONS = [
      "a person in {country} would buy in an ordinary local shop and eat without "
      "thinking it foreign? Sports products (an energy gel, an isotonic drink, an "
      "energy bar) count as ordinary anywhere. Name any that would not be."),
+    ("lines-typical",
+     "For each `after` line and each snack line, is its food what people in "
+     "{country} typically have at that moment, as typical there as anything they "
+     "might have instead, and not merely something on sale there? Sports products "
+     "count as typical anywhere. Name any line whose food a local would find an "
+     "unusual choice, and what they would more likely have."),
     ("shops-trade-there",
      "Does every supermarket or shop chain the plan or the reply names trade in "
      "{country}? Answer yes if none is named."),
