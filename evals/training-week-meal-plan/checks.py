@@ -307,7 +307,7 @@ def check_anchor_foods(ctx, spec):
 
 
 def check_units(ctx, spec):
-    """At least `share` of the weighed quantities are in the athlete's own `system`.
+    """At least `share` of the weighed quantities are in `system`, the country's.
 
     Read from the shopping list's quantities and the recipes' ingredient lines,
     which is what the athlete shops and cooks by. A quantity in neither system

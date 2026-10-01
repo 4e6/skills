@@ -1399,7 +1399,9 @@ VOLUME_UNITS = {
     # never added up: each was a counting noun the other did not share. The
     # fluid ounce is not here and cannot be — `fl oz` is two words where a
     # quantity takes one, and a bare `oz` is the weight above — so the skill
-    # keeps it off every line this reads.
+    # keeps it off every line this reads. The pint and the quart are the US ones;
+    # a British pint is a fifth bigger, and the skill keeps pints off a metric
+    # plan for that reason.
     "cup": 236.5882365,
     "pint": 473.176473,
     "quart": 946.352946,
@@ -2271,8 +2273,8 @@ def shopping_quantities(plan: dict) -> dict:
                 # the yoghurt its recipes pour is not a pack. Where the recipes
                 # count and the list weighs, the list is the more precise of the
                 # two, and 500 g of carrots is how a shop sells carrots.
-                # A bare 6 is a count, not a pack, and 5 cups is a measure this
-                # file will not convert rather than a container. Naming either a
+                # A bare 6 is a count, not a pack, and 5 bunches is a measure
+                # this file will not convert rather than a container. Naming either a
                 # pack prints a repair for a fault the row does not have, so the
                 # row has to look like packaging first: a container word, or a
                 # gloss stating the amount in the unit the recipes use.

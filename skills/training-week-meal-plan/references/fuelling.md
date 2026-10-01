@@ -683,7 +683,10 @@ they live.
 and the shopping list's `qty` and `pack.qty`.
 
 - **Weight in ounces, and in pounds from a pound up**: `8 oz`, `1.5 lb`, never
-  `34 oz`. Anything a shop sells by weight — meat, fish, rice, pasta, oats,
+  `34 oz`. **A row with a `pack` is the exception: its `qty` is in the pack's
+  own unit**, because the page counts packs only where the two are written
+  alike. `Canned black beans — 27 oz` beside a `9 oz` can prints *3 cans*;
+  `2 lb` of bananas beside a `4 oz` banana prints no count at all. Anything a shop sells by weight — meat, fish, rice, pasta, oats,
   potatoes, cheese — is weighed on the recipe line too, never measured in cups.
   A cup is a volume, and a cup of rice in a recipe and a pound of it on the list
   are two amounts that cannot be added together.
@@ -705,7 +708,10 @@ and the shopping list's `qty` and `pack.qty`.
   `Tinned`. A 15 oz can drains to about 9 oz.
 
 **Metric** everywhere else: grams, kilograms, millilitres, litres and °C, never
-cups or ounces.
+cups, ounces, pints or quarts. A British carton of milk is labelled in pints as
+well as litres, and the plan still writes litres: the pint the check reads is
+the US one, a fifth smaller than the British, so `2 pints` on a British list is
+added up wrong.
 
 **Never convert a figure into the other system.** You know an American pack of
 ground turkey is 12 oz, and `340 g` is that pack in a unit its shopper has to

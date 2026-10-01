@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T15:01:23Z
+timestamp: 2026-10-01T15:28:00Z
 sources: [evals/**]
 source_commit: 3f5066241fd3cdce46a20049b3b77fe7007c40ff
 ---
@@ -223,7 +223,19 @@ The evals keep the isolated host and give up two things:
 - **The five metric countries stayed metric**: not one US quantity in 15 runs.
 - **Carbohydrate stayed in grams and fluid went to fl oz** on the US fuel
   lines (`60–90 g of carbohydrate an hour; 14–27 fl oz of fluid an hour`), and
-  every can was *canned*.
+  every can on the list and in the recipes was *canned*. The aisle above them
+  still read *Tins, Jars & Seasonings*: the categories are a fixed list in the
+  schema, which the rule cannot reach.
+- **The pound rule ran into the pack count.** 15 rows stayed in ounces past a
+  pound, 12 of them beside a pack in ounces (`Canned black beans 27 oz`, a
+  `9 oz` can), which the page can count; three had no pack and broke the rule.
+  Four rows went to pounds beside a pack in ounces (`Bananas 2 lb`, a `4 oz`
+  banana), and the page, which counts packs only where the two units are
+  written alike, printed no count. The rule was then given its exception, a
+  row with a pack stays in the pack's unit, and the two US cases run three
+  times again (6 runs, 7 minutes, $10): every quantity in US units again, no
+  row in pounds beside a pack in ounces, 13 in ounces beside one, and one
+  without a pack still in ounces past a pound (`Chicken breast 56 oz`).
 - **What is left is odd precision.** A row adds its recipes up exactly, so
   ounces summed into pounds came out as `1.625 lb` of rice or `1.063 lb`, which
   the judge called odd and still buyable. Rounding the row would break

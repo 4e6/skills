@@ -33,8 +33,9 @@ nothing does, so every ingredient line you print has to be the pot it describes:
   scaled — rounding twice drifts from what the shopping list counted. A factor
   of 1 prints the line as written. Otherwise round up, never down, as the page
   does: kilos, litres, pounds and decilitres to the hundredth; every other
-  weight or volume to the whole unit; spoons, cups, cloves and anything
-  counted to the half below three and to the whole from three. A line with no
+  weight or volume to the whole unit; spoons, cups, pints, quarts, gallons,
+  cloves and anything counted to the half below three and to the whole from
+  three. A line with no
   single number to multiply — a pinch, to taste, 1 lb 5 oz — prints as written.
 - **A repeat's line is in the reply only.** The plan's repeat still carries no
   ingredients, but its pot is still bought.
