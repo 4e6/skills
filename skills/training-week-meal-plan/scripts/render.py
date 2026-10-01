@@ -29,7 +29,9 @@ multiplies the one by the other and each plate's figures are the origin's one
 portion times its own. The multiplying is validate.py's own scale_line, imported
 rather than copied, so the list the checker adds up is the list the page prints.
 A batch's `Makes` line states that pot in portions, and only when it is the pot
-the list is scaled to -- makes_line says when that is.
+the list is scaled to -- makes_line says when that is. The aisle headings are
+read from the plan too, never asked of it: a list weighed in US units prints a
+US shop's names for the schema's fixed categories -- in_us_units says when.
 
 Python 3.9, standard library only, no network. It reads the plan, the stylesheet
 and, when handed a list of photos, the image files that list names inside its
@@ -74,7 +76,14 @@ from pathlib import Path
 # a second file this was never told to write, in the skill's own directory.
 sys.dont_write_bytecode = True
 
-from validate import dishes_of, scale_line  # noqa: E402
+from validate import (  # noqa: E402
+    MASS_UNITS,
+    VOLUME_UNITS,
+    dishes_of,
+    scale_line,
+    singular,
+    written_quantity,
+)
 
 CSS_PATH = Path(__file__).resolve().parent.parent / "assets" / "plan.css"
 
@@ -134,6 +143,21 @@ KIND_LEAD = {
 # stop being text.
 SECTIONS = (("week", "The week"), ("recipes", "Recipes"), ("shopping", "Shopping list"))
 HEADING = dict(SECTIONS)
+
+# The shopping list's aisles as a US shop names them, keyed by the plan's own
+# category. The plan always writes the key: the schema's categories are a fixed
+# list, so a list is grouped and walked in one order whatever country it is for,
+# and only the heading it prints changes. A key not here prints as written.
+US_AISLES = {
+    "Fruit & Vegetables": "Produce",
+    "Tins, Jars & Seasonings": "Canned Goods, Jars & Seasonings",
+    "Meat & Fish": "Meat & Seafood",
+    "Dairy, Eggs & Chilled": "Dairy, Eggs & Refrigerated",
+}
+
+# The weights and volumes of US customary, singular and lower-case as the unit
+# tables key them. Every other unit in those tables is metric.
+US_UNITS = ("oz", "ounce", "lb", "pound", "cup", "pint", "quart", "qt", "gallon", "gal")
 
 # The glance is a fourth place to jump to, from the rail only: under the title
 # it is the first thing after the links, so a link to it would go nowhere.
@@ -1227,6 +1251,32 @@ def hint_span(text: str) -> str:
     return ' <span class="qty-hint">(' + prose(text) + ")</span>"
 
 
+def in_us_units(plan) -> bool:
+    """Whether the shopping list is weighed in US customary units.
+
+    The skill picks the units by the athlete's country, so they are the one
+    place the page can read the country from without a field of its own. Read
+    from the rows' quantities, counted rather than read off the first, so a
+    stray `500 ml` on a list in ounces and pounds does not turn its aisles
+    British; a tie, and a list of counts and spoons alone, stays as written.
+    The unit is lower-cased only when it is ASCII, which every unit in the
+    tables is, so no case mapping depends on the Unicode database.
+    """
+    us = metric = 0
+    for group in plan.get("shopping") or []:
+        for item in group.get("items") or []:
+            written = written_quantity(str(item.get("qty") or ""))
+            word = written[1] if written else None
+            if not word or not word.isascii():
+                continue
+            unit = singular(word.lower())
+            if unit in US_UNITS:
+                us += 1
+            elif unit in MASS_UNITS or unit in VOLUME_UNITS:
+                metric += 1
+    return us > metric
+
+
 def shop_sheet(plan) -> str:
     """The fridge, the list and the closing note — one page, one page break.
 
@@ -1263,12 +1313,15 @@ def shop_sheet(plan) -> str:
         out.append("</ul>")
         out.append("</section>")
 
+    aisles = US_AISLES if in_us_units(plan) else {}
+
     out.append('<section class="shopping">')
     out.append(section_heading("shopping"))
     out.append('<div class="shop-cols">')
     for category in plan["shopping"]:
         out.append('<section class="shop-cat">')
-        out.append("<h3>" + prose(category["category"]) + "</h3>")
+        name = category["category"]
+        out.append("<h3>" + prose(aisles.get(name, name)) + "</h3>")
         out.append('<ul class="shop-list">')
         for item in category["items"]:
             out.append(shop_item(item, skip_days))

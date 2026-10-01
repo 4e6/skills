@@ -91,7 +91,10 @@ told once to go ahead, and the run records that it asked.
   bagels, chocolate milk, sourdough, bolognese, lentil soup) in the dishes and
   on the daily lines. It and the gran fondo also count how many of the shopping
   list's and the recipes' weights and volumes are in the country's system:
-  pounds, ounces and cups in the US, grams and millilitres everywhere else.
+  pounds, ounces and cups in the US, grams and millilitres everywhere else,
+  and render the plan with the skill's own `render.py` to read the shopping
+  list's aisle headings: none British on a US list (*Tins*, *Chilled*), none
+  American on a metric one (*Canned*, *Refrigerated*).
 - **The judge** is an agent with no tools that reads the athlete's message, the
   plan and the reply, and answers each question `yes`, `no` or `unclear` with a
   reason. Some questions are asked of every run (the summary, invented figures,
@@ -123,7 +126,7 @@ A case is one JSON file in `evals/training-week-meal-plan/cases/`, named for its
 - `checks`: script checks from `checks.py`'s `CHECKS`, each with what it needs:
   a `day`; a `min` and `max` in g/kg for a band, or `below` for the band a day
   must stay under; a `pattern`; a `where`; a `system` and the `share` of
-  quantities that must be in it. An `id` names one where the default would
-  repeat.
+  quantities that must be in it; an `absent` pattern no aisle heading may
+  match. An `id` names one where the default would repeat.
 - `judge`: the case's own questions, each with an `id`. Word them so that `yes`
   is the right answer.

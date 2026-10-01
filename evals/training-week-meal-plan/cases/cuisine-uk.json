@@ -46,6 +46,11 @@
       "check": "units",
       "system": "metric",
       "share": 0.8
+    },
+    {
+      "check": "aisles",
+      "system": "metric",
+      "absent": "Canned|Refrigerated|Produce|Seafood"
     }
   ]
 }

@@ -92,7 +92,8 @@ and any preparation in brackets — *1 onion (diced)*.
    - A side in `alongside` is written the way its dish is. Anything `excluded`
      prints its reason.
 3. **The shopping list, last and in one block**, so it screenshots with no
-   recipe in between: what comes from the `fridge` first, then each aisle, one
+   recipe in between: what comes from the `fridge` first, then each aisle, named
+   as the page names it (*the category is a key* in `fuelling.md`), one
    row per item — its name and its quantity as the plan states it, and its
    `note` where it has one, since that is where *check the label is gluten-free*
    lives. No count of tins or packs: only the page works that out.
