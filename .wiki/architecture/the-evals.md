@@ -216,29 +216,34 @@ Britain; the after-session example was copied across.**
 - **The judge answered `yes` to every country question in every run.**
   Osaka's weeks were natto rice, ginger pork and udon; Pune's poha, upma, dal and
   rajma; Kraków's rye bread with curd cheese, buckwheat, pierogi and kefir; São
-  Paulo's bread rolls, tapioca crepes, rice and beans; Denver's oatmeal,
-  pancakes and breakfast burritos. Every closing note named local chains: Gyomu
+  Paulo's bread rolls, tapioca crepes, rice and beans; Denver's pancakes,
+  breakfast burritos and chili. Every closing note named local chains: Gyomu
   Super, Assaí, DMart, Biedronka, King Soopers.
 - **The examples in the dishes were ones the country eats anyway**, by the
-  judge's reading. Porridge was a breakfast in every Kraków and São Paulo week
-  and in none of Osaka's or Pune's; São Paulo's was `Oat porridge with banana
-  and honey` all three times, close to the skill's own `Porridge with banana`
-  with honey. Bolognese was a lunch and a dinner in one São Paulo week, bagels
-  one Denver week's breakfast. No sourdough or lentil soup appeared outside
-  Manchester.
+  judge's reading. Porridge was a breakfast in every Kraków, São Paulo and
+  Denver week (as oatmeal in Denver) and in none of Osaka's or Pune's; São
+  Paulo's was `Oat porridge with banana and honey` all three times, and two of
+  Denver's `Oatmeal with banana, peanut butter and honey`, close to the skill's
+  own `Porridge with banana` with honey. Bolognese was a lunch and a dinner in
+  one São Paulo week, bagels one Denver week's breakfast. Sourdough and lentil
+  soup appeared in no run.
 - **Chocolate milk after a session was copied across**: on every after-line in
   Kraków, São Paulo and Denver, a third of Osaka's and Pune's, where the others
   were a rice ball with milk, flavoured milk or a sweet lassi. The judge found it
   ordinary everywhere.
-- **The plan weighs food in the unit the athlete used, not the one their
-  country shops in.** Denver's athlete, in pounds, got ounces: 72 of 72, 54 of
-  58 and 65 of 65 weights and volumes. The gran fondo's American, in kilograms,
-  got grams in all three plans, 0 of 74, 66 and 81 in US units. Neither is
-  wrong by the skill, which says nothing about units. The ounces ran past a
-  pound (`Potatoes 34 oz`), and Denver's own question, whether a shopper there
-  could buy the list as written, was `no` once, for milk in millilitres.
+- **The units look like the athlete's, not the country's.** Denver's athlete,
+  in pounds, got ounces: 72 of 72, 54 of 58 and 65 of 65 weights and volumes.
+  The gran fondo's American, in kilograms, got grams in all three plans, 0 of
+  74, 66 and 81 in US units. The two cases differ in more than the unit, though:
+  a race week against an ordinary one, *the United States* against a city, and
+  skill 1.1 against 1.1.1, so the unit is the likely cause and not an isolated
+  one. Neither is wrong by the skill, which says nothing about units. The ounces
+  ran past a pound (`Potatoes 34 oz`), and Denver's own question, whether a
+  shopper there could buy the list as written, was `no` once: milk in
+  millilitres, `Butter 1 tbsp` and `Garlic 6.5 cloves`.
 - **The control is where the examples were**: porridge at 15 of 21 Manchester
-  breakfasts, a bagel or a crumpet with jam on the snack lines.
+  breakfasts, bolognese in two weeks, a bagel or a crumpet with jam on the
+  snack lines.
 
 **What this does not settle.** One model, one week, three runs a country, and
 the country typed into the message rather than picked from the intake's menu.

@@ -81,14 +81,15 @@ told once to go ahead, and the run records that it asked.
   has a recipe (which `validate.py` checks only from 1.1.1), it covers the right
   days, the race is ranked first and named as one, a loading day is fed in its
   band and an ordinary day is not, a long race's `during` line gives 60–90 g an
-  hour, and a vegan plan names no animal food. A country case counts the
-  skill's own example foods (porridge or overnight oats, bagels, chocolate
-  milk, sourdough, bolognese, lentil soup) in the dishes and on the daily lines,
-  and the US case how many of the shopping list's and the recipes' weights and
-  volumes are in pounds, ounces and cups rather than grams and millilitres. A day's band is read back from
+  hour, and a vegan plan names no animal food. A day's band is read back from
   its snack line: meals, fuel and the line's `at least` come to the band's
   bottom, and with its `up to` to its top. The total alone cannot tell 7–10 from
-  10–12, because snacks top every day up to its band's bottom.
+  10–12, because snacks top every day up to its band's bottom. A country case
+  counts the skill's own example foods (porridge, oatmeal or overnight oats,
+  bagels, chocolate milk, sourdough, bolognese, lentil soup) in the dishes and
+  on the daily lines, and the US case how many of the shopping list's and the
+  recipes' weights and volumes are in pounds, ounces and cups rather than grams
+  and millilitres.
 - **The judge** is an agent with no tools that reads the athlete's message, the
   plan and the reply, and answers each question `yes`, `no` or `unclear` with a
   reason. Some questions are asked of every run (the summary, invented figures,

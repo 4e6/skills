@@ -72,7 +72,7 @@ JOINS = {"and", "with", "&", "or", "+"}
 RACE = re.compile(r"\brace\b", re.I)
 # The example foods in the skill's own text (issue #10).
 ANCHORS = re.compile(
-    r"\b(?:porridge|overnight oats|bagels?|chocolate milk|sourdough|bolognese|lentil soup)\b", re.I)
+    r"\b(?:porridge|oatmeal|overnight oats|bagels?|chocolate milk|sourdough|bolognese|lentil soup)\b", re.I)
 # A weight or volume in each system. Spoons, counts, cloves and slices are in
 # neither: they read the same everywhere.
 UNITS = {
