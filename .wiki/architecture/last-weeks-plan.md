@@ -3,7 +3,7 @@ type: Module
 title: Each week's files, and recent weeks' dishes
 description: A run writes plan-<first day>.json and .html, so weekly runs from one folder never overwrite each other. Recent plans are looked for wherever the host keeps them, so lunches and dinners vary; a script that only read the folder was dropped.
 tags: [architecture, files]
-timestamp: 2026-10-01T10:31:40Z
+timestamp: 2026-10-01T10:38:00Z
 sources: [skills/training-week-meal-plan/SKILL.md]
 source_commit: 09ce2978e940f31f6b3e3e89ba18422c2c407218
 ---
@@ -34,8 +34,8 @@ The scripts take paths and have no default names.
 # Recent weeks are looked for, wherever the host keeps them
 
 An athlete planning every week should not get last week's dinners back. So step
-2 tells the host to look for plans the skill made for the athlete in the last
-week or two — earlier `plan-*.json` in the working directory, pages it published,
+2 tells the host to look for plans the skill made for the athlete for the week
+or two before — earlier `plan-*.json` in the working directory, pages it published,
 the conversation, memory — and to keep lunches and dinners different unless the
 athlete asks for a dish again. Breakfasts may repeat. Variety gives way to
 restrictions, the fuelling rules and the fridge. When one was found, step 7 says
@@ -62,6 +62,12 @@ where to the host.
   week before, and where a week was re-planned mid-week it took each day from
   the plan that covered it last. *The last week or two* is looser.
 - **Determinism.** The same folder gave the same answer every run.
+
+**A redo is not a recent week.** The script never read a plan for the same
+week, so a revision — a corrected weight, a moved long ride — kept its dishes,
+which the athlete may already have shopped for. The guidance first said only
+*the last week or two* and lost that; step 2 now names it: only a plan for an
+earlier calendar week counts.
 
 **Still not carried over: leftovers.** Most weeks leave half a loaf, but the plan
 cannot know whether the week was cooked as written, and a guessed fridge entry

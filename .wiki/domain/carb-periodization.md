@@ -3,7 +3,7 @@ type: Glossary Term
 title: Carb periodization
 description: Carbohydrate scaled to each day's training, hardest days fed hardest, and fuel stated per session as sourced guidance with example food. What each figure is, where it comes from, and which need a professional.
 tags: [nutrition, domain]
-timestamp: 2026-10-01T10:31:40Z
+timestamp: 2026-10-01T10:38:00Z
 sources: [skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 09ce2978e940f31f6b3e3e89ba18422c2c407218
 ---
@@ -75,11 +75,17 @@ unmeasured.
 and step 2 told the host not to look up other guidelines, after a host searched
 the web for protein and carbohydrate recommendations mid-run: whatever it finds
 is unchecked, varies by run, and can contradict what the skill ships. The ban
-was lifted because these figures assume a healthy athlete, and one whose coach
-or dietitian has given different targets, or who has a condition the file does
-not cover, needs those instead. `fuelling.md` now says to use them where given,
-say so in the summary, and keep to one set of figures across a plan — the part
-of the old reason that still holds.
+was lifted because an athlete whose coach or dietitian has given them different
+targets needs those instead. `fuelling.md` now says to use them where given, say
+so in the summary, and keep to one set of figures across a plan — the part of
+the old reason that still holds.
+
+**Only targets somebody gave the athlete, never ones the host looked up.** A
+first draft also let *guidance for something the file does not cover* replace
+the figures. Review caught that its only source is the host's own search — the
+unchecked figures the ban was for — and that it invited planning a condition
+treated by how much somebody eats, which the closing line then says the plan is
+not for ([the open question](/questions/conditions-treated-by-how-much-you-eat.md)).
 
 | Part | What the rules state | Source | Needs a professional |
 |---|---|---|---|
