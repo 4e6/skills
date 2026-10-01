@@ -5,7 +5,7 @@ description: No figure about the athlete's week that they did not give may be pr
 tags: [plan-quality, intake]
 timestamp: 2026-09-30T14:00:00Z
 sources: [skills/training-week-meal-plan/references/fuelling.md, skills/training-week-meal-plan/SKILL.md]
-source_commit: 3f5066241fd3cdce46a20049b3b77fe7007c40ff
+source_commit: 6baaea7682972296b9ace115aa6a8e9adacec9c5
 ---
 
 # Statement
