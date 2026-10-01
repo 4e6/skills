@@ -1,5 +1,8 @@
 # Wiki Update Log
 
+## 2026-10-01
+* **Update**: training-week-meal-plan 1.1. `last_week.py` is gone: it found last week's plan only as a file in the working folder, which web and mobile hosts never have, so step 2 now tells the host to look for plans for earlier weeks wherever it keeps them and vary lunches and dinners, a redo of the same week excluded ([recent weeks](/architecture/last-weeks-plan.md), [the payload](/architecture/the-payload.md), [overview](/overview.md)). The skill's figures are defaults rather than the only ones, so targets the athlete's coach or dietitian gave them win; guidance the host looks up does not ([carb periodization](/domain/carb-periodization.md), [conditions question](/questions/conditions-treated-by-how-much-you-eat.md)). The skill names no host's tools ([the intake](/architecture/the-intake.md)), and its *What this does not do* list is gone, its one rule not said elsewhere — the plan feeds the athlete alone — moved to `fuelling.md`.
+
 ## 2026-09-30
 * **Update**: Zips are built in UTC, so one built on a laptop matches the release byte for byte; the first release differed from a local build by an hour on every file ([the zip release](/architecture/the-zip-release.md)).
 * **Update**: A third skill, `llm-wiki`, copied from its author's own Claude Code skills and changed only so nothing false went out with it. It bends the payload's rules less than `z-image-turbo-macos` and is not offered as a zip ([the payload](/architecture/the-payload.md), [the zip release](/architecture/the-zip-release.md), [overview](/overview.md)); it now has two copies, like the meal plan ([which copy is the source](/questions/which-copy-is-the-source.md)).

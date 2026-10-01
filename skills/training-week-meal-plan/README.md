@@ -21,6 +21,8 @@ do.
   use it.
 - **Leftovers accounted for**: cook two, eat one, and the plan says which day the
   other one is for.
+- **A different week from last week** — where your assistant can see plans it
+  made you before, this week's lunches and dinners differ from them.
 - **A printable page** — one self-contained HTML file, handed to you as a private
   page or a file where your client can do that, and otherwise opened in your
   browser or pointed at, and printed with Cmd-P. Nothing to install, and laid
@@ -46,14 +48,12 @@ your fridge, and where you live — which chooses the dishes and names the shops
 ## Requirements
 
 **Python 3.9 or newer**, which macOS and every Linux already have — and it is
-optional. It buys three things: the checks over the finished plan, which are the
+optional. It buys two things: the checks over the finished plan, which are the
 arithmetic that makes sure every portion cooked gets eaten and every ingredient
-a recipe uses is on the shopping list; the printable page; and a look at last
-week's plan, if it is in the same folder, so this week's lunches and dinners
-differ from it. Nothing else: the rest of the skill is instructions and a JSON
-schema. Its scripts never go online, and there are no API keys and no accounts.
-Where your assistant can publish the page, it hands it over that way, kept
-private.
+a recipe uses is on the shopping list; and the printable page. Nothing else:
+the rest of the skill is instructions and a JSON schema. Its scripts never go
+online, and there are no API keys and no accounts. Where your assistant can
+publish the page, it hands it over that way, kept private.
 
 Without Python the plan is still written — into the reply itself, since there is
 no page to open. It just is not checked and there is nothing to print, and the

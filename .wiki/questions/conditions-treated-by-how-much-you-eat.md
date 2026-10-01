@@ -3,10 +3,10 @@ type: Open Question
 title: What should the skill do for a condition treated by how much somebody eats?
 description: The closing line says the plan is not for anyone managing a clinical condition or an eating disorder. Whether to say so before planning, or decline, is unsettled.
 tags: [safety, product]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-10-01T10:38:00Z
 status: open
 sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/README.md]
-source_commit: 36cd180908e7f0820c5f9881c1f3ddf776de7eb9
+source_commit: fb02e68eca5fba6559df6578e0407bc20c181b4f
 ---
 
 # The question
@@ -32,3 +32,8 @@ was rejected. Any option changes the skill's stance, not only its wording.
 
 The skill's `README.md` still carries the unqualified sentence, which reads as
 turning away the athletes the closing line was reworded to include.
+
+Since 1.1 `fuelling.md` lets targets the athlete's coach or dietitian gave them
+replace its own figures. That makes *plan with the professional's numbers* a
+fourth option, though the closing line still says the plan is not for these
+athletes. Guidance the host looks up for a condition was deliberately left out.

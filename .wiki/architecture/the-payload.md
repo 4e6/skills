@@ -3,9 +3,9 @@ type: Module
 title: The skill is a payload
 description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. Two skills bend the last two.
 tags: [architecture, distribution]
-timestamp: 2026-09-30T22:00:50Z
+timestamp: 2026-10-01T10:31:40Z
 sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**]
-source_commit: dfbb7c71b3f6a33830d3a9f2f0e1d75b28c30ecc
+source_commit: fb02e68eca5fba6559df6578e0407bc20c181b4f
 ---
 
 # The boundary
@@ -54,19 +54,19 @@ satisfies it on the other's behalf.
   counting have one Python copy, not two. It also reads the photos it is
   handed — each a relative path inside its own folder, no `..`, not a link out —
   and admits `base64` and `hashlib` for them alone.
-- `last_week.py` reads the folder it is given, one level deep.
 
-**Neither importing script leaves byte-code behind.** Both switch the import
-cache off before importing `validate.py`, because a cache write into the skill's
-own folder on every run is a write both docstrings say never happens.
+**`render.py` leaves no byte-code behind.** It switches the import cache off
+before importing `validate.py`, because a cache write into the skill's own
+folder on every run is a write its docstring says never happens.
 
 ## It names nothing outside itself
 
 No file under the skill names anything it could be read as promoting, and no
 repository, issue number, absolute path or module outside the folder. A reader
-who has only the skill cannot follow any of those. A host's own tool may still be
-named as an example — Claude Code's `AskUserQuestion` for a menu — because that
-is an instruction about the host, never a pointer away from it.
+who has only the skill cannot follow any of those. **Nor does it name a host or
+its tools.** A tool is described by what it does — *whichever one puts a
+question to the user with options to pick from* — so the skill reads the same to
+every agent. Until 1.1 it named Claude Code's `AskUserQuestion` as an example.
 
 Two lessons stand behind the rule, and both argue for thinking before any
 sentence goes back in that the host is told to pass on: a host restating a

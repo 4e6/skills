@@ -3,9 +3,10 @@
 The rules the schema cannot express. Read this before writing any JSON.
 
 Every figure here is taken from published sports-nutrition guidance and checked
-against it. Use these and no others: do not look up other guidelines,
-which may state different figures, and a plan built from two sets of figures
-contradicts itself.
+against it, and they are the defaults. Where the athlete's coach or dietitian has
+given them different targets, use those instead and say so in
+`training_overview.summary`. Keep to one set of figures across the plan: a plan
+built from two contradicts itself.
 
 ## Contents
 
@@ -628,6 +629,8 @@ name carries the food's own word. No meal slot, which no recipe there lists. No
 comparative — *bigger*, *larger* — which in a note declares an uneven split.
 
 ## The athlete
+
+**The plan feeds the athlete alone**, not a household.
 
 **Read the sport out of what they wrote, and do not assume it.** An endurance
 week may be swimming, cycling and running together, or nothing but riding, or

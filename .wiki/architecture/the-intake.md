@@ -3,9 +3,9 @@ type: Module
 title: The intake
 description: Step 1 asks for the week, the weight, three optional things and which days — on a menu where the host has one, in one message where it does not. Why each row is the row it is, and how the days are settled.
 tags: [architecture, intake]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-10-01T10:31:40Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/fuelling.md]
-source_commit: 01265d60524785eee06f6acb56fc010adb69359b
+source_commit: fb02e68eca5fba6559df6578e0407bc20c181b4f
 ---
 
 # What it asks
@@ -18,9 +18,8 @@ days** the plan covers ([nothing about the athlete is invented](/invariants/noth
 # A menu where there is one, and never a requirement
 
 Most questions have a handful of common answers, so step 1 offers them as a menu
-where the host has a tool for one — Claude Code's `AskUserQuestion`, or whatever
-another host calls it. **The tool is named as an example, never as a
-requirement**: with `allowed-tools` absent, a skill written around its author's
+where the host has a tool for one, described by what it does rather than by any
+host's name for it. **The tool is never a requirement**: with `allowed-tools` absent, a skill written around its author's
 client asks a stranger's agent for a tool that is not there. So the fallback —
 every question in one message — sits beside the menu as the same step, not a
 lesser one. The questions never become a message each.
