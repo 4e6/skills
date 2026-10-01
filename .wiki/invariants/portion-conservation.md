@@ -5,7 +5,7 @@ description: A recipe's pot must map every portion to a named meal on a day the 
 tags: [plan-quality, validation]
 timestamp: 2026-09-30T14:00:00Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
-source_commit: fb02e68eca5fba6559df6578e0407bc20c181b4f
+source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
 ---
 
 # Statement
