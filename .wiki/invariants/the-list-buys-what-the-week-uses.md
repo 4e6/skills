@@ -1,9 +1,9 @@
 ---
 type: Invariant
 title: The shopping list buys what the week uses
-description: Each row's quantity is what the recipes cook with, less what the fridge holds, and its days are the days that eat what it buys. One amount of food per row and never a pack size — except a staple, which is the jar and carries no days.
+description: Each row's quantity is what the recipes cook with, less what the fridge holds, and its days are the days that eat what it buys. One amount of food per row, never a pack size, and a count rounded up to a whole; a staple is the jar, with no days.
 tags: [plan-quality, shopping, validation]
-timestamp: 2026-10-01T16:57:50Z
+timestamp: 2026-10-01T18:15:00Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 7c8225eb1bc1397f6b17cdb0e4b967a5dee883ed
 ---
@@ -27,6 +27,16 @@ would make the row disagree with the recipes, which is the one thing this
 invariant forbids. The unit gives way rather than the number. A row with a
 `pack` is in ounces and so is its pack, since the page counts packs only where
 the two are written alike, character for character.
+
+**A count is the whole number above the week's sum** — `Bananas — 7` where the
+recipes add up to 6.5. Bigger plates scale a recipe's count to the half, so the
+sum can land on one, and a half is fine for the pot and wrong for the shop. A
+counted row is therefore the one row that may buy more than the week cooks, by
+less than one. A weight, a volume and a measure written as a noun — a spoon, a
+pinch, a centimetre of ginger — stay exact: `3.5 tsp` of butter buys the same
+block as `4 tsp`, and rounding it would cost a repair for nothing. Until 1.5.0 the sum was compared exactly, so the check held `6.5` to
+`6.5`, and 8 of 21 runs of 1.3.0 printed a half count, metric lists as well as
+US ones ([#23](https://github.com/4e6/skills/issues/23)).
 
 **A row's `note` says what the row is for or how to buy it, never how much** —
 not a weight, a pack, a count or what is in the fridge. `qty` has already taken
@@ -72,6 +82,18 @@ tinned food drained — and the page prints `ceil(qty / pack)`. `pack` itself is
 first attempt its life. Acting on either half of the row puts the same food in the
 trolley.
 
+**A drained weight is printed second, and says so**: `Tinned chickpeas — 2 tins
+(480 g drained)`. A US list printed `Canned kidney beans 9 oz (1 can)` and the
+judge read it as a 9 oz can, which no US shop sells; the shopper's labels say
+15 oz, and the row read as converted from grams
+([#23](https://github.com/4e6/skills/issues/23)). Where a recipe line drains the
+food, the page turns the row round, so the count a shopper acts on comes first
+and the weight is what the recipes take. It reads *drained* off the lines rather
+than from a field, because the lines already say it: in 107 earlier plans every
+bean, chickpea, tuna and sweetcorn row had a `, drained` line, and no tomato or
+coconut milk row did. A label weight on `pack` was turned down, since it is a
+second pack size to convert from the other system.
+
 - **A recipe line's count is its own**, from that line's weight against its
   food's `pack`, never copied from the row. A container is counted only where the
   line takes whole ones, within a twentieth of a pack — a cook who reads `1 can` beside 250 g of a 400 g tin tips in the whole can and takes the next meal's food. A loose
@@ -116,7 +138,8 @@ the message tells it how to fix it.
 
 # Enforced by
 
-Check 6 compares each dated row's `qty` with the recipes' total, less the fridge:
+Check 6 compares each dated row's `qty` with the recipes' total, less the
+fridge, a count rounded up to the whole number:
 `shopping-quantity-short`, `shopping-quantity-excess`, and
 `shopping-quantity-is-a-pack` for a list counting what the recipes weigh, and
 `shopping-quantity-in-odd-pounds` for a row that is right in a fraction of a

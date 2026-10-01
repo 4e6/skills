@@ -1096,7 +1096,7 @@ def recipes(plan, photos=None) -> str:
     return "\n".join(out)
 
 
-def shop_item(item, skip_days) -> str:
+def shop_item(item, skip_days, drained=False) -> str:
     aside = []
     if "days" in item:
         # A day the athlete is away uses nothing, so naming it here is simply
@@ -1114,6 +1114,19 @@ def shop_item(item, skip_days) -> str:
     # A count of the purchase, set beside the amount rather than after the
     # days: this half is read in the shop and the tags are read at home.
     #
+    # A drained weight is not what any label says. `18 oz` of beans is two
+    # 15 oz cans, and a shopper reading `18 oz (2 cans)` against those labels
+    # decides the list was converted from grams. So where the recipes drain
+    # the food, the count of containers is the amount and the weight is the
+    # aside, marked as drained: `2 cans (18 oz drained)`. Only where there is
+    # a container to count: spaghetti a recipe drains is weighed as bought.
+    count = counted(item["qty"], item.get("pack"), False)
+    pack = item.get("pack")
+    if drained and count and (pack.get("one") or pack.get("many")):
+        amount = ' <span class="qty">' + prose(count) + "</span>" + hint_span(item["qty"] + " drained")
+    else:
+        amount = ' <span class="qty">' + prose(item["qty"]) + "</span>" + hint_span(count)
+    #
     # A box to tick, and the whole row is its label so the row is the target.
     # No name and no form: nothing is submitted and nothing is kept, so a
     # reload clears it, which is fine for a list. In print it is an empty
@@ -1122,8 +1135,7 @@ def shop_item(item, skip_days) -> str:
     # bought.
     return (
         '<li><label><input type="checkbox">' + prose(item["name"])
-        + ' <span class="qty">' + prose(item["qty"]) + "</span>"
-        + hint_span(counted(item["qty"], item.get("pack"), False)) + tail + "</label></li>"
+        + amount + tail + "</label></li>"
     )
 
 
@@ -1239,12 +1251,48 @@ def packs_by_name(plan) -> dict:
     return found
 
 
-def hint_span(text: str) -> str:
-    """The count beside a quantity, in quieter ink at the same size.
+#: A recipe line that drains its food says so after the comma, the way the
+#: skill writes one: `Tinned chickpeas, drained and rinsed`. `not drained`
+#: says the opposite.
+DRAINED = re.compile(r"\bdrained\b")
+NOT_DRAINED = re.compile(r"\bnot\s+drained\b")
 
-    Takes the computed string rather than an entry, because the row's count and
-    the line's are worked out from different numbers and only the markup is
-    shared.
+
+def drained_heads(plan) -> dict:
+    """The name of every food a recipe line drains, lower-cased, as dict keys.
+
+    Read off the lines rather than asked of the plan, because the lines say it
+    already: a model writes `Canned black beans, drained` without being asked,
+    and a field it had to remember is a field it can leave out. A key is the
+    line's head before its comma, which is how packs_by_name keys a line too.
+    """
+    found = {}
+    for recipe in plan.get("recipes") or []:
+        for line in recipe.get("ingredients") or []:
+            head, comma, rest = str(line.get("item") or "").partition(",")
+            rest = rest.lower()
+            if comma and DRAINED.search(rest) and not NOT_DRAINED.search(rest):
+                found.setdefault(head.strip().lower(), True)
+    return found
+
+
+def drains(item, heads) -> bool:
+    """Whether the recipes weigh this row's food drained.
+
+    The row's name, or the row's name less a plural s, as packs_by_name
+    resolves a "Chicken breast" line to a "Chicken breasts" row.
+    """
+    name = str(item.get("name") or "").strip().lower()
+    return name in heads or (name.endswith("s") and name[:-1] in heads)
+
+
+def hint_span(text: str) -> str:
+    """The aside beside a quantity, in quieter ink at the same size.
+
+    Usually a count. Takes the computed string rather than an entry, because the
+    row's count and the line's are worked out from different numbers and only
+    the markup is shared. A drained row turns it round, and the weight is the
+    aside (shop_item).
     """
     if not text:
         return ""
@@ -1314,6 +1362,7 @@ def shop_sheet(plan) -> str:
         out.append("</section>")
 
     aisles = US_AISLES if in_us_units(plan) else {}
+    drained = drained_heads(plan)
 
     out.append('<section class="shopping">')
     out.append(section_heading("shopping"))
@@ -1324,7 +1373,7 @@ def shop_sheet(plan) -> str:
         out.append("<h3>" + prose(aisles.get(name, name)) + "</h3>")
         out.append('<ul class="shop-list">')
         for item in category["items"]:
-            out.append(shop_item(item, skip_days))
+            out.append(shop_item(item, skip_days, drains(item, drained)))
         out.append("</ul>")
         out.append("</section>")
     out.append("</div>")

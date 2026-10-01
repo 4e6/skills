@@ -1782,6 +1782,17 @@ def pack_in_ounces(item: dict, buy: str) -> str:
     return ", and pack.qty to " + in_ounces(grams[0]) + " so the page can still count it"
 
 
+# Measures a list writes as nouns, which this reads as counts and which are not
+# what anyone buys: a spoon, a pinch, a length of ginger. A count of them is
+# never rounded up to the whole one. The singular here takes an s off and no
+# more, so `pinches` reads as `pinche`, and both are listed.
+MEASURES = {
+    "tablespoon", "tbsp", "teaspoon", "tsp", "pinch", "pinche",
+    "dash", "dashe", "handful", "knob", "cm", "cms", "centimetre", "centimeter",
+    "inch", "inche",
+}
+
+
 # Containers, for telling a pack from another way of measuring.
 #
 # English only, and that is a bounded miss rather than a gap: a list saying
@@ -2429,9 +2440,27 @@ def check_shopping_quantities(plan: dict) -> list:
             bought = snap_to_row(sums[1], item["qty"])
             measured = sums[2]
             where = "shopping." + group["category"] + "." + item["name"]
+            # A count is bought whole. Bigger plates scale a recipe's count to
+            # the half, so the week's sum can land on one, and `Bananas — 6.5`
+            # is a row no shop can sell. The list buys the whole number above,
+            # which makes a counted row the one row allowed to buy more than
+            # the week cooks, by less than one. A weight or a volume stays
+            # exact, and so does a measure such as a spoon: nobody buys one,
+            # and `3.5 tsp` of butter is a block either way. `exact` is kept for
+            # the message, and is None wherever the week's sum was whole already.
+            exact = None
+            if need[1] not in ("g", "ml") and need[1] not in MEASURES and need[1] == bought[1]:
+                whole = _ceil(need[0] - QUANTITY_EPSILON)
+                if abs(whole - need[0]) > QUANTITY_EPSILON:
+                    exact = need
+                    need = (whole, need[1])
             # The need unsnapped, since the repair may leave the row's unit: a
             # sixteenth of a pound snapped to a thousandth is not whole ounces.
-            buy = repair_like(sums[0], item["qty"], item)
+            # A count never does, and is said as the whole number above.
+            if exact is None:
+                buy = repair_like(sums[0], item["qty"], item)
+            else:
+                buy = format_amount_like(need, item["qty"])
             have = format_amount_like(bought, item["qty"])
             and_pack = pack_in_ounces(item, buy)
 
@@ -2487,24 +2516,36 @@ def check_shopping_quantities(plan: dict) -> list:
                 continue
 
             if bought[0] < need[0]:
-                findings.append(
-                    finding(
-                        6,
-                        "shopping-quantity-short",
-                        item["name"] + " is on the list as " + have
-                        + ", but the week needs " + buy + " of it — the athlete comes home"
-                        + " without enough to cook what the plan says to cook. Set qty to "
-                        + buy + and_pack + ".",
-                        where,
+                if exact is not None and bought[0] >= exact[0] - QUANTITY_EPSILON:
+                    # Enough for the week, and not a number anyone can buy.
+                    message = (
+                        item["name"] + " is on the list as " + have + ", and the week's recipes"
+                        + " take " + format_amount_like(exact, item["qty"]) + " of it, but a"
+                        + " shop sells whole ones. Set qty to " + buy + ": a count on the list"
+                        + " is rounded up to the whole number."
                     )
-                )
+                else:
+                    needs = buy + " of it" if exact is None else (
+                        format_amount_like(exact, item["qty"]) + " of it, " + buy + " bought whole")
+                    message = (
+                        item["name"] + " is on the list as " + have
+                        + ", but the week needs " + needs + " — the athlete comes home"
+                        + " without enough to cook what the plan says to cook. Set qty to "
+                        + buy + and_pack + "."
+                    )
+                findings.append(finding(6, "shopping-quantity-short", message, where))
             else:
                 # The surplus is spelled the way the need is. Where the row is
                 # too coarse to hold the need the answer is given in the
                 # canonical unit — and spelling the difference in the row's unit
                 # anyway let it round back up to the whole purchase, which reads
                 # as though none of it is used.
-                gap = (bought[0] - need[0], need[1])
+                # A rounded count is over the week by more than the rounding:
+                # 8 against 6.5 is 1.5 never cooked, and the week needs 6.5.
+                used = need if exact is None else exact
+                gap = (bought[0] - used[0], need[1])
+                needs = buy + " of it" if exact is None else (
+                    format_amount_like(exact, item["qty"]) + " of it, " + buy + " bought whole")
                 if in_row_units(need, item["qty"]) is None:
                     spare = format_amount(gap)
                 elif buy.endswith(" oz") and in_pounds(item["qty"]):
@@ -2519,7 +2560,7 @@ def check_shopping_quantities(plan: dict) -> list:
                         6,
                         "shopping-quantity-excess",
                         item["name"] + " is on the list as " + have
-                        + ", but the week needs only " + buy + " of it — " + spare
+                        + ", but the week needs only " + needs + " — " + spare
                         + " bought and never cooked. Set qty to " + buy + and_pack
                         + ", even where a shop only sells a bigger pack: the athlete reads"
                         + " what they need and picks one that covers it.",

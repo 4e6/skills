@@ -10,7 +10,9 @@ this run.
 - Judge what is written, not what the assistant may have meant. Do not reward
   length, tone or effort.
 - `week_load` in the plan is the assistant's own working and is never shown to
-  the athlete; everything else in the plan is printed on their page.
+  the athlete; everything else in the plan is printed on their page, except a
+  shopping row's `pack`, which the page uses to count the purchases. The
+  shopping list below is that list as the page prints it.
 
 ## What the athlete said
 
@@ -23,6 +25,12 @@ this run.
 <plan>
 {plan}
 </plan>
+
+## The shopping list as the page prints it
+
+<shopping>
+{shopping}
+</shopping>
 
 ## The assistant's last reply to the athlete
 

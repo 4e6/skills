@@ -80,31 +80,34 @@ told once to go ahead, and the run records that it asked.
 
 - **Script checks** (`checks.py`) read the plan and give the same answer every
   time: the plan is the skill's own `validate.py` clean, every dish a meal names
-  has a recipe (which `validate.py` checks only from 1.1.1), it covers the right
-  days, the race is ranked first and named as one, a loading day is fed in its
-  band and an ordinary day is not, a long race's `during` line gives 60–90 g an
-  hour, and a vegan plan names no animal food. A day's band is read back from
-  its snack line: meals, fuel and the line's `at least` come to the band's
-  bottom, and with its `up to` to its top. The total alone cannot tell 7–10 from
-  10–12, because snacks top every day up to its band's bottom. A country case
-  counts the skill's own example foods (porridge, oatmeal or overnight oats,
-  bagels, chocolate milk, sourdough, bolognese, lentil soup) in the dishes and
-  on the daily lines. It and the gran fondo also count how many of the shopping
-  list's and the recipes' weights and volumes are in the country's system:
-  pounds, ounces and cups in the US, grams and millilitres everywhere else,
-  and render the plan with the skill's own `render.py` to read the shopping
-  list's aisle headings: none British on a US list (*Tins*, *Chilled*), none
-  American on a metric one (*Canned*, *Refrigerated*). The two US cases also
-  fail a list that writes pounds in anything but whole quarters (`1.625 lb`),
-  which the skill writes in ounces, and a row whose weight is in another unit
-  from its pack's, which the page cannot count.
+  has a recipe (which `validate.py` checks only from 1.1.1), every counted row
+  on the shopping list is a whole number (a spoon, a pinch or a centimetre is a
+  measure, and exempt), it covers the right days, the race is ranked first and
+  named as one, a loading day is fed in its band and an ordinary day is not, a
+  long race's `during` line gives 60–90 g an hour, and a vegan plan names no
+  animal food. A day's band is read back from its snack line: meals, fuel and
+  the line's `at least` come to the band's bottom, and with its `up to` to its
+  top. The total alone cannot tell 7–10 from 10–12, because snacks top every day
+  up to its band's bottom. A country case counts the skill's own example foods
+  (porridge, oatmeal or overnight oats, bagels, chocolate milk, sourdough,
+  bolognese, lentil soup) in the dishes and on the daily lines. It and the gran
+  fondo also count how many of the shopping list's and the recipes' weights and
+  volumes are in the country's system: pounds, ounces and cups in the US, grams
+  and millilitres everywhere else, and render the plan with the skill's own
+  `render.py` to read the shopping list's aisle headings: none British on a US
+  list (*Tins*, *Chilled*), none American on a metric one (*Canned*,
+  *Refrigerated*). The two US cases also fail a list that writes pounds in
+  anything but whole quarters (`1.625 lb`), which the skill writes in ounces,
+  and a row whose weight is in another unit from its pack's, which the page
+  cannot count.
 - **The judge** is an agent with no tools that reads the athlete's message, the
-  plan and the reply, and answers each question `yes`, `no` or `unclear` with a
-  reason. Some questions are asked of every run (the summary, invented figures,
-  restrictions, no claim to have varied on earlier weeks, the disclaimer), some
-  of every race week, some of every case that names a country (would an
-  ordinary household there cook these breakfasts, these lunches and dinners,
-  this fuel; do the shops named trade there), and some by one case.
+  plan, the shopping list as the skill's `render.py` prints it, and the reply,
+  and answers each question `yes`, `no` or `unclear` with a reason. Some
+  questions are asked of every run (the summary, invented figures, restrictions,
+  no claim to have varied on earlier weeks, the disclaimer), some of every race
+  week, some of every case that names a country (would an ordinary household
+  there cook these breakfasts, these lunches and dinners, this fuel; do the
+  shops named trade there), and some by one case.
 
 `report` prints how often each check passed and each question was answered
 `yes`, per case. A run that says nothing about the skill is set aside in a row

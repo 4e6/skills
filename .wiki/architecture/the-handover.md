@@ -3,7 +3,7 @@ type: Module
 title: The handover, and what the athlete reads along the way
 description: The progress checklist is the host's and never the athlete's. The athlete is handed the page — published or as a file where the host can, opened and pointed at where it cannot — and, with no page, a reply designed as one for a phone.
 tags: [architecture, conversation]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-10-01T18:15:00Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/when-there-is-no-page.md]
 source_commit: 7c8225eb1bc1397f6b17cdb0e4b967a5dee883ed
 ---
@@ -124,7 +124,8 @@ them:
   same pot* reads as eggs kept from Monday to Friday.
 - **No plan-wide fuelling block and no `week_load`**, which the page prints
   neither of, **and no count of tins**: that is the page's to compute from
-  `pack`, so without a page a row is its name and its quantity.
+  `pack`, so without a page a row is its name and its quantity, a tin's drained
+  weight marked as one (`18 oz drained`), since no can's label says it.
 - **The sentence about checking comes after the list**, with the disclaimer, so
   the caveat is met once.
 

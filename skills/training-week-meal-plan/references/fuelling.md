@@ -515,6 +515,12 @@ beside the chicken.
     purchase is not a second amount of food; the page prints one, worked out from
     the `pack` below, and you never write it. A staple is the one exception, and
     it carries no days (below).
+  - **A count on the list is a whole number, rounded up.** Bigger plates scale
+    a recipe's count to the half, so a week can add up to 6.5 bananas or 2.5
+    lemons. The list says `7` and `3`, because no shop sells half of one; the
+    recipes keep their halves, and the check expects the whole number above
+    their sum. A weight, a volume or a measure — a spoon, a pinch, a
+    centimetre of ginger — is never rounded.
   - **Say what one purchase holds in `pack`, and let the page do the counting.**
     The weight is right and it is hard to shop from: nobody eyeballs 460 g of
     onions, and 480 g of chickpeas is two tins only if you know what a tin
@@ -525,7 +531,12 @@ beside the chicken.
   - **`pack.qty` is what reaches the pot, not what the label says.** Recipes
     weigh tinned food drained, so a 400 g tin of chickpeas that drains to 240 g
     is `240 g` here, and a 15 oz can that drains to 9 oz is `9 oz`. Write the gross weight and the count comes out wrong the
-    moment a week needs more than one tin.
+    moment a week needs more than one tin. No label says 9 oz, so the page
+    prints such a row, where `pack` names its container, as the cans first and
+    the weight after them, marked: `2 cans (18 oz drained)`. It reads
+    *drained* off the recipe lines, so every
+    line of a drained food says so after its comma — `Canned black beans,
+    drained` — and a food that goes in whole, like tinned tomatoes, never does.
   - **`pack.one` and `pack.many` are the container's name** — "tin" and "tins",
     "jar" and "jars". Give both or neither: the page prints whichever the count
     calls for. **Leave both out for loose countable pieces** — onions, oranges,

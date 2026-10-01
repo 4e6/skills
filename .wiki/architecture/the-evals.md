@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T16:57:50Z
+timestamp: 2026-10-01T18:15:00Z
 sources: [evals/**]
 source_commit: 7c8225eb1bc1397f6b17cdb0e4b967a5dee883ed
 ---
@@ -155,7 +155,10 @@ go, and counting it would grade the account.
   own checker counts it. Every plan must be clean under it, and must give every
   dish a meal names a recipe. The validator checks that itself from 1.1.1
   (`dish-without-recipe`, after the first eval run found the gap), and the evals
-  keep their own check for runs of a skill from before it.
+  keep their own check for runs of a skill from before it. **Every counted row
+  on the list must be a whole number**, in every case: a half count is what no
+  shop sells, and `validate.py` lets it through on a row it cannot compare,
+  such as one whose recipe writes `half, diced`.
   - **A day's band is read back from its snack line.** The host works out the
     line as the gap from the day's meals and fuel to its band's bottom (`at
     least`) and top (`up to`). The first version took meals plus `at least` and
@@ -183,15 +186,18 @@ go, and counting it would grade the account.
     and `egg-free` as plant food. Meat and fish need a word that says so —
     `vegan`, `tofu`, `-style` — since `coconut chicken curry` is chicken. A
     regular expression could not do all of that.
-- **A judge**: an agent with no tools that reads the message, the plan and the
-  reply, and answers `yes`, `no` or `unclear` with a reason. It takes what a
-  script cannot read: whether the summary is honest, whether a dinner is light,
-  whether a race's example food adds up over the race. Questions are worded so
-  that `yes` is right, and some are asked of every run. **A question that rests
-  on one of the skill's rules quotes it**, since the judge never reads the
-  skill: asked only whether a 10K's fuel lines fit the race, it answers from its
-  own idea of sports nutrition. A case that names the athlete's **country**
-  gets four more: breakfasts, lunches and dinners, the line food, and the shops.
+- **A judge**: an agent with no tools that reads the message, the plan, the
+  shopping list as the page prints it, and the reply, and answers `yes`, `no` or
+  `unclear` with a reason. It gets the printed list from 1.5.0's measurement on:
+  reading only the JSON, it took a row's `pack`, which the page never prints,
+  for a can size. It takes what a script cannot read: whether the summary is
+  honest, whether a dinner is light, whether a race's example food adds up over
+  the race. Questions are worded so that `yes` is right, and some are asked of
+  every run. **A question that rests on one of the skill's rules quotes it**,
+  since the judge never reads the skill: asked only whether a 10K's fuel lines
+  fit the race, it answers from its own idea of sports nutrition. A case that
+  names the athlete's **country** gets four more: breakfasts, lunches and
+  dinners, the line food, and the shops.
 
 # Against the method the bundle used before
 
@@ -218,6 +224,38 @@ The evals keep the isolated host and give up two things:
   unremarkable rather than guess at a cuisine.
 
 # Measurements
+
+**2026-10-01, the two US cases three times each on Opus 5.5**, 1.5.0 rebased
+onto 1.4.0's ounces ([#23](https://github.com/4e6/skills/issues/23)): 6 runs, 6
+minutes, $10. **Both rules held together.** Every list was whole in its
+counts, wrote no pound but a whole quarter and no row in another unit from its
+pack, and every drained can printed its count first (`2 cans (18 oz drained)`,
+`3 cans (12 oz drained)` of tuna), 9 rows. The judge said every list could be
+bought as written, 6 of 6. Its two `no`s were the ones below: Denver's week
+added up to *~5h20* for 5h10, and the gran fondo ridden *at roughly tempo*.
+
+**2026-10-01, the country cases and the gran fondo three times each on Opus
+5.5**, skill 1.3.0 with 1.5.0's change, whose list rounds a count up to the
+whole number and whose page prints a drained can as `1 can (9 oz drained)`
+([#23](https://github.com/4e6/skills/issues/23)): 21 runs, 19 minutes, $36.
+Against 1.3.0's 21 runs, graded again with the new check and the new judge
+input:
+
+- **No list carried a half count**, 21 of 21, where 1.3.0's had one in 8 of
+  21: `Bananas 6.5`, `Garlic 15.5 cloves`, `Onions 7.5`, `Lemons 0.5`. Most
+  were metric lists. Two runs wrote one and were told by the checker to round
+  it up, and did.
+- **The judge said every US list could be bought as written**, 6 of 6, where
+  1.3.0's Denver run with *6.5 bananas* got its one `no`. Its reasons still
+  name `1.312 lb` of oats and `2 tsp` of butter as odd and buyable
+  ([#18](https://github.com/4e6/skills/issues/18)).
+- **Every drained can printed as one**, on 10 US and 8 metric rows, beans and
+  tuna. No tin of tomatoes did. A sauerkraut row with no container printed
+  `150 g (drained)`; review found the same of drained spaghetti, so 1.5.0
+  marks only a row whose pack names a container.
+- The one `no` elsewhere was the gran fondo adding its sessions up to *~9h45*
+  for 9h15 and calling the race *tempo effort*, under *nothing invented*, as
+  before. `anchor_foods` failed as it did on 1.3.0.
 
 **2026-10-01, the two US cases three times each on Opus 5.5, three times**,
 for 1.4.0 ([#18](https://github.com/4e6/skills/issues/18)): 6 runs, 7 minutes
