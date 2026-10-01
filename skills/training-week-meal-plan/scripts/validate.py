@@ -1788,7 +1788,8 @@ def pack_in_ounces(item: dict, buy: str) -> str:
 # more, so `pinches` reads as `pinche`, and both are listed.
 MEASURES = {
     "tablespoon", "tbsp", "teaspoon", "tsp", "pinch", "pinche",
-    "dash", "dashe", "cm", "centimetre", "inch", "inche",
+    "dash", "dashe", "handful", "knob", "cm", "cms", "centimetre", "centimeter",
+    "inch", "inche",
 }
 
 

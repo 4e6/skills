@@ -124,7 +124,7 @@ them:
   same pot* reads as eggs kept from Monday to Friday.
 - **No plan-wide fuelling block and no `week_load`**, which the page prints
   neither of, **and no count of tins**: that is the page's to compute from
-  `pack`, so without a page a row is its name and its quantity, a drained
+  `pack`, so without a page a row is its name and its quantity, a tin's drained
   weight marked as one (`18 oz drained`), since no can's label says it.
 - **The sentence about checking comes after the list**, with the disclaimer, so
   the caveat is met once.

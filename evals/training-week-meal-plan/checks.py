@@ -35,7 +35,8 @@ TOLERANCE = 0.05
 # here too, since `--skill-ref` can run a copy that predates it.
 MEASURES = {
     "tablespoon", "tbsp", "teaspoon", "tsp", "pinch", "pinche",
-    "dash", "dashe", "cm", "centimetre", "inch", "inche",
+    "dash", "dashe", "handful", "knob", "cm", "cms", "centimetre", "centimeter",
+    "inch", "inche",
 }
 AT_LEAST = re.compile(r"at least (?:about |around |roughly |~)?(\d+)\s*g", re.I)
 UP_TO = re.compile(r"up to (?:about |around |roughly |~)?(\d+)\s*g", re.I)
