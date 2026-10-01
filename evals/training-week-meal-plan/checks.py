@@ -73,6 +73,12 @@ RACE = re.compile(r"\brace\b", re.I)
 # The example foods in the skill's own text (issue #10).
 ANCHORS = re.compile(
     r"\b(?:porridge|overnight oats|bagels?|chocolate milk|sourdough|bolognese|lentil soup)\b", re.I)
+# A weight or volume in each system. Spoons, counts, cloves and slices are in
+# neither: they read the same everywhere.
+UNITS = {
+    "metric": re.compile(r"\d\s*(?:g|grams?|kg|kilos?|ml|l|litres?|liters?|cl|dl)\b", re.I),
+    "us": re.compile(r"\d\s*(?:lbs?|pounds?|oz|ounces?|fl\.? oz|cups?|pints?|quarts?|gallons?)\b", re.I),
+}
 
 
 def load_validate(skill: Path):
@@ -280,6 +286,8 @@ def check_anchor_foods(ctx, spec):
     session fuel lines and the snack line, short and written every day, where
     copying would show first).
     """
+    if spec["where"] not in ("dishes", "lines"):
+        raise ValueError("where is dishes or lines, not %r" % spec["where"])
     names = []
     for entry in ctx.plan.get("days", []):
         if spec["where"] == "dishes":
@@ -296,6 +304,23 @@ def check_anchor_foods(ctx, spec):
             counts[key] = counts.get(key, 0) + 1
     return not counts, (", ".join("%s x%d" % kv for kv in sorted(counts.items()))
                         if counts else "none of them")
+
+
+def check_units(ctx, spec):
+    """At least `share` of the weighed quantities are in the athlete's own `system`.
+
+    Read from the shopping list's quantities and the recipes' ingredient lines,
+    which is what the athlete shops and cooks by. A quantity in neither system
+    (a spoon, a count) is left out.
+    """
+    quantities = [i.get("qty") or "" for g in ctx.plan.get("shopping", []) for i in g.get("items", [])]
+    quantities += [i.get("qty") or "" for r in ctx.plan.get("recipes", []) for i in r.get("ingredients") or []]
+    counts = {name: sum(1 for q in quantities if unit.search(str(q))) for name, unit in UNITS.items()}
+    weighed = sum(counts.values())
+    share = counts[spec["system"]] / weighed if weighed else 0.0
+    return share >= spec["share"], "%s in %d of %d weighed quantities (%s)" % (
+        spec["system"], counts[spec["system"]], weighed,
+        ", ".join("%s %d" % kv for kv in sorted(counts.items())))
 
 
 def check_not_printed(ctx, spec):
@@ -316,6 +341,7 @@ CHECKS = {
     "vegan": check_vegan,
     "not_printed": check_not_printed,
     "anchor_foods": check_anchor_foods,
+    "units": check_units,
 }
 
 
@@ -328,7 +354,7 @@ class Context:
 
 def check_id(spec: dict) -> str:
     return spec.get("id") or "-".join(
-        [spec["check"]] + [str(spec[k]) for k in ("day", "where") if k in spec]
+        [spec["check"]] + [str(spec[k]) for k in ("day", "where", "system") if k in spec]
     )
 
 

@@ -65,8 +65,8 @@ RESULTS = HERE / "results"
 NUDGE = "Go ahead with what I've given you, I don't have anything to add."
 # Runs at once. The limit is the account, not the machine: a run is one `claude`
 # process of about 0.7 GB, mostly waiting on the model. Seven is a wave of the
-# seven race-week cases, so three runs each finish in three waves, about 20
-# minutes, where one at a time takes about two hours. Much wider and the runs
+# six race weeks and their control, so three runs each finish in three waves,
+# about 20 minutes, where one at a time takes about two hours. Much wider and the runs
 # share the account's rate limit and slow each other down, or are turned away
 # and retried.
 JOBS = 7

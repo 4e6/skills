@@ -3,7 +3,7 @@ type: Open Question
 title: Which countries should the intake offer as rows?
 description: The place question offers four English-speaking countries and a typed row. Naming rows stopped hosts inventing regions, but an athlete in Lisbon found nothing near her on them.
 tags: [intake, product]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-10-01T14:03:08Z
 status: open
 sources: [skills/training-week-meal-plan/SKILL.md]
 source_commit: 88345cbfeda6e4e157884cf119b046edfdd0008e
@@ -29,8 +29,9 @@ near me* on the four rows, while an invented *Europe* row had suited her.
   shops, never the language.
 - **A country the rows do not name is cooked for.** Given Japan, Brazil, India
   or Poland, every eval run cooked that country's food and named its shops
-  ([the evals](/architecture/the-evals.md#measurements)). So the rows decide what
-  is quick to pick, not what the plan can do.
+  ([the evals](/architecture/the-evals.md#measurements)), with the country
+  typed rather than picked. So the rows decide what is quick to pick, not what
+  the plan can do.
 
 # Open
 

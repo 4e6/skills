@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T13:06:44Z
+timestamp: 2026-10-01T14:03:08Z
 sources: [evals/**]
 source_commit: a2b8b756579dee3f9ba1790fe9c4dc881bcdb88c
 ---
@@ -38,18 +38,20 @@ The first set held a race given no distance, one on the plan's first day, and a
 vegan half marathon. They went to keep the list short: the first two test rules
 the long events do not reach, and those are now untested.
 
-# Five countries, one week
+# Six countries, one week
 
 The skill says to cook what an ordinary household in the athlete's country
 cooks, while nearly every food its own text names as an example is British:
 porridge, a bagel with jam, chocolate milk, sourdough, bolognese, lentil soup.
 The `cuisine-*` cases ask whether those examples pull a plan back to Britain
 ([#10](https://github.com/4e6/skills/issues/10)): the same training week, weight
-and empty fridge for an athlete in Osaka, São Paulo, Pune and Kraków, and in
-Manchester as the control, where the examples are at home. The week is ordinary
-rather than a race, with a threshold run and a long run, so the session lines
-and the snack lines every day are written, the short lines with a format to
-copy, where copying would show first.
+and empty fridge for an athlete in Osaka, São Paulo, Pune, Kraków and Denver,
+and in Manchester as the control, where the examples are at home. The week is
+ordinary rather than a race, with a threshold run and a long run, so the
+session lines and the snack lines every day are written, the short lines with a
+format to copy, where copying would show first. **The Denver athlete gives
+their weight in pounds**, as an American would, and the case also counts the
+units the plan weighs food in.
 
 **A count of the examples is evidence, not a verdict.** Porridge is an ordinary
 breakfast in Poland and in Brazil, and chocolate milk sells everywhere. So the
@@ -57,6 +59,13 @@ script counts the examples in the dishes and on the lines, a pass meaning none,
 and a judge answers whether an ordinary household there would make each
 breakfast, cook each lunch and dinner, and buy the line food without thinking
 it foreign, and whether the shops named trade there.
+
+**The judge measures what is foreign, not what was copied.** Chocolate milk on
+an Osaka after-line passes it, being on sale there; whether it came from the
+skill's example is the count's question. Asked the Osaka questions of a
+Manchester week, and the Kraków ones of a Pune week, it answered `no` to all
+eight, each naming the dish or the shop, so a `yes` is not a judge that cannot
+say no.
 
 # Outside the skill, and run by hand
 
@@ -156,7 +165,7 @@ go, and counting it would grade the account.
     range's middle; anything else on a line is not.
   - **Bounds are 5% wide either side**, since the rules say *roughly*.
   - **The skill's example foods are counted** in a country case's dishes and
-    on its lines, by name.
+    on its lines, by name, and the US case's weights and volumes by system.
   - **The vegan check reads only names of food** — dishes, ingredients, the
     list, fuel and snack examples — so `Dairy, Eggs & Chilled` and *no eggs or
     honey* in a summary do not fail it, and takes `oat milk`, `peanut butter`
@@ -199,25 +208,43 @@ The evals keep the isolated host and give up two things:
 
 # Measurements
 
-**2026-10-01, the five country cases three times each on Opus 5.5**, skill 1.1.1:
-15 runs, 20 minutes, $24. **The examples did not pull the cooking back to
-Britain.**
+**2026-10-01, the country cases three times each on Opus 5.5**, skill 1.1.1:
+18 runs, $28: the first five cases in 14 minutes, Denver's three, added after
+review, in six more. **The examples did not pull the cooking back to
+Britain; the after-session example was copied across.**
 
-- **Every check and every judge question passed in every run**, the four country
-  questions included. Osaka's weeks were natto rice, ginger pork and udon; Pune's
-  poha, upma, dal and rajma; Kraków's rye bread with curd cheese, buckwheat,
-  pierogi and kefir; São Paulo's bread rolls, tapioca crepes, rice and beans.
-  Every closing note named local chains: Gyomu Super, Assaí, DMart, Biedronka.
-- **The examples that turned up were the ones the country eats anyway.**
-  Porridge was a breakfast in every Kraków and São Paulo week, as *owsianka* and
-  *mingau*, and in none of Osaka's or Pune's; bolognese was a lunch and a dinner
-  in one São Paulo week. No bagel, sourdough or lentil soup appeared outside Manchester.
-- **The one example copied across was chocolate milk, after a session**: on
-  every after-line in Kraków and São Paulo, a third of Osaka's and Pune's, where
-  the others were a rice ball with milk, flavoured milk or a sweet lassi. The
-  judge found it ordinary in all four countries.
+- **The judge answered `yes` to every country question in every run.**
+  Osaka's weeks were natto rice, ginger pork and udon; Pune's poha, upma, dal and
+  rajma; Kraków's rye bread with curd cheese, buckwheat, pierogi and kefir; São
+  Paulo's bread rolls, tapioca crepes, rice and beans; Denver's oatmeal,
+  pancakes and breakfast burritos. Every closing note named local chains: Gyomu
+  Super, Assaí, DMart, Biedronka, King Soopers.
+- **The examples in the dishes were ones the country eats anyway**, by the
+  judge's reading. Porridge was a breakfast in every Kraków and São Paulo week
+  and in none of Osaka's or Pune's; São Paulo's was `Oat porridge with banana
+  and honey` all three times, close to the skill's own `Porridge with banana`
+  with honey. Bolognese was a lunch and a dinner in one São Paulo week, bagels
+  one Denver week's breakfast. No sourdough or lentil soup appeared outside
+  Manchester.
+- **Chocolate milk after a session was copied across**: on every after-line in
+  Kraków, São Paulo and Denver, a third of Osaka's and Pune's, where the others
+  were a rice ball with milk, flavoured milk or a sweet lassi. The judge found it
+  ordinary everywhere.
+- **The plan weighs food in the unit the athlete used, not the one their
+  country shops in.** Denver's athlete, in pounds, got ounces: 72 of 72, 54 of
+  58 and 65 of 65 weights and volumes. The gran fondo's American, in kilograms,
+  got grams in all three plans, 0 of 74, 66 and 81 in US units. Neither is
+  wrong by the skill, which says nothing about units. The ounces ran past a
+  pound (`Potatoes 34 oz`), and Denver's own question, whether a shopper there
+  could buy the list as written, was `no` once, for milk in millilitres.
 - **The control is where the examples were**: porridge at 15 of 21 Manchester
   breakfasts, a bagel or a crumpet with jam on the snack lines.
+
+**What this does not settle.** One model, one week, three runs a country, and
+the country typed into the message rather than picked from the intake's menu.
+#10's other half, the same cases on a skill whose examples say what each food
+is for, was not run: it is what would tell copying from the model's own habit,
+and the after-line is the place it would show.
 
 **2026-10-01, the seven cases three times each on Opus 5.5**, skill 1.1: 21 runs, seven at
 a time, 20 minutes, $36. Each run took 4.3–6.6 minutes.
