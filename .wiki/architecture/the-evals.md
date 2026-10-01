@@ -150,7 +150,10 @@ shared temporary folder that another run named between two of this run's own
 uses of it, by the transcripts' timestamps. It catches what the refusal lets
 through, a name with no dot or a shared path still to turn up, and `report`
 looks across every folder it is given, since a before and an after are often
-run at once. A run that runs out of time or
+run at once. **A copy of a run is not another run**: a folder copied to grade
+it again, or a rerun copied into its pass, has the same session, and review
+found `report` setting aside all 42 runs of a pass beside its copy. `report`
+works the crossing out afresh each time, so a rerun clears a mark `run` saved. A run that runs out of time or
 writes no plan counts, and fails every check on the plan, so a pass rate is
 never flattered by the runs that went worst.
 

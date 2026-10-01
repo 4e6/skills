@@ -275,6 +275,23 @@ def excluded(result: dict):
     return None
 
 
+def events(out: Path) -> list:
+    """The run's transcript, one event a line, leaving out any that do not parse."""
+    transcript = out / "transcript.jsonl"
+    found = []
+    for line in transcript.read_text().splitlines() if transcript.exists() else []:
+        try:
+            found.append(json.loads(line))
+        except ValueError:
+            continue
+    return found
+
+
+def session(out: Path):
+    """The agent's session the run was, which a copy of its folder shares."""
+    return next((e["session_id"] for e in events(out) if e.get("session_id")), None)
+
+
 def shared_uses(out: Path) -> dict:
     """{file in the shared temporary folder: when this run's tools named it}.
 
@@ -282,13 +299,7 @@ def shared_uses(out: Path) -> dict:
     own folder from one.
     """
     uses = {}
-    transcript = out / "transcript.jsonl"
-    lines = transcript.read_text().splitlines() if transcript.exists() else []
-    for line in lines:
-        try:
-            event = json.loads(line)
-        except ValueError:
-            continue
+    for event in events(out):
         if event.get("type") != "assistant" or not event.get("timestamp"):
             continue
         for part in event.get("message", {}).get("content", []):
@@ -317,10 +328,16 @@ def crossed(outs: list) -> dict:
       before the other began is left alone.
 
     Such a run grades the harness, not the skill, and is set aside like an
-    interrupted one.
+    interrupted one. A copy of a run's folder, kept to grade it again or to put
+    a rerun into a pass, is the same session and never another run.
     """
     def name(out):
         return "%s #%s" % (out.parent.name, out.name)
+
+    sessions = {out: session(out) for out in outs}
+
+    def another(out, other):
+        return other != out and (sessions[out] is None or sessions[other] != sessions[out])
 
     how = {}
     by_plan = {}
@@ -330,14 +347,14 @@ def crossed(outs: list) -> dict:
             by_plan.setdefault(plan.read_bytes(), []).append(out)
     for same in by_plan.values():
         for out in same:
-            others = [o for o in same if o != out]
+            others = [o for o in same if another(out, o)]
             if others:
                 how[out] = "its plan is byte for byte %s's" % name(others[0])
     uses = {out: shared_uses(out) for out in outs}
     for out in outs:
         for file, times in sorted(uses[out].items()):
             first, last = min(times), max(times)
-            other = next((o for o in outs if o != out
+            other = next((o for o in outs if another(out, o)
                           and any(first < t < last for t in uses[o].get(file, []))), None)
             if other is not None and out not in how:
                 how[out] = "%s used $TMPDIR%s between two of its own uses" % (name(other), file)
@@ -541,7 +558,12 @@ def summarise(root: Path, reached=()) -> dict:
         result = json.loads(result_path.read_text())
         cost += sum(result.get(k, 0) for k in ("cost_usd", "judge_cost_usd", "retried_cost_usd"))
         rows = table.setdefault(result["case"], {})
-        why = result.get("excluded") or (CROSSED if result_path.parent in reached else None)
+        # Crossing is worked out afresh across every folder given, so a mark a
+        # rerun has since cleared is not kept.
+        why = result.get("excluded")
+        if why == CROSSED:
+            why = None
+        why = why or (CROSSED if result_path.parent in reached else None)
         if why:
             row = rows.setdefault("excluded: " + why, [0, 0])
             row[1] += 1

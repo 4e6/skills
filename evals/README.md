@@ -121,7 +121,8 @@ run was killed, the API turned it away three times, or another run's files
 reached it. That last is a plan byte for byte another run's, or a file in the
 shared temporary folder that another run named between two of this run's own
 uses of it; `report` looks across every folder it is given, since a before and
-an after are often run at once. Every other run counts:
+an after are often run at once. A copy of a run's folder is the same session,
+and never counts as another run. Every other run counts:
 one that runs out of time is graded on whatever plan it wrote, one with no plan
 fails every check on the plan, and a judge that fails answers `unclear` to
 every question.
