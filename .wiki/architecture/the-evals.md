@@ -225,6 +225,15 @@ The evals keep the isolated host and give up two things:
 
 # Measurements
 
+**2026-10-01, the two US cases three times each on Opus 5.5**, 1.5.0 rebased
+onto 1.4.0's ounces ([#23](https://github.com/4e6/skills/issues/23)): 6 runs, 6
+minutes, $10. **Both rules held together.** Every list was whole in its
+counts, wrote no pound but a whole quarter and no row in another unit from its
+pack, and every drained can printed its count first (`2 cans (18 oz drained)`,
+`3 cans (12 oz drained)` of tuna), 11 rows. The judge said every list could be
+bought as written, 6 of 6. Its two `no`s were the ones below: Denver's week
+added up to *~5h20* for 5h10, and the gran fondo ridden *at roughly tempo*.
+
 **2026-10-01, the country cases and the gran fondo three times each on Opus
 5.5**, skill 1.3.0 with 1.5.0's change, whose list rounds a count up to the
 whole number and whose page prints a drained can as `1 can (9 oz drained)`
