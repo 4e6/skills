@@ -73,6 +73,13 @@ JOBS = 7
 DEFAULT_JUDGE = "opus"
 RETRIES = 2
 RETRY_WAIT = 60  # seconds, times the attempt
+# A file in the sandbox's temporary folder, which every run's shell shares
+# (#26), as a command names it: `$TMPDIR/build.py`, `"$TMPDIR"/gen.py`,
+# `os.environ["TMPDIR"]+"/parts.json"` or `/tmp/claude-501/x.json`.
+SHARED_FILE = re.compile(
+    r"""(?:\$\{?TMPDIR\b\}?|environ\[\s*['"]TMPDIR['"]\s*\]\s*\+\s*|(?:/private)?/tmp/claude-\d+)"""
+    r"""['"]?(/[\w.\-]+(?:/[\w.\-]+)*)""")
+CROSSED = "another run's files reached it"
 
 # Asked of every run. A question is passed by a `yes`.
 COMMON_QUESTIONS = [
@@ -263,7 +270,111 @@ def excluded(result: dict):
         return "interrupted"
     if result.get("is_error") and result.get("api_error"):
         return "the API turned it away (%s)" % result["api_error"]
+    if result.get("crossed"):
+        return CROSSED
     return None
+
+
+def events(out: Path) -> list:
+    """The run's transcript, one event a line, leaving out any that do not parse."""
+    transcript = out / "transcript.jsonl"
+    found = []
+    for line in transcript.read_text().splitlines() if transcript.exists() else []:
+        try:
+            found.append(json.loads(line))
+        except ValueError:
+            continue
+    return found
+
+
+def session(out: Path):
+    """The agent's session the run was, which a copy of its folder shares."""
+    return next((e["session_id"] for e in events(out) if e.get("session_id")), None)
+
+
+def shared_uses(out: Path) -> dict:
+    """{file in the shared temporary folder: when this run's tools named it}.
+
+    `mktemp`'s templates (`mealplan.XXXXXX`) are left out: every run gets its
+    own folder from one.
+    """
+    uses = {}
+    for event in events(out):
+        if event.get("type") != "assistant" or not event.get("timestamp"):
+            continue
+        for part in event.get("message", {}).get("content", []):
+            if part.get("type") != "tool_use":
+                continue
+            text = " ".join(str(v) for v in (part.get("input") or {}).values())
+            for name in set(SHARED_FILE.findall(text)):
+                if "XXX" not in name:
+                    uses.setdefault(name.rstrip("/"), []).append(event["timestamp"])
+    return uses
+
+
+def crossed(outs: list) -> dict:
+    """{run folder: how} for every run another run's files may have reached.
+
+    The sandbox gives every run's shell the same temporary folder (#26), and a
+    run once patched and ran a script there that another run had just written
+    over: its folder held a plan of Pune for an athlete in Osaka, and every
+    script check passed. `agents.py` refuses the names agents give their files
+    there, and this catches what gets through:
+
+    - **a plan byte for byte another run's**, which no two runs write alone;
+    - **a file in the shared folder that another run named between two of this
+      run's own uses of it**, so what this run read back may have been the
+      other's. Their timestamps say when; a run that was done with a file
+      before the other began is left alone.
+
+    Such a run grades the harness, not the skill, and is set aside like an
+    interrupted one. A copy of a run's folder, kept to grade it again or to put
+    a rerun into a pass, is the same session and never another run.
+    """
+    def name(out):
+        return "%s #%s" % (out.parent.name, out.name)
+
+    sessions = {out: session(out) for out in outs}
+
+    def another(out, other):
+        return other != out and (sessions[out] is None or sessions[other] != sessions[out])
+
+    how = {}
+    by_plan = {}
+    for out in outs:
+        plan = plan_in(out)
+        if plan is not None:
+            by_plan.setdefault(plan.read_bytes(), []).append(out)
+    for same in by_plan.values():
+        for out in same:
+            others = [o for o in same if another(out, o)]
+            if others:
+                how[out] = "its plan is byte for byte %s's" % name(others[0])
+    uses = {out: shared_uses(out) for out in outs}
+    for out in outs:
+        for file, times in sorted(uses[out].items()):
+            first, last = min(times), max(times)
+            other = next((o for o in outs if another(out, o)
+                          and any(first < t < last for t in uses[o].get(file, []))), None)
+            if other is not None and out not in how:
+                how[out] = "%s used $TMPDIR%s between two of its own uses" % (name(other), file)
+    return how
+
+
+def mark_crossed(root: Path) -> dict:
+    """Record in each run's result.json whether another run's files reached it."""
+    outs = [p.parent for p in sorted(root.glob("*/*/result.json"))]
+    how = crossed(outs)
+    for out in outs:
+        result = json.loads((out / "result.json").read_text())
+        if result.get("crossed") == how.get(out):
+            continue
+        result.pop("crossed", None)
+        if out in how:
+            result["crossed"] = how[out]
+        result["excluded"] = excluded(result)
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    return how
 
 
 def grade_one(agent, case: dict, out: Path, skill: Path, judge_model, judge: bool) -> dict:
@@ -408,6 +519,9 @@ def cmd_run(args):
     jobs = [(c, n) for n in range(1, args.runs + 1) for c in chosen]
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
         list(pool.map(one, jobs))
+    # Only once every run is in can one be seen to have reached another.
+    for out, how in mark_crossed(root).items():
+        say("skip   %s #%s  %s: %s" % (out.parent.name, out.name, CROSSED, how))
     print(report([root]))
     say("results: " + str(root))
 
@@ -418,6 +532,7 @@ def cmd_grade(args):
     meta = json.loads((root / "meta.json").read_text())
     agent = agents.AGENTS[meta["agent"]]()
     model = args.judge_model or meta.get("judge_model") or DEFAULT_JUDGE
+    mark_crossed(root)
     for result_path in sorted(root.glob("*/*/result.json")):
         out = result_path.parent
         if out.parent.name not in cases:
@@ -432,19 +547,25 @@ def cmd_grade(args):
     print(report([root]))
 
 
-def summarise(root: Path) -> dict:
+def summarise(root: Path, reached=()) -> dict:
     """{case: {row: [passes, runs]}} with the cost, for one results folder.
 
     A run `excluded` says why it counts for nothing, and is counted only in its
-    own row.
+    own row, as is one in `reached`, the run folders another run's files reached.
     """
     table, cost = {}, 0.0
     for result_path in sorted(root.glob("*/*/result.json")):
         result = json.loads(result_path.read_text())
         cost += sum(result.get(k, 0) for k in ("cost_usd", "judge_cost_usd", "retried_cost_usd"))
         rows = table.setdefault(result["case"], {})
-        if result.get("excluded"):
-            row = rows.setdefault("excluded: " + result["excluded"], [0, 0])
+        # Crossing is worked out afresh across every folder given, so a mark a
+        # rerun has since cleared is not kept.
+        why = result.get("excluded")
+        if why == CROSSED:
+            why = None
+        why = why or (CROSSED if result_path.parent in reached else None)
+        if why:
+            row = rows.setdefault("excluded: " + why, [0, 0])
             row[1] += 1
             continue
         for check in result.get("checks", []):
@@ -459,7 +580,10 @@ def summarise(root: Path) -> dict:
 
 
 def report(roots: list) -> str:
-    sums = [summarise(Path(r)) for r in roots]
+    # Across every folder given, since a before and an after are often run at
+    # once, and each run's shell shares the one temporary folder.
+    reached = crossed([p.parent for r in roots for p in sorted(Path(r).glob("*/*/result.json"))])
+    sums = [summarise(Path(r), reached) for r in roots]
     heads = [Path(r).name for r in roots]
     lines = ["| case | check | " + " | ".join(heads) + " |",
              "|---|---|" + "---|" * len(heads)]

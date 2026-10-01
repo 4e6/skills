@@ -3,9 +3,9 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T18:15:00Z
+timestamp: 2026-10-01T20:30:00Z
 sources: [evals/**]
-source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
+source_commit: d50e1524b262a45d4613b1900179681b7eda1d55
 ---
 
 # What they are for
@@ -115,6 +115,25 @@ would otherwise answer instead of the skill:
   own auto-allow still refused heredocs and variable assignments. Hosts treated
   one refusal as no Python at all, as the skill tells them to, and handed over
   unchecked plans, which graded as the skill's fault.
+- **The sandbox's temporary folder is shared, so a name there is refused.**
+  The sandbox sets every run's `$TMPDIR` to `/tmp/claude-<uid>`, whatever the
+  command line is started with, and agents write their generator there. Osaka's
+  run patched and ran `$TMPDIR/build.py` after Pune's had written over it, and
+  handed over Pune's plan, clean under every script check; only the judge
+  caught it ([#26](https://github.com/4e6/skills/issues/26)). Refusing the
+  whole folder broke every command: zsh writes each heredoc there and Claude
+  Code a `cwd-…` file after each command. Those names have no dot, and an
+  agent's (`build.py`, `parts.json`) have one, so the sandbox refuses writing
+  `/tmp/claude-<uid>/**/*.*`, in both spellings, and nothing else there.
+  **Reading them is refused too**, since the folder keeps whatever any session
+  on the machine left, and a run whose write was refused could still run the
+  `build.py` already there. That needs Claude Code's own files out of the
+  folder, since it keeps each command's output there under a dotted name and
+  every command printed nothing: `CLAUDE_CODE_TMPDIR` puts them in `.tmp`
+  inside the run's folder. Agents refused `$TMPDIR` find that folder and
+  write their scripts there, so it is not under `.claude/`, where Claude Code
+  refuses every Write. Heredocs, `python3 -`, `tempfile`, `cd` and background
+  commands all still work.
 - **What it leaves**: its session under `~/.claude/projects/`, as every Claude
   Code session does, which the nudge needs to resume it.
 
@@ -124,8 +143,17 @@ its folder, whatever its frontmatter says: the first run installed the copy as
 with no plan. Every run now records whether the agent was offered the skill
 (`skill-installed`) apart from whether it used it (`skill-used`). A run the
 skill was never offered to is set aside, with one that was killed before it
-finished and one the API turned away every time, in a row of its own: counting
-them would grade the harness or the account. A run that runs out of time or
+finished, one the API turned away every time, and **one another run's files
+reached**, in a row of its own: counting them would grade the harness or the
+account. The last is a plan byte for byte another run's, or a file in the
+shared temporary folder that another run named between two of this run's own
+uses of it, by the transcripts' timestamps. It catches what the refusal lets
+through, a name with no dot or a shared path still to turn up, and `report`
+looks across every folder it is given, since a before and an after are often
+run at once. **A copy of a run is not another run**: a folder copied to grade
+it again, or a rerun copied into its pass, has the same session, and review
+found `report` setting aside all 42 runs of a pass beside its copy. `report`
+works the crossing out afresh each time, so a rerun clears a mark `run` saved. A run that runs out of time or
 writes no plan counts, and fails every check on the plan, so a pass rate is
 never flattered by the runs that went worst.
 
@@ -224,6 +252,24 @@ The evals keep the isolated host and give up two things:
   unremarkable rather than guess at a cuisine.
 
 # Measurements
+
+**2026-10-01, the country cases and the gran fondo once each on Opus 5.5**,
+skill 1.5.0, with the shared temporary folder closed
+([#26](https://github.com/4e6/skills/issues/26)): 7 runs at once, 7 minutes,
+$10, script checks only. **Every plan validated clean, nothing was refused but
+`open`, and no run was set aside.** Pune and Denver wrote their generator to
+`$TMPDIR/gen.py` as before, were refused, and within a minute wrote it in the
+run's `.tmp` instead; Denver first tried which names got through, and wrote
+`$TMPDIR/genprobe`, the gap the setting aside is for. Each run took 4.0–6.3
+minutes, as before. A wave on the first version, which refused only writes and
+left Claude Code's files in the shared folder, found their folder there and was
+refused the Write tool on it twice, which is why `.tmp` is in the run's folder.
+
+**Graded again**, three of the day's earlier passes besides Osaka's had runs
+another had reached, 7 runs: Kraków appended its days to the gran fondo's
+`build.py` and noticed, and one Denver run ran the other's two seconds after it
+was written. Their grades were their cases' usual ones, Denver's example foods
+failing as in every Denver run, so no finding below changes.
 
 **2026-10-01, the two US cases three times each on Opus 5.5**, 1.5.0 rebased
 onto 1.4.0's ounces ([#23](https://github.com/4e6/skills/issues/23)): 6 runs, 6
