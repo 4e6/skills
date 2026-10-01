@@ -6,7 +6,7 @@ tags: [nutrition, product]
 timestamp: 2026-09-30T16:00:00Z
 status: answered
 sources: [skills/training-week-meal-plan/references/fuelling.md, skills/training-week-meal-plan/examples/sample-plan.json]
-source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
+source_commit: 3f5066241fd3cdce46a20049b3b77fe7007c40ff
 ---
 
 # The answer

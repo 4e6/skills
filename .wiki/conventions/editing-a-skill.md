@@ -5,7 +5,7 @@ description: Re-read the two upstream guides before editing and never copy them 
 tags: [skills, authoring, review]
 timestamp: 2026-10-01T12:40:00Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
-source_commit: 88345cbfeda6e4e157884cf119b046edfdd0008e
+source_commit: 3f5066241fd3cdce46a20049b3b77fe7007c40ff
 ---
 
 # Read the guides, and point at them
