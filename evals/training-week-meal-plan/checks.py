@@ -4,12 +4,16 @@ Every check returns `(passed, detail)`. They read `plan-<date>.json`, never the
 page, and they reuse the skill's own `validate.py` from the copy that ran, so a
 check counts a day's food the way the skill's checker does.
 
-**A day's carbohydrate is its meals plus its snack line's `at least` figure.**
-The meals are the athlete's plates as the checker's ranking check counts them;
-the snack line is the shortfall the host itself worked out to the bottom of the
-day's target. Food on a session's fuel lines is not counted, so a case asks
-this only of days whose sessions carry no fuel. Bounds are the published
-ranges, 5% wide either side, since the rules say *roughly*.
+**A day's target is read back from its snack line.** The host works out a
+day's snacks as the gap from its meals and fuel to the bottom of the day's band
+(`at least`) and to its top (`up to`). So meals, fuel and the first figure come
+to the bottom of the band the host aimed at, and with the second to its top. A
+check on the total alone cannot tell a band from the one above it, since the
+snacks top any day up to its band's bottom: a day wrongly loaded at 10-12 g/kg
+measures 10.0, inside 7-10. The meals are the athlete's plates as the checker's
+ranking check counts them; fuel-line food is counted from the fuelling table's
+items, at each range's middle, and anything else on a line is not. Bounds are
+5% wide either side, since the rules say *roughly*.
 """
 
 from __future__ import annotations
@@ -21,6 +25,35 @@ from pathlib import Path
 
 TOLERANCE = 0.05
 AT_LEAST = re.compile(r"at least (?:about |around |roughly |~)?(\d+)\s*g", re.I)
+UP_TO = re.compile(r"up to (?:about |around |roughly |~)?(\d+)\s*g", re.I)
+COUNT = r"(\d+|an?|one)\s+"
+# The fuelling table's items, at the middle of each range.
+FUEL_ITEMS = [
+    (re.compile(COUNT + r"(?:\w+\s+)?bottles? of isotonic", re.I), 35),
+    (re.compile(COUNT + r"energy gels?\b", re.I), 24),
+    (re.compile(COUNT + r"energy bars?\b", re.I), 43),
+    (re.compile(COUNT + r"bananas?\b", re.I), 27),
+    (re.compile(COUNT + r"dates?\b", re.I), 11.5),
+]
+# Animal food, and the words that make one of them plant food when they come
+# just before it (`oat milk`, `peanut butter`) or just after it (`egg-free`,
+# `butter beans`). A regular expression could not hold both without either
+# failing `soy yoghurt` or passing `whole milk`.
+ANIMAL = re.compile(
+    r"\b(?:chicken|beef|pork|lamb|bacon|ham|turkey|salmon|tuna|mackerel|cod|prawns?|"
+    r"shrimps?|anchov(?:y|ies)|fish sauce|eggs?|honey|whey|ghee|gelatine?|milk|"
+    r"buttermilk|yogh?urts?|butter|cheeses?|cheddar|parmesan|feta|mozzarella|cream|"
+    r"mayo(?:nnaise)?)\b",
+    re.I,
+)
+PLANT = {
+    "soy", "soya", "oat", "almond", "peanut", "cashew", "coconut", "rice", "hemp",
+    "pea", "plant", "plant-based", "vegan", "dairy-free", "tofu", "chickpea", "nut",
+    "hazelnut", "sunflower", "seed", "cocoa", "flax", "chia",
+}
+# And the words that say it is left out: `maple syrup instead of honey`.
+LEFT_OUT = {"instead", "no", "not", "without"}
+NOT_ANIMAL_AFTER = re.compile(r"[- ]?free\b| (?:substitute|alternative|replacer|beans?)\b", re.I)
 RACE = re.compile(r"\brace\b", re.I)
 
 
@@ -40,10 +73,44 @@ def day(plan: dict, name: str):
     return next((d for d in plan.get("days", []) if d.get("name") == name), None)
 
 
-def snack_minimum(entry: dict) -> int:
+def snack_figure(entry: dict, pattern):
     guidance = (entry.get("snacks") or {}).get("guidance") or ""
-    match = AT_LEAST.search(guidance)
-    return int(match.group(1)) if match else 0
+    match = pattern.search(guidance)
+    return int(match.group(1)) if match else None
+
+
+def fuel_food(entry: dict) -> float:
+    """The carbohydrate in a day's fuel-line examples, from the items the table names."""
+    total = 0.0
+    for session in entry.get("sessions", []):
+        for line in ("before", "during", "after"):
+            example = (session.get(line) or {}).get("example") or ""
+            for pattern, grams in FUEL_ITEMS:
+                for match in pattern.finditer(example):
+                    count = match.group(1).lower()
+                    total += grams * (int(count) if count.isdigit() else 1)
+    return total
+
+
+def day_carbs(ctx, name: str):
+    """(bottom, top, detail) in g/kg: the band the host aimed this day at.
+
+    `top` is None where the day has no snack line, and then `bottom` is simply
+    what the meals and fuel come to.
+    """
+    entry = day(ctx.plan, name)
+    if entry is None:
+        raise LookupError(name + " is not in the plan")
+    meals = ctx.validate.ranked_carbs(ctx.plan, name)
+    if meals is None:
+        raise LookupError("the checker cannot read %s's meals" % name)
+    fuel = fuel_food(entry)
+    at_least, up_to = snack_figure(entry, AT_LEAST), snack_figure(entry, UP_TO)
+    bottom = (meals + fuel + (at_least or 0)) / ctx.weight
+    top = (meals + fuel + up_to) / ctx.weight if up_to is not None else None
+    detail = "%.1f%s g/kg (meals %d g, fuel %d g, snacks %s to %s g)" % (
+        bottom, "" if top is None else "-%.1f" % top, meals, fuel, at_least, up_to)
+    return bottom, top, detail
 
 
 def check_validates(ctx, spec):
@@ -103,20 +170,58 @@ def check_no_race(ctx, spec):
 
 
 def check_carbs_per_kg(ctx, spec):
-    entry = day(ctx.plan, spec["day"])
-    if entry is None:
-        return False, spec["day"] + " is not in the plan"
-    meals = ctx.validate.ranked_carbs(ctx.plan, spec["day"])
-    if meals is None:
-        return False, "the checker cannot read %s's meals" % spec["day"]
-    snacks = snack_minimum(entry)
-    per_kg = (meals + snacks) / ctx.weight
-    low, high = spec.get("min"), spec.get("max")
-    ok = (low is None or per_kg >= low * (1 - TOLERANCE)) and (
-        high is None or per_kg <= high * (1 + TOLERANCE)
-    )
-    wanted = "%s-%s" % (low if low is not None else "", high if high is not None else "")
-    return ok, "%.1f g/kg (meals %d g + snacks %d g), wanted %s" % (per_kg, meals, snacks, wanted)
+    """The day is fed in the band `min`-`max` g/kg: its bottom reached, its top the one aimed at."""
+    try:
+        bottom, top, detail = day_carbs(ctx, spec["day"])
+    except LookupError as error:
+        return False, str(error)
+    low, high = spec["min"], spec["max"]
+    ok = low * (1 - TOLERANCE) <= bottom <= high * (1 + TOLERANCE)
+    if top is not None:
+        ok = ok and abs(top - high) <= high * TOLERANCE
+    return ok, "%s, wanted %s-%s" % (detail, low, high)
+
+
+def check_not_loaded(ctx, spec):
+    """The day is fed below the loading band that starts at `below` g/kg."""
+    try:
+        bottom, top, detail = day_carbs(ctx, spec["day"])
+    except LookupError as error:
+        return False, str(error)
+    limit = spec["below"]
+    ok = bottom < limit * (1 - TOLERANCE) and (top is None or top <= limit * (1 + TOLERANCE))
+    return ok, "%s, wanted below %s" % (detail, limit)
+
+
+def food_names(plan: dict) -> list:
+    """Every name the plan gives food: dishes, ingredients, the list, and fuel and snack examples."""
+    names = []
+    for recipe in plan.get("recipes", []):
+        names.append(recipe.get("title") or "")
+        names += [i.get("item") or "" for i in recipe.get("ingredients") or []]
+    for group in plan.get("shopping", []):
+        names += [i.get("name") or "" for i in group.get("items", [])]
+    for entry in plan.get("days", []):
+        for meal in entry.get("meals", []):
+            names += [meal.get("dish") or ""] + list(meal.get("alongside") or [])
+        for session in entry.get("sessions", []):
+            names += [(session.get(k) or {}).get("example") or "" for k in ("before", "during", "after")]
+        names.append((entry.get("snacks") or {}).get("example") or "")
+    return [n for n in names if n]
+
+
+def check_vegan(ctx, spec):
+    """No animal food is named anywhere the plan names food."""
+    found = []
+    for name in food_names(ctx.plan):
+        for match in ANIMAL.finditer(name):
+            before = [w.strip(".") for w in re.split(r"[,;(]", name[: match.start()])[-1].lower().split()]
+            if any(w in PLANT for w in before[-2:]) or LEFT_OUT & set(before):
+                continue
+            if NOT_ANIMAL_AFTER.match(name, match.end()):
+                continue
+            found.append(name)
+    return not found, "; ".join(sorted(set(found))) if found else "no animal food"
 
 
 def check_race_during(ctx, spec):
@@ -150,7 +255,9 @@ CHECKS = {
     "race_named": check_race_named,
     "no_race": check_no_race,
     "carbs_per_kg": check_carbs_per_kg,
+    "not_loaded": check_not_loaded,
     "race_during": check_race_during,
+    "vegan": check_vegan,
     "not_printed": check_not_printed,
 }
 
@@ -168,11 +275,19 @@ def check_id(spec: dict) -> str:
     )
 
 
+ALWAYS = [{"check": "validates"}, {"check": "dishes_have_recipes"}]
+
+
+def without_plan(specs: list) -> list:
+    """Every check the case asks for, failed: a run with no plan fails them all."""
+    return [{"id": check_id(s), "passed": False, "detail": "no plan"} for s in ALWAYS + specs]
+
+
 def run(plan: dict, weight: float, skill: Path, specs: list) -> list:
     """Every check the case asks for, each as {id, passed, detail}."""
     ctx = Context(plan, weight, skill)
     results = []
-    for spec in [{"check": "validates"}, {"check": "dishes_have_recipes"}] + specs:
+    for spec in ALWAYS + specs:
         try:
             passed, detail = CHECKS[spec["check"]](ctx, spec)
         except Exception as error:  # a plan the check cannot walk fails it

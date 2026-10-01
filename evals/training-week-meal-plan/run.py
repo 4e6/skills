@@ -67,6 +67,7 @@ NUDGE = "Go ahead with what I've given you, I don't have anything to add."
 # one at a time takes about two hours. Much wider and the runs share the
 # account's rate limit and slow each other down, or are turned away and retried.
 JOBS = 7
+DEFAULT_JUDGE = "opus"
 RETRIES = 2
 RETRY_WAIT = 60  # seconds, times the attempt
 
@@ -99,8 +100,12 @@ RACE_QUESTIONS = [
      "Is the dinner on the evening before the race carbohydrate-led, and not heavy "
      "or fatty?"),
     ("race-fuel-lines",
-     "Does the race session carry a `before` line, and are its `during` and `after` "
-     "lines (or their absence) consistent with the race as the athlete described it?"),
+     "The skill's rules: a race always has a `before` line. Carbohydrate during a "
+     "session goes by its length: under about 45 minutes none, only water; about "
+     "45-75 minutes of hard work, small amounts or a mouth rinse; one to two and a half "
+     "hours, roughly 30-60 g an hour; longer, 60-90 g an hour. A session that carries "
+     "fuel has an `after` line, carbohydrate with protein within about 2 hours. Do the "
+     "race session's lines follow these rules for the race as the athlete described it?"),
 ]
 
 JUDGE_SCHEMA = {
@@ -204,6 +209,9 @@ def run_one(agent, case: dict, n: int, out: Path, skill: Path, today: dt.date) -
         "turns": len(turns),
         "is_error": any(t.is_error for t in turns),
         "api_error": next((t.api_error for t in turns if t.api_error), None),
+        "timed_out": any(t.timed_out for t in turns),
+        # Killed before it could finish, by Ctrl-C or a crash: not the skill's doing.
+        "interrupted": not all(t.finished or t.timed_out for t in turns),
         "cost_usd": round(sum(t.cost_usd for t in turns), 4),
         "models": sorted({m for t in turns for m in t.models}),
         "skill_listed": SKILL in turns[0].listed,
@@ -216,8 +224,26 @@ def run_one(agent, case: dict, n: int, out: Path, skill: Path, today: dt.date) -
     return result
 
 
+def excluded(result: dict):
+    """Why a run says nothing about the skill, or None when it counts.
+
+    The agent was never offered the skill, the run was killed before it could
+    finish, or the API turned it away every time it was tried. Counting any of
+    those would grade the harness or the account. A run that ran out of time
+    counts: the skill had its go.
+    """
+    if not result.get("skill_listed", False):
+        return "the skill was not installed"
+    if result.get("interrupted"):
+        return "interrupted"
+    if result.get("is_error") and result.get("api_error"):
+        return "the API turned it away (%s)" % result["api_error"]
+    return None
+
+
 def grade_one(agent, case: dict, out: Path, skill: Path, judge_model, judge: bool) -> dict:
     result = json.loads((out / "result.json").read_text())
+    result["excluded"] = excluded(result)
     plan_path = plan_in(out)
     run_checks = [
         # Not the skill's fault when it fails: the agent was never offered it.
@@ -238,10 +264,24 @@ def grade_one(agent, case: dict, out: Path, skill: Path, judge_model, judge: boo
             run_checks[-1].update(passed=False, detail="does not parse: %s" % error)
     if plan is not None:
         run_checks += checks.run(plan, case["weight_kg"], skill, case.get("checks", []))
+    else:
+        run_checks += checks.without_plan(case.get("checks", []))
     result["checks"] = run_checks
-    if judge and plan is not None:
-        result["judge"], result["judge_cost_usd"] = ask_judge(agent, case, out, plan, judge_model)
+    # Written before the judge, so a judge that fails cannot take the checks with it.
+    result.pop("judge", None)
+    result.pop("judge_cost_usd", None)
     (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    if judge and not result["excluded"]:
+        if plan is None:
+            result["judge"] = [{"id": qid, "verdict": "no", "reason": "no plan to judge"}
+                               for qid, _ in questions(case)]
+        else:
+            try:
+                result["judge"], result["judge_cost_usd"] = ask_judge(
+                    agent, case, out, plan, judge_model)
+            except Exception as error:
+                result["judge_error"] = "%s: %s" % (type(error).__name__, error)
+        (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     return result
 
 
@@ -296,6 +336,7 @@ def cmd_run(args):
         out = root / case_id / str(n)
         say("start  %s #%d" % (case_id, n))
         try:
+            spent = 0.0
             for attempt in range(1, RETRIES + 2):
                 result = run_one(agent, cases[case_id], n, out, skill, today)
                 if not (result["is_error"] and result["api_error"]) or attempt > RETRIES:
@@ -303,12 +344,19 @@ def cmd_run(args):
                 # The API turned the run away (rate limit, overload): the skill
                 # never got a fair go, so the run starts again from nothing.
                 say("retry  %s #%d  API error %s" % (case_id, n, result["api_error"]))
+                spent += result["cost_usd"]
                 shutil.rmtree(out)
                 time.sleep(RETRY_WAIT * attempt)
+            if spent:
+                result["retried_cost_usd"] = round(spent, 4)
+                (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
             result = grade_one(agent, cases[case_id], out, skill, args.judge_model,
                                not args.no_judge)
             failed = [c["id"] for c in result["checks"] if not c["passed"]]
-            say("done   %s #%d  %s" % (case_id, n, "failed: " + ", ".join(failed) if failed else "checks pass"))
+            if result["excluded"]:
+                say("skip   %s #%d  %s" % (case_id, n, result["excluded"]))
+            else:
+                say("done   %s #%d  %s" % (case_id, n, "failed: " + ", ".join(failed) if failed else "checks pass"))
         except Exception as error:
             say("ERROR  %s #%d  %s: %s" % (case_id, n, type(error).__name__, error))
 
@@ -326,23 +374,36 @@ def cmd_grade(args):
     root = Path(args.results)
     meta = json.loads((root / "meta.json").read_text())
     agent = agents.AGENTS[meta["agent"]]()
-    model = args.judge_model or meta.get("judge_model")
+    model = args.judge_model or meta.get("judge_model") or DEFAULT_JUDGE
     for result_path in sorted(root.glob("*/*/result.json")):
         out = result_path.parent
         if out.parent.name not in cases:
             say("skip   %s: no such case any more" % out.parent.name)
             continue
-        grade_one(agent, cases[out.parent.name], out, root / "skill", model, not args.no_judge)
+        # The case as it is now, against the message the run was given then:
+        # a check that changed is applied to the old run.
+        try:
+            grade_one(agent, cases[out.parent.name], out, root / "skill", model, not args.no_judge)
+        except Exception as error:
+            say("ERROR  %s  %s: %s" % (out.relative_to(root), type(error).__name__, error))
     print(report([root]))
 
 
 def summarise(root: Path) -> dict:
-    """{case: {row: [passes, runs]}} with the cost, for one results folder."""
+    """{case: {row: [passes, runs]}} with the cost, for one results folder.
+
+    A run `excluded` says why it counts for nothing, and is counted only in its
+    own row.
+    """
     table, cost = {}, 0.0
     for result_path in sorted(root.glob("*/*/result.json")):
         result = json.loads(result_path.read_text())
-        cost += result.get("cost_usd", 0) + result.get("judge_cost_usd", 0)
+        cost += sum(result.get(k, 0) for k in ("cost_usd", "judge_cost_usd", "retried_cost_usd"))
         rows = table.setdefault(result["case"], {})
+        if result.get("excluded"):
+            row = rows.setdefault("excluded: " + result["excluded"], [0, 0])
+            row[1] += 1
+            continue
         for check in result.get("checks", []):
             row = rows.setdefault(check["id"], [0, 0])
             row[0] += check["passed"]
@@ -370,7 +431,12 @@ def report(roots: list) -> str:
             cells = []
             for s in sums:
                 got = s["table"].get(case, {}).get(row)
-                cells.append("%d/%d" % tuple(got) if got else "")
+                if not got:
+                    cells.append("")
+                elif row.startswith("excluded: "):
+                    cells.append("%d set aside" % got[1])
+                else:
+                    cells.append("%d/%d" % tuple(got))
             lines.append("| %s | %s | %s |" % (case, row, " | ".join(cells)))
     lines.append("| | cost, USD | " + " | ".join("%.2f" % s["cost"] for s in sums) + " |")
     return "\n".join(lines)
@@ -390,7 +456,8 @@ def main(argv=None) -> int:
     run.add_argument("--skill-ref", help="a git ref to take the skill from (default: working tree)")
     run.add_argument("--agent", default="claude-code", choices=sorted(agents.AGENTS))
     run.add_argument("--model", help="the agent's model (default: its own)")
-    run.add_argument("--judge-model", default="opus", help="the judge's model (default opus)")
+    run.add_argument("--judge-model", default=DEFAULT_JUDGE,
+                     help="the judge's model (default %s)" % DEFAULT_JUDGE)
     run.add_argument("--no-judge", action="store_true", help="script checks only")
     run.add_argument("--jobs", type=int, default=JOBS, help="runs at once (default %d)" % JOBS)
     run.add_argument("--max-budget-usd", type=float, default=8.0, help="cap per agent call")

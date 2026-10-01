@@ -46,16 +46,19 @@ python3 evals/training-week-meal-plan/run.py report evals/training-week-meal-pla
 
 Without `--skill-ref` the skill comes from the working tree, uncommitted edits
 included. `grade RESULTS` grades a results folder again without running the
-agent, for when a check or a judge question changes.
+agent, for when a check or a judge question changes. It applies the cases as
+they are now to the messages the runs were given then.
 
 ## What a run sees
 
 Each run starts in a new folder outside any checkout, with the skill under test
-installed as a project skill and nothing else of the machine: none of your
-skills, memory, CLAUDE.md or MCP servers. It can read, write and search, and run
-shell commands in Claude Code's sandbox, which writes only in that folder and
-never reaches the network. It has nothing that publishes, browses the web or
-puts up a menu, and it may not open the page it makes.
+installed as a project skill: none of your skills, memory, CLAUDE.md or MCP
+servers. It can read, write and search inside that folder only, and run shell
+commands in Claude Code's sandbox, which writes only in that folder, reads
+nothing in your home folder and never reaches the network. It has nothing that
+publishes, browses the web or puts up a menu, and it may not open the page it
+makes. What it does leave is its session, under `~/.claude/projects/`, as every
+Claude Code session does.
 The athlete's message gives everything the intake asks for, with next week's
 dates worked out on the day it runs. An agent that asks a question anyway is
 told once to go ahead, and the run records that it asked.
@@ -65,10 +68,12 @@ told once to go ahead, and the run records that it asked.
 - **Script checks** (`checks.py`) read the plan and give the same answer every
   time: the plan is the skill's own `validate.py` clean, every dish a meal names
   has a recipe (which `validate.py` does not check), it covers the right
-  days, the race is ranked first and named as one, a day's carbohydrate per
-  kilogram (meals plus the snack line's minimum) is in range, a long race's
-  `during` line gives 60–90 g an hour, and nothing is printed that should not
-  be.
+  days, the race is ranked first and named as one, a loading day is fed in its
+  band and an ordinary day is not, a long race's `during` line gives 60–90 g an
+  hour, and a vegan plan names no animal food. A day's band is read back from
+  its snack line: meals, fuel and the line's `at least` come to the band's
+  bottom, and with its `up to` to its top. The total alone cannot tell 7–10 from
+  10–12, because snacks top every day up to its band's bottom.
 - **The judge** is an agent with no tools that reads the athlete's message, the
   plan and the reply, and answers each question `yes`, `no` or `unclear` with a
   reason. Some questions are asked of every run (the summary, invented figures,
@@ -76,7 +81,10 @@ told once to go ahead, and the run records that it asked.
   of every race week, and some by one case.
 
 `report` prints how often each check passed and each question was answered
-`yes`, per case.
+`yes`, per case. A run that says nothing about the skill is set aside in a row
+of its own and counted nowhere else: the agent was never offered the skill, the
+run was killed, or the API turned it away three times. A run that runs out of
+time, or writes no plan, counts, and fails every check on the plan.
 
 ## Adding a case
 
@@ -88,7 +96,8 @@ A case is one JSON file in `evals/training-week-meal-plan/cases/`, named for its
 - `weight_kg`: the weight the message gives, which the per-kilogram checks use.
 - `race`: whether the week holds a race, which adds the race-week questions.
 - `checks`: script checks from `checks.py`'s `CHECKS`, each with what it needs:
-  a `day`, a `min` and `max` in g/kg, a `pattern`. An `id` names one where the
-  default would repeat.
+  a `day`; a `min` and `max` in g/kg for a band, or `below` for the band a day
+  must stay under; a `pattern`. An `id` names one where the default would
+  repeat.
 - `judge`: the case's own questions, each with an `id`. Word them so that `yes`
   is the right answer.

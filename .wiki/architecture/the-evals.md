@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, sealed off from the machine, plans a fixed athlete's week; script checks and a tool-less judge grade it, as pass rates.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T12:16:28Z
+timestamp: 2026-10-01T12:30:57Z
 sources: [evals/**]
 source_commit: 777a0f7fd1cbd29d4601f036f794fd3fd9f2505e
 ---
@@ -48,7 +48,7 @@ the long events do not reach, and those are now untested.
   each, and different every time. Each case runs several times and is reported
   as a pass rate, never as one verdict.
 
-# A run sees the skill and nothing of the machine
+# A run sees the skill and as little of the machine as it can
 
 Each run is the agent's command line in a new folder outside any checkout, with
 the skill copied in as a project skill. Every choice below removes something that
@@ -64,19 +64,30 @@ would otherwise answer instead of the skill:
   or puts up a menu. Anything else is refused rather than asked about, so no run
   waits on a person, and `open` is refused so none opens a browser on the
   machine running it.
-- **The shell is Claude Code's sandbox**, writing only in the run's folder and
-  never reaching the network, with every command allowed inside it. An allowlist
-  of commands came first and refused `cd <folder> && python3 …` and
-  `python3 …; echo "exit $?"`. Hosts treated one refusal as no Python at all,
-  as the skill tells them to, and handed over unchecked plans, which graded as
-  the skill's fault.
+- **The file tools reach only the run's folder.** Allowed bare, they reach
+  anywhere: a run wrote a generator script to `/tmp` and ran it, where seven
+  parallel runs could overwrite each other's, and step 2's search for earlier
+  plans could find a real one of the author's.
+- **The shell is Claude Code's sandbox**, writing only in the run's folder,
+  reading nothing in the home folder and never reaching the network, with every
+  command allowed inside it. An allowlist of commands came first and refused
+  `cd <folder> && python3 …` and `python3 …; echo "exit $?"`, and the sandbox's
+  own auto-allow still refused heredocs and variable assignments. Hosts treated
+  one refusal as no Python at all, as the skill tells them to, and handed over
+  unchecked plans, which graded as the skill's fault.
+- **What it leaves**: its session under `~/.claude/projects/`, as every Claude
+  Code session does, which the nudge needs to resume it.
 
 **The skill's folder is named for the skill.** Claude Code names a skill after
 its folder, whatever its frontmatter says: the first run installed the copy as
 `skill`, the agent guessed at `meal-plan`, was refused, and wrote a week in prose
 with no plan. Every run now records whether the agent was offered the skill
-(`skill-installed`) apart from whether it used it (`skill-used`), so the harness
-failing never reads as the skill failing.
+(`skill-installed`) apart from whether it used it (`skill-used`). A run the
+skill was never offered to is set aside, with one that was killed before it
+finished and one the API turned away every time, in a row of its own: counting
+them would grade the harness or the account. A run that runs out of time or
+writes no plan counts, and fails every check on the plan, so a pass rate is
+never flattered by the runs that went worst.
 
 **The athlete says everything in the first message**: the days with their dates,
 the week, the weight, the country, restrictions and the fridge. A run needs
@@ -104,16 +115,28 @@ go, and counting it would grade the account.
   own checker counts it. Every plan must be clean under it, and must give every
   dish a meal names a recipe, which
   [the validator does not check](/architecture/the-validator.md#check-10-the-plan-against-its-own-ranking).
-  - **A day's carbohydrate is its meals plus the snack line's `at least`
-    figure**, the shortfall the host worked out itself. Fuel lines are not
-    counted, so a case asks this only of days whose sessions carry no fuel.
-  - **Bounds are the published range, 5% wide either side**, since the rules say
-    *roughly*.
+  - **A day's band is read back from its snack line.** The host works out the
+    line as the gap from the day's meals and fuel to its band's bottom (`at
+    least`) and top (`up to`). The first version took meals plus `at least` and
+    checked it against a range, and review showed that could not tell a day
+    loaded at 10–12 g/kg from one fed at 7–10: the snacks top every day up to
+    its band's bottom, so a wrongly loaded day measures 10.0, inside 7–10. Now
+    the bottom must be reached and the top must be the band's.
+  - **Fuel-line food is counted** from the fuelling table's items at each
+    range's middle; anything else on a line is not.
+  - **Bounds are 5% wide either side**, since the rules say *roughly*.
+  - **The vegan check reads only names of food** — dishes, ingredients, the
+    list, fuel and snack examples — so `Dairy, Eggs & Chilled` and *no eggs or
+    honey* in a summary do not fail it, and takes `oat milk`, `peanut butter`
+    and `egg-free` as plant food. A regular expression could not do both.
 - **A judge**: an agent with no tools that reads the message, the plan and the
   reply, and answers `yes`, `no` or `unclear` with a reason. It takes what a
   script cannot read: whether the summary is honest, whether a dinner is light,
-  whether a race distance was assumed. Questions are worded so that `yes` is
-  right, and some are asked of every run.
+  whether a race's example food adds up over the race. Questions are worded so
+  that `yes` is right, and some are asked of every run. **A question that rests
+  on one of the skill's rules quotes it**, since the judge never reads the
+  skill: asked only whether a 10K's fuel lines fit the race, it answers from its
+  own idea of sports nutrition.
 
 # Against the method the bundle used before
 

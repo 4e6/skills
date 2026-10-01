@@ -5,15 +5,18 @@ skills, runs one athlete message in a folder (and resumes it once if asked),
 and answers a judge's questions. The skills here are written for any agent, so
 nothing else in the evals knows which agent ran.
 
-**Each run sees the skill under test and nothing of the machine it runs on.**
+**Each run sees the skill under test and as little of the machine as it can.**
 Claude Code is started in a fresh folder outside any checkout, with only the
 project's settings (so neither the user's skills, memory nor CLAUDE.md), no MCP
 servers (a meal-plan server or a training calendar would answer the athlete
 instead of the skill), and a fixed set of tools: no publishing, no web, no
-menus, since nobody is there to pick from one. Shell commands run in Claude
-Code's sandbox, writing only in the run's folder and never reaching the network.
+menus, since nobody is there to pick from one. The file tools work only inside
+the run's folder, and the shell runs in Claude Code's sandbox: it writes only
+there, reads nothing in the home folder, and never reaches the network.
 Anything else is refused, not asked about, so a run never waits on a person and
-never opens a browser on the machine running it.
+never opens a browser on the machine running it. What it cannot avoid is
+Claude Code keeping each run's session under `~/.claude/projects/`, which the
+nudge needs to resume it.
 
 Python 3.9, standard library only.
 """
@@ -33,6 +36,7 @@ class Turn:
 
     reply: str
     is_error: bool
+    finished: bool
     session_id: str | None
     cost_usd: float
     tools: list = field(default_factory=list)
@@ -42,6 +46,14 @@ class Turn:
     models: list = field(default_factory=list)
     api_error: object = None
     denied: list = field(default_factory=list)
+    timed_out: bool = False
+
+
+def _text(output) -> str:
+    """What a timed-out process had printed, which arrives as bytes or nothing."""
+    if output is None:
+        return ""
+    return output.decode("utf-8", "replace") if isinstance(output, bytes) else output
 
 
 class ClaudeCode:
@@ -50,14 +62,19 @@ class ClaudeCode:
     # The tools a host offers; Skill is how the skill is found, by its
     # description, as it would be in use.
     TOOLS = "Read,Write,Edit,Glob,Grep,Bash,Skill"
-    ALLOWED = ["Read", "Write", "Edit", "Glob", "Grep", "Skill"]
+    # The file tools only inside the run's folder: bare `Read` or `Write` reach
+    # anywhere, and one run wrote a script to /tmp, where the next could find it.
+    # Edit's rule covers Write, and Read's covers what Glob and Grep may list.
+    ALLOWED = ["Read(./**)", "Edit(./**)", "Glob(./**)", "Grep(./**)", "Skill", "Bash"]
     ISOLATED = ["--setting-sources", "project", "--strict-mcp-config"]
     # Every shell command runs, inside Claude Code's sandbox: writes only in the
-    # run's folder, and no network. An allowlist of commands was tried first and
-    # refused `cd <folder> && python3 ...`, and one refusal was enough for an
-    # agent to decide there was no Python and hand over an unchecked plan.
+    # run's folder, no reads in the home folder, and no network. An allowlist of
+    # commands was tried first and refused `cd <folder> && python3 ...`, and one
+    # refusal was enough for an agent to decide there was no Python and hand over
+    # an unchecked plan; the sandbox's own auto-allow still refused heredocs.
     SANDBOX = json.dumps({"sandbox": {"enabled": True, "autoAllowBashIfSandboxed": True,
-                                      "allowUnsandboxedCommands": False}})
+                                      "allowUnsandboxedCommands": False,
+                                      "filesystem": {"denyRead": ["~/"]}}})
     # The skill's last step opens the page; on this machine nobody is looking.
     DENIED = ["Bash(open *)", "Bash(xdg-open *)", "Bash(start *)"]
 
@@ -84,17 +101,25 @@ class ClaudeCode:
             args += ["--model", self.model]
         if resume:
             args += ["--resume", resume]
-        done = subprocess.run(args, cwd=workdir, capture_output=True, text=True,
-                              timeout=self.timeout, stdin=subprocess.DEVNULL)
+        try:
+            done = subprocess.run(args, cwd=workdir, capture_output=True, text=True,
+                                  timeout=self.timeout, stdin=subprocess.DEVNULL)
+            stdout, stderr, timed_out = done.stdout, done.stderr, False
+        except subprocess.TimeoutExpired as expired:
+            stdout, stderr, timed_out = _text(expired.stdout), _text(expired.stderr), True
         with transcript.open("a") as out:
-            out.write(done.stdout)
-            if done.stderr:
-                out.write(json.dumps({"type": "stderr", "text": done.stderr}) + "\n")
-        return self._turn(done.stdout)
+            out.write(stdout)
+            if stderr:
+                out.write(json.dumps({"type": "stderr", "text": stderr}) + "\n")
+            if timed_out:
+                out.write(json.dumps({"type": "timeout", "seconds": self.timeout}) + "\n")
+        turn = self._turn(stdout)
+        turn.timed_out = timed_out
+        return turn
 
     @staticmethod
     def _turn(stream: str) -> Turn:
-        turn = Turn(reply="", is_error=True, session_id=None, cost_usd=0.0)
+        turn = Turn(reply="", is_error=True, finished=False, session_id=None, cost_usd=0.0)
         for line in stream.splitlines():
             try:
                 event = json.loads(line)
@@ -113,6 +138,7 @@ class ClaudeCode:
                     elif name == "Read":
                         turn.reads.append(given.get("file_path"))
             elif event.get("type") == "result":
+                turn.finished = True
                 turn.reply = event.get("result") or ""
                 turn.is_error = bool(event.get("is_error"))
                 turn.session_id = event.get("session_id")
@@ -131,7 +157,10 @@ class ClaudeCode:
             args += ["--model", model]
         done = subprocess.run(args, cwd=workdir, capture_output=True, text=True,
                               timeout=self.timeout, stdin=subprocess.DEVNULL)
-        result = json.loads(done.stdout)
+        try:
+            result = json.loads(done.stdout)
+        except ValueError:
+            raise RuntimeError("judge failed: " + (done.stderr or done.stdout)[:500])
         if result.get("is_error") or "structured_output" not in result:
             raise RuntimeError("judge failed: " + (result.get("result") or done.stderr)[:500])
         return result["structured_output"], result.get("total_cost_usd") or 0.0

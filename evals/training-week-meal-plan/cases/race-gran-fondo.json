@@ -53,7 +53,7 @@
     {
       "check": "race_during",
       "day": "Sunday",
-      "pattern": "60\\s*[–-]\\s*90"
+      "pattern": "60\\s*(?:[–-]|to)\\s*90"
     }
   ],
   "judge": [

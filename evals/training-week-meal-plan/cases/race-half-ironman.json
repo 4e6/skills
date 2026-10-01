@@ -53,7 +53,7 @@
     {
       "check": "race_during",
       "day": "Sunday",
-      "pattern": "60\\s*[–-]\\s*90"
+      "pattern": "60\\s*(?:[–-]|to)\\s*90"
     }
   ],
   "judge": [
@@ -63,7 +63,7 @@
     },
     {
       "id": "swim-unfuelled",
-      "question": "The race's swim is in open water. Does the plan put no carbohydrate during the swim, and the race's hourly fuelling on the bike and the run?"
+      "question": "The race's swim is in open water, and the skill's rule is that an open-water swim has no carbohydrate during it. Does nothing in the plan or the reply tell the athlete to take carbohydrate during the swim? A plan that says nothing about the swim answers yes."
     }
   ]
 }

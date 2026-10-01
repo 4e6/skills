@@ -53,12 +53,10 @@
     {
       "check": "race_during",
       "day": "Sunday",
-      "pattern": "60\\s*[–-]\\s*90"
+      "pattern": "60\\s*(?:[–-]|to)\\s*90"
     },
     {
-      "id": "no-animal-food",
-      "check": "not_printed",
-      "pattern": "(?<!flax )(?<!chia )(?<!vegan )(?<!no )(?<!Dairy, )\\b(?:chicken|beef|pork|lamb|bacon|ham|turkey|salmon|tuna|mackerel|cod|prawns?|eggs?|honey|whey|ghee|cheddar|parmesan|feta|mozzarella)\\b(?![- ]?free)(?! (?:replacer|substitute|alternative))"
+      "check": "vegan"
     }
   ],
   "judge": [

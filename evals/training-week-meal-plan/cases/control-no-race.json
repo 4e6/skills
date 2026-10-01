@@ -38,16 +38,14 @@
       "check": "no_race"
     },
     {
-      "id": "carbs_per_kg-Friday-not-loaded",
-      "check": "carbs_per_kg",
+      "check": "not_loaded",
       "day": "Friday",
-      "max": 10
+      "below": 10
     },
     {
-      "id": "carbs_per_kg-Saturday-not-loaded",
-      "check": "carbs_per_kg",
+      "check": "not_loaded",
       "day": "Saturday",
-      "max": 10
+      "below": 10
     }
   ]
 }
