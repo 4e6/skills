@@ -47,7 +47,8 @@ python3 evals/training-week-meal-plan/run.py report evals/training-week-meal-pla
 Without `--skill-ref` the skill comes from the working tree, uncommitted edits
 included. `grade RESULTS` grades a results folder again without running the
 agent, for when a check or a judge question changes. It applies the cases as
-they are now to the messages the runs were given then.
+they are now to the messages the runs were given then, and with `--no-judge` it
+drops the judge's earlier answers rather than keeping ones it did not check.
 
 ## What a run sees
 
@@ -58,7 +59,11 @@ commands in Claude Code's sandbox, which writes only in that folder, reads
 nothing in your home folder and never reaches the network. It has nothing that
 publishes, browses the web or puts up a menu, and it may not open the page it
 makes. What it does leave is its session, under `~/.claude/projects/`, as every
-Claude Code session does.
+Claude Code session does, and an empty entry there for each judge.
+
+Because the shell reads nothing in your home folder, `python3` must not resolve
+to a shim there (pyenv, asdf): the agent would find no Python and hand over an
+unchecked plan. A system or Homebrew Python is fine.
 The athlete's message gives everything the intake asks for, with next week's
 dates worked out on the day it runs. An agent that asks a question anyway is
 told once to go ahead, and the run records that it asked.
@@ -83,8 +88,10 @@ told once to go ahead, and the run records that it asked.
 `report` prints how often each check passed and each question was answered
 `yes`, per case. A run that says nothing about the skill is set aside in a row
 of its own and counted nowhere else: the agent was never offered the skill, the
-run was killed, or the API turned it away three times. A run that runs out of
-time, or writes no plan, counts, and fails every check on the plan.
+run was killed, or the API turned it away three times. Every other run counts:
+one that runs out of time is graded on whatever plan it wrote, one with no plan
+fails every check on the plan, and a judge that fails answers `unclear` to
+every question.
 
 ## Adding a case
 

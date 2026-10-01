@@ -189,7 +189,7 @@ def plan_in(folder: Path):
 
 def run_one(agent, case: dict, n: int, out: Path, skill: Path, today: dt.date) -> dict:
     out.mkdir(parents=True)
-    work = Path(tempfile.mkdtemp(prefix="twmp-eval-"))
+    work = Path(tempfile.mkdtemp(prefix="twmp-eval-")).resolve()
     try:
         agent.install_skill(work, skill, SKILL)
         text = message(case, today)
@@ -268,8 +268,8 @@ def grade_one(agent, case: dict, out: Path, skill: Path, judge_model, judge: boo
         run_checks += checks.without_plan(case.get("checks", []))
     result["checks"] = run_checks
     # Written before the judge, so a judge that fails cannot take the checks with it.
-    result.pop("judge", None)
-    result.pop("judge_cost_usd", None)
+    for key in ("judge", "judge_cost_usd", "judge_error"):
+        result.pop(key, None)
     (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     if judge and not result["excluded"]:
         if plan is None:
@@ -280,7 +280,12 @@ def grade_one(agent, case: dict, out: Path, skill: Path, judge_model, judge: boo
                 result["judge"], result["judge_cost_usd"] = ask_judge(
                     agent, case, out, plan, judge_model)
             except Exception as error:
-                result["judge_error"] = "%s: %s" % (type(error).__name__, error)
+                # Every question stays counted, as unclear, so a judge that
+                # failed cannot shrink a pass rate's denominator.
+                reason = "the judge failed: %s: %s" % (type(error).__name__, error)
+                result["judge_error"] = reason
+                result["judge"] = [{"id": qid, "verdict": "unclear", "reason": reason}
+                                   for qid, _ in questions(case)]
         (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     return result
 

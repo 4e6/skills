@@ -26,10 +26,14 @@ from pathlib import Path
 TOLERANCE = 0.05
 AT_LEAST = re.compile(r"at least (?:about |around |roughly |~)?(\d+)\s*g", re.I)
 UP_TO = re.compile(r"up to (?:about |around |roughly |~)?(\d+)\s*g", re.I)
-COUNT = r"(\d+|an?|one)\s+"
+WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6}
+# A count, then at most one word before the item: `2 caffeinated energy gels`.
+COUNT = r"\b(\d+|an?|one|two|three|four|five|six)\s+(?:[a-z-]+\s+)?"
+# A volume or weight in an example is never a count: `a 500 ml bottle` is one.
+MEASURE = re.compile(r"\b\d+(?:\.\d+)?\s*(?:ml|l|cl|g|kg|oz)\b\s*", re.I)
 # The fuelling table's items, at the middle of each range.
 FUEL_ITEMS = [
-    (re.compile(COUNT + r"(?:\w+\s+)?bottles? of isotonic", re.I), 35),
+    (re.compile(COUNT + r"bottles? of isotonic", re.I), 35),
     (re.compile(COUNT + r"energy gels?\b", re.I), 24),
     (re.compile(COUNT + r"energy bars?\b", re.I), 43),
     (re.compile(COUNT + r"bananas?\b", re.I), 27),
@@ -53,7 +57,11 @@ PLANT = {
 }
 # And the words that say it is left out: `maple syrup instead of honey`.
 LEFT_OUT = {"instead", "no", "not", "without"}
-NOT_ANIMAL_AFTER = re.compile(r"[- ]?free\b| (?:substitute|alternative|replacer|beans?)\b", re.I)
+NOT_ANIMAL_AFTER = re.compile(
+    r"[- ]?free\b|-style\b| (?:substitute|alternative|replacer|beans?)\b", re.I)
+# A qualifier written after the food, as lists do: `Yoghurt, soy`, `Milk (oat)`.
+QUALIFIED_AFTER = re.compile(r"\s*[,(]\s*([a-z-]+)", re.I)
+JOINS = {"and", "with", "&", "or", "+"}
 RACE = re.compile(r"\brace\b", re.I)
 
 
@@ -84,11 +92,12 @@ def fuel_food(entry: dict) -> float:
     total = 0.0
     for session in entry.get("sessions", []):
         for line in ("before", "during", "after"):
-            example = (session.get(line) or {}).get("example") or ""
+            example = MEASURE.sub("", (session.get(line) or {}).get("example") or "")
+            example = re.sub(r"\b(\d+)\s*x\s+", r"\1 ", example)
             for pattern, grams in FUEL_ITEMS:
                 for match in pattern.finditer(example):
                     count = match.group(1).lower()
-                    total += grams * (int(count) if count.isdigit() else 1)
+                    total += grams * (int(count) if count.isdigit() else WORDS[count])
     return total
 
 
@@ -216,9 +225,16 @@ def check_vegan(ctx, spec):
     for name in food_names(ctx.plan):
         for match in ANIMAL.finditer(name):
             before = [w.strip(".") for w in re.split(r"[,;(]", name[: match.start()])[-1].lower().split()]
-            if any(w in PLANT for w in before[-2:]) or LEFT_OUT & set(before):
+            # The word just before, or the one before that across a modifier
+            # (`plant-based Greek yoghurt`), but never across a join: in
+            # `Rice with egg` the rice qualifies nothing.
+            near = before[-1:] if before[-1:] and before[-1] in JOINS else before[-2:]
+            if (near and near[-1] not in JOINS and any(w in PLANT for w in near)) or LEFT_OUT & set(before):
                 continue
             if NOT_ANIMAL_AFTER.match(name, match.end()):
+                continue
+            after = QUALIFIED_AFTER.match(name, match.end())
+            if after and after.group(1).lower() in PLANT:
                 continue
             found.append(name)
     return not found, "; ".join(sorted(set(found))) if found else "no animal food"

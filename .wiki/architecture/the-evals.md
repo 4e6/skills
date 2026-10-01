@@ -1,7 +1,7 @@
 ---
 type: Module
 title: The evals
-description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, sealed off from the machine, plans a fixed athlete's week; script checks and a tool-less judge grade it, as pass rates.
+description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week; script checks and a tool-less judge grade it, as pass rates.
 tags: [architecture, testing, evals]
 timestamp: 2026-10-01T12:30:57Z
 sources: [evals/**]
@@ -69,7 +69,8 @@ would otherwise answer instead of the skill:
   parallel runs could overwrite each other's, and step 2's search for earlier
   plans could find a real one of the author's.
 - **The shell is Claude Code's sandbox**, writing only in the run's folder,
-  reading nothing in the home folder and never reaching the network, with every
+  reading nothing in the home folder (so `python3` must not be a shim there)
+  and never reaching the network, with every
   command allowed inside it. An allowlist of commands came first and refused
   `cd <folder> && python3 …` and `python3 …; echo "exit $?"`, and the sandbox's
   own auto-allow still refused heredocs and variable assignments. Hosts treated
@@ -121,7 +122,9 @@ go, and counting it would grade the account.
     checked it against a range, and review showed that could not tell a day
     loaded at 10–12 g/kg from one fed at 7–10: the snacks top every day up to
     its band's bottom, so a wrongly loaded day measures 10.0, inside 7–10. Now
-    the bottom must be reached and the top must be the band's.
+    the bottom must be reached and the top must be the band's. **A day with no
+    snack line has no top to read**, so one whose meals alone reach a higher
+    band's bottom still passes; meals rarely come that close.
   - **Fuel-line food is counted** from the fuelling table's items at each
     range's middle; anything else on a line is not.
   - **Bounds are 5% wide either side**, since the rules say *roughly*.
