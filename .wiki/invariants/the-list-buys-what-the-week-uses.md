@@ -32,9 +32,9 @@ the two are written alike, character for character.
 recipes add up to 6.5. Bigger plates scale a recipe's count to the half, so the
 sum can land on one, and a half is fine for the pot and wrong for the shop. A
 counted row is therefore the one row that may buy more than the week cooks, by
-less than one. A weight, a volume and a spoon stay exact: `3.5 tsp` of butter
-buys the same block as `4 tsp`, and rounding it would cost a repair for
-nothing. Until 1.5.0 the sum was compared exactly, so the check held `6.5` to
+less than one. A weight, a volume and a measure written as a noun — a spoon, a
+pinch, a centimetre of ginger — stay exact: `3.5 tsp` of butter buys the same
+block as `4 tsp`, and rounding it would cost a repair for nothing. Until 1.5.0 the sum was compared exactly, so the check held `6.5` to
 `6.5`, and 8 of 21 runs of 1.3.0 printed a half count, metric lists as well as
 US ones ([#23](https://github.com/4e6/skills/issues/23)).
 

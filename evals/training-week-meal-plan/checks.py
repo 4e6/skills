@@ -31,9 +31,12 @@ import tempfile
 from pathlib import Path
 
 TOLERANCE = 0.05
-# Counted as nouns and a measure all the same, as validate.py's SPOONS; spelled
+# Counted as nouns and a measure all the same, as validate.py's MEASURES; spelled
 # here too, since `--skill-ref` can run a copy that predates it.
-SPOONS = {"tablespoon", "tbsp", "teaspoon", "tsp"}
+MEASURES = {
+    "tablespoon", "tbsp", "teaspoon", "tsp", "pinch", "pinche",
+    "dash", "dashe", "cm", "centimetre", "inch", "inche",
+}
 AT_LEAST = re.compile(r"at least (?:about |around |roughly |~)?(\d+)\s*g", re.I)
 UP_TO = re.compile(r"up to (?:about |around |roughly |~)?(\d+)\s*g", re.I)
 WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6}
@@ -440,13 +443,13 @@ def check_whole_counts(ctx, spec):
     """Every counted row on the shopping list is a whole number.
 
     A count is a bare number or a counting noun, never a weight, a volume or a
-    spoon. The recipes may count to the half; a shop sells whole ones (issue #23).
+    measure such as a spoon. The recipes may count to the half; a shop sells whole ones (issue #23).
     """
     halves = []
     for group in ctx.plan.get("shopping", []):
         for item in group.get("items", []):
             amount = ctx.validate.parse_amount(str(item.get("qty") or ""))
-            if amount and amount[1] not in ("g", "ml") and amount[1] not in SPOONS and abs(amount[0] - round(amount[0])) > 1e-9:
+            if amount and amount[1] not in ("g", "ml") and amount[1] not in MEASURES and abs(amount[0] - round(amount[0])) > 1e-9:
                 halves.append("%s %s" % (item.get("name"), item.get("qty")))
     return not halves, "; ".join(halves) or "every count whole"
 

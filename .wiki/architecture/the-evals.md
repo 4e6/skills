@@ -240,8 +240,10 @@ input:
   1.3.0's Denver run with *6.5 bananas* got its one `no`. Its reasons still
   name `1.312 lb` of oats and `2 tsp` of butter as odd and buyable
   ([#18](https://github.com/4e6/skills/issues/18)).
-- **Every drained can printed as one**, on 9 US and 7 metric rows: beans,
-  tuna and, once, sauerkraut. No tin of tomatoes did.
+- **Every drained can printed as one**, on 10 US and 8 metric rows, beans and
+  tuna. No tin of tomatoes did. A sauerkraut row with no container printed
+  `150 g (drained)`; review found the same of drained spaghetti, so 1.5.0
+  marks only a row whose pack names a container.
 - The one `no` elsewhere was the gran fondo adding its sessions up to *~9h45*
   for 9h15 and calling the race *tempo effort*, under *nothing invented*, as
   before. `anchor_foods` failed as it did on 1.3.0.

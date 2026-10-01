@@ -1118,18 +1118,14 @@ def shop_item(item, skip_days, drained=False) -> str:
     # 15 oz cans, and a shopper reading `18 oz (2 cans)` against those labels
     # decides the list was converted from grams. So where the recipes drain
     # the food, the count of containers is the amount and the weight is the
-    # aside, marked as drained: `2 cans (18 oz drained)`. With no container to
-    # count, the weight stays the amount and is marked all the same.
-    weight = prose(item["qty"])
+    # aside, marked as drained: `2 cans (18 oz drained)`. Only where there is
+    # a container to count: spaghetti a recipe drains is weighed as bought.
     count = counted(item["qty"], item.get("pack"), False)
     pack = item.get("pack")
     if drained and count and (pack.get("one") or pack.get("many")):
         amount = ' <span class="qty">' + prose(count) + "</span>" + hint_span(item["qty"] + " drained")
-    elif drained:
-        amount = ' <span class="qty">' + weight + "</span>" + hint_span(
-            (count + ", " if count else "") + "drained")
     else:
-        amount = ' <span class="qty">' + weight + "</span>" + hint_span(count)
+        amount = ' <span class="qty">' + prose(item["qty"]) + "</span>" + hint_span(count)
     #
     # A box to tick, and the whole row is its label so the row is the target.
     # No name and no form: nothing is submitted and nothing is kept, so a
@@ -1256,8 +1252,10 @@ def packs_by_name(plan) -> dict:
 
 
 #: A recipe line that drains its food says so after the comma, the way the
-#: skill writes one: `Tinned chickpeas, drained and rinsed`.
+#: skill writes one: `Tinned chickpeas, drained and rinsed`. `not drained`
+#: says the opposite.
 DRAINED = re.compile(r"\bdrained\b")
+NOT_DRAINED = re.compile(r"\bnot\s+drained\b")
 
 
 def drained_heads(plan) -> dict:
@@ -1272,7 +1270,8 @@ def drained_heads(plan) -> dict:
     for recipe in plan.get("recipes") or []:
         for line in recipe.get("ingredients") or []:
             head, comma, rest = str(line.get("item") or "").partition(",")
-            if comma and DRAINED.search(rest.lower()):
+            rest = rest.lower()
+            if comma and DRAINED.search(rest) and not NOT_DRAINED.search(rest):
                 found.setdefault(head.strip().lower(), True)
     return found
 

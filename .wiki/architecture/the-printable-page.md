@@ -109,9 +109,11 @@ what the recipes take, not what any label says, so printed first it read as a
 can size ([the list buys what the week uses](/invariants/the-list-buys-what-the-week-uses.md#a-count-of-the-purchase-is-not-a-second-amount)).
 **Whether the food drains is read off the recipe lines**, a line whose head is
 the row's name and whose words after the comma say *drained*, matched the way a
-line finds its pack. A row with no container to count still says *drained*
-beside its weight. A list written into the reply marks the weight too
-(`when-there-is-no-page.md`).
+line finds its pack, and not where they say *not drained*. **Only a row whose
+`pack` names a container is turned round**: a recipe drains spaghetti and
+boiled potatoes too, and their rows are weighed as bought, so marking every row
+a line drains would call a dry weight a drained one. A list written into the
+reply marks the weight too (`when-there-is-no-page.md`).
 
 # A phone is the other reader
 
