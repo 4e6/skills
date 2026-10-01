@@ -519,6 +519,45 @@ def gitlink_paths(repo: Path) -> frozenset[str]:
     return frozenset(paths)
 
 
+def page_in_repo(doc: Doc, repo: Path) -> str | None:
+    """The concept's own file, as git names it, or None when it is outside the repo."""
+    try:
+        return str(doc.path.resolve().relative_to(repo.resolve())).replace(os.sep, "/")
+    except ValueError:
+        return None
+
+
+# Starts each commit's header in `git log` output; file names follow it.
+_COMMIT = "\x1e"
+
+
+def unread_commits(repo: Path, since: str, pathspecs: list[str], page: str | None):
+    """The commits after `since` that changed the sources and not the page.
+
+    A commit that changes the page together with its sources is the page
+    describing its own change, so it needs no pin of its own. That is what lets
+    a change ship as one squashed commit: the pin can only name a commit that
+    exists before the merge, and a squash gives the change a hash nobody could
+    have written into the page beforehand. A commit that touches the page for
+    another reason covers only itself, never an earlier commit that changed the
+    sources and left the page alone.
+
+    Returns (commits as `<short hash> <subject>`, the source files they changed).
+    """
+    specs = list(pathspecs) + ([f":(literal){page}"] if page else [])
+    _, out = git(repo, "log", f"--format={_COMMIT}%h %s", "--name-only", f"{since}..HEAD", "--", *specs)
+    commits: list[str] = []
+    files: list[str] = []
+    for entry in out.split(_COMMIT)[1:]:
+        lines = [line for line in entry.splitlines() if line]
+        header, names = lines[0], lines[1:]
+        if page is not None and page in names:
+            continue
+        commits.append(header)
+        files.extend(name for name in names if name not in files)
+    return commits, files
+
+
 def stale(bundle: Bundle) -> dict:
     repo = bundle.repo
     findings: list[dict] = []
@@ -606,17 +645,16 @@ def stale(bundle: Bundle) -> dict:
             )
             continue
 
-        _, changed = git(repo, "diff", "--name-only", f"{recorded}..HEAD", "--", *pathspecs)
-        if changed:
-            _, commits = git(repo, "log", "--oneline", f"{recorded}..HEAD", "--", *pathspecs)
+        unread, changed = unread_commits(repo, recorded, pathspecs, page_in_repo(doc, repo))
+        if unread:
             findings.append(
                 {
                     "code": "S001",
                     "concept": doc.rel,
-                    "message": f"sources changed in {len(commits.splitlines())} commit(s) since "
-                    f"{recorded[:12]}",
-                    "files": changed.splitlines()[:20],
-                    "commits": commits.splitlines()[:10],
+                    "message": f"sources changed in {len(unread)} commit(s) since "
+                    f"{recorded[:12]} that left the page alone",
+                    "files": changed[:20],
+                    "commits": unread[:10],
                 }
             )
 
