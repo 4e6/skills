@@ -352,6 +352,32 @@ def check_round_pounds(ctx, spec):
     return not odd, ", ".join(odd) if odd else "none"
 
 
+def check_pack_unit(ctx, spec):
+    """Every row weighed beside a weighed pack writes the two in one unit.
+
+    The page counts packs only where the row and the pack are written alike, so
+    `2 lb` of bananas beside a `4 oz` banana prints no count.
+    """
+    v = ctx.validate
+
+    def unit(qty):
+        written = v.written_quantity(qty) if isinstance(qty, str) else None
+        if written is None or written[1] is None:
+            return None
+        return v.singular(v.fold_for_matching(written[1]))
+
+    apart = []
+    for group in ctx.plan.get("shopping", []):
+        for item in group.get("items", []):
+            pack = item.get("pack")
+            if not isinstance(pack, dict):
+                continue
+            row, one = unit(item.get("qty")), unit(pack.get("qty"))
+            if row in v.MASS_UNITS and one in v.MASS_UNITS and row != one:
+                apart.append("%s %s / pack %s" % (item.get("name"), item.get("qty"), pack.get("qty")))
+    return not apart, ", ".join(apart) if apart else "none"
+
+
 def check_not_printed(ctx, spec):
     match = re.search(spec["pattern"], printed(ctx.plan), re.I)
     return match is None, ("prints %r" % match.group(0)) if match else "absent"
@@ -372,6 +398,7 @@ CHECKS = {
     "anchor_foods": check_anchor_foods,
     "units": check_units,
     "round_pounds": check_round_pounds,
+    "pack_unit": check_pack_unit,
 }
 
 

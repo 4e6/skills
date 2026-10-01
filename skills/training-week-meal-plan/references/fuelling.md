@@ -682,22 +682,16 @@ they live.
 **US customary** wherever a quantity is printed: recipe lines, `portion_size`,
 and the shopping list's `qty` and `pack.qty`.
 
-- **Weight in ounces, and in pounds only where the figure is a whole number of
-  quarter pounds**: `8 oz`, `1.25 lb`, `2 lb`. Any other figure stays in
-  ounces, however big: `26 oz` of rice, never `1.625 lb`, which is the same
-  amount in a unit nobody shops by. A week's total is the recipes' ounces added
-  up, and most sums of ounces are not a quarter pound, so on the list ounces
-  are the usual answer. A whole quarter may be written either way, `20 oz` or
-  `1.25 lb`; pounds are never more than that. **A row and its `pack` are
-  written in the same unit**, because the page counts packs only where the two
-  are written alike: `Canned black beans — 27 oz` beside a `9 oz` can prints
-  *3 cans*, and `2 lb` of bananas beside a `4 oz` banana prints no count at all.
-  Where the row is in ounces and the bag is labelled in pounds, give the bag in
-  ounces too: frozen vegetables `27 oz` beside a 2 lb bag written `32 oz`
-  prints *1 bag*. Anything a shop sells by weight — meat, fish, rice, pasta,
-  oats, potatoes, cheese — is weighed on the recipe line too, never measured in
-  cups. A cup is a volume, and a cup of rice in a recipe and a pound of it on
-  the list are two amounts that cannot be added together.
+- **Weight in ounces**: `8 oz`, `26 oz`, `44 oz`. A week's total is its
+  recipes' ounces added up and is rarely a round number of pounds. Pounds are
+  for a whole number of quarter pounds on a row with no `pack`: `1.25 lb`,
+  `2 lb`. **A row with a `pack` is in ounces, and so is the pack**, since the
+  page counts packs only where the two are written alike: `Canned black beans —
+  27 oz` beside a `9 oz` can prints *3 cans*, `Bananas — 20 oz` beside a
+  `4 oz` banana prints *5 bananas*, and a 2 lb bag is a `32 oz` pack. Anything
+  a shop sells by weight — meat, fish, rice, pasta, oats, potatoes, cheese — is
+  weighed on the recipe line too, never measured in cups, which are a volume
+  and cannot be added to a weight.
 - **Liquids in cups**, and on the list in cups, pints, quarts or gallons:
   `2 cups` of milk in a recipe, `1.5 quarts` on the list. **Never fluid ounces on
   a recipe line or the list**: `oz` alone is a weight, so `16 oz` of milk is read

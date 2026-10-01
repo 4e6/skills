@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T16:06:07Z
+timestamp: 2026-10-01T16:34:11Z
 sources: [evals/**]
 source_commit: 6baaea7682972296b9ace115aa6a8e9adacec9c5
 ---
@@ -211,9 +211,27 @@ The evals keep the isolated host and give up two things:
 
 # Measurements
 
-**2026-10-01, the two US cases three times each on Opus 5.5**, skill 1.3.0,
-which writes a pound only in whole quarters and anything else in ounces
-([#18](https://github.com/4e6/skills/issues/18)): 6 runs, 7 minutes, $10.
+**2026-10-01, the two US cases three times each on Opus 5.5, twice**, for
+1.3.0 ([#18](https://github.com/4e6/skills/issues/18)): 6 runs, 7 minutes and
+$10 each time.
+
+**The rule as released weighs in ounces**, with a pound only for a whole
+quarter on a row with no pack, and a row with a pack in ounces like its pack.
+Every weight in all six runs was in ounces, not one row in pounds, and all 52
+rows beside a weighed pack shared its unit (`Bananas 19 oz` beside a `4 oz`
+banana, `Ground turkey 24 oz` beside a `16 oz` pack). No odd-pound finding
+fired, and every plan validated clean. Two gran fondo replies called the race a
+*tempo effort*, which the judge rightly said the athlete never gave; that is
+the reply, not the units. Denver's example-food counts failed, as in every
+Denver run.
+
+**The draft before it** wrote a pound only in whole quarters and any other
+figure in ounces, and said a row and its pack share a unit, illustrated with the
+failure: `2 lb` of bananas beside a `4 oz` banana *prints no count at all*. The
+results of that run follow. **One run copied the example exactly**, so an
+example of what goes wrong is written as one to follow; the rule now gives
+only examples to copy.
+
 **No list wrote an odd pound**, where 1.2.0 had written one in two of three gran
 fondo runs (`1.625 lb` of rice, `3.625 lb` of chicken) and 1.2.0's first draft
 in four of six.
@@ -229,7 +247,8 @@ in four of six.
   pounds. Against the 64 stored plans from before, the new validator differs
   from the old only on the 17 odd rows.
 - **One row and its pack still disagreed:** `Bananas 2 lb` beside a `4 oz`
-  banana, which prints no count. Nothing checks that the two share a unit.
+  banana, which prints no count, the text's own example word for word. The US
+  cases now check that a row and its weighed pack share a unit.
 - *Is it the line on converting body weight?* `fuelling.md` divides pounds by
   2.2046, and that line might have primed the model to convert the food too.
   The stored runs say not: every odd figure was a whole or half number of

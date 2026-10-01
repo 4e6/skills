@@ -3,7 +3,7 @@ type: Invariant
 title: The shopping list buys what the week uses
 description: Each row's quantity is what the recipes cook with, less what the fridge holds, and its days are the days that eat what it buys. One amount of food per row and never a pack size — except a staple, which is the jar and carries no days.
 tags: [plan-quality, shopping, validation]
-timestamp: 2026-10-01T16:06:07Z
+timestamp: 2026-10-01T16:34:11Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 6baaea7682972296b9ace115aa6a8e9adacec9c5
 ---
@@ -19,15 +19,15 @@ item** — `200 g` of peas, though no shop sells that amount. Buying is the
 shopper's step: nobody expects a 500 g bag of rice to match a list that says
 500 g, and frozen peas are the same problem, only less familiar.
 
-**A pound is written only in whole quarters**, and any other figure in ounces:
-`26 oz` of rice, never `1.625 lb`. The sum is exact, and a sum of the recipes'
+**A weight is in ounces**, and a pound only where it is a whole number of
+quarters on a row with no pack: `26 oz` of rice, never `1.625 lb`. The sum is exact, and a sum of the recipes'
 ounces is rarely a quarter pound, so written in pounds it comes out in
 sixteenths, a figure no shop prices. Rounding it instead would make the row
 disagree with the recipes, which is the one thing this invariant forbids. The
-unit gives way rather than the number. The skill writes a row and its `pack` in
-one unit, since the page counts packs only where the two are written alike; the
-check moves the pack to ounces with the row when it repairs one, and otherwise
-does not compare their units.
+unit gives way rather than the number. A row with a `pack` is in ounces and so
+is its pack, since the page counts packs only where the two are written alike;
+the check moves the pack to ounces with the row when it repairs one, and
+otherwise does not compare their units.
 
 **A row's `note` says what the row is for or how to buy it, never how much** —
 not a weight, a pack, a count or what is in the fridge. `qty` has already taken

@@ -49,6 +49,9 @@
     },
     {
       "check": "round_pounds"
+    },
+    {
+      "check": "pack_unit"
     }
   ],
   "judge": [
