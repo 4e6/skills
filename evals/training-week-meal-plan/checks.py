@@ -323,22 +323,31 @@ def check_units(ctx, spec):
         ", ".join("%s %d" % kv for kv in sorted(counts.items())))
 
 
-POUNDS = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*(?:lbs?|pounds?)\s*$", re.I)
-
-
 def check_round_pounds(ctx, spec):
     """No figure on the list is in pounds unless it is a whole number of quarters.
 
-    Read from each row's `qty` and `pack.qty`. A total of ounces written in
-    pounds comes out in sixteenths (`1.625 lb`), which nobody shops by; the
-    skill writes those in ounces.
+    Read from each row's `qty` and `pack.qty`, with the checker's own reading of
+    a quantity, so `1⅝ lb` and `1.625 lb (2 bags)` count as the validator reads
+    them. A total of ounces written in pounds comes out in sixteenths
+    (`1.625 lb`), which nobody shops by; the skill writes those in ounces.
     """
+    v = ctx.validate
+    pound = v.MASS_UNITS["lb"]
     odd = []
     for group in ctx.plan.get("shopping", []):
         for item in group.get("items", []):
-            for field, qty in (("qty", item.get("qty")), ("pack", (item.get("pack") or {}).get("qty"))):
-                match = POUNDS.match(str(qty or ""))
-                if match and float(match.group(1)) * 4 != int(float(match.group(1)) * 4):
+            pack = item.get("pack")
+            for field, qty in (("qty", item.get("qty")),
+                               ("pack", pack.get("qty") if isinstance(pack, dict) else None)):
+                if not isinstance(qty, str):
+                    continue
+                written = v.written_quantity(qty)
+                if written is None or written[1] is None:
+                    continue
+                if v.MASS_UNITS.get(v.singular(v.fold_for_matching(written[1]))) != pound:
+                    continue
+                quarters = written[0] * 4
+                if abs(quarters - round(quarters)) > 1e-9:
                     odd.append("%s %s%s" % (item.get("name"), qty, " (pack)" if field == "pack" else ""))
     return not odd, ", ".join(odd) if odd else "none"
 

@@ -1713,10 +1713,17 @@ def in_pounds(source: str) -> bool:
     return MASS_UNITS.get(singular(fold_for_matching(written[1]))) == MASS_UNITS["lb"]
 
 
+# How far from a whole quarter a weight may be and still be one, in quarters. A
+# row in pounds counts as right within half a thousandth of a pound of the need
+# (`snap_to_row`), and a need that close to a quarter is that quarter: calling it
+# odd would answer a right `1.25 lb` with `20.006 oz`.
+QUARTER_EPSILON = 0.004
+
+
 def odd_pounds(grams: float) -> bool:
     """Is this weight something other than a whole number of quarter pounds?"""
     quarters = grams / MASS_UNITS["lb"] * 4
-    return abs(quarters - round(quarters)) > QUANTITY_EPSILON
+    return abs(quarters - round(quarters)) > QUARTER_EPSILON
 
 
 def in_ounces(grams: float) -> str:
@@ -1736,8 +1743,13 @@ def pack_in_ounces(item: dict, buy: str) -> str:
     The page counts packs only where the row and the pack are written alike, so
     moving the row alone would silently take the count off it.
     """
-    pack = item.get("pack") or {}
-    if not buy.endswith(" oz") or not in_pounds(pack.get("qty") or ""):
+    # Read only where the schema's shape holds: a pack written as a string, or a
+    # number for its quantity, is a fault the schema reports, and it must not
+    # take every other finding down with it.
+    pack = item.get("pack")
+    if not isinstance(pack, dict) or not isinstance(pack.get("qty"), str):
+        return ""
+    if not buy.endswith(" oz") or not in_pounds(pack["qty"]):
         return ""
     grams = parse_amount(pack["qty"])
     if grams is None:
@@ -2412,7 +2424,8 @@ def check_shopping_quantities(plan: dict) -> list:
                         + ", but the week's recipes measure it rather than counting"
                         + " packs, and it needs " + in_recipe_units
                         + ". The list states the amount, not the packaging, so set qty to "
-                        + in_recipe_units + " — the athlete picks a pack that covers it.",
+                        + in_recipe_units + pack_in_ounces(item, in_recipe_units)
+                        + " — the athlete picks a pack that covers it.",
                         where,
                     )
                 )
@@ -2452,11 +2465,15 @@ def check_shopping_quantities(plan: dict) -> list:
                 # anyway let it round back up to the whole purchase, which reads
                 # as though none of it is used.
                 gap = (bought[0] - need[0], need[1])
-                spare = (
-                    repair_like(gap, item["qty"])
-                    if in_row_units(need, item["qty"]) is not None
-                    else format_amount(gap)
-                )
+                if in_row_units(need, item["qty"]) is None:
+                    spare = format_amount(gap)
+                elif buy.endswith(" oz") and in_pounds(item["qty"]):
+                    # Moved to ounces with the need, and from the unsnapped
+                    # sides for the same reason: 2 lb against 23 oz is 9 oz
+                    # over, where the snapped need left 8.992.
+                    spare = in_ounces(sums[1][0] - sums[0][0])
+                else:
+                    spare = format_amount_like(gap, item["qty"])
                 findings.append(
                     finding(
                         6,

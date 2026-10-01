@@ -687,7 +687,8 @@ and the shopping list's `qty` and `pack.qty`.
   ounces, however big: `26 oz` of rice, never `1.625 lb`, which is the same
   amount in a unit nobody shops by. A week's total is the recipes' ounces added
   up, and most sums of ounces are not a quarter pound, so on the list ounces
-  are the usual answer and pounds the round one. **A row and its `pack` are
+  are the usual answer. A whole quarter may be written either way, `20 oz` or
+  `1.25 lb`; pounds are never more than that. **A row and its `pack` are
   written in the same unit**, because the page counts packs only where the two
   are written alike: `Canned black beans — 27 oz` beside a `9 oz` can prints
   *3 cans*, and `2 lb` of bananas beside a `4 oz` banana prints no count at all.

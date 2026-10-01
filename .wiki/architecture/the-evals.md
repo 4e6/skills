@@ -220,11 +220,14 @@ in four of six.
 
 - Every row in pounds was a whole quarter (`1 lb`, `1.25 lb`, `2.5 lb`,
   `3.75 lb`), and totals that were not went to ounces (`26 oz` of rice,
-  `22.5 oz`, `44 oz` of chicken). Every check passed, the judge's included.
+  `22.5 oz`, `23 oz` of broccoli). Some whole quarters stayed in ounces too
+  (`44 oz` of chicken), which the rule allows. Every plan validated clean and
+  the judge said yes throughout; Denver's example-food counts failed as in
+  every Denver run before (oatmeal, bagels, chocolate milk).
 - **The text did it alone.** The validator's new finding for a right row in odd
-  pounds never fired in any transcript, and neither did a repair spelled in
-  ounces. Against the stored runs it fires on exactly the 17 odd rows, and on
-  no other row of 71 plans.
+  pounds never fired in any transcript, and no repair landed on a row in
+  pounds. Against the 64 stored plans from before, the new validator differs
+  from the old only on the 17 odd rows.
 - **One row and its pack still disagreed:** `Bananas 2 lb` beside a `4 oz`
   banana, which prints no count. Nothing checks that the two share a unit.
 - *Is it the line on converting body weight?* `fuelling.md` divides pounds by

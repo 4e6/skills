@@ -24,8 +24,10 @@ shopper's step: nobody expects a 500 g bag of rice to match a list that says
 ounces is rarely a quarter pound, so written in pounds it comes out in
 sixteenths, a figure no shop prices. Rounding it instead would make the row
 disagree with the recipes, which is the one thing this invariant forbids. The
-unit gives way rather than the number. A row and its `pack` move together, since
-the page counts packs only where the two are written alike.
+unit gives way rather than the number. The skill writes a row and its `pack` in
+one unit, since the page counts packs only where the two are written alike; the
+check moves the pack to ounces with the row when it repairs one, and otherwise
+does not compare their units.
 
 **A row's `note` says what the row is for or how to buy it, never how much** —
 not a weight, a pack, a count or what is in the fridge. `qty` has already taken
