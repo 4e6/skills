@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T15:28:00Z
+timestamp: 2026-10-01T15:30:19Z
 sources: [evals/**]
 source_commit: 3f5066241fd3cdce46a20049b3b77fe7007c40ff
 ---
@@ -226,8 +226,8 @@ The evals keep the isolated host and give up two things:
   every can on the list and in the recipes was *canned*. The aisle above them
   still read *Tins, Jars & Seasonings*: the categories are a fixed list in the
   schema, which the rule cannot reach.
-- **The pound rule ran into the pack count.** 15 rows stayed in ounces past a
-  pound, 12 of them beside a pack in ounces (`Canned black beans 27 oz`, a
+- **The pound rule ran into the pack count.** 12 rows stayed in ounces past a
+  pound, 9 of them beside a pack in ounces (`Canned black beans 27 oz`, a
   `9 oz` can), which the page can count; three had no pack and broke the rule.
   Four rows went to pounds beside a pack in ounces (`Bananas 2 lb`, a `4 oz`
   banana), and the page, which counts packs only where the two units are

@@ -710,8 +710,8 @@ and the shopping list's `qty` and `pack.qty`.
 **Metric** everywhere else: grams, kilograms, millilitres, litres and °C, never
 cups, ounces, pints or quarts. A British carton of milk is labelled in pints as
 well as litres, and the plan still writes litres: the pint the check reads is
-the US one, a fifth smaller than the British, so `2 pints` on a British list is
-added up wrong.
+the US one, and a British pint is a fifth bigger, so `2 pints` on a British
+list is added up wrong.
 
 **Never convert a figure into the other system.** You know an American pack of
 ground turkey is 12 oz, and `340 g` is that pack in a unit its shopper has to
