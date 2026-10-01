@@ -41,6 +41,11 @@
     {
       "check": "anchor_foods",
       "where": "lines"
+    },
+    {
+      "check": "units",
+      "system": "metric",
+      "share": 0.8
     }
   ]
 }

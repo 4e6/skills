@@ -54,12 +54,21 @@
       "check": "race_during",
       "day": "Sunday",
       "pattern": "60\\s*(?:[–-]|to)\\s*90"
+    },
+    {
+      "check": "units",
+      "system": "us",
+      "share": 0.8
     }
   ],
   "judge": [
     {
       "id": "during-adds-up",
-      "question": "Taken as food for the whole race, does the race's `during` example add up to roughly its hourly carbohydrate range over the time the athlete expects to take? Count about 30–40 g for a 500 ml bottle of isotonic drink, 21–27 g for an energy gel, 43 g for an energy bar and 27 g for a banana."
+      "question": "Taken as food for the whole race, does the race's `during` example add up to roughly its hourly carbohydrate range over the time the athlete expects to take? Count about 30–40 g for a bottle of isotonic drink, whether 500 ml or 20 fl oz, 21–27 g for an energy gel, 43 g for an energy bar and 27 g for a banana."
+    },
+    {
+      "id": "shops-in-its-units",
+      "question": "Is every quantity on the shopping list one a shopper in the United States could buy as written, without converting it from another measurement system first?"
     }
   ]
 }

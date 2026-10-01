@@ -25,6 +25,7 @@ built from two contradicts itself.
 - Using what is already there
 - A container you open is a container the week finishes
 - The athlete
+- Weights and measures are their country's
 - Days the athlete is away
 - Meals the athlete eats elsewhere
 - Race weeks
@@ -145,7 +146,8 @@ this is what their lines say.
   hours, and straight away when another session that carries fuel follows within
   about 8 hours. The plan does not know the gap, so where the day holds another
   session the line says what to do if it follows soon.
-- **Fluid**, on a session over about an hour: about 0.4–0.8 L an hour, more in heat.
+- **Fluid**, on a session over about an hour: about 0.4–0.8 L an hour, more in heat
+  — 14–27 fl oz on a plan in US units.
 - **A line carries only the part that applies to its session.** These ranges
   are the rule the lines apply; the plan has no block restating them whole, so
   each line states its own range. Keep a line's `guidance` to about 60
@@ -357,8 +359,13 @@ session's fuel lines are the figures that are not — so use it explicitly:
 - The scale of every other day's portions follows from it too. A 58 kg runner
   and a 92 kg rower on the same session do not eat the same bowl.
 
+**Every target is per kilogram, whatever unit they gave.** Pounds are divided
+by 2.2046 before any arithmetic, and the plan's food is still weighed in their
+country's units (*Weights and measures are their country's*, below).
+
 State the weight you used in `training_overview.summary` if you had to interpret
-it — for example if they gave a range, or pounds.
+it — for example if they gave a range, or pounds, which it states in both:
+`141 lb (64 kg)`.
 
 ## You can ask, but the plan cannot
 
@@ -410,7 +417,8 @@ see that whole day's eating. A dish eaten twice appears twice.
   quantities **for the `yields` portions you name** — a pot for two lists what
   goes in a pot for two — 3–7 numbered steps, `nutrition` for **one** portion,
   and `portion_size` saying what one portion is in a unit a cook can multiply:
-  `150 g cooked rice`, `2 eggs`, never *a ladle*. Keep it tight; this is a
+  `150 g cooked rice`, `1 cup cooked rice` on a plan in US units, `2 eggs`,
+  never *a ladle*. Keep it tight; this is a
   working kitchen reference, not a cookbook.
 - **repeat** — cooked again from scratch on a later day. No steps and no
   ingredients: it is cooked the same way, so `origin_day` carries the method,
@@ -428,7 +436,8 @@ bread and bananas weighed in grams scale cleanly, and a count of eggs or fillets
 rounds to what can be cooked.
 
 **Food from a tin or can is weighed on the line like everything else** —
-`Tinned chickpeas, drained — 240 g`, never `1 tin` as its quantity. The page works out
+`Tinned chickpeas, drained — 240 g`, or `Canned chickpeas, drained — 9 oz` in
+the US, never `1 tin` as its quantity. The page works out
 for itself how many tins a line takes, from the `pack` on that food's shopping
 row, so no recipe line states a count of its own.
 
@@ -493,8 +502,8 @@ beside the chicken.
     worth, not three more; counting the whole batch twice is the 2x over-buy
     this rule exists to prevent.
   - **One quantity, and never a pack size where a recipe measures the item.**
-    Write `200 g` of frozen peas and `70 g` of cheese even though no shop sells
-    either amount: the athlete reads what the week needs and picks a bag or a
+    Write `200 g` of frozen peas and `70 g` of cheese — `7 oz` and `2.5 oz` in
+    the US — even though no shop sells either amount: the athlete reads what the week needs and picks a bag or a
     block that covers it, the same way they already do for rice. Never `1 bag`,
     and never `1 bag (750 g)` — two *amounts of food* on one line is a choice made
     at walking pace, and the one a shopper acts on is the bigger. A count of the
@@ -510,7 +519,7 @@ beside the chicken.
     count anywhere: no `about 2 tins`, in `qty` or beside it.
   - **`pack.qty` is what reaches the pot, not what the label says.** Recipes
     weigh tinned food drained, so a 400 g tin of chickpeas that drains to 240 g
-    is `240 g` here. Write the gross weight and the count comes out wrong the
+    is `240 g` here, and a 15 oz can that drains to 9 oz is `9 oz`. Write the gross weight and the count comes out wrong the
     moment a week needs more than one tin.
   - **`pack.one` and `pack.many` are the container's name** — "tin" and "tins",
     "jar" and "jars". Give both or neither: the page prints whichever the count
@@ -659,6 +668,54 @@ what it is in English rather than borrowing theirs.
 
 The closing note usually says which of that country's supermarkets is cheapest
 for a category or two. Name chains that actually trade there.
+
+## Weights and measures are their country's
+
+**The country picks the measurement system, as it picks the dishes and the
+shops**, and the unit the athlete gave their own weight in does not. An American
+who says *78 kg* still shops in pounds, and a Briton who weighs themselves in
+stone still buys 500 g of pasta. Three countries never went metric: the United
+States, Liberia and Myanmar. A plan for one of them is in US customary units;
+every other plan is metric, including one for somebody who has not said where
+they live.
+
+**US customary** wherever a quantity is printed: recipe lines, `portion_size`,
+and the shopping list's `qty` and `pack.qty`.
+
+- **Weight in ounces, and in pounds from a pound up**: `8 oz`, `1.5 lb`, never
+  `34 oz`. **A row with a `pack` is the exception: its `qty` is in the pack's
+  own unit**, because the page counts packs only where the two are written
+  alike. `Canned black beans — 27 oz` beside a `9 oz` can prints *3 cans*;
+  `2 lb` of bananas beside a `4 oz` banana prints no count at all. Anything a shop sells by weight — meat, fish, rice, pasta, oats,
+  potatoes, cheese — is weighed on the recipe line too, never measured in cups.
+  A cup is a volume, and a cup of rice in a recipe and a pound of it on the list
+  are two amounts that cannot be added together.
+- **Liquids in cups**, and on the list in cups, pints, quarts or gallons:
+  `2 cups` of milk in a recipe, `1.5 quarts` on the list. **Never fluid ounces on
+  a recipe line or the list**: `oz` alone is a weight, so `16 oz` of milk is read
+  as a pound of it, and `fl oz` is two words where those fields take one unit.
+- **Spoons as everywhere**: `1 tbsp`, `2 tsp`. Oven temperatures in °F.
+- **One number and one unit**: `1.3 lb`, never `1 lb 5 oz`, which nothing can
+  add up or multiply.
+- **Never grams or millilitres, with one exception that holds in every
+  country: carbohydrate is in grams.** The daily targets, the hourly ranges on a
+  session's fuel lines and `nutrition` stay in grams, because that is how the
+  guidance is published and how an American sports drink labels it. Fluid on
+  those lines is in fl oz, about 14–27 fl oz an hour where a metric plan says
+  0.4–0.8 L, and a bottle of sports drink there is 20 fl oz with about the same
+  30–40 g as a 500 ml one.
+- **Containers have the name their shops use**: `Canned chickpeas`, never
+  `Tinned`. A 15 oz can drains to about 9 oz.
+
+**Metric** everywhere else: grams, kilograms, millilitres, litres and °C, never
+cups, ounces, pints or quarts. A British carton of milk is labelled in pints as
+well as litres, and the plan still writes litres: the pint the check reads is
+the US one, and a British pint is a fifth bigger, so `2 pints` on a British
+list is added up wrong.
+
+**Never convert a figure into the other system.** You know an American pack of
+ground turkey is 12 oz, and `340 g` is that pack in a unit its shopper has to
+convert back. Write the amount the way the shop in front of them prices it.
 
 ## Days the athlete is away
 

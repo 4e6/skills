@@ -200,6 +200,8 @@ IRREGULAR = {
     "mgs": "mg",
     "mls": "ml",
     "ozs": "oz",
+    "qts": "qt",
+    "gals": "gal",
     "leaves": "leaf",
     "loaves": "loaf",
     "potatoes": "potato",
@@ -1392,7 +1394,26 @@ VOLUME_UNITS = {
     "l": 1000,
     "litre": 1000,
     "liter": 1000,
+    # US customary, which a plan for the United States, Liberia or Myanmar
+    # writes. Without them a week measured in cups and bought by the quart was
+    # never added up: each was a counting noun the other did not share. The
+    # fluid ounce is not here and cannot be — `fl oz` is two words where a
+    # quantity takes one, and a bare `oz` is the weight above — so the skill
+    # keeps it off every line this reads. The pint and the quart are the US ones;
+    # a British pint is a fifth bigger, and the skill keeps pints off a metric
+    # plan for that reason.
+    "cup": 236.5882365,
+    "pint": 473.176473,
+    "quart": 946.352946,
+    "qt": 946.352946,
+    "gallon": 3785.411784,
+    "gal": 3785.411784,
 }
+
+# Measures a cook pours rather than weighs. They are compared as volumes and
+# multiplied as spoons are, to the half: a pot of one and a third cups is
+# `1½ cups`, where the hundredth the litre takes would print `1.34 cups`.
+COOKS_MEASURES = {"cup", "pint", "quart", "qt", "gallon", "gal"}
 
 # The fractions a quantity is written with, vulgar and typed.
 FRACTIONS = {
@@ -1797,8 +1818,8 @@ def scale_line(qty: str, factor: float, mark: str = "."):
     """A recipe line at a pot's size: (text, amount), or None where it cannot
     be multiplied. Exactly 1 is the line as written. Otherwise the words stay
     and the number rounds up — weights and volumes to the whole unit, kilos and
-    litres to the hundredth, counts to the half below three and the whole from
-    three — because the pot has to hold at least what the plates claim."""
+    litres to the hundredth, counts and cups to the half below three and the
+    whole from three — because the pot has to hold at least what the plates claim."""
     if factor == 1:
         return (qty, parse_amount(qty))
     loose = loose_quantity(qty)
@@ -1819,7 +1840,7 @@ def scale_line(qty: str, factor: float, mark: str = "."):
     def up(v: float, step: float) -> float:
         return _ceil(v / step - 1e-9) * step
 
-    if unit is None:
+    if unit is None or noun in COOKS_MEASURES:
         value = up(need, 0.5) if need < 3 else up(need, 1)
         shown = _with_halves(value, mark)
     elif unit >= 100:
@@ -2252,8 +2273,8 @@ def shopping_quantities(plan: dict) -> dict:
                 # the yoghurt its recipes pour is not a pack. Where the recipes
                 # count and the list weighs, the list is the more precise of the
                 # two, and 500 g of carrots is how a shop sells carrots.
-                # A bare 6 is a count, not a pack, and 5 cups is a measure this
-                # file will not convert rather than a container. Naming either a
+                # A bare 6 is a count, not a pack, and 5 bunches is a measure
+                # this file will not convert rather than a container. Naming either a
                 # pack prints a repair for a fault the row does not have, so the
                 # row has to look like packaging first: a container word, or a
                 # gloss stating the amount in the unit the recipes use.

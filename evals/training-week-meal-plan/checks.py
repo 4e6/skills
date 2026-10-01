@@ -77,7 +77,7 @@ ANCHORS = re.compile(
 # neither: they read the same everywhere.
 UNITS = {
     "metric": re.compile(r"\d\s*(?:g|grams?|kg|kilos?|ml|l|litres?|liters?|cl|dl)\b", re.I),
-    "us": re.compile(r"\d\s*(?:lbs?|pounds?|oz|ounces?|fl\.? oz|cups?|pints?|quarts?|gallons?)\b", re.I),
+    "us": re.compile(r"\d\s*(?:lbs?|pounds?|oz|ounces?|fl\.? oz|cups?|pints?|quarts?|qts?|gallons?|gals?)\b", re.I),
 }
 
 
@@ -307,7 +307,7 @@ def check_anchor_foods(ctx, spec):
 
 
 def check_units(ctx, spec):
-    """At least `share` of the weighed quantities are in the athlete's own `system`.
+    """At least `share` of the weighed quantities are in `system`, the country's.
 
     Read from the shopping list's quantities and the recipes' ingredient lines,
     which is what the athlete shops and cooks by. A quantity in neither system

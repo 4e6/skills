@@ -8,8 +8,10 @@ skill's zip is built from its own folder, and nothing here is in it.
 Only `training-week-meal-plan` has them so far: six race weeks, from a 10K to
 an Ironman, and a control week with no race (`race-*`, `control-no-race`); and
 one ordinary training week for an athlete in Japan, Brazil, India, Poland, the
-US and the UK, which asks whether the plan cooks what that country eats, and in
-the US whether it weighs food in the units shops there sell by (`cuisine-*`).
+US and the UK, which asks whether the plan cooks what that country eats and
+weighs its food in the units shops there sell by (`cuisine-*`). The gran fondo's
+athlete lives in the US and gives their weight in kilograms, so it asks the
+units question too.
 
 ## Running them
 
@@ -87,9 +89,9 @@ told once to go ahead, and the run records that it asked.
   10–12, because snacks top every day up to its band's bottom. A country case
   counts the skill's own example foods (porridge, oatmeal or overnight oats,
   bagels, chocolate milk, sourdough, bolognese, lentil soup) in the dishes and
-  on the daily lines, and the US case how many of the shopping list's and the
-  recipes' weights and volumes are in pounds, ounces and cups rather than grams
-  and millilitres.
+  on the daily lines. It and the gran fondo also count how many of the shopping
+  list's and the recipes' weights and volumes are in the country's system:
+  pounds, ounces and cups in the US, grams and millilitres everywhere else.
 - **The judge** is an agent with no tools that reads the athlete's message, the
   plan and the reply, and answers each question `yes`, `no` or `unclear` with a
   reason. Some questions are asked of every run (the summary, invented figures,

@@ -3,7 +3,7 @@ type: Module
 title: The intake
 description: Step 1 asks for the week, the weight, three optional things and which days — on a menu where the host has one, in one message where it does not. Why each row is the row it is, and how the days are settled.
 tags: [architecture, intake]
-timestamp: 2026-10-01T10:31:40Z
+timestamp: 2026-10-01T15:01:23Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 3f5066241fd3cdce46a20049b3b77fe7007c40ff
 ---
@@ -29,12 +29,19 @@ sentence that said *five* false at the same moment.
 
 # Why each row is the row it is
 
-- **Weight: `55`, `65`, `75`, `85` kg and a typed row.** Between 50 and 90 kg,
-  picking the nearest is at worst 5 kg out — single-digit per cent of a day's
-  carbohydrate, narrower than the band the g/kg targets are quoted across. Off
-  either end the error has no ceiling, and the skill says so. It is never a
-  licence to round on the athlete's behalf: an unstated weight is still a
-  question.
+- **Weight: `55`, `65`, `75`, `85` kg, each with its pounds, and a typed row.**
+  Between 50 and 90 kg, picking the nearest is at worst 5 kg out — single-digit
+  per cent of a day's carbohydrate, narrower than the band the g/kg targets are
+  quoted across. Off either end the error has no ceiling, and the skill says so.
+  It is never a licence to round on the athlete's behalf: an unstated weight is
+  still a question.
+- **Both units on every weight row, because the weight's unit is the athlete's
+  and the food's is the country's.** The rows were kilograms only, with pounds
+  left to the typed row. The menu goes up before the place is answered, so it
+  cannot pick one unit, and an American may well know their weight in
+  kilograms. A typed figure still needs its unit: a bare `100` is a 100 kg
+  rower or a 45 kg runner, so a number with no unit is read without asking only
+  where the other reading is impossible.
 - **The typed row never gets an option of its own.** Every such tool renders a
   free-text row, and an option saying *I'll type it* is the same choice written
   twice. A question whose only named answer is a default carries one option.

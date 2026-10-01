@@ -3,7 +3,7 @@ type: Invariant
 title: The shopping list buys what the week uses
 description: Each row's quantity is what the recipes cook with, less what the fridge holds, and its days are the days that eat what it buys. One amount of food per row and never a pack size — except a staple, which is the jar and carries no days.
 tags: [plan-quality, shopping, validation]
-timestamp: 2026-10-01T13:00:00Z
+timestamp: 2026-10-01T15:01:23Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 88345cbfeda6e4e157884cf119b046edfdd0008e
 ---
@@ -129,12 +129,17 @@ until 1.1.1 added `dish-without-recipe`.
 The rest are per row. Each is a place where comparing would be a claim rather than
 a sum:
 
-- **A quantity that will not parse** — `90 g dry per serving`, `handful`. One
-  number and at most one unit is all that is read.
+- **A quantity that will not parse** — `90 g dry per serving`, `handful`,
+  `1 lb 5 oz`, `16 fl oz`. One number and at most one unit word is all that is
+  read, which is why the skill keeps fluid ounces off the list and the recipes
+  of a plan in US units.
 - **Two sides measured differently** — grams against millilitres wants a density
   nothing has, and `½ head` against a count is not a disagreement about a
   half. Exactly one crossing is reported: a list *counting* what the recipes
-  *weigh* (`shopping-quantity-is-a-pack`).
+  *weigh* (`shopping-quantity-is-a-pack`). Cups, pints, quarts and gallons
+  were counting nouns until 1.2.0, so a week measured in cups and bought by the
+  quart went unchecked; they are volumes now. Spoons are still counted, so a
+  cup on one side and tablespoons on the other still go unchecked.
 - **The food on more than one row** — there is no single quantity, and no
   unambiguous repair.
 - **A row the fridge covers for the whole week** — check 2 then says to take it
