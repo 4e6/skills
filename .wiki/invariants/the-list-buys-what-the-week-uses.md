@@ -5,7 +5,7 @@ description: Each row's quantity is what the recipes cook with, less what the fr
 tags: [plan-quality, shopping, validation]
 timestamp: 2026-10-01T16:34:11Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
-source_commit: 6baaea7682972296b9ace115aa6a8e9adacec9c5
+source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
 ---
 
 # Statement
@@ -124,7 +124,7 @@ Check 6 compares each dated row's `qty` with the recipes' total, less the fridge
 pound no shop prices. Each message states the week's total in the row's own
 unit, so the repair is a copy — except a total in pounds that is no whole
 quarter, which it states in ounces, with the pack's ounces where the pack was in
-pounds. Until 1.3.0 it said `1.625 lb`, and the lists copied it
+pounds. Until 1.4.0 it said `1.625 lb`, and the lists copied it
 ([#18](https://github.com/4e6/skills/issues/18)). A repair always takes a
 decimal point. Check 2 compares the day tags.
 

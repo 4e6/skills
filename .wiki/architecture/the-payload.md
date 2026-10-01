@@ -3,9 +3,9 @@ type: Module
 title: The skill is a payload
 description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. Two skills bend the last two.
 tags: [architecture, distribution]
-timestamp: 2026-10-01T10:31:40Z
+timestamp: 2026-10-01T17:10:00Z
 sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**]
-source_commit: 6baaea7682972296b9ace115aa6a8e9adacec9c5
+source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
 ---
 
 # The boundary
@@ -50,8 +50,8 @@ A shared list stops meaning anything once there are two scripts, because one
 satisfies it on the other's behalf.
 
 - `validate.py` reads the one file it is given.
-- `render.py` imports `validate.py` beside it, so the rounding and the dish
-  counting have one Python copy, not two. It also reads the photos it is
+- `render.py` imports `validate.py` beside it, so the rounding, the dish
+  counting and the unit tables have one Python copy, not two. It also reads the photos it is
   handed — each a relative path inside its own folder, no `..`, not a link out —
   and admits `base64` and `hashlib` for them alone.
 

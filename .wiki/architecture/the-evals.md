@@ -3,9 +3,9 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T16:34:11Z
+timestamp: 2026-10-01T17:40:00Z
 sources: [evals/**]
-source_commit: 6baaea7682972296b9ace115aa6a8e9adacec9c5
+source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
 ---
 
 # What they are for
@@ -169,6 +169,13 @@ go, and counting it would grade the account.
   - **Bounds are 5% wide either side**, since the rules say *roughly*.
   - **The skill's example foods are counted** in a country case's dishes and
     on its lines, by name, and the US case's weights and volumes by system.
+  - **The aisle headings are read off the page**, the one check that does:
+    the plan's categories are the same fixed keys in every country, so
+    whether a US shopper reads *Tins* is the renderer's doing. The check
+    renders the plan again with the copy of the skill that ran, rather than
+    reading the agent's own page, which a run may not have made; a US case
+    fails on *Tins*, *Chilled*, *Fruit & Vegetables* or *Meat & Fish*, a
+    metric one on *Canned*, *Refrigerated*, *Produce* or *Seafood*.
   - **The vegan check reads only names of food** — dishes, ingredients, the
     list, fuel and snack examples — so `Dairy, Eggs & Chilled` and *no eggs or
     honey* in a summary do not fail it, and takes `oat milk`, `peanut butter`
@@ -212,7 +219,7 @@ The evals keep the isolated host and give up two things:
 # Measurements
 
 **2026-10-01, the two US cases three times each on Opus 5.5, twice**, for
-1.3.0 ([#18](https://github.com/4e6/skills/issues/18)): 6 runs, 7 minutes and
+1.4.0 ([#18](https://github.com/4e6/skills/issues/18)): 6 runs, 7 minutes and
 $10 each time.
 
 **The rule as released weighs in ounces**, with a pound only for a whole
@@ -254,6 +261,25 @@ in four of six.
   The stored runs say not: every odd figure was a whole or half number of
   ounces over 16, and most came from the gran fondo, whose athlete gives
   kilograms. The line stayed, and the figures went.
+
+**2026-10-01, the country cases and the gran fondo three times each on Opus
+5.5**, skill 1.3.0, whose page prints a US shop's aisle names on a list in US
+units ([#20](https://github.com/4e6/skills/issues/20)): 21 runs, 20 minutes,
+$35. **No US list printed *Tins*, and no metric list changed.**
+
+- **Every US page read as a US shop's**: *Produce*, *Canned Goods, Jars &
+  Seasonings*, *Meat & Seafood*, *Dairy, Eggs & Refrigerated*, in 6 of 6 runs.
+  The same check, graded again on 1.2.0's runs, failed all 12, three of Denver
+  and three of the gran fondo in each of its two passes.
+- **Every metric page kept the plan's own headings**, 15 of 15, as the 15 runs
+  of 1.2.0 did.
+- **Every plan weighed in its country's system**, 55–77 quantities in US units
+  on the US plans and none on the metric ones.
+- **What the judge found against it was not the headings**: a Denver list
+  bought `6.5` bananas and a `9 oz` can, a can's drained weight as its pack,
+  under `shops-in-its-units` ([#23](https://github.com/4e6/skills/issues/23)); a São Paulo page said *~5h20* for sessions adding
+  up to 5h10, under *nothing invented*. One Kraków run wrote a script to `/tmp`
+  and was refused, its plan finished in its own folder.
 
 **2026-10-01, the country cases and the gran fondo three times each on Opus
 5.5**, skill 1.2.0, which says the country picks the units

@@ -52,6 +52,11 @@
     },
     {
       "check": "pack_unit"
+    },
+    {
+      "check": "aisles",
+      "system": "us",
+      "absent": "Tins|Chilled|Fruit & Vegetables|Meat & Fish"
     }
   ],
   "judge": [

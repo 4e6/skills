@@ -3,9 +3,9 @@ type: Module
 title: The printable page
 description: render.py writes one self-contained HTML file for print, a phone and a wide screen. Plain rules, weight and space; the glance first; one column that never splits a recipe; a byte-compared example.
 tags: [architecture, rendering]
-timestamp: 2026-09-30T20:29:41Z
+timestamp: 2026-10-01T17:10:00Z
 sources: [skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css, skills/training-week-meal-plan/examples/**]
-source_commit: 3f5066241fd3cdce46a20049b3b77fe7007c40ff
+source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
 ---
 
 # One file, and Cmd-P
@@ -63,6 +63,42 @@ Print is the target:
   prints nine pages where it printed eight.
 - **The shopping page starts a page of its own**, and opens with the fridge,
   which is read before leaving.
+- **The aisle headings are the athlete's shops'.** A list weighed in US units
+  prints *Produce*, *Canned Goods, Jars & Seasonings*, *Meat & Seafood* and
+  *Dairy, Eggs & Refrigerated*; every other list prints the categories as the
+  plan writes them. See [the aisles](#an-aisle-is-a-key-and-the-page-names-it).
+
+# An aisle is a key, and the page names it
+
+`shopping[].category` is a fixed list of seven British headings in the schema,
+and the page printed it as written, so a US list bought `Canned black beans —
+27 oz` under *Tins, Jars & Seasonings* in all six US runs of 1.2.0
+([#20](https://github.com/4e6/skills/issues/20)). The skill's text could not
+reach it: a model told to write *Canned Goods* fails the schema.
+
+**The plan keeps writing the seven keys, and `render.py` prints a US shop's name
+for four of them** (*Bakery*, *Rice, Pasta & Dry Goods* and *Frozen* read the
+same there). Two others were turned down:
+
+- **A second set of names in the enum** would let one list mix *Produce* with
+  *Dairy, Eggs & Chilled*, and the walking order would have to cover both.
+- **Neutral names everywhere** (*Cans, Jars & Spices*) change every metric page
+  too, and *cans* reads no better to a British shopper than *tins* to an
+  American one.
+
+**The page reads the country from the units**, since the skill already picks
+the units by country ([which countries](/questions/which-countries-the-intake-offers.md)):
+a list whose rows are weighed more in ounces, pounds, cups, pints, quarts and
+gallons than in grams and litres is a US list. Counted rather than read off the
+first row, so one stray `500 ml` does not turn a list British; a tie, or a list
+of counts and spoons, keeps the plan's own words. A field naming the system was
+the alternative, and turned down because it is one more thing a model can leave
+out, and when it did the headings would go back to British. Liberia and Myanmar
+weigh in US units too, so their lists get the US names; no run has planned for
+either.
+
+A list written into the reply, where there is no page, names its aisles the
+same way (`fuelling.md`).
 
 # A phone is the other reader
 
@@ -235,8 +271,8 @@ page that ships. Nothing in this repository checks it yet
 ([which copy is the source](/questions/which-copy-is-the-source.md)). A byte comparison is worth what its determinism is worth,
 so the hazards are pinned: no set is iterated (string hashing is seeded per
 process), nothing is sorted (collation is locale-shaped), no case mapping reaches printed text or an id (the Unicode database moves between
-versions; the one lowercasing, of names to look up a pack, is compared and never
-printed), arithmetic is
+versions; the two lowercasings — names, to look up a pack, and ASCII units, to
+tell a US list's aisles — are compared and never printed), arithmetic is
 only of the kind that gives the same result on every platform, with every
 fraction printed as its shortest round-tripping `repr`, and there is no
 timestamp, date or generator string. The file is written with an explicit

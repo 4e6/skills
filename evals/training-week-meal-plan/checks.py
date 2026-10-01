@@ -1,8 +1,10 @@
 """Script checks on one run's plan: cheap, and the same answer every time.
 
-Every check returns `(passed, detail)`. They read `plan-<date>.json`, never the
-page, and they reuse the skill's own `validate.py` from the copy that ran, so a
-check counts a day's food the way the skill's checker does.
+Every check returns `(passed, detail)`. They read `plan-<date>.json`, and they
+reuse the skill's own `validate.py` from the copy that ran, so a check counts a
+day's food the way the skill's checker does. The one check of the page renders
+the plan again with that copy's `render.py`, rather than reading the page the
+agent made, which a run may not have made at all.
 
 **A day's target is read back from its snack line.** The host works out a
 day's snacks as the gap from its meals and fuel to the bottom of the day's band
@@ -18,9 +20,13 @@ items, at each range's middle, and anything else on a line is not. Bounds are
 
 from __future__ import annotations
 
+import html
 import importlib.util
 import json
 import re
+import subprocess
+import sys
+import tempfile
 from pathlib import Path
 
 TOLERANCE = 0.05
@@ -378,6 +384,30 @@ def check_pack_unit(ctx, spec):
     return not apart, ", ".join(apart) if apart else "none"
 
 
+def shopping_headings(ctx) -> list:
+    """The shopping list's aisle headings, as the skill's own renderer prints them."""
+    with tempfile.TemporaryDirectory() as tmp:
+        plan, page = Path(tmp) / "plan.json", Path(tmp) / "plan.html"
+        plan.write_text(json.dumps(ctx.plan, ensure_ascii=False), encoding="utf-8")
+        subprocess.run([sys.executable, str(ctx.skill / "scripts" / "render.py"), str(plan), str(page)],
+                       check=True, capture_output=True)
+        text = page.read_text(encoding="utf-8")
+    shopping = text.split('<section class="shopping">', 1)[-1]
+    return [html.unescape(h) for h in re.findall(r"<h3>(.*?)</h3>", shopping)]
+
+
+def check_aisles(ctx, spec):
+    """No aisle heading on the rendered shopping list matches `absent`.
+
+    The plan's categories are a fixed list in the schema, written the same for
+    every country, so whether a US shopper reads *Tins* is the page's doing and
+    is read off the page.
+    """
+    headings = shopping_headings(ctx)
+    wrong = [h for h in headings if re.search(spec["absent"], h)]
+    return not wrong, "; ".join(headings) if not wrong else "prints " + "; ".join(wrong)
+
+
 def check_not_printed(ctx, spec):
     match = re.search(spec["pattern"], printed(ctx.plan), re.I)
     return match is None, ("prints %r" % match.group(0)) if match else "absent"
@@ -399,6 +429,7 @@ CHECKS = {
     "units": check_units,
     "round_pounds": check_round_pounds,
     "pack_unit": check_pack_unit,
+    "aisles": check_aisles,
 }
 
 
@@ -406,6 +437,7 @@ class Context:
     def __init__(self, plan: dict, weight: float, skill: Path):
         self.plan = plan
         self.weight = weight
+        self.skill = skill
         self.validate = load_validate(skill)
 
 

@@ -491,6 +491,11 @@ beside the chicken.
   - The categories are listed in walking order: ambient first, chilled and frozen
     last. **Omit any category this week has nothing for.** A week with nothing
     frozen has no Frozen section; do not invent an item to fill one.
+  - **The category is a key, written as the schema lists it in every country.**
+    The page prints the aisle as the athlete's shops name it: on a list in US
+    units, *Produce*, *Canned Goods, Jars & Seasonings*, *Meat & Seafood* and
+    *Dairy, Eggs & Refrigerated*. A list written into the reply names them so
+    too.
 - **`qty` is what the week uses, not what the shop sells.** Add the item up
   across every recipe that cooks with it — a **repeat** cooks again and counts
   again, a **leftover** eats food that already exists and counts for nothing —
