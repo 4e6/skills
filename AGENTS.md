@@ -9,5 +9,6 @@ in an OKF knowledge bundle at [.wiki/](.wiki/). **Start at
 
 Wiki updates land in the same commit as the change, never as a follow-up, and
 that includes re-pinning a page whose text still holds: set its `source_commit`
-to the branch's merge base with `main`. Nothing is pinned after a merge
+to the branch's merge base with `main`, and check with `okf.py stale --base
+main`. Nothing is pinned after a merge
 ([why](.wiki/conventions/a-change-and-its-wiki-are-one-commit.md)).

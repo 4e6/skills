@@ -9,7 +9,7 @@ compatibility: >-
   bundle is read and written offline.
 metadata:
   author: 4e6
-  version: "1.1"
+  version: "1.1.0"
 ---
 
 # LLM-wiki (Open Knowledge Format)
@@ -160,8 +160,9 @@ as one commit and **nothing is pinned after it merges**. That is the only way a
 squash merge can work, since it gives the change a hash nobody could have
 written into the page beforehand. A pin names a commit on the default branch,
 never one of a branch's own, which a squash or a rebase leaves behind (`S006`).
-A page without them (a `Gotcha`, a `Glossary Term`) is timeless and is never reported stale. **Only add `sources` to a page whose
-truth actually depends on that code.** Over-tagging manufactures false staleness.
+A page with no `sources` (a `Gotcha`, a `Glossary Term`) is timeless and is
+never reported stale. **Only add `sources` to a page whose truth actually
+depends on that code.** Over-tagging manufactures false staleness.
 
 Link with plain markdown, bundle-absolute: `[auth](/architecture/auth.md)`.
 Not `[[wikilinks]]` — OKF §5. Broken links are legal (§5.3), so linking a page
@@ -265,12 +266,20 @@ other type.)
 ### A3 — Sync with the code (the important one)
 
 The wiki drifts silently. Run this on request ("sync the wiki", "is the wiki
-stale?"), and proactively after landing a change that touched architecture, a
-decision, an invariant, a data model, or an integration.
+stale?"), and proactively after committing a change that touched architecture,
+a decision, an invariant, a data model, or an integration — on a branch, before
+it merges.
 
 ```bash
 "$OKF/.venv/bin/python" "$OKF/okf.py" --bundle "$WIKI" stale --json
 ```
+
+**On a branch, add `--base <default branch>`.** The branch's commits are then
+judged as one, the way the default branch will see them once the branch is
+squashed: a page the branch changes anywhere covers every change to its sources
+on the branch, and an edit made and then reverted covers nothing. Without it, a
+page fixed in a later commit still reports the commit before it. A merge commit
+is judged by its diff against its first parent, the change it brought in.
 
 Then, per finding:
 
@@ -288,7 +297,8 @@ Then, per finding:
     and `timestamp` alone, add no log entry. The page was already correct.
   - **Semantic** — a boundary moved, a responsibility changed, an invariant was
     added or broken, a dependency appeared. **Rewrite** the affected sections,
-    bump `timestamp` *and* `source_commit`, and append to `log.md`.
+    bump `timestamp` *and* `source_commit` (on a branch, to its merge base),
+    and append to `log.md`.
 
   Never bump `source_commit` without having read the diff. That is how a wiki
   silently starts lying.

@@ -28,14 +28,18 @@ pin alone.
 `stale` now skips a commit that changed the page along with its sources,
 since that commit is the page describing its own change. A commit that edits
 the page for another reason covers only itself: a typo fixed later never
-vouches for an earlier change that left the page alone.
+vouches for an earlier change that left the page alone. **Within a squashed
+PR, though, any edit to the page counts as its review**, because the squash is
+one commit. A typo fixed in the same PR as an unread change clears it, and
+nothing flags the page after the merge, so the review is the one before it.
 
 # What follows
 
 - **A pin names a commit on main**, never one of a branch's own: a squash
   leaves those behind and `stale` reports `S006`.
-- **The pages are reviewed before the PR merges.** Run `stale` on the branch
-  once the change is committed. It lists the pages the change left alone; each
-  is fixed or re-pinned to the merge base in the same PR.
-- **A branch merged without squashing** would need the page in each commit
-  that changes its sources. This repository squashes.
+- **The pages are reviewed before the PR merges.** Run `stale --base main` on
+  the branch once the change is committed. It judges the branch as main will
+  see it squashed, and lists the pages the change left alone; each is fixed or
+  re-pinned to the merge base in the same PR.
+- **A branch merged without squashing** is judged by its merge commit's diff
+  against main, the same as a squash. This repository squashes.
