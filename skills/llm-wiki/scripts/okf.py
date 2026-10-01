@@ -602,7 +602,8 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
     if base and has_head:
         code, out = git(repo, "merge-base", "HEAD", base)
         if code != 0:
-            raise SystemExit(f"error: no merge base between HEAD and {base}")
+            print(f"error: no merge base between HEAD and {base}", file=sys.stderr)
+            raise SystemExit(2)
         branch_start = out.strip()
 
     for doc in bundle.concepts:
@@ -892,7 +893,7 @@ def main() -> int:
         "--base",
         default=None,
         help="on a branch: judge its commits as one, as the default branch will see them "
-        "once the branch is squashed (e.g. --base main)",
+        "once the branch is squashed (e.g. --base origin/main)",
     )
 
     p_index = sub.add_parser("index", parents=[common], help="regenerate index.md files")

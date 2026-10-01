@@ -37,9 +37,10 @@ nothing flags the page after the merge, so the review is the one before it.
 
 - **A pin names a commit on main**, never one of a branch's own: a squash
   leaves those behind and `stale` reports `S006`.
-- **The pages are reviewed before the PR merges.** Run `stale --base main` on
-  the branch once the change is committed. It judges the branch as main will
+- **The pages are reviewed before the PR merges.** Run `stale --base origin/main`
+  on the branch once the change is committed. It judges the branch as main will
   see it squashed, and lists the pages the change left alone; each is fixed or
   re-pinned to the merge base in the same PR.
-- **A branch merged without squashing** is judged by its merge commit's diff
-  against main, the same as a squash. This repository squashes.
+- **A branch merged with a merge commit** is judged by that commit's diff
+  against main, the same as a squash. A fast-forward or a rebase merge keeps
+  every commit, and each is judged on its own. This repository squashes.

@@ -280,6 +280,9 @@ squashed: a page the branch changes anywhere covers every change to its sources
 on the branch, and an edit made and then reverted covers nothing. Without it, a
 page fixed in a later commit still reports the commit before it. A merge commit
 is judged by its diff against its first parent, the change it brought in.
+`--base` judges only the branch's own change: name the remote's branch
+(`--base origin/main`), and a commit the branch merged in from it is not
+vouched for by a page the branch edits.
 
 Then, per finding:
 
@@ -287,7 +290,7 @@ Then, per finding:
   page alone** — read the actual diff of each commit it lists before touching
   the page:
   ```bash
-  git show <commit> -- <sources>
+  git show --first-parent <commit> -- <sources>
   ```
   Then classify:
 
