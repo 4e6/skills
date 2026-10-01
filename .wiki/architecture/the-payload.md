@@ -5,7 +5,7 @@ description: A skill folder is copied out whole and runs where this repository d
 tags: [architecture, distribution]
 timestamp: 2026-10-01T17:10:00Z
 sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**]
-source_commit: 7c8225eb1bc1397f6b17cdb0e4b967a5dee883ed
+source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
 ---
 
 # The boundary

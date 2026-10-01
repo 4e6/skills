@@ -6,7 +6,7 @@ tags: [safety, product]
 timestamp: 2026-10-01T10:38:00Z
 status: open
 sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/README.md]
-source_commit: 7c8225eb1bc1397f6b17cdb0e4b967a5dee883ed
+source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
 ---
 
 # The question

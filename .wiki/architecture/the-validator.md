@@ -5,7 +5,7 @@ description: validate.py is the one part of the skill that checks rather than in
 tags: [architecture, validation]
 timestamp: 2026-10-01T12:19:17Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/SKILL.md]
-source_commit: 7c8225eb1bc1397f6b17cdb0e4b967a5dee883ed
+source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
 ---
 
 # Why it exists
