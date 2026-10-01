@@ -50,6 +50,13 @@ ANIMAL = re.compile(
     r"mayo(?:nnaise)?)\b",
     re.I,
 )
+# Meat and fish are made plant food only by a word that says so: `coconut
+# chicken curry` and `soy sauce chicken` are chicken, where `coconut yoghurt`
+# is not yoghurt.
+FLESH = re.compile(
+    r"chicken|beef|pork|lamb|bacon|ham|turkey|salmon|tuna|mackerel|cod|prawns?|"
+    r"shrimps?|anchov(?:y|ies)", re.I)
+SAYS_SO = {"vegan", "plant-based", "tofu", "chickpea", "seitan", "jackfruit", "soy-based"}
 PLANT = {
     "soy", "soya", "oat", "almond", "peanut", "cashew", "coconut", "rice", "hemp",
     "pea", "plant", "plant-based", "vegan", "dairy-free", "tofu", "chickpea", "nut",
@@ -93,6 +100,7 @@ def fuel_food(entry: dict) -> float:
     for session in entry.get("sessions", []):
         for line in ("before", "during", "after"):
             example = MEASURE.sub("", (session.get(line) or {}).get("example") or "")
+            example = re.sub(r"\s*\(\s*\)", "", example)
             example = re.sub(r"\b(\d+)\s*x\s+", r"\1 ", example)
             for pattern, grams in FUEL_ITEMS:
                 for match in pattern.finditer(example):
@@ -229,12 +237,13 @@ def check_vegan(ctx, spec):
             # (`plant-based Greek yoghurt`), but never across a join: in
             # `Rice with egg` the rice qualifies nothing.
             near = before[-1:] if before[-1:] and before[-1] in JOINS else before[-2:]
-            if (near and near[-1] not in JOINS and any(w in PLANT for w in near)) or LEFT_OUT & set(before):
+            qualifiers = SAYS_SO if FLESH.fullmatch(match.group(0)) else PLANT
+            if (near and near[-1] not in JOINS and any(w in qualifiers for w in near)) or LEFT_OUT & set(before):
                 continue
             if NOT_ANIMAL_AFTER.match(name, match.end()):
                 continue
             after = QUALIFIED_AFTER.match(name, match.end())
-            if after and after.group(1).lower() in PLANT:
+            if after and after.group(1).lower() in qualifiers:
                 continue
             found.append(name)
     return not found, "; ".join(sorted(set(found))) if found else "no animal food"

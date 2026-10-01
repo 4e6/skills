@@ -131,7 +131,9 @@ go, and counting it would grade the account.
   - **The vegan check reads only names of food** — dishes, ingredients, the
     list, fuel and snack examples — so `Dairy, Eggs & Chilled` and *no eggs or
     honey* in a summary do not fail it, and takes `oat milk`, `peanut butter`
-    and `egg-free` as plant food. A regular expression could not do both.
+    and `egg-free` as plant food. Meat and fish need a word that says so —
+    `vegan`, `tofu`, `-style` — since `coconut chicken curry` is chicken. A
+    regular expression could not do all of that.
 - **A judge**: an agent with no tools that reads the message, the plan and the
   reply, and answers `yes`, `no` or `unclear` with a reason. It takes what a
   script cannot read: whether the summary is honest, whether a dinner is light,
