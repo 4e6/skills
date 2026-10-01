@@ -748,10 +748,12 @@ def outside_the_run(plan: dict):
 def check_day_meal_completeness(plan: dict) -> list:
     """The structural faults that every other check depends on.
 
-    The days not being a run that ends on Sunday, every day being excluded, and
-    a main meal missing altogether. The portion ledger skips a slot that has no
-    recipe on the grounds that this check already reported it, so without these
-    a missing meal would be reported by nothing at all.
+    The days not being a run that ends on Sunday, every day being excluded, a
+    main meal missing altogether, and a meal naming a dish no recipe at its
+    sitting has, or a recipe there no dish names. The portion ledger skips a
+    slot that has no recipe, and check 10 a day whose meals and recipes do not
+    line up, on the grounds that this check already reported it, so without
+    these the fault would be reported by nothing at all.
 
     Then the recipes that sit where the plan cannot reach them: one entered on
     a day the plan does not cover, and a pointer at nothing, at the wrong day,
@@ -800,6 +802,60 @@ def check_day_meal_completeness(plan: dict) -> list:
                 lowered = meal_name.lower()
                 findings.append(
                     finding(3, "missing-meal", day["name"] + " has no " + lowered, where)
+                )
+
+    # Each dish a meal names against the entries at its sitting, by title and
+    # exactly, since that is how the page links a meal to its method. Without
+    # this the page names one breakfast while the recipe and the list cook
+    # another, and check 10 drops the day without a word, because it compares
+    # only days whose meals and recipes line up and leaves the rest to here.
+    by_slot = recipes_by_slot(plan)
+    for day in plan["days"]:
+        if is_excluded(day):
+            continue
+        meals = meals_present[day["name"]]
+        for meal_name in MEAL_NAMES:
+            meal = meals.get(meal_name)
+            if meal is None or is_excluded(meal):
+                continue
+            sitting = day["name"] + " " + meal_name.lower()
+            dishes = dishes_of(meal)
+            titles = [r["title"] for r in by_slot.get(slot_key(day["name"], meal_name)) or []]
+            unnamed = [t for i, t in enumerate(titles) if t not in dishes and titles.index(t) == i]
+            for dish in dishes:
+                if dish in titles:
+                    continue
+                if unnamed:
+                    repair = (
+                        "; the entry there that no dish names is "
+                        + ", ".join("'" + rendered(t) + "'" for t in unnamed)
+                        + ": if this dish is that recipe, give both one title, and otherwise"
+                        + " write this dish's recipe at this sitting"
+                    )
+                else:
+                    repair = (
+                        "; write its recipe at this sitting, or, if its recipe is entered"
+                        + " under another title, give both one title"
+                    )
+                findings.append(
+                    finding(
+                        3,
+                        "dish-without-recipe",
+                        sitting + " names '" + rendered(dish) + "', which no recipe at that"
+                        + " sitting has" + repair,
+                        "days." + day["name"] + "." + meal_name,
+                    )
+                )
+            for title in unnamed:
+                findings.append(
+                    finding(
+                        3,
+                        "recipe-without-dish",
+                        "'" + rendered(title) + "' is entered for " + sitting + ", but that meal"
+                        + " names no such dish; name it in the meal's `dish` or `alongside` by"
+                        + " this exact title, or, if the meal does not eat it, take the entry out",
+                        "recipes." + day["name"] + "." + meal_name,
+                    )
                 )
 
     uncovered = outside_the_run(plan)
@@ -2517,9 +2573,10 @@ def ranked_carbs(plan: dict, name: str):
 
     Only a day whose meals are whole is compared: each main slot there once,
     not excluded, and served by exactly one recipe per dish it names, the main
-    and everything alongside it. A missing, moved or doubled recipe, or a dish
-    whose figures cannot be read, is a fault the day and portion checks already
-    name, and comparing that day would add advice to fix the wrong thing.
+    and everything alongside it. A missing, moved or doubled recipe, a dish
+    named that no recipe has, or a dish whose figures cannot be read, is a fault
+    the day and portion checks already name, and comparing that day would add
+    advice to fix the wrong thing.
     Skipping errs on the silent side. Only the athlete's own plates count: the
     published schema has no fields for anyone else.
     """
