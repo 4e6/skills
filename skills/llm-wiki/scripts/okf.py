@@ -519,7 +519,77 @@ def gitlink_paths(repo: Path) -> frozenset[str]:
     return frozenset(paths)
 
 
-def stale(bundle: Bundle) -> dict:
+def page_in_repo(doc: Doc, repo: Path) -> str | None:
+    """The concept's own file, as git names it, or None when it is outside the repo."""
+    try:
+        return str(doc.path.resolve().relative_to(repo.resolve())).replace(os.sep, "/")
+    except ValueError:
+        return None
+
+
+# Starts each commit's header in `git log` output; file names follow it.
+_COMMIT = "\x1e"
+
+
+def unread_commits(
+    repo: Path, since: str, pathspecs: list[str], page: str | None, branch_start: str | None = None
+):
+    """The commits after `since` that changed the sources and not the page.
+
+    A commit that changes the page together with its sources is the page
+    describing its own change, so it needs no pin of its own. That is what lets
+    a change ship as one squashed commit: the pin can only name a commit that
+    exists before the merge, and a squash gives the change a hash nobody could
+    have written into the page beforehand. A commit that touches the page for
+    another reason covers only itself, never an earlier commit that changed the
+    sources and left the page alone.
+
+    A merge commit is judged by its diff against its first parent, the change
+    it brought in, and the commits of the branch it merged are not walked: the
+    same rule a squash applies.
+
+    With `branch_start`, the commits after it are judged as main will see them
+    once the branch is squashed: as one change, which covers the page if the
+    branch's net diff touches it. An edit made on the branch and then reverted
+    covers nothing.
+
+    Returns (commits as `<short hash> <subject>`, the source files they changed).
+    """
+    specs = list(pathspecs) + ([f":(literal){page}"] if page else [])
+    # Paths verbatim, so a page named in another script still matches its own name.
+    quiet = ("-c", "core.quotePath=false")
+    _, out = git(
+        repo, *quiet, "log", "--first-parent", "-m", f"--format={_COMMIT}%H %h %s", "--name-only",
+        f"{since}..HEAD", "--", *specs,
+    )
+    on_branch: set[str] = set()
+    branch_covers = False
+    if branch_start:
+        _, listed = git(repo, "rev-list", f"{branch_start}..HEAD")
+        on_branch = set(listed.split())
+        if page is not None:
+            _, net = git(repo, *quiet, "diff", "--name-only", branch_start, "HEAD", "--", f":(literal){page}")
+            branch_covers = bool(net)
+    commits: list[str] = []
+    files: list[str] = []
+    for entry in out.split(_COMMIT)[1:]:
+        lines = [line for line in entry.splitlines() if line]
+        full, _, header = lines[0].partition(" ")
+        names = lines[1:]
+        sources = [name for name in names if name != page]
+        if not sources:
+            continue
+        if full in on_branch:
+            if branch_covers:
+                continue
+        elif page is not None and page in names:
+            continue
+        commits.append(header)
+        files.extend(name for name in sources if name not in files)
+    return commits, files
+
+
+def stale(bundle: Bundle, base: str | None = None) -> dict:
     repo = bundle.repo
     findings: list[dict] = []
     tracked = tracked_files(repo)
@@ -528,6 +598,13 @@ def stale(bundle: Bundle) -> dict:
 
     code, _ = git(repo, "rev-parse", "--verify", "HEAD")
     has_head = code == 0
+    branch_start = None
+    if base and has_head:
+        code, out = git(repo, "merge-base", "HEAD", base)
+        if code != 0:
+            print(f"error: no merge base between HEAD and {base}", file=sys.stderr)
+            raise SystemExit(2)
+        branch_start = out.strip()
 
     for doc in bundle.concepts:
         raw_sources = doc.meta.get("sources")
@@ -606,17 +683,18 @@ def stale(bundle: Bundle) -> dict:
             )
             continue
 
-        _, changed = git(repo, "diff", "--name-only", f"{recorded}..HEAD", "--", *pathspecs)
-        if changed:
-            _, commits = git(repo, "log", "--oneline", f"{recorded}..HEAD", "--", *pathspecs)
+        unread, changed = unread_commits(
+            repo, recorded, pathspecs, page_in_repo(doc, repo), branch_start
+        )
+        if unread:
             findings.append(
                 {
                     "code": "S001",
                     "concept": doc.rel,
-                    "message": f"sources changed in {len(commits.splitlines())} commit(s) since "
-                    f"{recorded[:12]}",
-                    "files": changed.splitlines()[:20],
-                    "commits": commits.splitlines()[:10],
+                    "message": f"sources changed in {len(unread)} commit(s) since "
+                    f"{recorded[:12]} that left the page alone",
+                    "files": changed[:20],
+                    "commits": unread[:10],
                 }
             )
 
@@ -810,7 +888,13 @@ def main() -> int:
     p_lint = sub.add_parser("lint", parents=[common], help="conformance, links, orphans, index coverage")
     p_lint.add_argument("--strict", action="store_true", help="treat warnings as errors")
 
-    sub.add_parser("stale", parents=[common], help="git-derived staleness and coverage gaps")
+    p_stale = sub.add_parser("stale", parents=[common], help="git-derived staleness and coverage gaps")
+    p_stale.add_argument(
+        "--base",
+        default=None,
+        help="on a branch: judge its commits as one, as the default branch will see them "
+        "once the branch is squashed (e.g. --base origin/main)",
+    )
 
     p_index = sub.add_parser("index", parents=[common], help="regenerate index.md files")
     p_index.add_argument("--write", action="store_true", help="write changes (default: dry run)")
@@ -848,7 +932,7 @@ def main() -> int:
         return 1 if errors or (args.strict and warnings) else 0
 
     if args.cmd == "stale":
-        result = stale(bundle)
+        result = stale(bundle, args.base)
 
         def human(res):
             for item in res["findings"]:

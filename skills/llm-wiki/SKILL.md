@@ -9,7 +9,7 @@ compatibility: >-
   bundle is read and written offline.
 metadata:
   author: 4e6
-  version: "1.0"
+  version: "1.1.0"
 ---
 
 # LLM-wiki (Open Knowledge Format)
@@ -139,7 +139,7 @@ timestamp: 2026-07-10T09:00:00Z # recommended — last *meaningful* change
 resource: https://…             # only if a canonical external asset exists
 # --- producer extensions this skill defines ---
 sources: [src/auth/**]          # repo-relative gitignore-syntax globs — the page's L2
-source_commit: 4f2a1c9e…        # commit at which `sources` was last actually read
+source_commit: 4f2a1c9e…        # commit at which `sources` was last actually read — on the default branch
 status: accepted                # Decision / Open Question only
 superseded_by: /decisions/0009-mtls.md
 amends: [0004-tokens.md]        # Decision only — the pages this one revises in part
@@ -153,9 +153,16 @@ not an extension of it, and it is written down in
 [reference/okf-v0.1.md](reference/okf-v0.1.md) beside the clause it breaks.
 
 `sources` + `source_commit` are the entire sync mechanism. A page with `sources`
-can be checked against git; a page without them (a `Gotcha`, a `Glossary Term`)
-is timeless and is never reported stale. **Only add `sources` to a page whose
-truth actually depends on that code.** Over-tagging manufactures false staleness.
+can be checked against git: it is stale when a commit after `source_commit`
+changed its sources **and left the page alone**. A commit that changes the page
+too is the page describing its own change, so a change and its wiki edit land
+as one commit and **nothing is pinned after it merges**. That is the only way a
+squash merge can work, since it gives the change a hash nobody could have
+written into the page beforehand. A pin names a commit on the default branch,
+never one of a branch's own, which a squash or a rebase leaves behind (`S006`).
+A page with no `sources` (a `Gotcha`, a `Glossary Term`) is timeless and is
+never reported stale. **Only add `sources` to a page whose truth actually
+depends on that code.** Over-tagging manufactures false staleness.
 
 Link with plain markdown, bundle-absolute: `[auth](/architecture/auth.md)`.
 Not `[[wikilinks]]` — OKF §5. Broken links are legal (§5.3), so linking a page
@@ -207,7 +214,8 @@ coverage gap deserves a page — stays with the model.
    *small* set of pages you can actually support: typically `overview.md`, one
    `Module` per genuine subsystem, and any `Decision` / `Gotcha` the user
    volunteers. **Ten good pages beat sixty generated ones.**
-4. For pages with `sources`, set `source_commit` to `git rev-parse HEAD`.
+4. For pages with `sources`, set `source_commit` to `git rev-parse HEAD` — on a
+   branch, to `git merge-base HEAD <default branch>`, the commit it started from.
 5. Do A5 (wire up the read and write paths), then A4 (index + lint).
 6. Seed `log.md` with a `**Initialization**` entry.
 
@@ -258,32 +266,51 @@ other type.)
 ### A3 — Sync with the code (the important one)
 
 The wiki drifts silently. Run this on request ("sync the wiki", "is the wiki
-stale?"), and proactively after landing a change that touched architecture, a
-decision, an invariant, a data model, or an integration.
+stale?"), and proactively after committing a change that touched architecture,
+a decision, an invariant, a data model, or an integration — on a branch, before
+it merges.
 
 ```bash
 "$OKF/.venv/bin/python" "$OKF/okf.py" --bundle "$WIKI" stale --json
 ```
 
+**On a branch, add `--base <default branch>`.** The branch's commits are then
+judged as one, the way the default branch will see them once the branch is
+squashed: a page the branch changes anywhere covers every change to its sources
+on the branch, and an edit made and then reverted covers nothing. Without it, a
+page fixed in a later commit still reports the commit before it. A merge commit
+is judged by its diff against its first parent, the change it brought in.
+`--base` judges only the branch's own change: name the remote's branch
+(`--base origin/main`), and a commit the branch merged in from it is not
+vouched for by a page the branch edits.
+
 Then, per finding:
 
-- **`S001` sources changed since `source_commit`** — read the actual diff before
-  touching the page:
+- **`S001` sources changed since `source_commit`, in a commit that left the
+  page alone** — read the actual diff of each commit it lists before touching
+  the page:
   ```bash
-  git diff <source_commit>..HEAD -- <sources>
+  git show --first-parent <commit> -- <sources>
   ```
   Then classify:
 
   - **Cosmetic** — renames, formatting, comments, test-only edits, changes that
     preserve responsibility and boundaries. **Touch, don't rewrite:** bump
-    `source_commit` to `HEAD`, leave the body and `timestamp` alone, add no log
-    entry. The page was already correct.
+    `source_commit` to `HEAD` — on a branch, to its merge base — leave the body
+    and `timestamp` alone, add no log entry. The page was already correct.
   - **Semantic** — a boundary moved, a responsibility changed, an invariant was
     added or broken, a dependency appeared. **Rewrite** the affected sections,
-    bump `timestamp` *and* `source_commit`, and append to `log.md`.
+    bump `timestamp` *and* `source_commit` (on a branch, to its merge base),
+    and append to `log.md`.
 
   Never bump `source_commit` without having read the diff. That is how a wiki
   silently starts lying.
+
+  **On a branch, the fix is part of the change.** Either edit goes into the
+  commit that changed the sources — amended in, or a later commit of a branch
+  that is squashed on merge — so the page and its sources change together and
+  the finding does not come back on the default branch. A page fixed in a
+  commit of its own covers only that commit.
 
 - **`S002` uncommitted changes in sources** — sync describes committed history
   only. Report it and stop; there is no commit to record. Offer to proceed after
@@ -298,7 +325,8 @@ Then, per finding:
 
 - **`S006` `source_commit` unreachable or not an ancestor of HEAD** — history was
   rewritten (rebase, squash, amend), so the diff is meaningless. Re-review the
-  page against HEAD from scratch, then re-pin.
+  page against HEAD from scratch, then re-pin. A pin to a branch's own commit
+  ends here once the branch is squashed; pin to the merge base instead.
 
 - **`S004` coverage gap** — tracked code no page claims. Do **not** create one
   page per file. Ask whether the gap is a real subsystem worth a `Module`, or
