@@ -49,6 +49,11 @@ class Turn:
     timed_out: bool = False
 
 
+def _target(given: dict) -> str:
+    """What a refused call was after: its path or its command, shortened."""
+    return str(given.get("file_path") or given.get("path") or given.get("command") or "")[:160]
+
+
 def _text(output) -> str:
     """What a timed-out process had printed, which arrives as bytes or nothing."""
     if output is None:
@@ -91,10 +96,26 @@ class ClaudeCode:
         shutil.copytree(skill, target)
         return target
 
+    @staticmethod
+    def folder_rules(workdir: Path) -> list:
+        """The file tools' rules for the run's folder by its absolute path, in each spelling.
+
+        `./**` alone let a relative path through and refused the absolute one
+        hosts mostly write: `/private/var/...` on macOS, where a temporary
+        folder is also `/var/...`. Five of seven runs had their plan's Write
+        refused.
+        """
+        real = str(Path(workdir).resolve())
+        spellings = {real}
+        if real.startswith("/private/"):
+            spellings.add(real[len("/private"):])
+        return [tool + "(/" + path + "/**)" for path in sorted(spellings) for tool in ("Read", "Edit")]
+
     def run(self, workdir: Path, prompt: str, transcript: Path, resume: str | None = None) -> Turn:
         args = [self.binary, "-p", prompt, *self.ISOLATED, "--tools", self.TOOLS,
                 "--permission-mode", "dontAsk", "--settings", self.SANDBOX,
-                "--allowedTools", *self.ALLOWED, "--disallowedTools", *self.DENIED,
+                "--allowedTools", *self.ALLOWED, *self.folder_rules(workdir),
+                "--disallowedTools", *self.DENIED,
                 "--output-format", "stream-json", "--verbose",
                 "--max-budget-usd", str(self.max_budget_usd)]
         if self.model:
@@ -143,7 +164,10 @@ class ClaudeCode:
                 turn.is_error = bool(event.get("is_error"))
                 turn.session_id = event.get("session_id")
                 turn.cost_usd = event.get("total_cost_usd") or 0.0
-                turn.denied = [d.get("tool_name") for d in event.get("permission_denials", [])]
+                turn.denied = [
+                    "%s %s" % (d.get("tool_name"), _target(d.get("tool_input") or {}))
+                    for d in event.get("permission_denials", [])
+                ]
                 turn.models = sorted(event.get("modelUsage") or {})
                 turn.api_error = event.get("api_error_status")
         return turn

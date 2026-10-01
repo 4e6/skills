@@ -38,6 +38,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -253,6 +254,11 @@ def grade_one(agent, case: dict, out: Path, skill: Path, judge_model, judge: boo
          "detail": "skills: %r" % result["skills"]},
         {"id": "planned-without-asking", "passed": result["turns"] == 1,
          "detail": "%d turn(s)" % result["turns"]},
+        # Anything refused but opening the page is the harness in the way, not
+        # the skill: a row of its own, so it is seen rather than averaged in.
+        {"id": "harness-refused-only-open",
+         "passed": all(d.startswith("Bash ") and re.search(r"\bopen\b", d) for d in result["denied"]),
+         "detail": "; ".join(result["denied"]) or "nothing refused"},
         {"id": "plan-written", "passed": plan_path is not None,
          "detail": plan_path.name if plan_path else "no plan file"},
     ]

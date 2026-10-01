@@ -67,7 +67,13 @@ would otherwise answer instead of the skill:
 - **The file tools reach only the run's folder.** Allowed bare, they reach
   anywhere: a run wrote a generator script to `/tmp` and ran it, where seven
   parallel runs could overwrite each other's, and step 2's search for earlier
-  plans could find a real one of the author's.
+  plans could find a real one of the author's. **The folder is named by its
+  absolute path, in both spellings.** A rule for `./**` let a relative path
+  through and refused the absolute one hosts mostly write, `/private/var/…` on
+  macOS, where a temporary folder is also `/var/…`: five of the first seven runs
+  of a pass had their plan's Write refused, and one handed over its week in the
+  reply. Every run now reports anything refused other than `open`, in a row of
+  its own.
 - **The shell is Claude Code's sandbox**, writing only in the run's folder,
   reading nothing in the home folder (so `python3` must not be a shim there)
   and never reaching the network, with every
