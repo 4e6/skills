@@ -3,7 +3,7 @@ type: Invariant
 title: The shopping list buys what the week uses
 description: Each row's quantity is what the recipes cook with, less what the fridge holds, and its days are the days that eat what it buys. One amount of food per row and never a pack size — except a staple, which is the jar and carries no days.
 tags: [plan-quality, shopping, validation]
-timestamp: 2026-10-01T16:34:11Z
+timestamp: 2026-10-01T16:40:14Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
 ---
@@ -20,14 +20,13 @@ shopper's step: nobody expects a 500 g bag of rice to match a list that says
 500 g, and frozen peas are the same problem, only less familiar.
 
 **A weight is in ounces**, and a pound only where it is a whole number of
-quarters on a row with no pack: `26 oz` of rice, never `1.625 lb`. The sum is exact, and a sum of the recipes'
-ounces is rarely a quarter pound, so written in pounds it comes out in
-sixteenths, a figure no shop prices. Rounding it instead would make the row
-disagree with the recipes, which is the one thing this invariant forbids. The
-unit gives way rather than the number. A row with a `pack` is in ounces and so
-is its pack, since the page counts packs only where the two are written alike;
-the check moves the pack to ounces with the row when it repairs one, and
-otherwise does not compare their units.
+quarters on a row with no pack: `26 oz` of rice, never `1.625 lb`. The sum is
+exact, and a sum of the recipes' ounces is rarely a quarter pound, so written in
+pounds it comes out in sixteenths, a figure no shop prices. Rounding it instead
+would make the row disagree with the recipes, which is the one thing this
+invariant forbids. The unit gives way rather than the number. A row with a
+`pack` is in ounces and so is its pack, since the page counts packs only where
+the two are written alike, character for character.
 
 **A row's `note` says what the row is for or how to buy it, never how much** —
 not a weight, a pack, a count or what is in the fridge. `qty` has already taken
@@ -121,10 +120,14 @@ Check 6 compares each dated row's `qty` with the recipes' total, less the fridge
 `shopping-quantity-short`, `shopping-quantity-excess`, and
 `shopping-quantity-is-a-pack` for a list counting what the recipes weigh, and
 `shopping-quantity-in-odd-pounds` for a row that is right in a fraction of a
-pound no shop prices. Each message states the week's total in the row's own
-unit, so the repair is a copy — except a total in pounds that is no whole
-quarter, which it states in ounces, with the pack's ounces where the pack was in
-pounds. Until 1.4.0 it said `1.625 lb`, and the lists copied it
+pound no shop prices, and `shopping-quantity-in-pounds-beside-ounces` for one
+that is right in pounds beside a pack in ounces, which the page cannot count.
+Each message states the week's total in the row's own unit, so the repair is a
+copy — except a total in pounds that is no whole quarter or sits beside a pack
+in ounces, which it states in ounces, with the pack's ounces where the pack was
+in pounds. A row and a pack both in pounds are counted and left alone, though
+the skill writes both in ounces. Nothing compares the units otherwise, so a row
+in grams beside a pack in kilograms prints no count and draws no finding. Until 1.4.0 it said `1.625 lb`, and the lists copied it
 ([#18](https://github.com/4e6/skills/issues/18)). A repair always takes a
 decimal point. Check 2 compares the day tags.
 

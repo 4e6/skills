@@ -693,7 +693,7 @@ and the shopping list's `qty` and `pack.qty`.
   `2 lb`. **A row with a `pack` is in ounces, and so is the pack**, since the
   page counts packs only where the two are written alike: `Canned black beans —
   27 oz` beside a `9 oz` can prints *3 cans*, `Bananas — 20 oz` beside a
-  `4 oz` banana prints *5 bananas*, and a 2 lb bag is a `32 oz` pack. Anything
+  `4 oz` banana prints *5*, and a 2 lb bag is a `32 oz` pack. Anything
   a shop sells by weight — meat, fish, rice, pasta, oats, potatoes, cheese — is
   weighed on the recipe line too, never measured in cups, which are a volume
   and cannot be added to a weight.

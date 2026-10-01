@@ -358,29 +358,35 @@ def check_round_pounds(ctx, spec):
     return not odd, ", ".join(odd) if odd else "none"
 
 
-def check_pack_unit(ctx, spec):
-    """Every row weighed beside a weighed pack writes the two in one unit.
+# The page's own reading of a quantity (`render.amount`): a number, then the
+# unit exactly as written. It counts packs only where the two units are the same
+# string, so `2 lbs` beside `1 lb`, or `20 oz` beside `4 OZ`, prints no count.
+PAGE_AMOUNT = re.compile(r"^\s*([0-9]+(?:\.[0-9]+)?)\s*([^\s,]*)")
 
-    The page counts packs only where the row and the pack are written alike, so
-    `2 lb` of bananas beside a `4 oz` banana prints no count.
+
+def check_pack_unit(ctx, spec):
+    """Every row weighed beside a weighed pack writes the two as the page can count.
+
+    The page counts packs only where the row and the pack are written in the
+    same unit, character for character, so `2 lb` of bananas beside a `4 oz`
+    banana prints no count.
     """
     v = ctx.validate
-
-    def unit(qty):
-        written = v.written_quantity(qty) if isinstance(qty, str) else None
-        if written is None or written[1] is None:
-            return None
-        return v.singular(v.fold_for_matching(written[1]))
-
     apart = []
     for group in ctx.plan.get("shopping", []):
         for item in group.get("items", []):
             pack = item.get("pack")
             if not isinstance(pack, dict):
                 continue
-            row, one = unit(item.get("qty")), unit(pack.get("qty"))
-            if row in v.MASS_UNITS and one in v.MASS_UNITS and row != one:
-                apart.append("%s %s / pack %s" % (item.get("name"), item.get("qty"), pack.get("qty")))
+            row, one = item.get("qty"), pack.get("qty")
+            if not isinstance(row, str) or not isinstance(one, str):
+                continue
+            weighed = [v.parse_amount(q) for q in (row, one)]
+            if any(w is None or w[1] != "g" for w in weighed):
+                continue
+            units = [PAGE_AMOUNT.match(q) for q in (row, one)]
+            if not all(units) or units[0].group(2) != units[1].group(2):
+                apart.append("%s %s / pack %s" % (item.get("name"), row, one))
     return not apart, ", ".join(apart) if apart else "none"
 
 

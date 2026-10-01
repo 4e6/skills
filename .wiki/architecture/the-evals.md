@@ -239,7 +239,7 @@ results of that run follow. **One run copied the example exactly**, so an
 example of what goes wrong is written as one to follow; the rule now gives
 only examples to copy.
 
-**No list wrote an odd pound**, where 1.2.0 had written one in two of three gran
+**In the draft's run, no list wrote an odd pound**, where 1.2.0 had written one in two of three gran
 fondo runs (`1.625 lb` of rice, `3.625 lb` of chicken) and 1.2.0's first draft
 in four of six.
 
