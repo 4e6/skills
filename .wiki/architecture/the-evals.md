@@ -232,7 +232,7 @@ $35. **No US list printed *Tins*, and no metric list changed.**
   on the US plans and none on the metric ones.
 - **What the judge found against it was not the headings**: a Denver list
   bought `6.5` bananas and a `9 oz` can, a can's drained weight as its pack,
-  under `shops-in-its-units`; a São Paulo page said *~5h20* for sessions adding
+  under `shops-in-its-units` ([#23](https://github.com/4e6/skills/issues/23)); a São Paulo page said *~5h20* for sessions adding
   up to 5h10, under *nothing invented*. One Kraków run wrote a script to `/tmp`
   and was refused, its plan finished in its own folder.
 
