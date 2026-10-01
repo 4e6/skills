@@ -96,7 +96,9 @@ and any preparation in brackets — *1 onion (diced)*.
    as the page names it (*the category is a key* in `fuelling.md`), one
    row per item — its name and its quantity as the plan states it, and its
    `note` where it has one, since that is where *check the label is gluten-free*
-   lives. No count of tins or packs: only the page works that out.
+   lives. No count of tins or packs: only the page works that out. A food the
+   recipes drain says so after its quantity — `18 oz drained` — because no can's
+   label says 18 oz.
 4. **After the list:** its `closing_note`, the sentence about checking, and the
    disclaimer.
 

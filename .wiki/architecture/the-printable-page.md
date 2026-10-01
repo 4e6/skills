@@ -3,7 +3,7 @@ type: Module
 title: The printable page
 description: render.py writes one self-contained HTML file for print, a phone and a wide screen. Plain rules, weight and space; the glance first; one column that never splits a recipe; a byte-compared example.
 tags: [architecture, rendering]
-timestamp: 2026-10-01T17:10:00Z
+timestamp: 2026-10-01T18:15:00Z
 sources: [skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css, skills/training-week-meal-plan/examples/**]
 source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
 ---
@@ -99,6 +99,19 @@ either.
 
 A list written into the reply, where there is no page, names its aisles the
 same way (`fuelling.md`).
+
+# A drained can is counted first
+
+A row the recipes drain prints the count of containers as its amount and the
+weight after it: `Canned black beans 2 cans (18 oz drained)`, where every other
+counted row reads `Tinned tomatoes 800 g (2 tins)`. The weight on such a row is
+what the recipes take, not what any label says, so printed first it read as a
+can size ([the list buys what the week uses](/invariants/the-list-buys-what-the-week-uses.md#a-count-of-the-purchase-is-not-a-second-amount)).
+**Whether the food drains is read off the recipe lines**, a line whose head is
+the row's name and whose words after the comma say *drained*, matched the way a
+line finds its pack. A row with no container to count still says *drained*
+beside its weight. A list written into the reply marks the weight too
+(`when-there-is-no-page.md`).
 
 # A phone is the other reader
 
@@ -271,8 +284,9 @@ page that ships. Nothing in this repository checks it yet
 ([which copy is the source](/questions/which-copy-is-the-source.md)). A byte comparison is worth what its determinism is worth,
 so the hazards are pinned: no set is iterated (string hashing is seeded per
 process), nothing is sorted (collation is locale-shaped), no case mapping reaches printed text or an id (the Unicode database moves between
-versions; the two lowercasings — names, to look up a pack, and ASCII units, to
-tell a US list's aisles — are compared and never printed), arithmetic is
+versions; the two lowercasings — names, to look up a pack and whether a line
+drains its food, and ASCII units, to tell a US list's aisles — are compared and
+never printed), arithmetic is
 only of the kind that gives the same result on every platform, with every
 fraction printed as its shortest round-tripping `repr`, and there is no
 timestamp, date or generator string. The file is written with an explicit

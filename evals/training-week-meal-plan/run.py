@@ -308,7 +308,7 @@ def grade_one(agent, case: dict, out: Path, skill: Path, judge_model, judge: boo
         else:
             try:
                 result["judge"], result["judge_cost_usd"] = ask_judge(
-                    agent, case, out, plan, judge_model)
+                    agent, case, out, plan, skill, judge_model)
             except Exception as error:
                 # Every question stays counted, as unclear, so a judge that
                 # failed cannot shrink a pass rate's denominator.
@@ -320,11 +320,16 @@ def grade_one(agent, case: dict, out: Path, skill: Path, judge_model, judge: boo
     return result
 
 
-def ask_judge(agent, case: dict, out: Path, plan: dict, model) -> tuple:
+def ask_judge(agent, case: dict, out: Path, plan: dict, skill: Path, model) -> tuple:
     asked = questions(case)
+    try:
+        shopping = checks.shopping_text(plan, skill)
+    except Exception as error:  # the page is the skill's to fail, not the judge's
+        shopping = "(the page could not be rendered: %s)" % type(error).__name__
     prompt = (HERE / "judge.md").read_text().format(
         message=(out / "message.md").read_text().strip(),
         plan=json.dumps(plan, indent=1, ensure_ascii=False),
+        shopping=shopping,
         reply=(out / "reply.md").read_text().strip(),
         questions="\n".join("- `%s`: %s" % q for q in asked),
     )

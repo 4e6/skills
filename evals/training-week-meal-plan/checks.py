@@ -4,7 +4,8 @@ Every check returns `(passed, detail)`. They read `plan-<date>.json`, and they
 reuse the skill's own `validate.py` from the copy that ran, so a check counts a
 day's food the way the skill's checker does. The one check of the page renders
 the plan again with that copy's `render.py`, rather than reading the page the
-agent made, which a run may not have made at all.
+agent made, which a run may not have made at all; the judge is handed the
+shopping list rendered the same way.
 
 **A day's target is read back from its snack line.** The host works out a
 day's snacks as the gap from its meals and fuel to the bottom of the day's band
@@ -30,6 +31,9 @@ import tempfile
 from pathlib import Path
 
 TOLERANCE = 0.05
+# Counted as nouns and a measure all the same, as validate.py's SPOONS; spelled
+# here too, since `--skill-ref` can run a copy that predates it.
+SPOONS = {"tablespoon", "tbsp", "teaspoon", "tsp"}
 AT_LEAST = re.compile(r"at least (?:about |around |roughly |~)?(\d+)\s*g", re.I)
 UP_TO = re.compile(r"up to (?:about |around |roughly |~)?(\d+)\s*g", re.I)
 WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6}
@@ -390,16 +394,34 @@ def check_pack_unit(ctx, spec):
     return not apart, ", ".join(apart) if apart else "none"
 
 
-def shopping_headings(ctx) -> list:
-    """The shopping list's aisle headings, as the skill's own renderer prints them."""
+def rendered_shopping(plan: dict, skill: Path) -> str:
+    """The shopping list's markup, as the skill's own renderer prints it."""
     with tempfile.TemporaryDirectory() as tmp:
-        plan, page = Path(tmp) / "plan.json", Path(tmp) / "plan.html"
-        plan.write_text(json.dumps(ctx.plan, ensure_ascii=False), encoding="utf-8")
-        subprocess.run([sys.executable, str(ctx.skill / "scripts" / "render.py"), str(plan), str(page)],
+        given, page = Path(tmp) / "plan.json", Path(tmp) / "plan.html"
+        given.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+        subprocess.run([sys.executable, str(skill / "scripts" / "render.py"), str(given), str(page)],
                        check=True, capture_output=True)
         text = page.read_text(encoding="utf-8")
-    shopping = text.split('<section class="shopping">', 1)[-1]
+    return text.split('<section class="shopping">', 1)[-1].split('<p class="closing">', 1)[0]
+
+
+def shopping_headings(ctx) -> list:
+    """The shopping list's aisle headings, as the skill's own renderer prints them."""
+    shopping = rendered_shopping(ctx.plan, ctx.skill)
     return [html.unescape(h) for h in re.findall(r"<h3>(.*?)</h3>", shopping)]
+
+
+def shopping_text(plan: dict, skill: Path) -> str:
+    """The shopping list as a shopper reads it on the page: a line per aisle and per row.
+
+    For the judge, which is otherwise handed the plan's JSON, where a row's
+    `pack` reads like a can size and is never printed.
+    """
+    lines = []
+    for tag, body in re.findall(r"<(h3|li)>(.*?)</\1>", rendered_shopping(plan, skill), re.S):
+        text = html.unescape(re.sub(r"<[^>]+>", "", body)).strip()
+        lines.append(text + ":" if tag == "h3" else "- " + text)
+    return "\n".join(lines)
 
 
 def check_aisles(ctx, spec):
@@ -412,6 +434,21 @@ def check_aisles(ctx, spec):
     headings = shopping_headings(ctx)
     wrong = [h for h in headings if re.search(spec["absent"], h)]
     return not wrong, "; ".join(headings) if not wrong else "prints " + "; ".join(wrong)
+
+
+def check_whole_counts(ctx, spec):
+    """Every counted row on the shopping list is a whole number.
+
+    A count is a bare number or a counting noun, never a weight, a volume or a
+    spoon. The recipes may count to the half; a shop sells whole ones (issue #23).
+    """
+    halves = []
+    for group in ctx.plan.get("shopping", []):
+        for item in group.get("items", []):
+            amount = ctx.validate.parse_amount(str(item.get("qty") or ""))
+            if amount and amount[1] not in ("g", "ml") and amount[1] not in SPOONS and abs(amount[0] - round(amount[0])) > 1e-9:
+                halves.append("%s %s" % (item.get("name"), item.get("qty")))
+    return not halves, "; ".join(halves) or "every count whole"
 
 
 def check_not_printed(ctx, spec):
@@ -436,6 +473,7 @@ CHECKS = {
     "round_pounds": check_round_pounds,
     "pack_unit": check_pack_unit,
     "aisles": check_aisles,
+    "whole_counts": check_whole_counts,
 }
 
 
@@ -453,7 +491,7 @@ def check_id(spec: dict) -> str:
     )
 
 
-ALWAYS = [{"check": "validates"}, {"check": "dishes_have_recipes"}]
+ALWAYS = [{"check": "validates"}, {"check": "dishes_have_recipes"}, {"check": "whole_counts"}]
 
 
 def without_plan(specs: list) -> list:
