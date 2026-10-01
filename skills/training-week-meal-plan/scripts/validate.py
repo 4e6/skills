@@ -2477,8 +2477,8 @@ def check_shopping_quantities(plan: dict) -> list:
                             6,
                             "shopping-quantity-in-pounds-beside-ounces",
                             item["name"] + " is on the list as " + have
-                            + ", which is what the week needs, but its pack is in"
-                            + " ounces and the page counts packs only where the two"
+                            + ", which is what the week needs, but its pack is not in"
+                            + " pounds and the page counts packs only where the two"
                             + " are written alike. A row with a pack is in ounces"
                             + " like its pack; set qty to " + buy + ".",
                             where,

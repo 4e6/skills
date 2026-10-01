@@ -3,7 +3,7 @@ type: Invariant
 title: The shopping list buys what the week uses
 description: Each row's quantity is what the recipes cook with, less what the fridge holds, and its days are the days that eat what it buys. One amount of food per row and never a pack size — except a staple, which is the jar and carries no days.
 tags: [plan-quality, shopping, validation]
-timestamp: 2026-10-01T16:40:14Z
+timestamp: 2026-10-01T16:57:50Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
 ---
@@ -127,7 +127,8 @@ copy — except a total in pounds that is no whole quarter or sits beside a pack
 in ounces, which it states in ounces, with the pack's ounces where the pack was
 in pounds. A row and a pack both in pounds are counted and left alone, though
 the skill writes both in ounces. Nothing compares the units otherwise, so a row
-in grams beside a pack in kilograms prints no count and draws no finding. Until 1.4.0 it said `1.625 lb`, and the lists copied it
+in grams beside a pack in kilograms prints no count and draws no finding. Until
+1.4.0 a repair said `1.625 lb`, and the lists copied it
 ([#18](https://github.com/4e6/skills/issues/18)). A repair always takes a
 decimal point. Check 2 compares the day tags.
 

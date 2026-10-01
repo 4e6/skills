@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T16:53:29Z
+timestamp: 2026-10-01T16:57:50Z
 sources: [evals/**]
 source_commit: 5bb4c77a5a1a342bc78b138597f2e5b6cc7a7c99
 ---
@@ -54,7 +54,8 @@ their weight in pounds**, as an American would. Every country case also counts
 the units the plan weighs food in, against its country's system, and so does
 the gran fondo, whose American gives kilograms: the pair tells the country's
 unit from the athlete's. Both US cases also fail a list with a pound in
-anything but whole quarters, such as `1.625 lb`.
+anything but whole quarters, such as `1.625 lb`, or a row written in another
+unit from its pack, which the page cannot count.
 
 **A count of the examples is evidence, not a verdict.** Porridge is an ordinary
 breakfast in Poland and in Brazil, and chocolate milk sells everywhere. So the
@@ -244,9 +245,9 @@ results of that run follow. **One run copied the example exactly**, so an
 example of what goes wrong is written as one to follow; the rule now gives
 only examples to copy.
 
-**In the draft's run, no list wrote an odd pound**, where 1.2.0 had written one in two of three gran
-fondo runs (`1.625 lb` of rice, `3.625 lb` of chicken) and 1.2.0's first draft
-in four of six.
+**In the draft's run, no list wrote an odd pound**, where 1.2.0 had written one
+in two of three gran fondo runs (`1.625 lb` of rice, `3.625 lb` of chicken) and
+1.2.0's first draft in four of six.
 
 - Every row in pounds was a whole quarter (`1 lb`, `1.25 lb`, `2.5 lb`,
   `3.75 lb`), and totals that were not went to ounces (`26 oz` of rice,
@@ -256,8 +257,9 @@ in four of six.
   every Denver run before (oatmeal, bagels, chocolate milk).
 - **The text did it alone.** The validator's new finding for a right row in odd
   pounds never fired in any transcript, and no repair landed on a row in
-  pounds. Against the 64 stored plans from before, the new validator differs
-  from the old only on the 17 odd rows.
+  pounds. Against the 64 stored plans from before, the released validator
+  differs from the old only on 18 rows: the 17 odd ones, and one `Bananas 2 lb`
+  beside a `4 oz` banana.
 - **One row and its pack still disagreed:** `Bananas 2 lb` beside a `4 oz`
   banana, which prints no count, the text's own example word for word. The US
   cases now check that a row and its weighed pack share a unit.
