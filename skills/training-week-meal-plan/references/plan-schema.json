@@ -321,7 +321,7 @@
               "Dairy, Eggs & Chilled",
               "Frozen"
             ],
-            "description": "The part of the shop the item is picked up in, never what it does nutritionally: potatoes are Fruit & Vegetables, tuna in a tin or can is Tins, Jars & Seasonings, butter is Dairy, Eggs & Chilled, walnuts and dried fruit are Rice, Pasta & Dry Goods. Where a zone differs by country, follow that country's shops."
+            "description": "The part of the shop the item is picked up in, never what it does nutritionally: potatoes are Fruit & Vegetables, tuna in a tin or can is Tins, Jars & Seasonings, butter is Dairy, Eggs & Chilled, walnuts and dried fruit are Rice, Pasta & Dry Goods. Where a zone differs by country, follow that country's shops. Written as listed here in every country: on a list in US units the page prints a US shop's name for the aisle, such as Produce for Fruit & Vegetables."
           },
           "items": {
             "minItems": 1,

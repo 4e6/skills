@@ -46,6 +46,11 @@
       "check": "units",
       "system": "us",
       "share": 0.8
+    },
+    {
+      "check": "aisles",
+      "system": "us",
+      "absent": "Tins|Chilled|Fruit & Vegetables|Meat & Fish"
     }
   ],
   "judge": [
