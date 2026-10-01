@@ -3,7 +3,7 @@ type: Glossary Term
 title: Carb periodization
 description: Carbohydrate scaled to each day's training, hardest days fed hardest, and fuel stated per session as sourced guidance with example food. What each figure is, where it comes from, and which need a professional.
 tags: [nutrition, domain]
-timestamp: 2026-09-30T14:00:00Z
+timestamp: 2026-10-01T10:31:40Z
 sources: [skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 01265d60524785eee06f6acb56fc010adb69359b
 ---
@@ -71,10 +71,15 @@ unmeasured.
 
 # The figures, and where each comes from
 
-**These are the only figures the host uses.** `fuelling.md` and step 2 tell it
-not to look up other guidelines. A host once searched the web for protein and
-carbohydrate recommendations mid-run; whatever it finds is unchecked, varies by
-run, and can contradict what the skill ships.
+**These are the default figures, not the only ones.** Until 1.1, `fuelling.md`
+and step 2 told the host not to look up other guidelines, after a host searched
+the web for protein and carbohydrate recommendations mid-run: whatever it finds
+is unchecked, varies by run, and can contradict what the skill ships. The ban
+was lifted because these figures assume a healthy athlete, and one whose coach
+or dietitian has given different targets, or who has a condition the file does
+not cover, needs those instead. `fuelling.md` now says to use them where given,
+say so in the summary, and keep to one set of figures across a plan — the part
+of the old reason that still holds.
 
 | Part | What the rules state | Source | Needs a professional |
 |---|---|---|---|

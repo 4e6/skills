@@ -3,7 +3,7 @@ type: Overview
 title: What this repository is
 description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a described training week into meals, a shopping list and a printable page; z-image-turbo-macos draws images on a Mac; llm-wiki keeps a codebase's wiki.
 tags: [overview]
-timestamp: 2026-09-30T21:57:09Z
+timestamp: 2026-10-01T10:31:40Z
 sources: [/README.md, skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md, skills/llm-wiki/SKILL.md]
 source_commit: dfbb7c71b3f6a33830d3a9f2f0e1d75b28c30ecc
 ---
@@ -48,7 +48,7 @@ Seven steps in `SKILL.md`, which the host follows:
 | Step | What happens | Page |
 |---|---|---|
 | 1 | Ask for the week, the weight, three optional things and which days | [the intake](/architecture/the-intake.md) |
-| 2 | Read the fuelling rules, and last week's dishes if there is a plan | [carb periodization](/domain/carb-periodization.md), [last week's plan](/architecture/last-weeks-plan.md) |
+| 2 | Read the fuelling rules, and look for recent plans to vary the dishes | [carb periodization](/domain/carb-periodization.md), [recent weeks](/architecture/last-weeks-plan.md) |
 | 3 | Write the plan as JSON against the published schema | [origin, repeat and leftover](/domain/origin-repeat-and-leftover.md) |
 | 4–5 | Check it with `validate.py`, repair at most twice | [the validator](/architecture/the-validator.md) |
 | 6 | Render the page with `render.py`, with photos where the host can draw | [the printable page](/architecture/the-printable-page.md), [dish photos](/architecture/dish-photos.md) |

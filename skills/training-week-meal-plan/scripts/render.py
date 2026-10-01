@@ -86,9 +86,9 @@ CSS_PATH = Path(__file__).resolve().parent.parent / "assets" / "plan.css"
 # not a photo sized as asked. The page's photos together may be 10 MB, every card
 # counted, because each card embeds its bytes again: the sample week's
 # twenty-one cards at 400 KB each would come to 8.4 MB, and the cap itself is a
-# page of about 13.5 MB once the bytes are base64 -- under the 16 MB a Claude
-# artifact may be, and far from the 48 MB page a preview refused. Tighter caps
-# than these refused photos from pages that would have opened.
+# page of about 13.5 MB once the bytes are base64 -- under the 16 MB some
+# hosts allow a published page, and far from the 48 MB page a preview refused.
+# Tighter caps than these refused photos from pages that would have opened.
 PHOTO_MAX_BYTES = 400 * 1024
 PHOTOS_MAX_BYTES = 10 * 1024 * 1024
 
