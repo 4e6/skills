@@ -64,7 +64,12 @@ Each run starts in a new folder outside any checkout, with the skill under test
 installed as a project skill: none of your skills, memory, CLAUDE.md or MCP
 servers. It can read, write and search inside that folder only, and run shell
 commands in Claude Code's sandbox, which writes only in that folder, reads
-nothing in your home folder and never reaches the network. It has nothing that
+nothing in your home folder and never reaches the network. The sandbox also
+gives every run's shell the same temporary folder, `/tmp/claude-<uid>`, where
+one run ran another's `$TMPDIR/build.py`. There the shell may read and write
+only files with no dot in their name, its own heredocs and bookkeeping, so an
+agent's `build.py` goes in its own folder. Claude Code keeps each run's command
+output in `.tmp` inside the run's folder instead (`CLAUDE_CODE_TMPDIR`). It has nothing that
 publishes, browses the web or puts up a menu, and it may not open the page it
 makes. What it does leave is its session, under `~/.claude/projects/`, as every
 Claude Code session does, and an empty entry there for each judge.
@@ -112,7 +117,11 @@ told once to go ahead, and the run records that it asked.
 `report` prints how often each check passed and each question was answered
 `yes`, per case. A run that says nothing about the skill is set aside in a row
 of its own and counted nowhere else: the agent was never offered the skill, the
-run was killed, or the API turned it away three times. Every other run counts:
+run was killed, the API turned it away three times, or another run's files
+reached it. That last is a plan byte for byte another run's, or a file in the
+shared temporary folder that another run named between two of this run's own
+uses of it; `report` looks across every folder it is given, since a before and
+an after are often run at once. Every other run counts:
 one that runs out of time is graded on whatever plan it wrote, one with no plan
 fails every check on the plan, and a judge that fails answers `unclear` to
 every question.
