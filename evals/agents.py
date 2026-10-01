@@ -50,8 +50,9 @@ class Turn:
 
 
 def _target(given: dict) -> str:
-    """What a refused call was after: its path or its command, shortened."""
-    return str(given.get("file_path") or given.get("path") or given.get("command") or "")[:160]
+    """What a refused call was after: its path or its command, whole, since the
+    `open` that explains a refusal is often the last thing in a long command."""
+    return str(given.get("file_path") or given.get("path") or given.get("command") or "")
 
 
 def _text(output) -> str:

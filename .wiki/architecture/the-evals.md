@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week; script checks and a tool-less judge grade it, as pass rates.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T12:30:57Z
+timestamp: 2026-10-01T13:06:44Z
 sources: [evals/**]
 source_commit: 7fb6472b4ab1212455f9834dc081fb9ac778e05c
 ---
@@ -173,25 +173,36 @@ The evals keep the isolated host and give up two things:
 - Which country a plan cooks for, [an open issue](https://github.com/4e6/skills/issues/10)
   these cases could carry.
 
-# First measurements
+# Measurements
 
-2026-10-01, one run per case, so anecdotes rather than rates. A pass costs about
-$12: $1.40–1.70 a run on Opus, and $0.10–0.20 for the judge.
+**2026-10-01, the seven cases three times each on Opus 5.5**: 21 runs, seven at
+a time, 20 minutes, $36. Each run took 4.3–6.6 minutes.
 
-- **Opus 5.5, all seven cases: every script check passed.** The loading days
-  came to 7.0 g/kg before the 10K; 10.0 and 10.0 before the half; 10.1 and
-  10.1 before the vegan half; 6.9 on the Saturday alone before the sub-90 half,
-  inside the 5% band, with Friday unloaded at 4.4. The control's Friday and
-  Saturday stayed at 3.1 and 6.5. The judge said `no` once: a reply wishing an
-  athlete *hoping for about 1:55* luck *for sub-1:55*.
-- **An earlier pass, discarded**, ran under the command allowlist, and two hosts
-  handed over unchecked plans because of it. One thing in it was the skill's and
-  not the harness's: a vegetarian's list bought plain parmesan, usually made
-  with animal rennet, and refried beans, which in the US are often made with lard.
-- **Haiku 4.5, the 10K case once**: a clean check, with two meals naming dishes
-  no recipe had ([the validator's gap](/architecture/the-validator.md#check-10-the-plan-against-its-own-ranking)),
-  and a reply saying the lunches and dinners differ from recent weeks when there
-  were none — what step 2 says never to do.
+- **Every script check passed in every run.** Every plan passed the checker
+  clean, with every dish's recipe present. Every race was ranked first and named
+  as a race. The two days before each long race were fed at 10.0–12.0 g/kg in all
+  15 measurements, and the day before the 10K at 7.0–10.0 in all three. The sub-90
+  half's Saturday came to 7.2–8.3 with its Friday at 4.2–5.2, and the control's
+  Friday and Saturday stayed at 3.1–4.0 and 6.1–6.2. Every long race's `during`
+  line gave 60–90 g an hour, and two of the triathlons' lines said it starts after
+  the swim. The vegan Ironman named no animal food, and no run claimed variety
+  against earlier weeks.
+- **The judge said `no` three times, all to *nothing invented*, and all real.**
+  A 10K's page assumed the race takes 40–60 minutes, a duration the athlete never
+  gave. An Ironman's `during` example was sized for about 10 hours on the bike and
+  run, taken from the 11h30 target less a swim the athlete never timed. A half
+  Ironman's `total` said *~4h25* for sessions that add up to 4h35.
 
-**Not yet**: three runs per case, and more than one run on a small model.
+**Earlier, one run per case** of a first set that held a race with no distance,
+one on the plan's first day and a vegan half marathon. Every script check
+passed, and the race given no distance had none assumed in its session names.
+Two things in it were the skill's and not the harness's:
 
+- **Vegetarian groceries:** a vegetarian's list bought plain parmesan (usually
+  made with animal rennet) and refried beans (often made with lard in the US).
+- **Haiku 4.5, the 10K case once:** the plan checked clean with two meals naming
+  dishes no recipe had ([#13](https://github.com/4e6/skills/issues/13)), and the
+  reply said the lunches and dinners differ from recent weeks when there were
+  none, which step 2 says never to do.
+
+**Not yet**: more than one run on a small model.

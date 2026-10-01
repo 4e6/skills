@@ -3,7 +3,7 @@ type: Glossary Term
 title: Carb periodization
 description: Carbohydrate scaled to each day's training, hardest days fed hardest, and fuel stated per session as sourced guidance with example food. What each figure is, where it comes from, and which need a professional.
 tags: [nutrition, domain]
-timestamp: 2026-10-01T11:43:32Z
+timestamp: 2026-10-01T13:06:44Z
 sources: [skills/training-week-meal-plan/references/fuelling.md]
 source_commit: 6f2d1ba5595c818e020d416797ec5441e3486f45
 ---
@@ -293,13 +293,22 @@ says so, and the day's `session` names the race — and
 [check 10](/architecture/the-validator.md#check-10-the-plan-against-its-own-ranking)
 then holds its meals to that.
 
-**Measured, 2026-10-01**, by [the evals](/architecture/the-evals.md#first-measurements),
-once per case on Opus 5.5: six race weeks and a control. Every race was ranked
-first and named as one, and the days before landed in their bands, the snack
-line making up the gap: 7.0 g/kg before a 10K, about 10 g/kg on each of the two
-days before a half marathon, vegan included, and the day before alone for a half
-run in under 90 minutes. A race given no distance had none assumed. One run per
-case is an anecdote, not a rate.
+**Measured, 2026-10-01**, by [the evals](/architecture/the-evals.md#measurements):
+on Opus 5.5, every one of 21 runs was right. Those are three each of a 10K, a half
+marathon, a half run in under 90 minutes, a gran fondo, a half Ironman, a vegan
+Ironman and a week with no race.
+
+- **Ranking:** every race was ranked first and named as a race.
+- **Loading:** the days before each race were fed in their band, the snack line
+  making up the gap. That means 7–10 g/kg the day before the 10K and the sub-90
+  half, and 10–12 g/kg on each of the two days before the longer races. Days the
+  rules do not load stayed below 10 g/kg.
+- **Fuel during long races:** every race over 2½ hours carried 60–90 g an hour.
+
+The one fault was an assumed duration, three times in 21 runs: a 10K's
+40–60 minutes, an Ironman's 10 hours on the bike and run, and a training total
+added up wrong. That breaks the rule that a session's length is printed only
+where the week states one.
 
 # Sources
 
