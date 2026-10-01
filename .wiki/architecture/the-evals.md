@@ -230,7 +230,7 @@ onto 1.4.0's ounces ([#23](https://github.com/4e6/skills/issues/23)): 6 runs, 6
 minutes, $10. **Both rules held together.** Every list was whole in its
 counts, wrote no pound but a whole quarter and no row in another unit from its
 pack, and every drained can printed its count first (`2 cans (18 oz drained)`,
-`3 cans (12 oz drained)` of tuna), 11 rows. The judge said every list could be
+`3 cans (12 oz drained)` of tuna), 9 rows. The judge said every list could be
 bought as written, 6 of 6. Its two `no`s were the ones below: Denver's week
 added up to *~5h20* for 5h10, and the gran fondo ridden *at roughly tempo*.
 
