@@ -17,7 +17,7 @@ compatibility: >-
   without it you still get the plan. The plan is written in English.
 metadata:
   author: 4e6
-  version: "1.1.1"
+  version: "1.1.2"
 ---
 
 # A week of meals that tracks the training

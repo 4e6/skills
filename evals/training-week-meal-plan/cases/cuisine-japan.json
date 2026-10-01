@@ -1,0 +1,46 @@
+{
+  "id": "cuisine-japan",
+  "title": "A training week in Osaka: does it cook what Japan eats?",
+  "race": false,
+  "country": "Japan",
+  "weight_kg": 64,
+  "message": [
+    "Could you plan my meals for next week, {Mon} to {Sun}?",
+    "",
+    "Mon: rest",
+    "Tue: 1h10 run with 5 x 5 min at threshold",
+    "Wed: 45 min easy run",
+    "Thu: 50 min easy run with 6 strides",
+    "Fri: rest",
+    "Sat: 1h45 long run, steady",
+    "Sun: 40 min recovery jog",
+    "",
+    "I weigh 64 kg and live in Osaka, Japan. No restrictions. The fridge is empty.",
+    "That's everything — please go ahead and make the plan."
+  ],
+  "checks": [
+    {
+      "check": "covers",
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    {
+      "check": "no_race"
+    },
+    {
+      "check": "anchor_foods",
+      "where": "dishes"
+    },
+    {
+      "check": "anchor_foods",
+      "where": "lines"
+    }
+  ]
+}

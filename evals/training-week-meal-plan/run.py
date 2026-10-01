@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import fnmatch
 import json
 import re
 import shutil
@@ -64,9 +65,10 @@ RESULTS = HERE / "results"
 NUDGE = "Go ahead with what I've given you, I don't have anything to add."
 # Runs at once. The limit is the account, not the machine: a run is one `claude`
 # process of about 0.7 GB, mostly waiting on the model. Seven is a wave of the
-# seven cases, so three runs each finish in three waves, about 20 minutes, where
-# one at a time takes about two hours. Much wider and the runs share the
-# account's rate limit and slow each other down, or are turned away and retried.
+# six race weeks and their control, so three runs each finish in three waves,
+# about 20 minutes, where one at a time takes about two hours. Much wider and the runs
+# share the account's rate limit and slow each other down, or are turned away
+# and retried.
 JOBS = 7
 DEFAULT_JUDGE = "opus"
 RETRIES = 2
@@ -107,6 +109,26 @@ RACE_QUESTIONS = [
      "hours, roughly 30-60 g an hour; longer, 60-90 g an hour. A session that carries "
      "fuel has an `after` line, carbohydrate with protein within about 2 hours. Do the "
      "race session's lines follow these rules for the race as the athlete described it?"),
+]
+
+# Asked of every run whose case names the athlete's `country`. The skill says to
+# cook what an ordinary household there cooks, the breakfast in particular, and
+# to name shops that trade there.
+COUNTRY_QUESTIONS = [
+    ("breakfasts-local",
+     "Is every breakfast in the plan one an ordinary household in {country} would "
+     "make on a weekday? Name any that would be unusual there."),
+    ("main-meals-local",
+     "Is every lunch and dinner in the plan one an ordinary household in {country} "
+     "would cook on a weekday? Name any that would be unusual there."),
+    ("lines-local",
+     "Is the example food on the sessions' fuel lines and the days' snack lines food "
+     "a person in {country} would buy in an ordinary local shop and eat without "
+     "thinking it foreign? Sports products (an energy gel, an isotonic drink, an "
+     "energy bar) count as ordinary anywhere. Name any that would not be."),
+    ("shops-trade-there",
+     "Does every supermarket or shop chain the plan or the reply names trade in "
+     "{country}? Answer yes if none is named."),
 ]
 
 JUDGE_SCHEMA = {
@@ -159,6 +181,8 @@ def message(case: dict, today: dt.date) -> str:
 
 def questions(case: dict) -> list:
     asked = COMMON_QUESTIONS + (RACE_QUESTIONS if case.get("race") else [])
+    if case.get("country"):
+        asked += [(qid, q.format(country=case["country"])) for qid, q in COUNTRY_QUESTIONS]
     return asked + [(q["id"], q["question"]) for q in case.get("judge", [])]
 
 
@@ -321,8 +345,11 @@ def cmd_list(args):
 
 def cmd_run(args):
     cases = load_cases()
-    chosen = args.case or list(cases)
-    unknown = [c for c in chosen if c not in cases]
+    chosen, unknown = [], []
+    for pattern in args.case or ["*"]:
+        matched = [c for c in cases if fnmatch.fnmatchcase(c, pattern)]
+        unknown += [] if matched else [pattern]
+        chosen += [c for c in matched if c not in chosen]
     if unknown:
         raise SystemExit("no such case: " + ", ".join(unknown))
     stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -462,7 +489,8 @@ def main(argv=None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list", help="the cases")
     run = sub.add_parser("run", help="run cases and grade them")
-    run.add_argument("--case", action="append", help="a case id; repeat for more (default: all)")
+    run.add_argument("--case", action="append",
+                     help="a case id or a pattern such as 'cuisine-*'; repeat for more (default: all)")
     run.add_argument("--runs", type=int, default=3, help="runs per case (default 3)")
     run.add_argument("--skill-ref", help="a git ref to take the skill from (default: working tree)")
     run.add_argument("--agent", default="claude-code", choices=sorted(agents.AGENTS))
