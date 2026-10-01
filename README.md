@@ -55,7 +55,9 @@ Upload the zip as it is; it holds the skill's folder, which is what both expect.
 
 An uploaded skill does not update itself. Each new version is a
 [release](https://github.com/4e6/skills/releases) with its own zip; to take it,
-upload that zip in place of the old one.
+upload that zip in place of the old one. A version is three numbers: the last
+moving alone is a fix, the middle one a change you would notice, the first one
+something that stops working as it did.
 
 ## Licence
 
