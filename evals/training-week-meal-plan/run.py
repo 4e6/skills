@@ -42,6 +42,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -60,6 +61,14 @@ SKILL = "training-week-meal-plan"
 CASES = HERE / "cases"
 RESULTS = HERE / "results"
 NUDGE = "Go ahead with what I've given you, I don't have anything to add."
+# Runs at once. The limit is the account, not the machine: a run is one `claude`
+# process of about 0.7 GB, mostly waiting on the model. Seven is a wave of the
+# seven cases, so three runs each finish in three waves, about 20 minutes, where
+# one at a time takes about two hours. Much wider and the runs share the
+# account's rate limit and slow each other down, or are turned away and retried.
+JOBS = 7
+RETRIES = 2
+RETRY_WAIT = 60  # seconds, times the attempt
 
 # Asked of every run. A question is passed by a `yes`.
 COMMON_QUESTIONS = [
@@ -143,10 +152,7 @@ def message(case: dict, today: dt.date) -> str:
 
 
 def questions(case: dict) -> list:
-    """The common questions, the race week's where it is one, and the case's own,
-    less any the case says do not apply to it (`skip_judge`)."""
     asked = COMMON_QUESTIONS + (RACE_QUESTIONS if case.get("race") else [])
-    asked = [q for q in asked if q[0] not in case.get("skip_judge", [])]
     return asked + [(q["id"], q["question"]) for q in case.get("judge", [])]
 
 
@@ -197,6 +203,7 @@ def run_one(agent, case: dict, n: int, out: Path, skill: Path, today: dt.date) -
         "run": n,
         "turns": len(turns),
         "is_error": any(t.is_error for t in turns),
+        "api_error": next((t.api_error for t in turns if t.api_error), None),
         "cost_usd": round(sum(t.cost_usd for t in turns), 4),
         "models": sorted({m for t in turns for m in t.models}),
         "skill_listed": SKILL in turns[0].listed,
@@ -289,7 +296,15 @@ def cmd_run(args):
         out = root / case_id / str(n)
         say("start  %s #%d" % (case_id, n))
         try:
-            run_one(agent, cases[case_id], n, out, skill, today)
+            for attempt in range(1, RETRIES + 2):
+                result = run_one(agent, cases[case_id], n, out, skill, today)
+                if not (result["is_error"] and result["api_error"]) or attempt > RETRIES:
+                    break
+                # The API turned the run away (rate limit, overload): the skill
+                # never got a fair go, so the run starts again from nothing.
+                say("retry  %s #%d  API error %s" % (case_id, n, result["api_error"]))
+                shutil.rmtree(out)
+                time.sleep(RETRY_WAIT * attempt)
             result = grade_one(agent, cases[case_id], out, skill, args.judge_model,
                                not args.no_judge)
             failed = [c["id"] for c in result["checks"] if not c["passed"]]
@@ -297,7 +312,9 @@ def cmd_run(args):
         except Exception as error:
             say("ERROR  %s #%d  %s: %s" % (case_id, n, type(error).__name__, error))
 
-    jobs = [(c, n) for c in chosen for n in range(1, args.runs + 1)]
+    # Run-major, so the first wave holds every case once and a pass stopped
+    # early still has something to say about each.
+    jobs = [(c, n) for n in range(1, args.runs + 1) for c in chosen]
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
         list(pool.map(one, jobs))
     print(report([root]))
@@ -312,6 +329,9 @@ def cmd_grade(args):
     model = args.judge_model or meta.get("judge_model")
     for result_path in sorted(root.glob("*/*/result.json")):
         out = result_path.parent
+        if out.parent.name not in cases:
+            say("skip   %s: no such case any more" % out.parent.name)
+            continue
         grade_one(agent, cases[out.parent.name], out, root / "skill", model, not args.no_judge)
     print(report([root]))
 
@@ -372,7 +392,7 @@ def main(argv=None) -> int:
     run.add_argument("--model", help="the agent's model (default: its own)")
     run.add_argument("--judge-model", default="opus", help="the judge's model (default opus)")
     run.add_argument("--no-judge", action="store_true", help="script checks only")
-    run.add_argument("--jobs", type=int, default=1, help="runs at once (default 1)")
+    run.add_argument("--jobs", type=int, default=JOBS, help="runs at once (default %d)" % JOBS)
     run.add_argument("--max-budget-usd", type=float, default=8.0, help="cap per agent call")
     run.add_argument("--label", help="appended to the results folder's name")
     grade = sub.add_parser("grade", help="grade a results folder again")

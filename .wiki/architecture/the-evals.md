@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, sealed off from the machine, plans a fixed athlete's week; script checks and a tool-less judge grade it, as pass rates.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T11:43:32Z
+timestamp: 2026-10-01T12:16:28Z
 sources: [evals/**]
 source_commit: 842198a385bb8965ec414740a88dddde8b8e5950
 ---
@@ -17,6 +17,26 @@ measurement: an agent runs the skill on a fixed athlete, and what it wrote is
 graded. Race weeks came first, because their figures are prescribed per
 kilogram and a wrong day is easy to name
 ([carb periodization](/domain/carb-periodization.md#race-weeks)).
+
+# Seven cases: the race distances, and a control
+
+Each case is a distance the rules treat differently, so a wrong band shows up as
+a number:
+
+- **a 10K**, the day before at 7–10 g/kg;
+- **a half marathon**, the two days before at 10–12 g/kg, and **one run in
+  under 90 minutes**, loaded like the shorter race;
+- **a 5-hour gran fondo, a half Ironman with a lake swim, and a vegan Ironman**:
+  two days loaded, and the race's `during` line at 60–90 g an hour with example
+  food that adds up over the race. That line is the one the rules call the
+  commonest to get wrong. The triathlons add an open-water swim with nothing
+  during it, and the vegan one loading at up to 864 g a day with no animal food;
+- **a control**, the half-marathon week with a long run in place of the race,
+  so nothing gets loaded or called a race.
+
+The first set held a race given no distance, one on the plan's first day, and a
+vegan half marathon. They went to keep the list short: the first two test rules
+the long events do not reach, and those are now untested.
 
 # Outside the skill, and run by hand
 
@@ -64,6 +84,18 @@ nobody to answer it, and the intake is not what is tested. The dates are next
 week's, worked out on the day it runs, because the agent's context carries the
 real date and the skill refuses to plan a day already gone. An agent that asks
 anyway is told once to go ahead, and the run records that it asked.
+
+# Seven at a time
+
+The limit on parallel runs is the account, not the machine. A run is one
+`claude` process of about 0.7 GB, mostly waiting on the model, and the author's
+machine has 15 cores and 48 GB. Every run shares the account's rate limit, so
+much wider and they slow each other down, or are turned away. Seven is one wave
+of the seven cases, so the default three runs each take three waves, about 20
+minutes, where one at a time took two hours. Jobs go out run by run rather than
+case by case, so a pass stopped early still has every case once. A run the API
+turns away starts again from nothing, twice at most: the skill never got a fair
+go, and counting it would grade the account.
 
 # Two layers of grading
 

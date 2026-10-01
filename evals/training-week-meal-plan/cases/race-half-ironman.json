@@ -1,0 +1,69 @@
+{
+  "id": "race-half-ironman",
+  "title": "Sunday half Ironman: open-water swim unfuelled, bike and run at 60-90 g an hour",
+  "race": true,
+  "weight_kg": 66,
+  "message": [
+    "Can you plan my meals for next week, {Mon} to {Sun}? I'm racing a half Ironman (70.3) on Sunday and I'm aiming for about 5h15. The swim is in a lake.",
+    "",
+    "Monday: rest",
+    "Tuesday: 45 min pool swim with 8 x 100 m hard, then 40 min easy run",
+    "Wednesday: 1h30 ride with 2 x 15 min at race pace",
+    "Thursday: 40 min run with 3 x 5 min at threshold",
+    "Friday: 20 min easy swim",
+    "Saturday: 30 min easy bike with a few short efforts and a 10 min jog",
+    "Sunday: half Ironman race",
+    "",
+    "I weigh 66 kg and live in Australia. No restrictions. I've got half a bag of spinach and some Greek yoghurt to use up.",
+    "That's everything — please go ahead and make the plan."
+  ],
+  "checks": [
+    {
+      "check": "covers",
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    {
+      "check": "ranked_first",
+      "day": "Sunday"
+    },
+    {
+      "check": "race_named",
+      "day": "Sunday"
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Friday",
+      "min": 10,
+      "max": 12
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Saturday",
+      "min": 10,
+      "max": 12
+    },
+    {
+      "check": "race_during",
+      "day": "Sunday",
+      "pattern": "60\\s*[–-]\\s*90"
+    }
+  ],
+  "judge": [
+    {
+      "id": "during-adds-up",
+      "question": "Taken as food for the whole race, does the race's `during` example add up to roughly its hourly carbohydrate range over the time the athlete expects to take? Count about 30–40 g for a 500 ml bottle of isotonic drink, 21–27 g for an energy gel, 43 g for an energy bar and 27 g for a banana."
+    },
+    {
+      "id": "swim-unfuelled",
+      "question": "The race's swim is in open water. Does the plan put no carbohydrate during the swim, and the race's hourly fuelling on the bike and the run?"
+    }
+  ]
+}

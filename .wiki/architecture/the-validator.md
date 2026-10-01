@@ -135,7 +135,8 @@ meals do not match their recipes on the grounds that the day and portion checks
 already name the fault, but no check compares a meal's `dish` or `alongside`
 with the recipe titles at that sitting. The first eval run found a plan exiting
 0 with two meals naming dishes no recipe had: the page cannot link them to a
-method, and check 10 ignored both days. Not yet fixed; the
+method, and check 10 ignored both days. Not yet fixed
+([#13](https://github.com/4e6/skills/issues/13)); the
 [evals](/architecture/the-evals.md) check it themselves.
 
 # Tolerance is matched to what can be answered

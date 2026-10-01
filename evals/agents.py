@@ -40,6 +40,7 @@ class Turn:
     reads: list = field(default_factory=list)
     listed: list = field(default_factory=list)
     models: list = field(default_factory=list)
+    api_error: object = None
     denied: list = field(default_factory=list)
 
 
@@ -118,6 +119,7 @@ class ClaudeCode:
                 turn.cost_usd = event.get("total_cost_usd") or 0.0
                 turn.denied = [d.get("tool_name") for d in event.get("permission_denials", [])]
                 turn.models = sorted(event.get("modelUsage") or {})
+                turn.api_error = event.get("api_error_status")
         return turn
 
     def judge(self, workdir: Path, prompt: str, schema: dict, model: str | None) -> tuple:

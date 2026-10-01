@@ -119,18 +119,26 @@ def check_carbs_per_kg(ctx, spec):
     return ok, "%.1f g/kg (meals %d g + snacks %d g), wanted %s" % (per_kg, meals, snacks, wanted)
 
 
-def session_names(plan: dict) -> str:
-    return "\n".join(
-        text
-        for d in plan.get("days", [])
-        for text in [d.get("session") or ""] + [s.get("name") or "" for s in d.get("sessions", [])]
-    )
+def check_race_during(ctx, spec):
+    """The race's `during` guidance gives the range `pattern` matches.
+
+    A race over two and a half hours takes 60-90 g an hour; this reads only the
+    range, and the judge whether the example food adds up to it.
+    """
+    entry = day(ctx.plan, spec["day"])
+    if entry is None:
+        return False, spec["day"] + " is not in the plan"
+    lines = [
+        ((s.get("during") or {}).get("guidance") or "")
+        for s in entry.get("sessions", [])
+        if RACE.search(s.get("name") or "")
+    ]
+    ok = any(re.search(spec["pattern"], line) for line in lines)
+    return ok, "during: %r" % lines
 
 
 def check_not_printed(ctx, spec):
-    """`pattern` appears nowhere printed, or with `in: sessions` in no session's name."""
-    text = session_names(ctx.plan) if spec.get("in") == "sessions" else printed(ctx.plan)
-    match = re.search(spec["pattern"], text, re.I)
+    match = re.search(spec["pattern"], printed(ctx.plan), re.I)
     return match is None, ("prints %r" % match.group(0)) if match else "absent"
 
 
@@ -142,6 +150,7 @@ CHECKS = {
     "race_named": check_race_named,
     "no_race": check_no_race,
     "carbs_per_kg": check_carbs_per_kg,
+    "race_during": check_race_during,
     "not_printed": check_not_printed,
 }
 

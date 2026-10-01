@@ -5,8 +5,8 @@ and what it wrote is graded. They are run by hand when a change to a skill's
 behaviour needs measuring. They are never run in CI, and never released: a
 skill's zip is built from its own folder, and nothing here is in it.
 
-Only `training-week-meal-plan` has them so far, and its first cases are race
-weeks.
+Only `training-week-meal-plan` has them so far: six race weeks, from a 10K to
+an Ironman, and a control week with no race.
 
 ## Running them
 
@@ -17,8 +17,14 @@ money, so start small:
 ```sh
 python3 evals/training-week-meal-plan/run.py list
 python3 evals/training-week-meal-plan/run.py run --case race-10k-saturday --runs 1
-python3 evals/training-week-meal-plan/run.py run --runs 3 --jobs 3
+python3 evals/training-week-meal-plan/run.py run
 ```
+
+The last is every case three times, seven runs at once: about 20 minutes and
+$35 on Opus. `--jobs` changes how many run at once. The limit is your account's
+rate limit, not the machine (a run is one `claude` process of about 0.7 GB,
+mostly waiting on the model): much wider than seven and the runs slow each other
+down. A run the API turns away is started again, twice at most.
 
 `--model` picks the agent's model and `--judge-model` the judge's (default
 `opus`); `--no-judge` runs the script checks alone. Results land in
@@ -60,8 +66,9 @@ told once to go ahead, and the run records that it asked.
   time: the plan is the skill's own `validate.py` clean, every dish a meal names
   has a recipe (which `validate.py` does not check), it covers the right
   days, the race is ranked first and named as one, a day's carbohydrate per
-  kilogram (meals plus the snack line's minimum) is in range, and nothing is
-  printed that should not be.
+  kilogram (meals plus the snack line's minimum) is in range, a long race's
+  `during` line gives 60–90 g an hour, and nothing is printed that should not
+  be.
 - **The judge** is an agent with no tools that reads the athlete's message, the
   plan and the reply, and answers each question `yes`, `no` or `unclear` with a
   reason. Some questions are asked of every run (the summary, invented figures,
@@ -81,10 +88,7 @@ A case is one JSON file in `evals/training-week-meal-plan/cases/`, named for its
 - `weight_kg`: the weight the message gives, which the per-kilogram checks use.
 - `race`: whether the week holds a race, which adds the race-week questions.
 - `checks`: script checks from `checks.py`'s `CHECKS`, each with what it needs:
-  a `day`, a `min` and `max` in g/kg, a `pattern` (searched in everything the
-  page prints, or with `"in": "sessions"` in session names only). An `id` names
-  one where the default would repeat.
+  a `day`, a `min` and `max` in g/kg, a `pattern`. An `id` names one where the
+  default would repeat.
 - `judge`: the case's own questions, each with an `id`. Word them so that `yes`
   is the right answer.
-- `skip_judge`: ids of common questions that do not apply to the case, such as
-  the dinner before a race that falls on the plan's first day.
