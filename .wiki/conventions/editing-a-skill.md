@@ -1,7 +1,7 @@
 ---
 type: Convention
 title: Editing a skill
-description: Re-read the two upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone, and a change to behaviour or to the page is judged by running it.
+description: Re-read the two upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone; a change to behaviour or to the page is judged by running it.
 tags: [skills, authoring, review]
 timestamp: 2026-10-01T12:40:00Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
@@ -66,14 +66,16 @@ it ([which copy is the source](/questions/which-copy-is-the-source.md)).
 - **The name is a noun phrase**, not the preferred gerund
   ([why](/architecture/the-payload.md#frontmatter-the-host-reads)). Renaming it
   breaks every install, since the folder name must match.
-- **It is not tested systematically across models, and has no eval suite.** The
-  simulated runs recorded here are mostly Opus, with some Sonnet and Haiku. That
-  is a known gap, not a decision.
+- **It is not tested systematically across models.** The simulated runs
+  recorded here are mostly Opus, with some Sonnet and Haiku. That is a known
+  gap, not a decision. [The evals](/architecture/the-evals.md) take a model as
+  an option, and so far cover race weeks only.
 
 # Do not cut prose on argument alone
 
-With no eval suite, nothing shows that removing a rule costs nothing. Where a
-rule's value is unmeasured, leave it.
+Nothing shows that removing a rule costs nothing until it is measured. Where a
+rule's value is unmeasured, leave it; where [the evals](/architecture/the-evals.md)
+have a case for it, run them before and after.
 
 # How a change to behaviour is measured
 
@@ -87,6 +89,9 @@ The measurements in this bundle share a method, and it is the one to reuse:
   pairwise judge per scenario compares the arms as X and Y.
 - **Simulated hosts are not real ones.** Say which it was, and what the run did
   not cover — model sizes, real hosts, real tools.
+
+[The evals](/architecture/the-evals.md) script the host's half of this, from the
+command line, and give up the responder and the pairwise judge.
 
 # Judging a change to the page
 

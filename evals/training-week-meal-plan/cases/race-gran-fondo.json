@@ -1,0 +1,65 @@
+{
+  "id": "race-gran-fondo",
+  "title": "Sunday gran fondo, about 5 hours: two days loaded, 60-90 g an hour",
+  "race": true,
+  "weight_kg": 78,
+  "message": [
+    "Meal plan for next week please, {Mon} to {Sun}. Sunday is a 160 km gran fondo that I'm racing, I expect it to take about 5 hours.",
+    "",
+    "Mon: rest",
+    "Tue: 1h15 on the turbo with 3 x 10 min at threshold",
+    "Wed: 1h30 easy ride",
+    "Thu: 1h on the turbo with 5 x 3 min at VO2max",
+    "Fri: rest",
+    "Sat: 30 min easy spin with 3 short openers",
+    "Sun: gran fondo, 160 km",
+    "",
+    "I weigh 78 kg and live in the United States. No restrictions. Fridge is empty.",
+    "That's everything — please go ahead and make the plan."
+  ],
+  "checks": [
+    {
+      "check": "covers",
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    {
+      "check": "ranked_first",
+      "day": "Sunday"
+    },
+    {
+      "check": "race_named",
+      "day": "Sunday"
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Friday",
+      "min": 10,
+      "max": 12
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Saturday",
+      "min": 10,
+      "max": 12
+    },
+    {
+      "check": "race_during",
+      "day": "Sunday",
+      "pattern": "60\\s*(?:[–-]|to)\\s*90"
+    }
+  ],
+  "judge": [
+    {
+      "id": "during-adds-up",
+      "question": "Taken as food for the whole race, does the race's `during` example add up to roughly its hourly carbohydrate range over the time the athlete expects to take? Count about 30–40 g for a 500 ml bottle of isotonic drink, 21–27 g for an energy gel, 43 g for an energy bar and 27 g for a banana."
+    }
+  ]
+}

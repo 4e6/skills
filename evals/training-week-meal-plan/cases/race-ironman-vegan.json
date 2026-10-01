@@ -1,0 +1,68 @@
+{
+  "id": "race-ironman-vegan",
+  "title": "Vegan Ironman: loading at 10-12 g/kg without animal food",
+  "race": true,
+  "weight_kg": 72,
+  "message": [
+    "Hi! Please make me a meal plan for next week, {Mon} to {Sun}. Sunday is my Ironman, I'm hoping to finish in around 11h30. The swim is in the sea.",
+    "",
+    "Monday: 30 min easy swim",
+    "Tuesday: 1h bike with 3 x 8 min at race effort",
+    "Wednesday: 40 min easy run",
+    "Thursday: 30 min swim with a few race-pace 200s",
+    "Friday: rest",
+    "Saturday: 20 min easy ride and a 10 min jog to check the bike",
+    "Sunday: Ironman race",
+    "",
+    "I weigh 72 kg and live in the United Kingdom. I'm vegan. I've got 200 g cooked lentils and 2 ripe avocados to use up.",
+    "That's everything — please go ahead and make the plan."
+  ],
+  "checks": [
+    {
+      "check": "covers",
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    {
+      "check": "ranked_first",
+      "day": "Sunday"
+    },
+    {
+      "check": "race_named",
+      "day": "Sunday"
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Friday",
+      "min": 10,
+      "max": 12
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Saturday",
+      "min": 10,
+      "max": 12
+    },
+    {
+      "check": "race_during",
+      "day": "Sunday",
+      "pattern": "60\\s*(?:[–-]|to)\\s*90"
+    },
+    {
+      "check": "vegan"
+    }
+  ],
+  "judge": [
+    {
+      "id": "during-adds-up",
+      "question": "Taken as food for the whole race, does the race's `during` example add up to roughly its hourly carbohydrate range over the time the athlete expects to take? Count about 30–40 g for a 500 ml bottle of isotonic drink, 21–27 g for an energy gel, 43 g for an energy bar and 27 g for a banana."
+    }
+  ]
+}

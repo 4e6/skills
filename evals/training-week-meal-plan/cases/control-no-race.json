@@ -1,0 +1,51 @@
+{
+  "id": "control-no-race",
+  "title": "Control: the half-marathon week with a long run instead of a race",
+  "race": false,
+  "weight_kg": 62,
+  "message": [
+    "I need a meal plan for next week, {Mon} to {Sun}.",
+    "",
+    "Monday: 50 min easy run",
+    "Tuesday: 55 min with 4 x 6 min at threshold",
+    "Wednesday: rest",
+    "Thursday: 40 min easy",
+    "Friday: rest",
+    "Saturday: 20 min easy jog with 4 strides",
+    "Sunday: 1h55 long run, steady",
+    "",
+    "I weigh 62 kg and live in Australia. No restrictions. I've got half a bag of spinach and some Greek yoghurt to use up.",
+    "That's everything — please go ahead and make the plan."
+  ],
+  "checks": [
+    {
+      "check": "covers",
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    {
+      "check": "ranked_first",
+      "day": "Sunday"
+    },
+    {
+      "check": "no_race"
+    },
+    {
+      "check": "not_loaded",
+      "day": "Friday",
+      "below": 10
+    },
+    {
+      "check": "not_loaded",
+      "day": "Saturday",
+      "below": 10
+    }
+  ]
+}

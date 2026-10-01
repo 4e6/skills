@@ -1,0 +1,59 @@
+{
+  "id": "race-half-sub90",
+  "title": "Half marathon under 90 minutes: loaded like a shorter race",
+  "race": true,
+  "weight_kg": 68,
+  "message": [
+    "Meal plan for next week please, {Mon} to {Sun}. I'm racing a half marathon on Sunday and aiming for 1:24.",
+    "",
+    "Mon: 60 min easy",
+    "Tue: 70 min with 3 x 10 min at half marathon pace",
+    "Wed: 45 min easy",
+    "Thu: 50 min with 5 x 3 min at 10K pace",
+    "Fri: rest",
+    "Sat: 25 min easy with strides",
+    "Sun: half marathon race",
+    "",
+    "I weigh 68 kg and live in Canada. No restrictions. Nothing in the fridge worth mentioning.",
+    "That's everything — please go ahead and make the plan."
+  ],
+  "checks": [
+    {
+      "check": "covers",
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    {
+      "check": "ranked_first",
+      "day": "Sunday"
+    },
+    {
+      "check": "race_named",
+      "day": "Sunday"
+    },
+    {
+      "check": "carbs_per_kg",
+      "day": "Saturday",
+      "min": 7,
+      "max": 10
+    },
+    {
+      "check": "not_loaded",
+      "day": "Friday",
+      "below": 10
+    }
+  ],
+  "judge": [
+    {
+      "id": "sub90-one-day",
+      "question": "The athlete expects to finish the half marathon in about 1:24, under 90 minutes. Does the plan load carbohydrate on Saturday alone, as for a race under 90 minutes, rather than over both Friday and Saturday?"
+    }
+  ]
+}

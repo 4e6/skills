@@ -3,7 +3,7 @@ type: Overview
 title: What this repository is
 description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a described training week into meals, a shopping list and a printable page; z-image-turbo-macos draws images on a Mac; llm-wiki keeps a codebase's wiki.
 tags: [overview]
-timestamp: 2026-10-01T10:31:40Z
+timestamp: 2026-10-01T11:43:32Z
 sources: [/README.md, skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md, skills/llm-wiki/SKILL.md]
 source_commit: 88345cbfeda6e4e157884cf119b046edfdd0008e
 ---
@@ -59,6 +59,9 @@ runs, checked in code: [every cooked portion is eaten](/invariants/portion-conse
 and [the list buys what the week uses](/invariants/the-list-buys-what-the-week-uses.md).
 A third is a rule the whole skill is organised around:
 [nothing about the athlete is invented](/invariants/nothing-about-the-athlete-is-invented.md).
+
+Whether a host following the rules writes the right plan is measured on demand,
+outside the skill, by [the evals](/architecture/the-evals.md): race weeks so far.
 
 # Where it came from
 
