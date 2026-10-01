@@ -3,7 +3,7 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-timestamp: 2026-10-01T15:30:19Z
+timestamp: 2026-10-01T16:06:07Z
 sources: [evals/**]
 source_commit: 6baaea7682972296b9ace115aa6a8e9adacec9c5
 ---
@@ -53,7 +53,8 @@ format to copy, where copying would show first. **The Denver athlete gives
 their weight in pounds**, as an American would. Every country case also counts
 the units the plan weighs food in, against its country's system, and so does
 the gran fondo, whose American gives kilograms: the pair tells the country's
-unit from the athlete's.
+unit from the athlete's. Both US cases also fail a list with a pound in
+anything but whole quarters, such as `1.625 lb`.
 
 **A count of the examples is evidence, not a verdict.** Porridge is an ordinary
 breakfast in Poland and in Brazil, and chocolate milk sells everywhere. So the
@@ -210,6 +211,28 @@ The evals keep the isolated host and give up two things:
 
 # Measurements
 
+**2026-10-01, the two US cases three times each on Opus 5.5**, skill 1.3.0,
+which writes a pound only in whole quarters and anything else in ounces
+([#18](https://github.com/4e6/skills/issues/18)): 6 runs, 7 minutes, $10.
+**No list wrote an odd pound**, where 1.2.0 had written one in two of three gran
+fondo runs (`1.625 lb` of rice, `3.625 lb` of chicken) and 1.2.0's first draft
+in four of six.
+
+- Every row in pounds was a whole quarter (`1 lb`, `1.25 lb`, `2.5 lb`,
+  `3.75 lb`), and totals that were not went to ounces (`26 oz` of rice,
+  `22.5 oz`, `44 oz` of chicken). Every check passed, the judge's included.
+- **The text did it alone.** The validator's new finding for a right row in odd
+  pounds never fired in any transcript, and neither did a repair spelled in
+  ounces. Against the stored runs it fires on exactly the 17 odd rows, and on
+  no other row of 71 plans.
+- **One row and its pack still disagreed:** `Bananas 2 lb` beside a `4 oz`
+  banana, which prints no count. Nothing checks that the two share a unit.
+- *Is it the line on converting body weight?* `fuelling.md` divides pounds by
+  2.2046, and that line might have primed the model to convert the food too.
+  The stored runs say not: every odd figure was a whole or half number of
+  ounces over 16, and most came from the gran fondo, whose athlete gives
+  kilograms. The line stayed, and the figures went.
+
 **2026-10-01, the country cases and the gran fondo three times each on Opus
 5.5**, skill 1.2.0, which says the country picks the units
 ([#17](https://github.com/4e6/skills/issues/17)): 21 runs, 18 minutes, $34.
@@ -225,7 +248,8 @@ The evals keep the isolated host and give up two things:
   lines (`60–90 g of carbohydrate an hour; 14–27 fl oz of fluid an hour`), and
   every can on the list and in the recipes was *canned*. The aisle above them
   still read *Tins, Jars & Seasonings*: the categories are a fixed list in the
-  schema, which the rule cannot reach.
+  schema, which the rule cannot reach
+  ([#20](https://github.com/4e6/skills/issues/20)).
 - **The pound rule ran into the pack count.** 12 rows stayed in ounces past a
   pound, 9 of them beside a pack in ounces (`Canned black beans 27 oz`, a
   `9 oz` can), which the page can count; three had no pack and broke the rule.

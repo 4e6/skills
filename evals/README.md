@@ -92,6 +92,8 @@ told once to go ahead, and the run records that it asked.
   on the daily lines. It and the gran fondo also count how many of the shopping
   list's and the recipes' weights and volumes are in the country's system:
   pounds, ounces and cups in the US, grams and millilitres everywhere else.
+  The two US cases also fail a list that writes pounds in anything but whole
+  quarters (`1.625 lb`), which the skill writes in ounces.
 - **The judge** is an agent with no tools that reads the athlete's message, the
   plan and the reply, and answers each question `yes`, `no` or `unclear` with a
   reason. Some questions are asked of every run (the summary, invented figures,

@@ -323,6 +323,26 @@ def check_units(ctx, spec):
         ", ".join("%s %d" % kv for kv in sorted(counts.items())))
 
 
+POUNDS = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*(?:lbs?|pounds?)\s*$", re.I)
+
+
+def check_round_pounds(ctx, spec):
+    """No figure on the list is in pounds unless it is a whole number of quarters.
+
+    Read from each row's `qty` and `pack.qty`. A total of ounces written in
+    pounds comes out in sixteenths (`1.625 lb`), which nobody shops by; the
+    skill writes those in ounces.
+    """
+    odd = []
+    for group in ctx.plan.get("shopping", []):
+        for item in group.get("items", []):
+            for field, qty in (("qty", item.get("qty")), ("pack", (item.get("pack") or {}).get("qty"))):
+                match = POUNDS.match(str(qty or ""))
+                if match and float(match.group(1)) * 4 != int(float(match.group(1)) * 4):
+                    odd.append("%s %s%s" % (item.get("name"), qty, " (pack)" if field == "pack" else ""))
+    return not odd, ", ".join(odd) if odd else "none"
+
+
 def check_not_printed(ctx, spec):
     match = re.search(spec["pattern"], printed(ctx.plan), re.I)
     return match is None, ("prints %r" % match.group(0)) if match else "absent"
@@ -342,6 +362,7 @@ CHECKS = {
     "not_printed": check_not_printed,
     "anchor_foods": check_anchor_foods,
     "units": check_units,
+    "round_pounds": check_round_pounds,
 }
 
 

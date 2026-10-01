@@ -46,6 +46,9 @@
       "check": "units",
       "system": "us",
       "share": 0.8
+    },
+    {
+      "check": "round_pounds"
     }
   ],
   "judge": [

@@ -1700,6 +1700,51 @@ def snap_to_row(amount, source: str):
     return (in_row[0] * scale[0], amount[1])
 
 
+# A shop prices pounds in quarters at most: 1.25 lb, 1.5 lb, 2 lb. A week's total
+# is its recipes' ounces added up, and most sums of ounces are no quarter pound,
+# so in pounds they come out in sixteenths — 26 oz of rice is `1.625 lb`. The
+# repairs below once handed exactly that back to be copied, and so the lists
+# copied it. Such a figure is said in ounces, the unit the recipes summed in.
+def in_pounds(source: str) -> bool:
+    """Is this quantity written in pounds?"""
+    written = written_quantity(source)
+    if written is None or written[1] is None or not _all_letters(written[1]):
+        return False
+    return MASS_UNITS.get(singular(fold_for_matching(written[1]))) == MASS_UNITS["lb"]
+
+
+def odd_pounds(grams: float) -> bool:
+    """Is this weight something other than a whole number of quarter pounds?"""
+    quarters = grams / MASS_UNITS["lb"] * 4
+    return abs(quarters - round(quarters)) > QUANTITY_EPSILON
+
+
+def in_ounces(grams: float) -> str:
+    return rendered(int(grams / MASS_UNITS["oz"] * 1000 + 0.5) / 1000) + " oz"
+
+
+def repair_like(amount, source: str) -> str:
+    """The amount a repair tells the row to set: in its own unit, never odd pounds."""
+    if amount[1] == "g" and in_pounds(source) and odd_pounds(amount[0]):
+        return in_ounces(amount[0])
+    return format_amount_like(amount, source)
+
+
+def pack_in_ounces(item: dict, buy: str) -> str:
+    """The rest of a repair that moves a row to ounces while its pack is in pounds.
+
+    The page counts packs only where the row and the pack are written alike, so
+    moving the row alone would silently take the count off it.
+    """
+    pack = item.get("pack") or {}
+    if not buy.endswith(" oz") or not in_pounds(pack.get("qty") or ""):
+        return ""
+    grams = parse_amount(pack["qty"])
+    if grams is None:
+        return ""
+    return ", and pack.qty to " + in_ounces(grams[0]) + " so the page can still count it"
+
+
 # Containers, for telling a pack from another way of measuring.
 #
 # English only, and that is a bounded miss rather than a gap: a list saying
@@ -2347,15 +2392,18 @@ def check_shopping_quantities(plan: dict) -> list:
             bought = snap_to_row(sums[1], item["qty"])
             measured = sums[2]
             where = "shopping." + group["category"] + "." + item["name"]
-            buy = format_amount_like(need, item["qty"])
+            # The need unsnapped, since the repair may leave the row's unit: a
+            # sixteenth of a pound snapped to a thousandth is not whole ounces.
+            buy = repair_like(sums[0], item["qty"])
             have = format_amount_like(bought, item["qty"])
+            and_pack = pack_in_ounces(item, buy)
 
             if bought[1] != need[1]:
                 # The row counts bags and the recipes weigh, so there is no row
                 # unit to scale through and the canonical one would answer a
                 # week written in ounces with 453.592 g. The recipes' own
                 # wording is the next best thing the plan has.
-                in_recipe_units = format_amount_like(sums[0], measured or item["qty"])
+                in_recipe_units = repair_like(sums[0], measured or item["qty"])
                 findings.append(
                     finding(
                         6,
@@ -2370,6 +2418,19 @@ def check_shopping_quantities(plan: dict) -> list:
                 )
                 continue
             if abs(bought[0] - need[0]) <= QUANTITY_EPSILON:
+                # Right, and written in a figure no shop prices.
+                if in_pounds(item["qty"]) and odd_pounds(sums[0][0]):
+                    findings.append(
+                        finding(
+                            6,
+                            "shopping-quantity-in-odd-pounds",
+                            item["name"] + " is on the list as " + have
+                            + ", which is what the week needs, in a fraction of a"
+                            + " pound no shop prices. A pound is written only in"
+                            + " whole quarters; set qty to " + buy + and_pack + ".",
+                            where,
+                        )
+                    )
                 continue
 
             if bought[0] < need[0]:
@@ -2380,7 +2441,7 @@ def check_shopping_quantities(plan: dict) -> list:
                         item["name"] + " is on the list as " + have
                         + ", but the week needs " + buy + " of it — the athlete comes home"
                         + " without enough to cook what the plan says to cook. Set qty to "
-                        + buy + ".",
+                        + buy + and_pack + ".",
                         where,
                     )
                 )
@@ -2392,7 +2453,7 @@ def check_shopping_quantities(plan: dict) -> list:
                 # as though none of it is used.
                 gap = (bought[0] - need[0], need[1])
                 spare = (
-                    format_amount_like(gap, item["qty"])
+                    repair_like(gap, item["qty"])
                     if in_row_units(need, item["qty"]) is not None
                     else format_amount(gap)
                 )
@@ -2402,7 +2463,7 @@ def check_shopping_quantities(plan: dict) -> list:
                         "shopping-quantity-excess",
                         item["name"] + " is on the list as " + have
                         + ", but the week needs only " + buy + " of it — " + spare
-                        + " bought and never cooked. Set qty to " + buy
+                        + " bought and never cooked. Set qty to " + buy + and_pack
                         + ", even where a shop only sells a bigger pack: the athlete reads"
                         + " what they need and picks one that covers it.",
                         where,
