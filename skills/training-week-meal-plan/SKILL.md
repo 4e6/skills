@@ -472,8 +472,11 @@ It is written beside `photos.json` and prints one `link` line per photo:
 publish each of those files beside the page, at that same path. That copy is
 the page's text alone, small enough to read where a tool asks to read a page
 before publishing it — the one time a page is read back. Where the tool takes
-no files beside the page, publish `plan-<date>.html` itself. A file attached
-is always `plan-<date>.html`, which carries its photos.
+no files beside the page, publish `plan-<date>.html` itself — unless it must
+read a page first, which that page is too big for: then publish a copy without
+the photos, step 6's command with `plan-<date>-web.html` as the page, since a
+link without the photos still beats a file with them. A file attached is
+always `plan-<date>.html`, which carries its photos.
 
 Where the host can neither publish nor attach, open it:
 

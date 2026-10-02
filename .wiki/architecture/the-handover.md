@@ -114,8 +114,15 @@ same path, where the tool takes files beside a page. It is written beside
 `photos.json`, and refuses to be written anywhere else, so the paths that
 resolve on disk are the paths it is published with. It is the one page a host
 may read back, and only because a publishing tool asks to. Where the tool takes
-no files beside a page, the self-contained page is published whole; a file
-attached is always the self-contained page, since an attachment is one file.
+no files beside a page, the self-contained page is published whole — unless the
+tool must read it first, when the review of #29 caught the first draft sending
+the host straight back into the failure: there a copy without photos is
+published, a link without them still beating a file with them. A file attached
+is always the self-contained page, since an attachment is one file.
+
+**A linked page is written in the list's folder, one name from the list**, so
+`render.py` refuses to write over `photos.json` as it refuses to write over the
+plan: both are read into memory first, and the write would report success.
 
 **The page says it is light.** `<meta name="color-scheme" content="light">`, so
 a viewer in a dark theme shows the paper as designed, and a host has no theme of

@@ -1772,30 +1772,33 @@ def main(argv=None) -> int:
         print("could not " + doing + " " + args.path + ": " + str(error), file=sys.stderr)
         return 2
 
-    # Refuse to write over the plan itself. By this point it has been read into
-    # memory, so the write would succeed, report success, and leave the athlete
-    # holding HTML where their only copy of the document used to be — the worst
-    # shape a failure can take, because nothing looks wrong.
+    # Refuse to write over the plan itself, or over the list of photos. By this
+    # point each has been read into memory, so the write would succeed, report
+    # success, and leave the athlete holding HTML where their only copy of the
+    # document used to be — the worst shape a failure can take, because nothing
+    # looks wrong. The list is as easy to hit: a linked page has to go in its
+    # folder, one name away.
     #
-    # It is worth a guard rather than a warning because the two paths are
-    # exactly what step 6 says is easiest to get wrong. resolve() follows a
-    # symlink; the stat comparison catches a hard link, which resolve() cannot
-    # see. Both are best-effort: a path that cannot be inspected is not a reason
-    # to refuse a write that would otherwise be fine.
-    same = False
-    try:
-        same = Path(args.path).resolve() == Path(args.out).resolve()
-        if not same and Path(args.out).exists():
-            source, target = Path(args.path).stat(), Path(args.out).stat()
-            same = (source.st_dev, source.st_ino) == (target.st_dev, target.st_ino)
-    except Exception:
-        same = False
-    if same:
-        print(
-            "could not write " + args.out + ": that is the plan itself",
-            file=sys.stderr,
-        )
-        return 2
+    # It is worth a guard rather than a warning because the paths are exactly
+    # what step 6 says is easiest to get wrong. resolve() follows a symlink; the
+    # stat comparison catches a hard link, which resolve() cannot see. Both are
+    # best-effort: a path that cannot be inspected is not a reason to refuse a
+    # write that would otherwise be fine.
+    def same_file(given):
+        try:
+            if Path(given).resolve() == Path(args.out).resolve():
+                return True
+            if Path(args.out).exists():
+                source, target = Path(given).stat(), Path(args.out).stat()
+                return (source.st_dev, source.st_ino) == (target.st_dev, target.st_ino)
+        except Exception:
+            pass
+        return False
+
+    for given, what in ((args.path, "the plan itself"), (args.photos, "the list of photos")):
+        if given is not None and same_file(given):
+            print("could not write " + args.out + ": that is " + what, file=sys.stderr)
+            return 2
 
     # Both of these are load-bearing for the byte comparison: the explicit
     # encoding overrides whatever the host's default is, and the explicit
