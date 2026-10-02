@@ -71,8 +71,10 @@ even when a photo is left out, and says which one and why. Render once more only
 when what it said is a name that matched no dish or a photo that was too big,
 and only after fixing exactly that. Otherwise do not draw again or render again.
 
-There is one page and one handover. Never edit the page and never open it to
-read it back: it is mostly the photos' bytes. Hand it over as step 7 says. An
+There is one page and one handover. Never edit the page, and never read it back
+to check it: it is mostly the photos' bytes. Step 7 may render it once more with
+the photos linked rather than carried, to publish, and that copy is small
+enough to read where a publishing tool asks to. Hand it over as step 7 says. An
 exit 2 is the command or the plan, never a photo: step 6's four messages, or a
 usage line if the list's name went missing.
 

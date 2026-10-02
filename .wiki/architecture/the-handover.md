@@ -1,10 +1,10 @@
 ---
 type: Module
 title: The handover, and what the athlete reads along the way
-description: The progress checklist is the host's and never the athlete's. The athlete is handed the page — published or as a file where the host can, opened and pointed at where it cannot — and, with no page, a reply designed as one for a phone.
+description: The progress checklist is the host's and never the athlete's. The athlete is handed the page — published, else attached, else opened and pointed at — and, with no page, a reply designed as one for a phone.
 tags: [architecture, conversation]
-timestamp: 2026-10-01T18:15:00Z
-sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/when-there-is-no-page.md]
+timestamp: 2026-10-02T15:10:00Z
+sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/when-there-is-no-page.md, skills/training-week-meal-plan/references/photos.md]
 source_commit: e5ae3bf78ef71fa3efb195ca7b30307aea5865c5
 ---
 
@@ -43,11 +43,12 @@ The JSON is scaffolding: it is named in every step that writes, checks or
 repairs it, and in none of the handover. Two paths ask somebody to work out
 which file is their week.
 
-**Where the host can publish a page or hand over a file, it does that** — an
-artifact, a file card, named as examples and never as a download. A link or a
-file in the chat reaches the athlete wherever they are: at the stove, in the
-shop, sent on to whoever cooks with them. A file on a disk reaches whoever sits
-at that machine. So step 7 hands over the page step 6 wrote:
+**Step 7 is an order, not a menu: publish, else attach, else open.** A link
+reaches the athlete wherever they are: at the stove, in the shop, sent on to
+whoever cooks with them. A file in the chat reaches them where the chat does. A
+file on a disk reaches whoever sits at that machine. So step 7 hands over the
+page step 6 wrote by the first of the three the host can do, each failure
+falling back to the next in one plain line, and the page is:
 
 - **never retyped.** The page is about 55 KB without photos, and a hand copy is not the page the
   renderer wrote; the shopping list comes last, which is the part a truncated
@@ -55,14 +56,28 @@ at that machine. So step 7 hands over the page step 6 wrote:
 - **private**, unless they ask to share it — it carries their weight and diet;
 - **no opener and no path.** Without *name no path*, the smaller models handed
   the file over and recited its sandbox path beside it;
-- **one way that fails falls back to the other** — a link that will not publish
-  can still be a file — before the host falls back to having neither.
+- **published as the renderer wrote it** — not redesigned, restyled or retyped
+  to suit a publishing tool's rules for a page written by hand
+  ([publishing a page with photos](#publishing-a-page-with-photos)).
 
 **The trigger is what the host can do, not where it runs.** An earlier version
 handed over only when the session was off the athlete's machine. Opus with a
 file tool on the athlete's own machine attached the page instead of opening it,
 which was first counted a regression and then judged the better outcome: a
 published page is more useful than a local file even at the machine that made it.
+
+**Until 1.7.0 the three were a menu**, publishing and attaching named as
+examples — *an artifact or a file card is an example, never a requirement* —
+with opening for where there was neither. That left the host to decide whether
+it could publish, and on 2026-10-02 a real run decided it could not: Opus on
+Claude Code, with a publishing tool, a six-photo page of 663 KB and an athlete
+at the machine, opened the page locally. Asked why, it named two things. The
+publishing tool asks for a file it did not write to be read whole first, and
+`photos.md` said never to read the page back, it being mostly the photos' bytes —
+about 200,000 tokens of base64, more than one read returns. And the tool's own
+rules for a page (a dark theme, a design pass) did not fit a page the skill
+forbids retyping. Wording alone would have left the first in place, so 1.7.0
+changed what is published as well as the order.
 
 **Where it can do neither, the page is opened** — `open`, `xdg-open` or
 `start`, **tried once**, and where it will not run, the full path and the line
@@ -85,8 +100,35 @@ revision that dropped the location condition. The *name no path* revision fixed
 Sonnet in the first pass and not in the second, and **the smaller models, Sonnet
 and Haiku, still recite a path beside the handover about half the time**, on
 either text. Given both, Opus in a sandbox chose the file card over the link
-every time; the step prefers neither. One real run on claude.ai, with code
-execution, published the page as an artifact unprompted and named no path.
+every time; the step then preferred neither, and from 1.7.0 prefers the link.
+One real run on claude.ai, with code execution, published the page as an
+artifact unprompted and named no path.
+
+## Publishing a page with photos
+
+`render.py … --photos photos.json --link-photos` writes a copy whose image
+elements point at each photo's path from the list instead of carrying its bytes
+— 48 KB for that six-photo week, against 663 KB — and prints one `link PATH`
+line per photo. Step 7 publishes it, with each of those files beside it at the
+same path, where the tool takes files beside a page. It is written beside
+`photos.json`, and refuses to be written anywhere else, so the paths that
+resolve on disk are the paths it is published with. It is the one page a host
+may read back, and only because a publishing tool asks to. Where the tool takes
+no files beside a page, the self-contained page is published whole — unless the
+tool must read it first, when the review of #29 caught the first draft sending
+the host straight back into the failure: there a copy without photos is
+published, a link without them still beating a file with them. A file attached
+is always the self-contained page, since an attachment is one file.
+
+**A linked page is written in the list's folder, one name from the list**, so
+`render.py` refuses to write over `photos.json` as it refuses to write over the
+plan: both are read into memory first, and the write would report success.
+
+**Unmeasured.** [The evals](/architecture/the-evals.md) give a run no tool that
+publishes, deliberately, since a run would publish to the author's account, so
+the order is not yet measured; a stub that takes the page and its files and
+publishes nothing would measure it. The evidence for 1.7.0 is the one real run
+above.
 
 # When there is no page
 

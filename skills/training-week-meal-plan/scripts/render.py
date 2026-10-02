@@ -3,11 +3,20 @@
 
     python3 scripts/render.py plan.json plan.html      0 wrote it, 2 could not
     python3 scripts/render.py plan.json plan.html --photos photos.json
+    python3 scripts/render.py plan.json plan-web.html --photos photos.json --link-photos
     python3 scripts/render.py plan.json photos.json --list-photos
 
 The output is a single self-contained file. The stylesheet beside this script
 is inlined into it, so there are no sidecar assets and nothing to fetch: the
 athlete can mail the file to themselves, open it anywhere, and press Cmd-P.
+
+--link-photos is the one exception, and it is for publishing. A self-contained
+page with photos is mostly their bytes in base64 -- about 650 KB for six dishes
+-- and a host that publishes a page by reading it first cannot read that. Linked,
+each photo is an image element pointing at the path photos.json gives it, and
+the page is its text alone. It is written beside photos.json, so the paths that
+resolve on disk are the paths the host publishes the photos at, and it prints
+one "link PATH" line per photo it points at: the files to publish beside it.
 
 Exit 0 prints a line saying where it wrote, rather than staying silent — a
 silent success and a crash look identical to anything reading output rather
@@ -1518,8 +1527,28 @@ def read_photo(folder, given, list_name):
     return (data, found), None
 
 
-def load_photos(path, titles):
-    """Title -> data URI for the photos the list names, and the warnings.
+def linked_path(given):
+    """A photo's relative path as an image element's source: forward slashes,
+    and anything outside a URL path's plain characters percent-encoded, byte by
+    byte from UTF-8, so a space or a quote in a file name neither breaks the
+    attribute nor points somewhere else."""
+    plain = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~/"
+    out = []
+    for char in Path(given).as_posix():
+        if char in plain:
+            out.append(char)
+        else:
+            out.extend("%{:02X}".format(byte) for byte in char.encode("utf-8", "surrogatepass"))
+    return "".join(out)
+
+
+def load_photos(path, titles, link=False):
+    """Title -> data URI for the photos the list names, the warnings, and the files.
+
+    With link, the value is the photo's path beside the list instead, as an
+    image element's source, and the page carries none of its bytes; the files
+    are those paths as the list wrote them, in page order -- what a host
+    publishes beside the page. Without link there are none.
 
     titles is photo_titles(plan): the dishes the page prints, in page order,
     each with its number of cards -- computed once, so the count main reports is
@@ -1539,6 +1568,7 @@ def load_photos(path, titles):
     """
     photos = {}
     warnings = []
+    files = []
 
     def quoted(text):
         return json.dumps(text, ensure_ascii=False)
@@ -1550,7 +1580,7 @@ def load_photos(path, titles):
             if not isinstance(names, dict):
                 raise ValueError("it is not a JSON object of dish titles")
         except Exception as error:
-            return {}, ["no photos: " + path + " will not open: " + str(error)]
+            return {}, ["no photos: " + path + " will not open: " + str(error)], []
         folder = listing.resolve().parent
         total = 0
         for title, blocks in titles:
@@ -1578,14 +1608,19 @@ def load_photos(path, titles):
                     + ", not square; the tile shows its centre"
                 )
             total += len(data) * blocks
-            photos[title] = "data:" + kind + ";base64," + base64.b64encode(data).decode("ascii")
+            if link:
+                photos[title] = linked_path(given)
+                if Path(given).as_posix() not in files:
+                    files.append(Path(given).as_posix())
+            else:
+                photos[title] = "data:" + kind + ";base64," + base64.b64encode(data).decode("ascii")
         on_page = [entry[0] for entry in titles]
         for key in names:
             if key not in on_page:
                 warnings.append("no dish on the page is called " + quoted(key) + "; its photo is not used")
     except Exception as error:
-        return {}, ["no photos: " + str(error)]
-    return photos, warnings
+        return {}, ["no photos: " + str(error)], []
+    return photos, warnings, files
 
 
 def document(plan, css, photos=None) -> str:
@@ -1635,7 +1670,14 @@ def main(argv=None) -> int:
         action="store_true",
         help="write the list of photos the page would show instead of the page",
     )
+    parser.add_argument(
+        "--link-photos",
+        action="store_true",
+        help="with --photos: point at each photo beside the list instead of embedding it",
+    )
     args = parser.parse_args(argv)
+    if args.link_photos and args.photos is None:
+        parser.error("--link-photos needs --photos")
 
     # The stylesheet is the skill's own file rather than anything the caller
     # named, so it gets its own message. Folded into the one below, a skill
@@ -1691,7 +1733,22 @@ def main(argv=None) -> int:
     if args.list_photos and not args.out.lower().endswith(".json"):
         print("could not write " + args.out + ": the list of photos is a .json file", file=sys.stderr)
         return 2
-    photos, warnings, titles = {}, [], []
+    # A linked page names each photo by its path from the list's folder, so it
+    # has to stand in that folder for the paths to resolve -- on disk, and at the
+    # same paths wherever it is published with its photos beside it.
+    if args.link_photos:
+        try:
+            beside = Path(args.out).resolve().parent == Path(args.photos).resolve().parent
+        except Exception:
+            beside = False
+        if not beside:
+            print(
+                "could not write " + args.out + ": a page with linked photos goes in the folder "
+                + args.photos + " is in",
+                file=sys.stderr,
+            )
+            return 2
+    photos, warnings, titles, files = {}, [], [], []
     try:
         plan = json.loads(raw.decode("utf-8"))
         if args.list_photos:
@@ -1704,37 +1761,40 @@ def main(argv=None) -> int:
         else:
             if args.photos is not None:
                 titles = photo_titles(plan)
-                photos, warnings = load_photos(args.photos, titles)
+                photos, warnings, files = load_photos(args.photos, titles, args.link_photos)
             page = document(plan, css, photos)
     except Exception as error:
         doing = "list" if args.list_photos else "render"
         print("could not " + doing + " " + args.path + ": " + str(error), file=sys.stderr)
         return 2
 
-    # Refuse to write over the plan itself. By this point it has been read into
-    # memory, so the write would succeed, report success, and leave the athlete
-    # holding HTML where their only copy of the document used to be — the worst
-    # shape a failure can take, because nothing looks wrong.
+    # Refuse to write over the plan itself, or over the list of photos. By this
+    # point each has been read into memory, so the write would succeed, report
+    # success, and leave the athlete holding HTML where their only copy of the
+    # document used to be — the worst shape a failure can take, because nothing
+    # looks wrong. The list is as easy to hit: a linked page has to go in its
+    # folder, one name away.
     #
-    # It is worth a guard rather than a warning because the two paths are
-    # exactly what step 6 says is easiest to get wrong. resolve() follows a
-    # symlink; the stat comparison catches a hard link, which resolve() cannot
-    # see. Both are best-effort: a path that cannot be inspected is not a reason
-    # to refuse a write that would otherwise be fine.
-    same = False
-    try:
-        same = Path(args.path).resolve() == Path(args.out).resolve()
-        if not same and Path(args.out).exists():
-            source, target = Path(args.path).stat(), Path(args.out).stat()
-            same = (source.st_dev, source.st_ino) == (target.st_dev, target.st_ino)
-    except Exception:
-        same = False
-    if same:
-        print(
-            "could not write " + args.out + ": that is the plan itself",
-            file=sys.stderr,
-        )
-        return 2
+    # It is worth a guard rather than a warning because the paths are exactly
+    # what step 6 says is easiest to get wrong. resolve() follows a symlink; the
+    # stat comparison catches a hard link, which resolve() cannot see. Both are
+    # best-effort: a path that cannot be inspected is not a reason to refuse a
+    # write that would otherwise be fine.
+    def same_file(given):
+        try:
+            if Path(given).resolve() == Path(args.out).resolve():
+                return True
+            if Path(args.out).exists():
+                source, target = Path(given).stat(), Path(args.out).stat()
+                return (source.st_dev, source.st_ino) == (target.st_dev, target.st_ino)
+        except Exception:
+            pass
+        return False
+
+    for given, what in ((args.path, "the plan itself"), (args.photos, "the list of photos")):
+        if given is not None and same_file(given):
+            print("could not write " + args.out + ": that is " + what, file=sys.stderr)
+            return 2
 
     # Both of these are load-bearing for the byte comparison: the explicit
     # encoding overrides whatever the host's default is, and the explicit
@@ -1780,9 +1840,14 @@ def main(argv=None) -> int:
         return 0
     for warning in warnings:
         print(warning, file=sys.stderr)
+    # The files to publish beside a linked page, each at the path it names, in
+    # page order: by its name on disk, which is how a host publishes a file,
+    # rather than the encoded source the page carries.
+    for name in files:
+        print("link " + name)
     print(
         "wrote " + args.out + " with photos of " + str(len(photos)) + " of "
-        + str(len(titles)) + " dishes"
+        + str(len(titles)) + " dishes" + (", linked" if args.link_photos else "")
     )
     return 0
 
