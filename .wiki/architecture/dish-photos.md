@@ -1,9 +1,9 @@
 ---
 type: Module
 title: Dish photos
-description: Where the host can draw, each dish gets a square photo beside its recipe's title. The renderer lists the dishes, names each photo for what it shows, embeds the bytes, and never lets a bad photo cost the page.
+description: Where the host can draw, each dish gets a square photo beside its recipe's title. The renderer lists the dishes, names each photo for what it shows, embeds the bytes — or, to publish, links them — and never lets a bad photo cost the page.
 tags: [architecture, rendering, photos]
-timestamp: 2026-09-30T20:29:41Z
+timestamp: 2026-10-02T15:10:00Z
 sources: [skills/training-week-meal-plan/references/photos.md, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css]
 source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
 ---
@@ -35,6 +35,12 @@ page, not the plan.
 - `render.py plan.json page.html --photos photos.json` embeds them. A path is
   read only if it is relative, has no `..` and resolves inside the list's folder —
   the photo's counterpart of escaping plan text.
+- `--link-photos` beside `--photos` points at them instead, for a host that
+  publishes the page with its photos beside it: the source is the list's path,
+  percent-encoded, and every check above still runs, so a photo the embedded page
+  would drop is dropped here too. The page must be written in the list's folder,
+  and prints a `link` line per photo, the files to publish
+  ([publishing a page with photos](/architecture/the-handover.md#publishing-a-page-with-photos)).
 
 **A photo is named for what it shows, never its position** — a short digest of
 the dish's title and its first cook's ingredients, the two things a drawing is
@@ -118,8 +124,9 @@ Python does not try to plot a plate. `photos.md` is loaded only where it applies
 draw only where step 4's check ran, whatever it found; one line to the athlete
 first; square and top-down, describing the food and never the athlete; stop at
 the first quota, rate-limit or billing error; render once — again only after
-fixing a name that matched no dish or a photo over the cap — one handover, never
-edit the page; one line in the report, and another only if the athlete was told
+fixing a name that matched no dish or a photo over the cap, or with the photos
+linked where step 7 publishes — one handover, never edit the page and never read
+it back except where a publishing tool asks to read the linked copy; one line in the report, and another only if the athlete was told
 photos were coming and the page went out with none or fewer. A host that drew
 none says nothing about photos.
 

@@ -3,7 +3,7 @@ type: Module
 title: The printable page
 description: render.py writes one self-contained HTML file for print, a phone and a wide screen. Plain rules, weight and space; the glance first; one column that never splits a recipe; a byte-compared example.
 tags: [architecture, rendering]
-timestamp: 2026-10-01T18:15:00Z
+timestamp: 2026-10-02T15:10:00Z
 sources: [skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css, skills/training-week-meal-plan/examples/**]
 source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
 ---
@@ -16,7 +16,13 @@ sandbox has no network to fetch one, so `render.py` writes **one self-contained
 HTML file** with `assets/plan.css` inlined, and the athlete prints it. One file
 because it gets mailed and copied to a phone, and a sidecar asset is a broken
 document on arrival. Photos, where there are any, are data URIs for the same
-reason ([dish photos](/architecture/dish-photos.md)).
+reason ([dish photos](/architecture/dish-photos.md)); the one copy that links
+them instead is made to be published with them beside it, never to be sent
+([publishing a page with photos](/architecture/the-handover.md#publishing-a-page-with-photos)).
+
+**It says it is light**, with `<meta name="color-scheme" content="light">`: the
+design is paper, white with dark ink, and a viewer in a dark theme shows it so
+rather than inverting it.
 
 HTML gains one thing over paper: a link is live. Three links under the title jump
 to the week, the recipes and the shopping list; a leftover's *Leftover from

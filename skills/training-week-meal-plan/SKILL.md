@@ -17,7 +17,7 @@ compatibility: >-
   without it you still get the plan. The plan is written in English.
 metadata:
   author: 4e6
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 # A week of meals that tracks the training
@@ -444,10 +444,38 @@ has a shape for handing a week over when there is no page to open.
 
 ## Step 7 — put the page in their hands, then report
 
-Where step 6 wrote a page and your host can publish it or hand them a file,
-hand over that file, never retyped, private unless they ask to share it; run no
-opener and name no path. An artifact or a file card is an example, never a
-requirement. If one fails, try the other; where there is none, open it:
+Where step 6 wrote a page, hand it over by the **first** of these your host can
+do. What decides is what it can do, never where it runs: a link reaches them at
+the stove, in the shop and on their phone, which a file on this machine does
+not, so a link beats a file even on the athlete's own computer.
+
+1. **Publish it**, as a private page they open from a link — with any tool
+   that turns a page on disk into one.
+2. **Attach it** to the conversation, as a file.
+3. **Open it**, only where the host can do neither — below.
+
+A way that fails falls back to the next, said in one plain line. Either of the
+first two is the page never retyped, private unless they ask to share it, with
+no opener run and no path named beside it.
+
+**Publish the page the renderer wrote, as it stands.** It is not a page to
+redesign, restyle or retype, whatever a publishing tool asks of a page written
+by hand: it is set for paper, in every theme. Where it has photos and the tool
+takes files beside the page, publish a copy that links them rather than
+carrying them:
+
+```
+python3 <this skill's directory>/scripts/render.py plan-<date>.json plan-<date>-web.html --photos photos.json --link-photos
+```
+
+It is written beside `photos.json` and prints one `link` line per photo:
+publish each of those files beside the page, at that same path. That copy is
+the page's text alone, small enough to read where a tool asks to read a page
+before publishing it — the one time a page is read back. Where the tool takes
+no files beside the page, publish `plan-<date>.html` itself. A file attached
+is always `plan-<date>.html`, which carries its photos.
+
+Where the host can neither publish nor attach, open it:
 
 ```
 open plan-<date>.html       # macOS
@@ -470,11 +498,12 @@ Then say, in a few lines:
 - which day you made the biggest fuel day, and what led you to that;
 - anything you assumed because they had not said;
 - whether the plan was checked, and what the check found, in your own words;
-- the file to print: `plan-<date>.html` as handed over, else its full path.
+- the page to print: the link, or the file as attached, else its full path.
 
 **Hand over the page, not the document.** `plan-<date>.json` is scaffolding, and
 two paths leave the athlete working out which one is their week. Where they open
-it themselves, the full path: their shell is not standing where yours is.
+it themselves, the full path to `plan-<date>.html`: their shell is not standing
+where yours is.
 
 **Unless there is no page** — either step 6 refusing to start or step 6 exiting
 2 having written nothing. Check the file is there before pointing at it, and

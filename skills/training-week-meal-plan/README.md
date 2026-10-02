@@ -24,8 +24,9 @@ do.
 - **A different week from last week** — where your assistant can see plans it
   made you before, this week's lunches and dinners differ from them.
 - **A printable page** — one self-contained HTML file, handed to you as a private
-  page or a file where your client can do that, and otherwise opened in your
-  browser or pointed at, and printed with Cmd-P. Nothing to install, and laid
+  page you open from a link where your assistant can publish one, else as a
+  file, and only otherwise opened in your browser or pointed at; printed with
+  Cmd-P. Nothing to install, and laid
   out so the recipes sit under the day that cooks them, no recipe is split across
   a page, and the shopping list can be torn off. On a wide screen it reads like
   the printed page, with the whole week beside it one click from any recipe.
