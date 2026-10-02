@@ -20,10 +20,6 @@ reason ([dish photos](/architecture/dish-photos.md)); the one copy that links
 them instead is made to be published with them beside it, never to be sent
 ([publishing a page with photos](/architecture/the-handover.md#publishing-a-page-with-photos)).
 
-**It says it is light**, with `<meta name="color-scheme" content="light">`: the
-design is paper, white with dark ink, and a viewer in a dark theme shows it so
-rather than inverting it.
-
 HTML gains one thing over paper: a link is live. Three links under the title jump
 to the week, the recipes and the shopping list; a leftover's *Leftover from
 Monday Dinner* links to the card that cooked it, whose band reads the same words;

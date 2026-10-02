@@ -1631,10 +1631,6 @@ def document(plan, css, photos=None) -> str:
             "<head>",
             '<meta charset="utf-8">',
             '<meta name="viewport" content="width=device-width, initial-scale=1">',
-            # The page is paper: white with dark ink, in every theme. Said here,
-            # a viewer in dark mode shows it as designed rather than inverting
-            # it, and a host publishing it has no reason to restyle it.
-            '<meta name="color-scheme" content="light">',
             "<title>" + esc(plan["week_label"]) + "</title>",
             "<style>",
             css,

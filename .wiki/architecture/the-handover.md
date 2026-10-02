@@ -124,10 +124,6 @@ is always the self-contained page, since an attachment is one file.
 `render.py` refuses to write over `photos.json` as it refuses to write over the
 plan: both are read into memory first, and the write would report success.
 
-**The page says it is light.** `<meta name="color-scheme" content="light">`, so
-a viewer in a dark theme shows the paper as designed, and a host has no theme of
-its own to impose ([the printable page](/architecture/the-printable-page.md)).
-
 **Unmeasured.** [The evals](/architecture/the-evals.md) give a run no tool that
 publishes, deliberately, since a run would publish to the author's account, so
 the order is not yet measured; a stub that takes the page and its files and
