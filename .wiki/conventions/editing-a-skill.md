@@ -10,7 +10,7 @@ source_commit: 3d9b7b7cc609f46bdb4ba7a90778593b47dcb3a2
 
 # Read the guides, and point at them
 
-Before editing any skill here, read all three:
+Before editing any skill read:
 
 - the Agent Skills specification — <https://agentskills.io/specification>
 - the Agent Skills best practices —
