@@ -1,7 +1,7 @@
 # work-on-github-issue
 
-An [Agent Skill](https://agentskills.io) that takes one GitHub issue to a
-reviewed pull request, in any GitHub repository.
+An [Agent Skill](https://agentskills.io) that takes a GitHub issue and produces
+a reviewed pull request, ready to merge, in any GitHub repository.
 
 Give your assistant an issue — `#123`, `owner/repo#123` or a link — and it:
 

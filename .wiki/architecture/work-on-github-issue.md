@@ -1,7 +1,7 @@
 ---
 type: Module
 title: Work on a GitHub issue
-description: One issue to a reviewed pull request, in any GitHub repository. Guidance for a capable agent rather than a list of bans; a worktree always, a reviewed plan before code, a reviewer chosen for the change, and approval rather than perfection.
+description: Takes a GitHub issue and produces a reviewed pull request, ready to merge, in any repository. Guidance rather than bans — a worktree always, a reviewed plan before code, a reviewer fit for the change, approval over perfection.
 tags: [architecture, github, process]
 timestamp: 2026-10-03T11:31:49Z
 sources: [skills/work-on-github-issue/**]
