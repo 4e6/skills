@@ -3,7 +3,7 @@ type: Module
 title: Work on a GitHub issue
 description: Takes a GitHub issue and produces a reviewed pull request, ready to merge, in any repository. Guidance rather than bans — a worktree always, a reviewed plan before code, a reviewer fit for the change, approval over perfection.
 tags: [architecture, github, process]
-timestamp: 2026-10-03T11:31:49Z
+timestamp: 2026-10-03T11:56:11Z
 sources: [skills/work-on-github-issue/**]
 source_commit: be3fa4e2e9233de05344c0d974468f6cf6857f77
 ---
@@ -25,6 +25,14 @@ situations that never arise; an agent that understands *why* a step exists
 handles the case nobody wrote down. So the skill has one ban-shaped sentence —
 merge only when the user says so — and gives its reason for the rest.
 
+For the same reason it gives no commands for the agent to copy. The agent knows
+`git` and `gh`, and a copied command is followed even where it does not fit. A
+tool's behaviour is named only where an agent would otherwise get it wrong: a
+branch started from a remote-tracking branch tracks it, git will not check a
+branch out in two worktrees, `gh` renames the shared `origin` when it adds a
+fork unless the remote is named, and checks are not reported the moment a pull
+request opens.
+
 It is also small: one `SKILL.md`, no scripts and no state machine. A run's
 state is what GitHub and git already hold — the branch, the pull request, the
 comments — so a session that dies leaves work another can pick up by looking,
@@ -44,6 +52,11 @@ and step 1 has the agent look before it starts.
   agent decides, so the user is not a bottleneck on choices the code settles.
   With nobody in the session, the questions go on the issue, where whoever
   answers and whichever session resumes can both read them.
+- **The plan is left on the issue.** The final plan, any change to it, and
+  what the work turned up that the code does not say. A session's reasoning
+  dies with it, and a pull request is found only by someone who already knows
+  to look for it; the issue is where the next person to work on or investigate
+  that code starts.
 - **A reviewer suited to the change.** A general reviewer misses what a
   security or migration reviewer would catch, and a specialist on a typo is
   waste. The skill's own local review runs before the project's, because it is

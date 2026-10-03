@@ -4,12 +4,12 @@ description: >-
   Takes a GitHub issue and produces a reviewed pull request, ready to merge,
   with green checks, in any GitHub repository: reads the issue and its whole
   thread, works in a git worktree of its own so other agents can share the
-  checkout, writes a plan and has it reviewed before any code, implements and
-  tests, opens the pull request and works the review until a reviewer
-  approves, then hands it over. Use when the user asks to work on, fix, implement, resolve or
-  pick up a GitHub issue, gives an issue number such as 123 or #123, an
-  owner/repo#123 reference or an issue URL, or asks to turn an issue into a pull
-  request.
+  checkout, writes a plan, has it reviewed and leaves it on the issue before
+  any code, implements and tests, opens the pull request and works the review
+  until a reviewer approves, then hands it over. Use when the user asks to work
+  on, fix, implement, resolve or pick up a GitHub issue, gives an issue number
+  such as 123 or #123, an owner/repo#123 reference or an issue URL, or asks to
+  turn an issue into a pull request.
 license: MIT
 compatibility: >-
   Needs git, and the GitHub CLI (gh) authenticated with access to the
@@ -38,7 +38,7 @@ review in a separate pass that starts again from the issue and the plan alone.
 Progress:
 - [ ] 1. Understand the issue
 - [ ] 2. Set up a worktree
-- [ ] 3. Plan, and have the plan reviewed
+- [ ] 3. Plan, have the plan reviewed, and leave it on the issue
 - [ ] 4. Implement and verify
 - [ ] 5. Review the change, and open the pull request
 - [ ] 6. Work the review until it is approved
@@ -47,20 +47,15 @@ Progress:
 
 ## 1. Understand the issue
 
-```sh
-gh issue view <n> --comments
-gh issue view <n> --json state,assignees,closedByPullRequestsReferences
-gh pr list --state all --search <n>
-```
-
 Read the **whole** thread, not just the description: later comments often
-answer a question and change the scope in the same breath. Follow the issues
-and pull requests it links to.
+answer a question and change the scope in the same breath, and earlier work may
+have left a plan or findings there. Follow the issues and pull requests it
+links to.
 
-Check whether the work has already started — a pull request for the issue, an
-assignee. If it has, continue that work rather than starting over; if it looks
-like someone else is actively on it, ask the user before touching it. A closed
-issue is not worked: say so and stop.
+Check whether the work has already started — a pull request for the issue, a
+branch, an assignee. If it has, continue that work rather than starting over;
+if it looks like someone else is actively on it, ask the user before touching
+it. A closed issue is not worked: say so and stop.
 
 Read the project's own rules before its code: `CONTRIBUTING.md`, the agent
 instructions file (`AGENTS.md` or the host's equivalent), the pull request
@@ -74,31 +69,24 @@ question for the user, not a guess to build on.
 
 Always work in a git worktree of your own, even when the checkout looks idle.
 Other agents may be working in the same clone, and a branch switched or a file
-edited under them breaks their work silently.
+edited under them breaks their work silently. If the host can create a worktree
+and move the session into it, use that.
 
-If the host can create a worktree and move the session into it, use that.
-Otherwise, from the clone:
+Start a new branch from the freshly fetched default branch, with `--no-track`:
+a branch started from a remote-tracking branch tracks it by default, and a
+plain push can then land on the default branch.
 
-```sh
-git fetch origin
-git worktree add --no-track -b issue-<n>-<slug> "$(git rev-parse --show-toplevel)/../<repo>-issue-<n>" origin/<default-branch>
-```
-
-`--no-track` keeps the branch from tracking the default branch, which a later
-plain `git push` could otherwise push to.
-
-To continue an existing branch, look in `git worktree list` first: a worktree
-left by an earlier session may already hold it, and is where to carry on. If
-none does, make a worktree on its name in place of `-b issue-<n>-<slug>` and
-`origin/<default-branch>`; for a pull request from a fork, make a detached
-worktree and run `gh pr checkout <pr>` inside it.
+To continue an existing branch, look for a worktree an earlier session left on
+it first — git will not check a branch out in a second worktree, and the old
+one is where to carry on. A pull request from a fork has its branch on the
+fork, not on `origin`; check it out through the pull request.
 
 Do everything in the worktree from then on, and leave the original checkout as
 you found it. A fresh worktree has none of the ignored files the main checkout
 has — installed dependencies, build output, local environment files — so set up
 what the project needs before the first test run.
 
-## 3. Plan, and have the plan reviewed
+## 3. Plan, have the plan reviewed, and leave it on the issue
 
 A good implementation will not rescue a bad plan, and a design mistake is far
 cheaper to spot in a plan than in a diff. So plan before writing code.
@@ -125,22 +113,27 @@ those and wait for the answer. If nobody is in the session to answer, post the
 questions as a comment on the issue and stop there. Decide everything else
 yourself.
 
+Post the final plan as a comment on the issue. The thread is where the next
+person to work on or investigate this code will look, long after this session
+and its reasoning are gone; the plan tells them what was found, what was chosen
+and what was ruled out.
+
 ## 4. Implement and verify
 
-Follow the plan. When the code shows the plan to be wrong, go back to step 3
-and fix the plan rather than patching around it.
+Follow the plan. When the code shows the plan to be wrong, go back to step 3,
+fix the plan rather than patching around it, and post what changed and why on
+the issue.
 
 Commit in steps that each make sense on their own, in the project's commit
 style. Run what CI runs — tests, linters, type checks — and check the behaviour
 the issue describes, not only the unit tests. Keep the diff to the issue:
 unrelated problems you find are a note in the pull request or a new issue.
 
-Push the branch early, with `git push -u origin HEAD`. Work that lives only in
-a local worktree is invisible to everyone else, and is lost with the session.
-Without push access to the repository, fork it and push there instead:
-`gh repo fork --remote --remote-name fork`, then `git push -u fork HEAD`. Name
-the remote: by default `gh` renames the clone's `origin` to make room for the
-fork, and remotes are shared by every worktree of the clone.
+Push the branch early. Work that lives only in a local worktree is invisible to
+everyone else, and is lost with the session. Without push access to the
+repository, push to a fork. Give the fork's remote a name of its own: by
+default `gh` renames the clone's `origin` to make room for the fork, and
+remotes are shared by every worktree of the clone.
 
 ## 5. Review the change, and open the pull request
 
@@ -151,24 +144,15 @@ post on GitHub. A change to security, concurrency, data migrations or
 performance deserves a reviewer briefed for that. This review is cheap; the
 project's CI and reviewers are not, so it comes first.
 
-```sh
-gh pr create --title "<title>" --body-file <file>
-```
-
-Fill in the project's template if it has one. The body says what changed and
-why, the decisions made and the alternatives rejected, how it was verified, and
-`Closes #<n>`.
+Then open the pull request, filling in the project's template if it has one.
+The body says what changed and why, the decisions made and the alternatives
+rejected, how it was verified, and `Closes #<n>`.
 
 ## 6. Work the review until it is approved
 
-Wait for the checks:
-
-```sh
-gh pr checks <pr> --watch
-```
-
-If none are reported yet, wait a minute and try again; a repository with no CI
-has none to wait for. Then answer every finding — from the checks, from your
+Wait for the checks. They can take a minute to be reported after the pull
+request opens, so none yet is not the same as none at all; a repository with no
+CI has none to wait for. Then answer every finding — from the checks, from your
 reviewer, and from any human or bot review that has arrived — by fixing it or
 by replying with a reason. Verify a finding before acting on it: reviewers are
 wrong too. Have your reviewer read each round of fixes.
@@ -183,10 +167,13 @@ maintainer's approval; that comes after the hand-over.
 ## 7. Hand over
 
 The run ends with the pull request open, its checks green and its review
-answered. Tell the user: the pull request's link, what changed, the decisions
-they should know about, anything left open, and the worktree's path, which can
-be removed once the pull request is merged or closed. Merge only when they say
-so.
+answered. If the work turned up something the next person would want and the
+code does not say — a dead end, a surprising cause, a follow-up — add it to the
+issue.
+
+Tell the user: the pull request's link, what changed, the decisions they should
+know about, anything left open, and the worktree's path, which can be removed
+once the pull request is merged or closed. Merge only when they say so.
 
 ## When you keep returning to the same problem
 
