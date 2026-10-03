@@ -3,7 +3,7 @@ type: Module
 title: Work on a GitHub issue
 description: Takes a GitHub issue and produces a reviewed pull request, ready to merge, in any repository. Guidance rather than bans — a worktree always, a reviewed plan before code, a reviewer fit for the change, approval over perfection.
 tags: [architecture, github, process]
-timestamp: 2026-10-03T12:07:34Z
+timestamp: 2026-10-03T12:11:06Z
 sources: [skills/work-on-github-issue/**]
 source_commit: be3fa4e2e9233de05344c0d974468f6cf6857f77
 ---
@@ -84,7 +84,9 @@ and step 1 has the agent look before it starts.
 
 It is not a pure [payload](/architecture/the-payload.md): its whole job is on
 the network, reading issues and writing branches, pull requests and comments
-through `gh`, and `compatibility` says so. It ships nothing that reaches the
+through `gh`. `compatibility` names only `git` and an authenticated `gh`,
+which already say it: anything more there would restate what a reader can
+infer from those two. It ships nothing that reaches the
 network on its own; every such act is a command the agent runs and the host
 may ask about. It names `git`, `gh` and the files projects keep their rules
 in, and describes a host's tools by what they do — *if the host can create a

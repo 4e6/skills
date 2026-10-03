@@ -13,12 +13,7 @@ description: >-
 license: MIT
 compatibility: >-
   Needs git, and the GitHub CLI (gh) authenticated with access to the
-  repository, run from a clone of it. Uses the network for GitHub, a handful
-  of API calls per step to read the issue, push a branch, open a pull request
-  and comment; the skill itself downloads nothing, but setting up the project
-  and running its tests may fetch the project's own dependencies. Reviews are
-  best done by subagents; where the host has none, the agent reviews in a
-  separate, deliberate pass.
+  repository.
 metadata:
   author: 4e6
   version: "1.0.0"
