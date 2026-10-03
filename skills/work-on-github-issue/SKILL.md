@@ -11,7 +11,7 @@ compatibility: >-
   repository.
 metadata:
   author: 4e6
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Work on a GitHub issue
@@ -35,6 +35,7 @@ Progress:
 - [ ] 5. Review the change, and open the pull request
 - [ ] 6. Work the review until it is approved
 - [ ] 7. Hand over
+- [ ] 8. When the user says to merge: merge, and clean up
 ```
 
 ## 1. Understand the issue
@@ -177,6 +178,21 @@ issue.
 Tell the user: the pull request's link, what changed, the decisions they should
 know about, anything left open, and the worktree's path, which can be removed
 once the pull request is merged or closed. Merge only when they say so.
+
+## 8. When the user says to merge: merge, and clean up
+
+Merge the way the project merges. Then remove what the work left behind: the
+worktree, its branch, locally and on the remote it was pushed to, and every
+other worktree or branch made along the way, such as a subagent's or a branch
+for an abandoned approach. Leave alone what this work did not make: other
+agents share the clone.
+
+After a squash or rebase merge, git sees the branch as unmerged and refuses a
+plain delete. The merged pull request is the proof: once its last commit is the
+branch's last commit, so nothing local was left unpushed, force the delete. Do
+not remove a worktree with uncommitted changes until you have seen what they
+are. Leave the worktree before removing it if the session is in it, and leave
+the original checkout as you found it.
 
 ## When you keep returning to the same problem
 
