@@ -1,5 +1,8 @@
 # Wiki Update Log
 
+## 2026-10-03
+* **Update**: A fourth skill, `work-on-github-issue` 1.0.0, takes a GitHub issue and produces a reviewed pull request, ready to merge, in any repository ([work on a GitHub issue](/architecture/work-on-github-issue.md)). It works on the network through `gh`, and has no zip, since it needs a clone ([the payload](/architecture/the-payload.md), [the zip release](/architecture/the-zip-release.md), [overview](/overview.md)). Unmeasured: no eval, no run on Sonnet or Haiku.
+
 ## 2026-10-02
 * **Update**: training-week-meal-plan 1.7.0 hands the page over by an order — publish, else attach, else open — where publishing and attaching had been examples ([the handover](/architecture/the-handover.md#the-page-is-what-they-are-handed)). A real run on Claude Code with a publishing tool opened a six-photo page locally: the tool reads a page before publishing it, the page was 663 KB of mostly base64, and `photos.md` said never to read it back. `render.py --link-photos` now writes a 48 KB copy that links each photo by its path beside `photos.json` and prints the files to publish with it ([dish photos](/architecture/dish-photos.md), [the printable page](/architecture/the-printable-page.md)). The order is unmeasured: the evals give a run nothing to publish with.
 

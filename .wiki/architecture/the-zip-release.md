@@ -3,9 +3,9 @@ type: Module
 title: The zip release
 description: Web hosts install a skill from an uploaded zip. Each skill is released alone when its MAJOR.MINOR.PATCH version changes, as a zip built from the commit; README.md's download link is the offer and the list.
 tags: [distribution, release, ci, versioning]
-timestamp: 2026-10-01T12:40:00Z
+timestamp: 2026-10-03T11:31:49Z
 sources: [tools/release.py, .github/workflows/release.yml, /README.md, /.gitignore]
-source_commit: 3d9b7b7cc609f46bdb4ba7a90778593b47dcb3a2
+source_commit: be3fa4e2e9233de05344c0d974468f6cf6857f77
 ---
 
 # Why there is a zip at all
@@ -80,7 +80,7 @@ Linux sandbox, and the skill works only on the user's Mac
 every time.
 
 `llm-wiki` has none either: it works on a project's git checkout, which a web
-app's chat does not have.
+app's chat does not have. Nor does `work-on-github-issue`, for the same reason.
 
 # Built from the commit, not the folder
 
