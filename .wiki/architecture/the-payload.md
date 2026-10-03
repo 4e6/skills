@@ -125,7 +125,7 @@ staleness is read from history. Its instructions name Claude Code's own paths
 and files, as instructions about the host.
 
 `work-on-github-issue` ships no script; its work is on the network, through
-`gh` ([work on a GitHub issue](/architecture/work-on-github-issue.md#how-it-bends-the-payload)).
+`gh`, and it names GitHub and `gh` because they are its subject ([work on a GitHub issue](/architecture/work-on-github-issue.md#how-it-bends-the-payload)).
 
 Their scripts' own facts, in the same terms as the others:
 
