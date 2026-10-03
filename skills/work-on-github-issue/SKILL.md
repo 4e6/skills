@@ -13,10 +13,12 @@ description: >-
 license: MIT
 compatibility: >-
   Needs git, and the GitHub CLI (gh) authenticated with access to the
-  repository, run from a clone of it. Uses the network for GitHub alone: a
-  handful of API calls per step to read the issue, push a branch, open a pull
-  request and comment; no downloads. Reviews are best done by subagents; where
-  the host has none, the agent reviews in a separate, deliberate pass.
+  repository, run from a clone of it. Uses the network for GitHub, a handful
+  of API calls per step to read the issue, push a branch, open a pull request
+  and comment; the skill itself downloads nothing, but setting up the project
+  and running its tests may fetch the project's own dependencies. Reviews are
+  best done by subagents; where the host has none, the agent reviews in a
+  separate, deliberate pass.
 metadata:
   author: 4e6
   version: "1.0.0"
@@ -159,7 +161,10 @@ rejected, how it was verified, and `Closes #<n>`.
 
 Wait for the checks. They can take a minute to be reported after the pull
 request opens, so none yet is not the same as none at all; a repository with no
-CI has none to wait for. Then answer every finding — from the checks, from your
+CI has none to wait for. Checks that wait on a maintainer — a project may hold a
+fork's workflow runs until one approves them — will not arrive on their own:
+run the same commands locally and say at the hand-over that CI has not run.
+Then answer every finding — from the checks, from your
 reviewer, and from any human or bot review that has arrived — by fixing it or
 by replying with a reason. Verify a finding before acting on it: reviewers are
 wrong too. Have your reviewer read each round of fixes.
@@ -173,8 +178,8 @@ maintainer's approval; that comes after the hand-over.
 
 ## 7. Hand over
 
-The run ends with the pull request open, its checks green and its review
-answered. If the work turned up something the next person would want and the
+The run ends with the pull request open, its checks green — or, where they
+wait on a maintainer, passing locally — and its review answered. If the work turned up something the next person would want and the
 code does not say — a dead end, a surprising cause, a follow-up — add it to the
 issue.
 

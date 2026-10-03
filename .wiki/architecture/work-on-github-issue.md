@@ -3,7 +3,7 @@ type: Module
 title: Work on a GitHub issue
 description: Takes a GitHub issue and produces a reviewed pull request, ready to merge, in any repository. Guidance rather than bans — a worktree always, a reviewed plan before code, a reviewer fit for the change, approval over perfection.
 tags: [architecture, github, process]
-timestamp: 2026-10-03T12:05:23Z
+timestamp: 2026-10-03T12:07:34Z
 sources: [skills/work-on-github-issue/**]
 source_commit: be3fa4e2e9233de05344c0d974468f6cf6857f77
 ---
@@ -22,8 +22,9 @@ The skill assumes a capable agent and tells it how to work well, rather than
 listing what it may not do. A list of bans has to foresee every spelling of
 every act, grows with each incident, and spends a stranger's context on
 situations that never arise; an agent that understands *why* a step exists
-handles the case nobody wrote down. So the skill has one ban-shaped sentence —
-merge only when the user says so — and gives its reason for the rest.
+handles the case nobody wrote down. So the skill gives each rule its reason,
+and forbids outright only what the agent cannot judge from where it stands:
+merging, which is the user's call, and working a closed issue.
 
 For the same reason it gives no commands for the agent to copy. The agent knows
 `git` and `gh`, and a copied command is followed even where it does not fit. A
@@ -71,7 +72,8 @@ and step 1 has the agent look before it starts.
   rest declined or noted, rather than when the reviewer falls silent. The
   judgement is the agent's own reviewer's, with the checks green, and not a
   maintainer's, who may take days: an agent told to wait for one waits, or
-  polls, with nothing to do.
+  polls, with nothing to do. Checks a maintainer must release, as on a fork's
+  first pull request, are run locally instead and reported as not run.
 - **Step back when circling.** The same kind of finding in a new place is one
   design error paid for per site; the fix is the rule, not the next site. A
   fix that keeps failing goes to a fresh subagent, which does not share the

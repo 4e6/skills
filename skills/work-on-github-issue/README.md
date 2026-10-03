@@ -14,9 +14,10 @@ Give your assistant an issue — `#123`, `owner/repo#123` or a link — and it:
    on the issue for whoever works on that code next;
 4. implements and tests the change;
 5. opens a pull request that closes the issue;
-6. works the review — its own reviewers and your project's CI and review — until
-   the change is approved;
-7. hands the pull request to you. It merges only when you say so.
+6. answers its own reviewer, your project's CI and any review that has arrived,
+   until its reviewer approves and the checks are green;
+7. hands the pull request to you. Your maintainers' review comes after that,
+   and it merges only when you say so.
 
 It follows your project's own rules where they differ — `CONTRIBUTING.md`,
 `AGENTS.md`, the pull request template, what CI runs.
@@ -31,4 +32,5 @@ It follows your project's own rules where they differ — `CONTRIBUTING.md`,
 
 It uses the network: it reads the issue, pushes a branch, opens a pull request,
 and comments on the issue — the plan, what changed in it, and questions nobody
-is there to answer.
+is there to answer. Setting up your project to test the change may fetch its
+dependencies.
