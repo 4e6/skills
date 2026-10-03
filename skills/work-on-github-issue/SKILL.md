@@ -72,9 +72,7 @@ Other agents may be working in the same clone, and a branch switched or a file
 edited under them breaks their work silently. If the host can create a worktree
 and move the session into it, use that.
 
-Start a new branch from the freshly fetched default branch, with `--no-track`:
-a branch started from a remote-tracking branch tracks it by default, and a
-plain push can then land on the default branch.
+Start a new branch from the freshly fetched default branch.
 
 To continue an existing branch, look for a worktree an earlier session left on
 it first — git will not check a branch out in a second worktree, and the old

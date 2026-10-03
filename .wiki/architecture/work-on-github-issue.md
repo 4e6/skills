@@ -27,9 +27,8 @@ merge only when the user says so — and gives its reason for the rest.
 
 For the same reason it gives no commands for the agent to copy. The agent knows
 `git` and `gh`, and a copied command is followed even where it does not fit. A
-tool's behaviour is named only where an agent would otherwise get it wrong: a
-branch started from a remote-tracking branch tracks it, git will not check a
-branch out in two worktrees, `gh` renames the shared `origin` when it adds a
+tool's behaviour is named only where an agent would otherwise get it wrong: git
+will not check a branch out in two worktrees, `gh` renames the shared `origin` when it adds a
 fork unless the remote is named, and checks are not reported the moment a pull
 request opens.
 
