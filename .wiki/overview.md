@@ -1,11 +1,11 @@
 ---
 type: Overview
 title: What this repository is
-description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a described training week into meals, a shopping list and a printable page; z-image-turbo-macos draws images on a Mac; llm-wiki keeps a codebase's wiki.
+description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a training week into meals; z-image-turbo-macos draws images on a Mac; llm-wiki keeps a codebase's wiki; work-on-github-issue takes an issue to a pull request.
 tags: [overview]
-timestamp: 2026-10-01T11:43:32Z
-sources: [/README.md, skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md, skills/llm-wiki/SKILL.md]
-source_commit: 3d9b7b7cc609f46bdb4ba7a90778593b47dcb3a2
+timestamp: 2026-10-03T11:31:49Z
+sources: [/README.md, skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md, skills/llm-wiki/SKILL.md, skills/work-on-github-issue/SKILL.md]
+source_commit: be3fa4e2e9233de05344c0d974468f6cf6857f77
 ---
 
 # What it is
@@ -16,11 +16,13 @@ A collection of [Agent Skills](https://agentskills.io), one folder each under
 their tokens and on whatever that host happens to provide
 ([the payload](/architecture/the-payload.md)).
 
-There are three. `training-week-meal-plan`, below, is the one most of this bundle
+There are four. `training-week-meal-plan`, below, is the one most of this bundle
 is about. `z-image-turbo-macos` draws images from prompts with one model on one
 kind of machine ([Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md)).
 `llm-wiki` keeps a knowledge base like this one, and this bundle is kept with
-it. Those two are not pure payloads
+it. `work-on-github-issue` takes one GitHub issue to a reviewed pull request
+([work on a GitHub issue](/architecture/work-on-github-issue.md)). Those three
+are not pure payloads
 ([where they bend](/architecture/the-payload.md#the-skills-that-cannot-be-pure-payloads)).
 
 # What the meal-plan skill does

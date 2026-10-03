@@ -1,11 +1,11 @@
 ---
 type: Module
 title: The skill is a payload
-description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. Two skills bend the last two.
+description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. Three skills bend the last two.
 tags: [architecture, distribution]
-timestamp: 2026-10-01T17:10:00Z
-sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**]
-source_commit: 3d9b7b7cc609f46bdb4ba7a90778593b47dcb3a2
+timestamp: 2026-10-03T11:31:49Z
+sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**, skills/work-on-github-issue/SKILL.md]
+source_commit: be3fa4e2e9233de05344c0d974468f6cf6857f77
 ---
 
 # The boundary
@@ -123,6 +123,13 @@ the only network use, and the only write into the folder. The venv ignores
 itself, because the folder may sit inside the repository the skill documents. It needs `git`, since
 staleness is read from history. Its instructions name Claude Code's own paths
 and files, as instructions about the host.
+
+`work-on-github-issue` ships no script, and its work is on the network: it
+reads an issue and writes a branch, a pull request and comments, through `git`
+and `gh`, as commands the agent runs and the host can ask about. It names those
+two tools and the files projects keep their rules in, and describes a host's
+tools by what they do
+([work on a GitHub issue](/architecture/work-on-github-issue.md#how-it-bends-the-payload)).
 
 Their scripts' own facts, in the same terms as the others:
 
