@@ -65,7 +65,7 @@ edited under them breaks their work silently. If the host can create a worktree
 and move the session into it, use that.
 
 Start a new branch from the freshly fetched default branch of the issue's
-repository — not of a fork the clone may have come from.
+repository.
 
 To continue an existing branch, look for a worktree an earlier session left on
 it first — git will not check a branch out in a second worktree, and the old
