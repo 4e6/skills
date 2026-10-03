@@ -100,7 +100,16 @@ Write the plan down, briefly:
 - what is out of scope;
 - what you could not settle.
 
-Then have it reviewed by a fresh subagent that has not seen your reasoning: give
+When the issue is big — several areas of the code, a long investigation, a
+design with real alternatives — hand the planning to a planner subagent: give
+it the issue, the project's rules and what you already know, and have it hand
+back the plan. Areas that can be investigated apart can go to subagents of
+their own, in parallel. Their reading stays in their context and only the
+conclusions come back, which leaves yours for judging the plan and building
+it. The plan is still yours: read it critically before it goes to review.
+
+Then have it reviewed by a fresh subagent that has not seen your reasoning, nor
+the planner's: give
 it the issue and the plan, and ask for design flaws — a wrong cause, a missed
 caller, a simpler approach, scope creep, a test that would not catch the bug.
 Revise until the reviewer would approve it.

@@ -8,7 +8,8 @@ Give your assistant an issue — `#123`, `owner/repo#123` or a link — and it:
 1. reads the issue and its whole thread, and checks whether work on it has
    already started;
 2. works in a git worktree of its own, so several agents can share one clone;
-3. writes a plan and has a fresh reviewer check it before any code is written,
+3. writes a plan — handing a big issue's planning to subagents — and has a
+   fresh reviewer check it before any code is written,
    asking you only about the decisions that are yours, and posts the final plan
    on the issue for whoever works on that code next;
 4. implements and tests the change;
