@@ -124,12 +124,8 @@ itself, because the folder may sit inside the repository the skill documents. It
 staleness is read from history. Its instructions name Claude Code's own paths
 and files, as instructions about the host.
 
-`work-on-github-issue` ships no script, and its work is on the network: it
-reads an issue and writes a branch, a pull request and comments, through `git`
-and `gh`, as commands the agent runs and the host can ask about. It names those
-two tools and the files projects keep their rules in, and describes a host's
-tools by what they do
-([work on a GitHub issue](/architecture/work-on-github-issue.md#how-it-bends-the-payload)).
+`work-on-github-issue` ships no script; its work is on the network, through
+`gh` ([work on a GitHub issue](/architecture/work-on-github-issue.md#how-it-bends-the-payload)).
 
 Their scripts' own facts, in the same terms as the others:
 

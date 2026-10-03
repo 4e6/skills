@@ -1,36 +1,10 @@
 # work-on-github-issue
 
 An [Agent Skill](https://agentskills.io) that takes a GitHub issue and produces
-a reviewed pull request, ready to merge, in any GitHub repository.
-
-Give your assistant an issue — `#123`, `owner/repo#123` or a link — and it:
-
-1. reads the issue and its whole thread, and checks whether work on it has
-   already started;
-2. works in a git worktree of its own, so several agents can share one clone;
-3. writes a plan — handing a big issue's planning to subagents — and has a
-   fresh reviewer check it before any code is written,
-   asking you only about the decisions that are yours, and posts the final plan
-   on the issue for whoever works on that code next;
-4. implements and tests the change;
-5. opens a pull request that closes the issue;
-6. answers its own reviewer, your project's CI and any review that has arrived,
-   until its reviewer approves and the checks are green;
-7. hands the pull request to you. Your maintainers' review comes after that,
-   and it merges only when you say so.
-
-It follows your project's own rules where they differ — `CONTRIBUTING.md`,
-`AGENTS.md`, the pull request template, what CI runs.
+a reviewed pull request, ready to merge, in any GitHub repository. Give your
+assistant an issue — `#123`, `owner/repo#123` or a link. Merging stays yours.
 
 ## Requirements
 
-- `git`, and the [GitHub CLI](https://cli.github.com) (`gh`) signed in with
-  access to the repository.
-- A clone of the repository to work in.
-- Reviews work best in an assistant that can start subagents; one that cannot
-  reviews its own work in a separate pass.
-
-It uses the network: it reads the issue, pushes a branch, opens a pull request,
-and comments on the issue — the plan, what changed in it, and questions nobody
-is there to answer. Setting up your project to test the change may fetch its
-dependencies.
+`git`, and the [GitHub CLI](https://cli.github.com) (`gh`) signed in with
+access to the repository.

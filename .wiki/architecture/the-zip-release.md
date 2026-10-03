@@ -80,8 +80,7 @@ Linux sandbox, and the skill works only on the user's Mac
 every time.
 
 `llm-wiki` has none either: it works on a project's git checkout, which a web
-app's chat does not have. Nor does `work-on-github-issue`, for the same reason:
-it works in a clone of the issue's repository.
+app's chat does not have. Nor does `work-on-github-issue`, for the same reason.
 
 # Built from the commit, not the folder
 

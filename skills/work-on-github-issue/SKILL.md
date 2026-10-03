@@ -2,14 +2,9 @@
 name: work-on-github-issue
 description: >-
   Takes a GitHub issue and produces a reviewed pull request, ready to merge,
-  with green checks, in any GitHub repository: reads the issue and its whole
-  thread, works in a git worktree of its own so other agents can share the
-  checkout, writes a plan, has it reviewed and leaves it on the issue before
-  any code, implements and tests, opens the pull request and works the review
-  until a reviewer approves, then hands it over. Use when the user asks to work
-  on, fix, implement, resolve or pick up a GitHub issue, gives an issue number
-  such as 123 or #123, an owner/repo#123 reference or an issue URL, or asks to
-  turn an issue into a pull request.
+  in any GitHub repository. Use when the user asks to work on, fix, implement,
+  resolve or pick up a GitHub issue, or gives an issue number, reference or
+  URL.
 license: MIT
 compatibility: >-
   Needs git, and the GitHub CLI (gh) authenticated with access to the

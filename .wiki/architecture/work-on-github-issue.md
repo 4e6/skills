@@ -1,20 +1,12 @@
 ---
 type: Module
 title: Work on a GitHub issue
-description: Takes a GitHub issue and produces a reviewed pull request, ready to merge, in any repository. Guidance rather than bans — a worktree always, a reviewed plan before code, a reviewer fit for the change, approval over perfection.
+description: Takes a GitHub issue and produces a reviewed pull request, ready to merge. Why it guides a capable agent rather than banning, and the reason behind each of its rules.
 tags: [architecture, github, process]
-timestamp: 2026-10-03T12:11:06Z
+timestamp: 2026-10-03T12:12:18Z
 sources: [skills/work-on-github-issue/**]
 source_commit: be3fa4e2e9233de05344c0d974468f6cf6857f77
 ---
-
-# What it is
-
-`work-on-github-issue` takes one GitHub issue, named by the user, to a pull
-request with green checks and a reviewer's approval, and hands it over. Merging
-stays the user's. It works in any repository through `git` and `gh`, and defers
-to the project's own rules — `CONTRIBUTING.md`, `AGENTS.md`, the pull request
-template, what CI runs — wherever they differ.
 
 # Guidance, not a fence
 
@@ -26,75 +18,43 @@ handles the case nobody wrote down. So the skill gives each rule its reason,
 and forbids outright only what the agent cannot judge from where it stands:
 merging, which is the user's call, and working a closed issue.
 
-For the same reason it gives no commands for the agent to copy. The agent knows
-`git` and `gh`, and a copied command is followed even where it does not fit. A
-tool's behaviour is named only where an agent would otherwise get it wrong: git
-will not check a branch out in two worktrees, `gh` renames the shared `origin` when it adds a
-fork unless the remote is named, and checks are not reported the moment a pull
-request opens.
+For the same reason it gives no commands to copy. The agent knows `git` and
+`gh`, and a copied command is followed even where it does not fit. A tool's
+behaviour is named only where an agent would otherwise get it wrong.
 
-It is also small: one `SKILL.md`, no scripts and no state machine. A run's
-state is what GitHub and git already hold — the branch, the pull request, the
-comments — so a session that dies leaves work another can pick up by looking,
-and step 1 has the agent look before it starts.
+It keeps no state of its own. A run's state is what GitHub and git already
+hold, so a session that dies leaves work another can pick up by looking.
 
 # Why each rule is there
 
-- **A worktree, always.** Several agents may share one clone. A branch switched
-  or a file edited under another agent breaks its work with no error, so the
-  skill never works in the shared checkout, even when it looks idle.
+- **A worktree, always.** Several agents may share one clone, and a branch
+  switched or a file edited under another agent breaks its work with no error.
 - **A reviewed plan before code.** A good implementation does not rescue a bad
-  plan, and a design mistake is cheaper to see in ten lines of plan than in a
-  diff. The reviewer is a fresh subagent because it has not absorbed the
-  author's assumptions.
+  plan, and a design mistake is cheaper to see in a plan than in a diff. The
+  reviewer is fresh because it has not absorbed the author's assumptions.
 - **A big issue is planned by subagents.** Investigating a wide issue fills a
   context with code read on the way, and the same context then has to judge
-  the plan and build it. A planner subagent, or several investigating separate
-  areas at once, returns only the conclusions. The agent still owns the plan
-  and reads it critically, and the plan's reviewer is neither of them, so it
-  shares no one's assumptions.
-- **The user is asked only what is theirs.** Scope the issue leaves open,
-  behaviour users see, breaking changes, new dependencies. Everything else the
-  agent decides, so the user is not a bottleneck on choices the code settles.
-  With nobody in the session, the questions go on the issue, where whoever
-  answers and whichever session resumes can both read them.
-- **The plan is left on the issue.** The final plan, any change to it, and
-  what the work turned up that the code does not say. A session's reasoning
-  dies with it, and a pull request is found only by someone who already knows
-  to look for it; the issue is where the next person to work on or investigate
-  that code starts.
+  the plan and build it. Subagents return only their conclusions.
+- **The user is asked only what is theirs**, so the user is not a bottleneck on
+  choices the code settles.
+- **The plan is left on the issue.** A session's reasoning dies with it, and a
+  pull request is found only by someone who already knows to look for it; the
+  issue is where the next person to work on or investigate that code starts.
 - **A reviewer suited to the change.** A general reviewer misses what a
-  security or migration reviewer would catch, and a specialist on a typo is
-  waste. The skill's own local review runs before the project's, because it is
-  the cheap one.
-- **Approval, not perfection.** A reviewer always has another comment. The
-  loop ends on a judgement that the change is good enough to merge, with the
-  rest declined or noted, rather than when the reviewer falls silent. The
-  judgement is the agent's own reviewer's, with the checks green, and not a
-  maintainer's, who may take days: an agent told to wait for one waits, or
-  polls, with nothing to do. Checks a maintainer must release, as on a fork's
-  first pull request, are run locally instead and reported as not run.
+  specialist would catch, and a specialist on a typo is waste.
+- **Approval, not perfection.** A reviewer always has another comment, so the
+  loop ends on a judgement that the change is good enough to merge. The
+  judgement is the agent's own reviewer's, not a maintainer's, who may take
+  days: an agent told to wait for one waits, or polls, with nothing to do.
 - **Step back when circling.** The same kind of finding in a new place is one
-  design error paid for per site; the fix is the rule, not the next site. A
-  fix that keeps failing goes to a fresh subagent, which does not share the
-  assumption the agent is stuck on, and a long context is compacted because it
-  degrades judgement.
+  design error paid for per site. A fresh subagent does not share the
+  assumption the agent is stuck on, and a long context degrades judgement.
 
 # How it bends the payload
 
 It is not a pure [payload](/architecture/the-payload.md): its whole job is on
-the network, reading issues and writing branches, pull requests and comments
-through `gh`. `compatibility` names only `git` and an authenticated `gh`,
-which already say it: anything more there would restate what a reader can
-infer from those two. It ships nothing that reaches the
-network on its own; every such act is a command the agent runs and the host
-may ask about. It names `git`, `gh` and the files projects keep their rules
-in, and describes a host's tools by what they do — *if the host can create a
-worktree and move the session into it* — rather than by name.
-
-It has no zip ([the zip release](/architecture/the-zip-release.md)), for the
-same reason as `llm-wiki`: it needs a clone of the repository, which a web
-app's chat does not have.
+the network, through `gh`. It has no zip
+([why](/architecture/the-zip-release.md#readmemds-link-is-the-list)).
 
 # Not measured
 
