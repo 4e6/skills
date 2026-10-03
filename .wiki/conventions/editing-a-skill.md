@@ -1,22 +1,24 @@
 ---
 type: Convention
 title: Editing a skill
-description: Re-read the two upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone; a change to behaviour or to the page is judged by running it.
+description: Re-read the upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone; a change to behaviour or to the page is judged by running it.
 tags: [skills, authoring, review]
-timestamp: 2026-10-01T21:38:33Z
+timestamp: 2026-10-03T14:30:00Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
 source_commit: 3d9b7b7cc609f46bdb4ba7a90778593b47dcb3a2
 ---
 
 # Read the guides, and point at them
 
-Before editing any skill here, read both:
+Before editing any skill here, read all three:
 
 - the Agent Skills specification — <https://agentskills.io/specification>
+- the Agent Skills best practices —
+  <https://agentskills.io/skill-creation/best-practices>
 - Anthropic's skill authoring guidance —
   <https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices>
 
-**Point at them; never copy either into this repository.** Both are revised
+**Point at them; never copy any of them into this repository.** All are revised
 upstream without notice, and a copy is right the day it is written and silently
 wrong afterwards. A paraphrase drifts even when its source does not: a summary of
 a list once quietly lost several of its items.
