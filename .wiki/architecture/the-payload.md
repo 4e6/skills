@@ -1,7 +1,7 @@
 ---
 type: Module
 title: The skill is a payload
-description: A skill folder is copied out whole and runs where this repository does not exist. So it imports nothing from outside itself, nothing it ships reaches the network, and its scripts need only Python 3.9. Three skills bend the last two.
+description: A skill folder is copied out whole and runs where this repository does not exist, on whatever the host provides. What each skill may reach — the network, packages, a newer Python — and why, skill by skill.
 tags: [architecture, distribution]
 timestamp: 2026-10-03T11:31:49Z
 sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**, skills/work-on-github-issue/SKILL.md]
