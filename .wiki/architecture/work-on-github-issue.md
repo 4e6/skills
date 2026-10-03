@@ -3,9 +3,9 @@ type: Module
 title: Work on a GitHub issue
 description: Takes a GitHub issue and produces a reviewed pull request, ready to merge. Why it guides a capable agent rather than banning, and the reason behind each of its rules.
 tags: [architecture, github, process]
-timestamp: 2026-10-03T12:12:18Z
+timestamp: 2026-10-03T14:00:00Z
 sources: [skills/work-on-github-issue/**]
-source_commit: be3fa4e2e9233de05344c0d974468f6cf6857f77
+source_commit: 30a0fcd2cde2ff691ac22f1d233bb25ef33a633b
 ---
 
 # Guidance, not a fence
@@ -46,6 +46,13 @@ hold, so a session that dies leaves work another can pick up by looking.
   loop ends on a judgement that the change is good enough to merge. The
   judgement is the agent's own reviewer's, not a maintainer's, who may take
   days: an agent told to wait for one waits, or polls, with nothing to do.
+- **The merge cleans up after the work.** Worktrees and branches pile up in a
+  clone that several agents share, each one a question for the next agent
+  about whose it is and whether it is still live. The run that made them is
+  the only one that knows, so it removes them when it merges, and touches
+  nothing it did not make. It names the squash merge because that is where an
+  agent goes wrong: git calls a squashed branch unmerged, and the safe-looking
+  delete fails, inviting a force without the check that makes it safe.
 - **Step back when circling.** The same kind of finding in a new place is one
   design error paid for per site. A fresh subagent does not share the
   assumption the agent is stuck on, and a long context degrades judgement.
