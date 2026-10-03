@@ -81,11 +81,17 @@ Otherwise, from the clone:
 
 ```sh
 git fetch origin
-git worktree add -b issue-<n>-<slug> "$(git rev-parse --show-toplevel)/../<repo>-issue-<n>" origin/<default-branch>
+git worktree add --no-track -b issue-<n>-<slug> "$(git rev-parse --show-toplevel)/../<repo>-issue-<n>" origin/<default-branch>
 ```
 
-To continue an existing branch instead, give its name in place of `-b
-issue-<n>-<slug>` and `origin/<default-branch>`.
+`--no-track` keeps the branch from tracking the default branch, which a later
+plain `git push` could otherwise push to.
+
+To continue an existing branch, look in `git worktree list` first: a worktree
+left by an earlier session may already hold it, and is where to carry on. If
+none does, make a worktree on its name in place of `-b issue-<n>-<slug>` and
+`origin/<default-branch>`; for a pull request from a fork, make a detached
+worktree and run `gh pr checkout <pr>` inside it.
 
 Do everything in the worktree from then on, and leave the original checkout as
 you found it. A fresh worktree has none of the ignored files the main checkout
@@ -129,9 +135,12 @@ style. Run what CI runs — tests, linters, type checks — and check the behavi
 the issue describes, not only the unit tests. Keep the diff to the issue:
 unrelated problems you find are a note in the pull request or a new issue.
 
-Push the branch early. Work that lives only in a local worktree is invisible to
-everyone else, and is lost with the session. Without push access to the
-repository, fork it (`gh repo fork --remote`) and push to the fork.
+Push the branch early, with `git push -u origin HEAD`. Work that lives only in
+a local worktree is invisible to everyone else, and is lost with the session.
+Without push access to the repository, fork it and push there instead:
+`gh repo fork --remote --remote-name fork`, then `git push -u fork HEAD`. Name
+the remote: by default `gh` renames the clone's `origin` to make room for the
+fork, and remotes are shared by every worktree of the clone.
 
 ## 5. Review the change, and open the pull request
 
