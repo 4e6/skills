@@ -3,9 +3,8 @@ type: Module
 title: The zip release
 description: Web hosts install a skill from an uploaded zip. Each skill is released alone when its MAJOR.MINOR.PATCH version changes, as a zip built from the commit; README.md's download link is the offer and the list.
 tags: [distribution, release, ci, versioning]
-timestamp: 2026-10-03T11:31:49Z
 sources: [tools/release.py, .github/workflows/release.yml, /README.md, /.gitignore]
-source_commit: be3fa4e2e9233de05344c0d974468f6cf6857f77
+sources_digest: 7c925f0823c71f14
 ---
 
 # Why there is a zip at all

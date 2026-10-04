@@ -3,9 +3,8 @@ type: Module
 title: The validator
 description: validate.py is the one part of the skill that checks rather than instructs. Three exits, a line on success, findings that name their repair, and tolerance chosen so a malformed plan is described rather than hidden.
 tags: [architecture, validation]
-timestamp: 2026-10-01T12:19:17Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/SKILL.md]
-source_commit: 3d9b7b7cc609f46bdb4ba7a90778593b47dcb3a2
+sources_digest: 0eceefca2a19f50a
 ---
 
 # Why it exists

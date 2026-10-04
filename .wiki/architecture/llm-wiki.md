@@ -1,11 +1,10 @@
 ---
 type: Module
 title: llm-wiki
-description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits behind a gate and a reason goes in the page it explains, why a page is retired on evidence and never on age, and what prune does and does not say.
+description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits behind a gate, why a page is retired on evidence and never on age, and why it is pinned by the content of its sources and not by a commit.
 tags: [architecture, llm-wiki, retirement]
-timestamp: 2026-10-04T12:00:00Z
 sources: [skills/llm-wiki/**]
-source_commit: acf5f8692b620671b808e71e6ddea129572655ae
+sources_digest: b11bbfe1d59c9c4b
 ---
 
 # What it is for
@@ -64,6 +63,21 @@ subject. That is the last step of folding the reasoning in, not a sweep.
 - **The tombstone names a path and not a commit.** `git log --diff-filter=D --
   <path>` finds a deleted page. A hash written into the log would be one more
   reference a squash merge invalidates.
+
+# The pin is content
+
+A page is pinned by `sources_digest`, a digest of its sources' content, and not by a
+commit: a commit is a name for history, and a squash merge, a rebase and a
+shallow clone each rewrite or cut it off ([why, and what was tested](/conventions/a-change-and-its-wiki-are-one-commit.md#why-the-pin-is-content-not-a-commit)).
+Three consequences are the skill's own:
+
+- **`pin` takes pages by name.** Pinning says *I read these sources*, so there is no
+  "all" form; `--migrate` converts only pages already current under the old pin.
+- **A stale page still gets a diff to read.** A digest says that the sources
+  changed and not how, so `stale` looks for the newest of the last 50 commits that
+  touched them whose sources digest to the pin, and names it. After a squash there
+  may be none, and the finding says only *changed*.
+- **A Decision is not pinned.** It records an event; see above.
 
 # What is not measured
 

@@ -3,9 +3,8 @@ type: Module
 title: Dish photos
 description: Where the host can draw, each dish gets a square photo beside its recipe's title. The renderer lists the dishes, names each photo for what it shows, embeds the bytes — or, to publish, links them — and never lets a bad photo cost the page.
 tags: [architecture, rendering, photos]
-timestamp: 2026-10-02T15:10:00Z
 sources: [skills/training-week-meal-plan/references/photos.md, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css]
-source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
+sources_digest: 708e8aee97233473
 ---
 
 # Why the renderer does it

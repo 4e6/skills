@@ -117,7 +117,6 @@ title: Use JWTs for service-to-service auth
 description: Chose stateless JWTs over a shared session store for internal RPC.
 status: accepted            # proposed | accepted | amended | superseded
 tags: [auth, security]
-timestamp: 2026-07-10T09:00:00Z
 sources: [src/rpc/**]       # the code the choice shaped; when it is gone, so is the page's subject
 superseded_by: /decisions/0009-mtls.md   # only when status: superseded
 ---
@@ -159,9 +158,8 @@ type: Invariant
 title: Every order has exactly one payment intent
 description: Orders and payment intents are 1:1; a second intent means a bug upstream.
 tags: [billing]
-timestamp: 2026-07-10T09:00:00Z
 sources: [src/billing/**]
-source_commit: 4f2a1c9e...
+sources_digest: 9f2c4e7a1b3d5f60
 ---
 
 # Statement
@@ -196,9 +194,8 @@ type: Module
 title: Auth
 description: Issues and verifies sessions for the web and mobile clients.
 tags: [auth]
-timestamp: 2026-07-10T09:00:00Z
 sources: [src/auth/**]
-source_commit: 4f2a1c9e...
+sources_digest: 9f2c4e7a1b3d5f60
 ---
 
 # Responsibility
@@ -244,7 +241,6 @@ type: Gotcha
 title: Clock skew breaks JWT verification
 description: Hosts more than 60s ahead of the issuer reject freshly minted tokens.
 tags: [auth, ops]
-timestamp: 2026-07-10T09:00:00Z
 ---
 
 # Symptom
@@ -269,7 +265,6 @@ type: Playbook
 title: Rotate the signing key
 description: Steps to rotate the JWT signing key without logging everyone out.
 tags: [oncall, auth]
-timestamp: 2026-07-10T09:00:00Z
 ---
 
 # When
@@ -295,7 +290,6 @@ type: Glossary Term
 title: Settlement
 description: The point at which funds irrevocably move, distinct from authorization.
 tags: [billing, domain]
-timestamp: 2026-07-10T09:00:00Z
 ---
 
 Authorization reserves funds; **settlement** moves them. Our `orders.status`
@@ -319,7 +313,6 @@ title: How do we rotate mTLS certs?
 description: No rotation story exists; blocks the mTLS decision.
 status: open
 tags: [security]
-timestamp: 2026-07-10T09:00:00Z
 ---
 
 # Question

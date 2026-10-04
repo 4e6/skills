@@ -9,7 +9,7 @@ compatibility: >-
   bundle is read and written offline.
 metadata:
   author: 4e6
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # LLM-wiki (Open Knowledge Format)
@@ -137,11 +137,10 @@ type: Module                    # REQUIRED. From reference/concept-types.md.
 title: Auth                     # recommended
 description: One or two.        # recommended — this is L0, ≤250 chars; indexes reuse it verbatim
 tags: [auth]                    # recommended
-timestamp: 2026-07-10T09:00:00Z # recommended — last *meaningful* change
 resource: https://…             # only if a canonical external asset exists
 # --- producer extensions this skill defines ---
 sources: [src/auth/**]          # repo-relative gitignore-syntax globs — the page's L2
-source_commit: 4f2a1c9e…        # commit at which `sources` was last actually read — on the default branch
+sources_digest: 9f2c4e7a1b3d5f60 # written by `okf.py pin`, never by hand — digest of the sources as last read
 status: accepted                # Decision / Open Question only
 superseded_by: /decisions/0009-mtls.md
 amends: [0004-tokens.md]        # Decision only — the pages this one revises in part
@@ -154,17 +153,28 @@ carry no frontmatter and are not concepts. That is a **deviation from OKF §3.1*
 not an extension of it, and it is written down in
 [reference/okf-v0.1.md](reference/okf-v0.1.md) beside the clause it breaks.
 
-`sources` + `source_commit` are the entire sync mechanism. A page with `sources`
-can be checked against git: it is stale when a commit after `source_commit`
-changed its sources **and left the page alone**. A commit that changes the page
-too is the page describing its own change, so a change and its wiki edit land
-as one commit and **nothing is pinned after it merges**. That is the only way a
-squash merge can work, since it gives the change a hash nobody could have
-written into the page beforehand. A pin names a commit on the default branch,
-never one of a branch's own, which a squash or a rebase leaves behind (`S006`).
+`sources` + `sources_digest` are the entire sync mechanism. A page with `sources`
+is stale when a digest of its sources' content no longer equals the one it was
+pinned at. The pin is **content, not history**: a commit hash is a name for
+history, and a squash merge, a rebase and a shallow clone each rewrite or cut off
+history, so a hash written into a page goes invalid where a digest of the same
+files does not. Nothing is pinned after a merge and nothing needs a follow-up
+commit: run `okf.py pin <page>` as the last step after the final edit to a page's
+sources (A3), and the pin is right on the default branch whatever merge made it
+land. Only the sources count; the page may be edited after pinning.
 A page with no `sources` (a `Gotcha`, a `Glossary Term`) is timeless and is
 never reported stale. **Only add `sources` to a page whose truth actually
-depends on that code.** Over-tagging manufactures false staleness.
+depends on that code, and name the files it depends on.** A broad glob is stale
+whenever anything under it changes, so over-tagging manufactures false staleness.
+
+There is no `timestamp` to keep. A hand-set date is one more thing that is wrong
+a week later, and `git log -1 --format=%cI -- <page>` says when a page last
+changed. The field is still legal and `okf.py` neither requires nor reads it.
+
+A page that still carries `source_commit` from before is checked the old way, by
+the commits after it (`S001`, `S002`, `S006`, and `--base` for a branch), and
+`lint` says `W022` until it is pinned: `okf.py pin --migrate` converts the pages
+that are current, and one that is not is read first.
 
 Link with plain markdown, bundle-absolute: `[auth](/architecture/auth.md)`.
 Not `[[wikilinks]]` — OKF §5. Broken links are legal (§5.3), so linking a page
@@ -196,8 +206,8 @@ very repository it documents:
 Always invoke as `"$OKF/.venv/bin/python" "$OKF/okf.py"` — never a system Python.
 It shells out to `git`, so run it from inside the target repo: `--bundle` resolves
 against `$PWD` (defaulting to `wiki`, which is wrong for a `.wiki/` bundle — pass
-it explicitly) and `--repo` defaults to the bundle's git root. All four
-subcommands (`lint`, `stale`, `index`, `prune`) accept `--json`.
+it explicitly) and `--repo` defaults to the bundle's git root. All five
+subcommands (`lint`, `stale`, `index`, `prune`, `pin`) accept `--json`.
 
 The split is deliberate: the script does what is mechanically checkable
 (conformance, link graph, orphans, git diffs, index rendering). Every judgement
@@ -215,8 +225,8 @@ coverage gap deserves a page — stays with the model.
 3. Write `$WIKI/index.md` (with `okf_version: "0.1"`), `$WIKI/overview.md`, and a
    *small* set of pages you can actually support: typically `overview.md`, one
    `Module` per genuine subsystem, and any `Gotcha` the user volunteers. **Ten good pages beat sixty generated ones.**
-4. For pages with `sources`, set `source_commit` to `git rev-parse HEAD` — on a
-   branch, to `git merge-base HEAD <default branch>`, the commit it started from.
+4. For pages with `sources`, run `okf.py pin <page>…` (A3) once you have read what
+   they say.
 5. Do A5 (wire up the read and write paths), then A4 (index + lint).
 6. Seed `log.md` with a `**Initialization**` entry.
 
@@ -246,8 +256,7 @@ fact during other work.
    `# Citations` (§8).
 4. Cross-link both ways: the new page links its neighbours, and at least one
    existing page links to it. An unlinked page is invisible (`W011`).
-5. Set `timestamp` (`date -u +%Y-%m-%dT%H:%M:%SZ`) and, if it has `sources`,
-   `source_commit`. A `Decision` names in `sources` the code its choice shaped, so
+5. If it has `sources`, pin it (`okf.py pin`, A3). A `Decision` names in `sources` the code its choice shaped, so
    that A6 can tell when nothing is left for it to explain.
 6. Run A4, append to `log.md`.
 
@@ -281,61 +290,42 @@ it merges.
 "$OKF/.venv/bin/python" "$OKF/okf.py" --bundle "$WIKI" stale --json
 ```
 
-**On a branch, add `--base <default branch>`.** The branch's commits are then
-judged as one, the way the default branch will see them once the branch is
-squashed: a page the branch changes anywhere covers every change to its sources
-on the branch, and an edit made and then reverted covers nothing. Without it, a
-page fixed in a later commit still reports the commit before it. A merge commit
-is judged by its diff against its first parent, the change it brought in.
-`--base` judges only the branch's own change: name the remote's branch
-(`--base origin/main`), and a commit the branch merged in from it is not
-vouched for by a page the branch edits.
-
 Then, per finding:
 
-- **`S001` sources changed since `source_commit`, in a commit that left the
-  page alone** — read the actual diff of each commit it lists before touching
-  the page:
+- **`S001` sources changed since the page was pinned** — read what changed before
+  touching the page. When a commit with the sources as they were is still in
+  history, the finding names it and the diff to read:
   ```bash
-  git show --first-parent <commit> -- <sources>
+  git diff <baseline> -- <sources>
   ```
-  Then classify:
+  With none (a squash leaves no commit with the branch's intermediate state, and a
+  shallow clone cuts the walk short) read the sources themselves. Then classify:
 
   - **Cosmetic** — renames, formatting, comments, test-only edits, changes that
-    preserve responsibility and boundaries. **Touch, don't rewrite:** bump
-    `source_commit` to `HEAD` — on a branch, to its merge base — leave the body
-    and `timestamp` alone, add no log entry. The page was already correct.
+    preserve responsibility and boundaries. **Touch, don't rewrite:** leave the
+    body alone, add no log entry, and re-pin. The page was already correct.
   - **Semantic** — a boundary moved, a responsibility changed, an invariant was
     added or broken, a dependency appeared. **Rewrite** the affected sections,
-    bump `timestamp` *and* `source_commit` (on a branch, to its merge base),
-    and append to `log.md`.
+    re-pin, and append to `log.md`.
 
-  Never bump `source_commit` without having read the diff. That is how a wiki
-  silently starts lying.
+  Re-pinning is `okf.py pin <page>`, and it is the one step that says *I read
+  this*. **Never pin without having read the sources.** That is how a wiki silently
+  starts lying, and why `pin` takes pages by name and has no "all" form.
 
-  **On a branch, the fix is part of the change.** Either edit goes into the
-  commit that changed the sources — amended in, or a later commit of a branch
-  that is squashed on merge — so the page and its sources change together and
-  the finding does not come back on the default branch. A page fixed in a
-  commit of its own covers only that commit.
+  **Pin last.** The digest is of the sources as they are on disk, so pin after the
+  final edit to them: a source edited after the pin makes the page stale again. On a
+  branch that means the pin is the last thing before the commit that lands, and
+  if the default branch changed the same sources in the meantime the pin is
+  wrong there, which is the page doing its job. Run `stale` on the merged result.
 
-- **`S002` uncommitted changes in sources** — sync describes committed history
-  only. Report it and stop; there is no commit to record. Offer to proceed after
-  the user commits.
-
-- **`S003` `sources` but no `source_commit`** — backfill from the last commit
-  that touched them: `git log -1 --format=%H -- <sources>`.
+- **`S003` `sources` but no `sources_digest`** — never pinned. Read what the page
+  says against its sources, then pin it.
 
 - **`S005` `sources` matches nothing** — the code it described is gone. This is
   the only retirement `stale` can detect; resolve it exactly as A6 does —
   rewrite, retire, or supersede. A `Decision` is never reported stale for its
   sources changing, since it records an event; `S005` is all it can raise, and it
   means the decision is a retirement candidate.
-
-- **`S006` `source_commit` unreachable or not an ancestor of HEAD** — history was
-  rewritten (rebase, squash, amend), so the diff is meaningless. Re-review the
-  page against HEAD from scratch, then re-pin. A pin to a branch's own commit
-  ends here once the branch is squashed; pin to the merge base instead.
 
 - **`S004` coverage gap** — tracked code no page claims. Do **not** create one
   page per file. Ask whether the gap is a real subsystem worth a `Module`, or
@@ -360,7 +350,7 @@ cannot derive. An `index.md` containing `<!-- okf:manual -->` is left untouched.
 
 `lint` enforces OKF §9 conformance (`E…`) and reports rot (`W…`): broken links,
 orphans, concepts missing from their index, directories with no index, absent
-`description`/`timestamp`, and `W018` — a concept hidden behind an instruction
+`description`, and `W018` — a concept hidden behind an instruction
 file's name (A5). Errors mean the bundle is non-conformant — fix them.
 Warnings are judgement: `W010` on a deliberate forward reference is fine.
 
