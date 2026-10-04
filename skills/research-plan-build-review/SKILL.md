@@ -13,7 +13,7 @@ compatibility: >-
   role is a separate pass by the same agent. Uses no network of its own.
 metadata:
   author: 4e6
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Research, plan, build, review
@@ -21,6 +21,12 @@ metadata:
 A task of any size goes through the same loop. What differs is where it stops
 and what is handed over. A small task gets the loop at small scale, and a task
 that is one step skips it, roles and all: just do it.
+
+**Run to the end without stopping to ask.** Handing a task over means the user is
+not at the keyboard. Decide what you can, record each decision and the
+alternative you rejected, and keep going. A question that blocks the work is the
+last resort, not a step: park it in the delivery and do everything that does not
+depend on it.
 
 ```
 Progress:
@@ -41,12 +47,14 @@ gets. Read it off the ask:
 |---|---|---|
 | a question; "find out why" | findings, with evidence and what stays unknown | 2, 5, 6 |
 | "how should we"; "make a plan" | a plan with the alternatives rejected, to approve | 2, 3, 6 |
-| a fix, feature, refactor, docs | a change, verified, delivered the way the project takes changes (step 6) | all |
+| a fix, feature, refactor, docs | a change **delivered**: merged, and live and verified where the project has a deploy path (step 6) | all |
 | work to run: a migration, a batch, an audit | the work done and its result checked | all |
 
 Stages are cut to the ask. A research ask never turns into a change. If two
-readings of the ask would produce different work, ask the user; otherwise take
-the cheaper one and say so.
+readings of the ask would produce different work, take the cheaper one, say so,
+and carry on. Words in the ask that narrow the finish line win over this table:
+"draft", "don't merge", "keep it local", "don't deploy" stop delivery where they
+say.
 
 ## Roles
 
@@ -70,6 +78,8 @@ judgement on the strongest.
   and the artifact — findings, plan or result — and says what to hunt: a wrong
   cause, a missed caller, a claim with no evidence, a simpler way, scope creep, a
   test that would not catch the bug. It reports and does not edit or publish.
+  For a change delivered as a pull request, its verdict goes on the PR (comment or
+  review) with the commit SHA it covered, not only back to you.
   A change to security, concurrency, data migrations or performance deserves a
   reviewer briefed for that.
 - **Advisor.** If you can consult a stronger model, do so before committing to a
@@ -105,8 +115,10 @@ doing it. Have a reviewer read the plan and revise until it would approve.
 
 Some decisions are the user's: scope the task leaves open, behaviour its users
 will see, breaking changes, new dependencies, spend, anything that leaves the
-machine. Ask, and wait. If nobody is there to answer, deliver what can be
-delivered and list the questions. Decide everything else yourself.
+machine other than the delivery path of step 6. Do not stop for them. Take the
+smallest, most reversible option, or leave that part out; list it in the delivery
+as a decision for the user, with what you chose and what it would take to change
+it. Decide everything else yourself.
 
 ## 4. Build and verify
 
@@ -136,16 +148,40 @@ should know about and the alternatives rejected, how it was checked, what is
 still open, and where the written artifacts are. Say plainly what was not done
 or not verified.
 
-A change is delivered the way the project takes changes. Where that is pull
-requests, the work is not done at a verified diff: commit on a branch, push,
-open the pull request, and work the checks and the review until your reviewer
-approves and the checks are green. Asking for a change is asking for that; keep
-the change local only if the user said to.
+**A change is done when it is delivered, not when the diff is verified.** Delivery
+means the way the project takes changes, carried to the end:
 
-Merging, publishing, sending, deploying and deleting are the user's to say, and
-nothing is merged until they do. An ask that says to **integrate**, merge or ship
-carries the delivery through the merge, and then clears away what the work
-made. Without those words, hand the work over ready.
+1. **Open the PR** (or the project's equivalent): commit on a branch, push, open
+   it, and work the checks and the review.
+2. **Merge it** when every one of these holds:
+   - every required check is green **on the head commit**;
+   - a reviewer approved **that commit**, and the verdict is on the PR with its SHA.
+     Any push after approval, including a one-line fix to a finding, needs a new
+     review round before the merge. "The fixes were small" is not a review;
+   - every finding is fixed, or answered with a reason on the PR;
+   - the diff is inside the planned scope.
+
+   Squash or whatever the project's history rule says; never force-push; delete the
+   branch afterwards. If a condition fails, fix it and loop (three rounds at most,
+   then deliver what is ready and name what is open).
+3. **Deploy it** where the project documents a deploy path (CLAUDE.md, README,
+   a deploy runbook): follow that path exactly. Work out the order first when
+   several repos or services change: what must land before what, and why. Prove it
+   landed — the deployed commit against the merged one, then the behaviour, not
+   only the exit code. If the proof fails, roll back (revert the change, redeploy,
+   verify) and report; do not leave a broken deploy for the user.
+4. **Clear away what the work made**: branches, scratch files, temporary state.
+
+Handing over the task is the authority for this path. These are not: deleting
+data you did not create, rotating or exposing credentials, changing something
+other people consume (a public endpoint, a published package) beyond what the ask
+describes, or spending money. Leave them out of delivery and list them.
+
+**If a delivery step is refused** — by the permission layer, a protected branch, a
+required human review, a failing deploy gate — do not retry it another way and do
+not look for a way round. Finish everything that does not depend on it, then stop
+and say: the exact step, what blocked it, and the words or rule that would unlock
+it. A refusal is information about what the user has authorized, not an obstacle.
 
 ## When you keep returning to the same problem
 
