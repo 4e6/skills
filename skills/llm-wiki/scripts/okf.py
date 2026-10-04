@@ -504,6 +504,18 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
             "rename it and fix its inbound links; nothing else here reports it",
         )
 
+    cache: dict[str, object] = {}
+
+    def decision_tracked() -> list[str]:
+        if "tracked" not in cache:
+            cache["tracked"] = tracked_files(bundle.repo)
+        return cache["tracked"]  # type: ignore[return-value]
+
+    def decision_gitlinks() -> frozenset[str]:
+        if "gitlinks" not in cache:
+            cache["gitlinks"] = gitlink_paths(bundle.repo)
+        return cache["gitlinks"]  # type: ignore[return-value]
+
     # §11 — concept conformance.
     for doc in bundle.concepts:
         if doc.raw_frontmatter is None:
@@ -571,7 +583,7 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
                     "re-litigate, it is not a decision: write it as a section of the page "
                     "that owns the thing",
                 )
-            if not any(code_sources(doc.meta.get("sources"))):
+            if not matched_sources(doc, bundle.repo, decision_tracked(), decision_gitlinks())[0]:
                 warn(
                     "W020",
                     doc.rel,
@@ -1064,7 +1076,7 @@ def sources_block_end(lines: list[str]) -> int | None:
         value = re.split(r"\s#", line[len("sources:") :])[0].strip()
         j = i + 1
         if value.startswith("[") and "]" not in value:
-            while j < len(lines) and "]" not in lines[j - 1]:
+            while j < len(lines) and "]" not in re.split(r"\s#", lines[j - 1])[0]:
                 j += 1
         elif not value:
             # A block sequence: indented lines, or `- ` at the key's own indent,
@@ -1218,14 +1230,16 @@ def upgrade_frontmatter(lines: list[str], meta: dict) -> tuple[list[str], list[s
     if entries and all(plain and resource for resource, plain in entries):
         start = next(i for i, l in enumerate(lines) if l.startswith("sources:"))
         end = sources_block_end(lines) or start + 1
-        if any(l.lstrip().startswith("#") for l in lines[start:end]):
-            # Rewriting the block would delete the comment, which is somebody's note.
-            return lines, notes
-        # A note on the key's own line is kept: `sources: # why these`.
-        header = lines[start] if re.search(r"\s#", lines[start]) else "sources:"
-        block = [header] + [f"  - resource: {yaml_scalar(r)}" for r, _ in entries if r]
-        lines = lines[:start] + block + lines[end:]
-        notes.append(f"`sources`: {len(entries)} plain string(s) -> `resource` mappings")
+        # A comment past the key's own line would be deleted with the block, and it
+        # is somebody's note, so such a page is left for a person (`W024` says so).
+        if not any("#" in l for l in lines[start + 1 : end]):
+            # A note on the key's own line is kept, and only the note: for a flow
+            # list that line is the whole value, which the block replaces.
+            note = re.search(r"\s+#.*$", lines[start])
+            header = "sources:" + (note.group(0) if note else "")
+            block = [header] + [f"  - resource: {yaml_scalar(r)}" for r, _ in entries if r]
+            lines = lines[:start] + block + lines[end:]
+            notes.append(f"`sources`: {len(entries)} plain string(s) -> `resource` mappings")
     status = str(meta.get("status") or "").strip().lower()
     if status in LEGACY_STATUS:
         target = LEGACY_STATUS[status]

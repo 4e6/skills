@@ -5,7 +5,7 @@ description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits 
 tags: [architecture, llm-wiki, retirement]
 sources:
   - resource: skills/llm-wiki/**
-sources_digest: 970261d31d943ac4
+sources_digest: 50bd4e41a0e68ddc
 ---
 
 # What it is for

@@ -6,7 +6,7 @@ tags: [process, wiki]
 sources:
   - resource: AGENTS.md
   - resource: skills/llm-wiki/scripts/okf.py
-sources_digest: d1e5ae89cd1ce7c1
+sources_digest: df5178d5a93e1e2c
 ---
 
 # The rule
