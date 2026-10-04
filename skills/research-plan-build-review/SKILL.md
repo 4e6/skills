@@ -13,7 +13,7 @@ compatibility: >-
   role is a separate pass by the same agent. Uses no network of its own.
 metadata:
   author: 4e6
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Research, plan, build, review
@@ -27,6 +27,13 @@ not at the keyboard. Decide what you can, record each decision and the
 alternative you rejected, and keep going. A question that blocks the work is the
 last resort, not a step: park it in the delivery and do everything that does not
 depend on it.
+
+**Work in a git worktree of your own, on every task, read-only ones too.** Other
+agents may share the checkout, and a branch switched or a file edited under you
+changes what you read as well as what you build. Create the worktree before the
+first read, do everything in it, and leave the original checkout as you found it.
+Subagents work in yours; a builder running beside another builder gets a
+worktree of its own. Step 6 removes them.
 
 ```
 Progress:
@@ -71,9 +78,7 @@ judgement on the strongest.
   context and only conclusions come back.
 - **Planner.** You, from the findings; for a big task, a planner subagent whose
   plan you then read critically.
-- **Builder.** Follows the plan and verifies. In a repository other agents may
-  share, it works in a worktree or branch of its own, so no one's files change
-  under them.
+- **Builder.** Follows the plan and verifies, in the worktree.
 - **Reviewer.** A fresh agent that has not seen anyone's reasoning. Gets the ask
   and the artifact — findings, plan or result — and says what to hunt: a wrong
   cause, a missed caller, a claim with no evidence, a simpler way, scope creep, a
@@ -170,7 +175,8 @@ means the way the project takes changes, carried to the end:
    landed — the deployed commit against the merged one, then the behaviour, not
    only the exit code. If the proof fails, roll back (revert the change, redeploy,
    verify) and report; do not leave a broken deploy for the user.
-4. **Clear away what the work made**: branches, scratch files, temporary state.
+4. **Clear away what the work made**: worktrees, branches, scratch files,
+   temporary state. Leave what you did not make.
 
 Handing over the task is the authority for this path. These are not: deleting
 data you did not create, rotating or exposing credentials, changing something
