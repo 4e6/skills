@@ -3,8 +3,10 @@ type: Open Question
 title: Should the plan be sized to daily carbohydrate targets?
 description: Answered with a line of snacks per day. Published daily bands are whole-day intake, and the example's meals came to between half and nine-tenths of each day's band. The measurement and the options weighed are kept here.
 tags: [nutrition, product]
-status: answered
-sources: [skills/training-week-meal-plan/references/fuelling.md, skills/training-week-meal-plan/examples/sample-plan.json]
+status: deprecated
+sources:
+  - resource: skills/training-week-meal-plan/references/fuelling.md
+  - resource: skills/training-week-meal-plan/examples/sample-plan.json
 sources_digest: 606bb3966479e264
 ---
 

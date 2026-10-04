@@ -3,7 +3,9 @@ type: Invariant
 title: Nothing about the athlete is invented
 description: No figure about the athlete's week that they did not give may be printed, and a missing required input is a question, never a guess. What they did give is theirs to print and to fuel from.
 tags: [plan-quality, intake]
-sources: [skills/training-week-meal-plan/references/fuelling.md, skills/training-week-meal-plan/SKILL.md]
+sources:
+  - resource: skills/training-week-meal-plan/references/fuelling.md
+  - resource: skills/training-week-meal-plan/SKILL.md
 sources_digest: 0c65279997992a3a
 ---
 

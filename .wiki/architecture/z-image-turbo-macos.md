@@ -3,7 +3,8 @@ type: Module
 title: Z-Image Turbo on macOS
 description: One model on one kind of machine, and no fallback. The one skill here whose substance is a download, so its network use is fenced into a setup the user agrees to, pinned to what was tested, and generating stays offline.
 tags: [architecture, images, distribution]
-sources: [skills/z-image-turbo-macos/**]
+sources:
+  - resource: skills/z-image-turbo-macos/**
 sources_digest: 9f9a29248c96b873
 ---
 

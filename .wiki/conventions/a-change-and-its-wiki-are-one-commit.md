@@ -3,8 +3,10 @@ type: Convention
 title: A change and its wiki are one commit
 description: A PR changes the code and every page it touches in one squashed commit, and pins each page to the content of its sources, so nothing is pinned after a merge.
 tags: [process, wiki]
-sources: [AGENTS.md, skills/llm-wiki/scripts/okf.py]
-sources_digest: 2010d656102cd1f9
+sources:
+  - resource: AGENTS.md
+  - resource: skills/llm-wiki/scripts/okf.py
+sources_digest: 89ad5a0fbf64afa7
 ---
 
 # The rule

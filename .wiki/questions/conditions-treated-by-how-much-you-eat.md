@@ -3,8 +3,9 @@ type: Open Question
 title: What should the skill do for a condition treated by how much somebody eats?
 description: The closing line says the plan is not for anyone managing a clinical condition or an eating disorder. Whether to say so before planning, or decline, is unsettled.
 tags: [safety, product]
-status: open
-sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/README.md]
+sources:
+  - resource: skills/training-week-meal-plan/SKILL.md
+  - resource: skills/training-week-meal-plan/README.md
 sources_digest: 8b89d6953bb731a5
 ---
 

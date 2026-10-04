@@ -3,8 +3,13 @@ type: Overview
 title: What this repository is
 description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a training week into meals; z-image-turbo-macos draws images on a Mac; llm-wiki keeps a codebase's wiki; work-on-github-issue turns an issue into a reviewed pull request.
 tags: [overview]
-sources: [/README.md, skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md, skills/llm-wiki/SKILL.md, skills/work-on-github-issue/SKILL.md]
-sources_digest: 6bedf6c776fa8a6a
+sources:
+  - resource: /README.md
+  - resource: skills/training-week-meal-plan/SKILL.md
+  - resource: skills/z-image-turbo-macos/SKILL.md
+  - resource: skills/llm-wiki/SKILL.md
+  - resource: skills/work-on-github-issue/SKILL.md
+sources_digest: 93871d4bc4e53e20
 ---
 
 # What it is

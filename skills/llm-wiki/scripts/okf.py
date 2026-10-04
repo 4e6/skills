@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Tooling for Open Knowledge Format (OKF) v0.1 bundles used as LLM-wikis.
+"""Tooling for Open Knowledge Format (OKF) v0.2 bundles used as LLM-wikis.
 
 Subcommands
 -----------
-  lint    Conformance (OKF v0.1 §9) plus link, orphan and index checks.
+  lint    Conformance (OKF v0.2 §11) plus link, orphan and index checks.
   stale   Git-derived staleness of concepts, and coverage gaps in the repo.
   index   Regenerate index.md files from concept frontmatter.
   pin     Record the digest of a page's sources, once its sources have been read.
   prune   Candidates for retirement: pages whose subject is gone.
+  upgrade Rewrite a v0.1 bundle's frontmatter to v0.2: `sources` and `status`.
 
 Everything the model cannot reliably eyeball lives here; everything requiring
 judgement (what a concept should say) stays in SKILL.md.
@@ -32,7 +33,7 @@ from pathlib import Path
 import pathspec
 import yaml
 
-# OKF v0.1 §3.1 — reserved at any level of the hierarchy.
+# OKF §3.1 — reserved at any level of the hierarchy.
 RESERVED = {"index.md", "log.md"}
 
 # Agent instruction files, which a bundle carries so that the rules for editing
@@ -67,8 +68,21 @@ def is_concept_file(name: str) -> bool:
 # alone, and lint treats its links as deliberate (they count against W011).
 MANUAL_MARKER = "<!-- okf:manual -->"
 
-# Frontmatter keys OKF defines. Anything else is a producer extension (§4.1).
-OKF_KEYS = {"type", "title", "description", "resource", "tags", "timestamp"}
+# The version a new bundle declares, and the one `lint` reports. A bundle that
+# declares another keeps what it declared: `index --write` does not upgrade it.
+OKF_VERSION = "0.2"
+
+# v0.2 §5.4. The statuses a v0.1 bundle used are mapped onto these by `upgrade`;
+# `None` means the key goes, since absent means `stable`.
+V02_STATUS = {"draft", "stable", "deprecated"}
+LEGACY_STATUS = {
+    "proposed": "draft",
+    "accepted": "stable",
+    "amended": "stable",
+    "superseded": "deprecated",
+    "answered": "deprecated",
+    "open": None,
+}
 
 # L0 is a scan line: every index entry is read on the way to any single page, so
 # its cost is paid by every query and not just the relevant one. The ceiling is a
@@ -89,7 +103,7 @@ L0_MIN_CHARS = 40
 #
 # `amended` is deliberately absent: an amended decision still governs in part,
 # so demoting it would hide a live answer. Its L0 says what amended it instead.
-RETIRED_STATUS = {"superseded", "answered"}
+RETIRED_STATUS = {"deprecated", "superseded", "answered"}
 RETIRED_HEADING = "No longer current"
 
 # A `Decision` records a fork somebody might re-litigate, so it is only worth a
@@ -308,6 +322,40 @@ def normalize_sources(patterns: list[str], repo: Path, gitlinks: frozenset[str] 
     return out
 
 
+def source_entries(raw) -> list[tuple[str | None, bool]]:
+    """A `sources` value as (resource, is_plain_string) pairs.
+
+    v0.2 §5.1 makes each entry a mapping with a `resource`; a v0.1 bundle wrote
+    bare strings, still read here. A mapping with no `resource` comes back as
+    `None`, which `lint` reports.
+    """
+    if raw is None or raw == "":
+        return []
+    items = raw if isinstance(raw, list) else [raw]
+    out: list[tuple[str | None, bool]] = []
+    for item in items:
+        if isinstance(item, dict):
+            resource = item.get("resource")
+            out.append((str(resource).strip() if resource else None, False))
+        elif item is not None:
+            out.append((str(item).strip(), True))
+    return out
+
+
+def code_sources(raw) -> list[str]:
+    """The entries of `sources` that name files in this repository.
+
+    `sources` is also where a page cites what is not code: a URL, or a scope
+    descriptor in words (§5.1). A repo path or glob has no scheme and no spaces,
+    which is the whole of the test, so those other entries never reach `git`.
+    """
+    return [
+        resource
+        for resource, _ in source_entries(raw)
+        if resource and not SCHEME_RE.match(resource) and not re.search(r"\s", resource)
+    ]
+
+
 # ---------------------------------------------------------------------------
 # bundle model
 # ---------------------------------------------------------------------------
@@ -451,7 +499,7 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
             "rename it and fix its inbound links; nothing else here reports it",
         )
 
-    # §9.1/§9.2 — concept conformance.
+    # §11 — concept conformance.
     for doc in bundle.concepts:
         if doc.raw_frontmatter is None:
             err("E001", doc.rel, "no YAML frontmatter block")
@@ -488,6 +536,25 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
         tags = doc.meta.get("tags")
         if tags is not None and not isinstance(tags, list):
             warn("W015", doc.rel, "`tags` should be a YAML list")
+        status = doc.meta.get("status")
+        if status is not None and str(status).strip().lower() not in V02_STATUS:
+            hint = LEGACY_STATUS.get(str(status).strip().lower(), "stable")
+            warn(
+                "W023",
+                doc.rel,
+                f"`status: {status}` is not one of draft | stable | deprecated (§5.4); "
+                f"`okf.py upgrade` maps it to " + (f"`{hint}`" if hint else "no key, since absent means stable"),
+            )
+        entries = source_entries(doc.meta.get("sources"))
+        if any(plain for _, plain in entries):
+            warn(
+                "W024",
+                doc.rel,
+                "`sources` holds plain strings; v0.2 §5.1 makes each entry a mapping with a "
+                "`resource`. `okf.py upgrade` rewrites a list of only strings; a mixed one is edited by hand",
+            )
+        if any(resource is None for resource, _ in entries):
+            warn("W025", doc.rel, "a `sources` entry has no `resource`, which §5.1 requires")
         if is_decision(doc):
             if count_alternatives(doc.body) < MIN_ALTERNATIVES:
                 warn(
@@ -498,7 +565,7 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
                     "re-litigate, it is not a decision: write it as a section of the page "
                     "that owns the thing",
                 )
-            if not doc.meta.get("sources"):
+            if not code_sources(doc.meta.get("sources")):
                 warn(
                     "W020",
                     doc.rel,
@@ -515,31 +582,31 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
             "belong in the Module or Invariant that owns them; review the newest for demotion",
         )
 
-    # §6 — index files carry no frontmatter, except okf_version at bundle root.
+    # §8 — index files carry no frontmatter, except okf_version at bundle root.
     for doc in bundle.indexes:
         is_root = doc.path.parent == bundle.root
         if doc.raw_frontmatter is None:
             if is_root:
-                warn("W005", doc.rel, 'root index.md should declare okf_version: "0.1"')
+                warn("W005", doc.rel, f'root index.md should declare okf_version: "{OKF_VERSION}"')
         elif not is_root:
-            err("E004", doc.rel, "non-root index.md must not have frontmatter (§6)")
+            err("E004", doc.rel, "non-root index.md must not have frontmatter (§8)")
         elif doc.yaml_error:
             err("E002", doc.rel, f"unparseable frontmatter: {doc.yaml_error}")
         elif "okf_version" not in doc.meta:
-            warn("W005", doc.rel, 'root index.md should declare okf_version: "0.1"')
+            warn("W005", doc.rel, f'root index.md should declare okf_version: "{OKF_VERSION}"')
 
-    # §7 — log entries are ISO-dated, newest first.
+    # §9 — log entries are ISO-dated, newest first.
     for doc in bundle.logs:
         if doc.raw_frontmatter is not None:
-            err("E004", doc.rel, "log.md must not have frontmatter (§7)")
+            err("E004", doc.rel, "log.md must not have frontmatter (§9)")
         dates = [m.group(1) for line in doc.body.splitlines() if (m := LOG_DATE_RE.match(line.strip()))]
         headings = [l for l in doc.body.splitlines() if l.strip().startswith("## ")]
         if len(dates) != len(headings):
-            err("E006", doc.rel, "every `## ` heading must be an ISO 8601 YYYY-MM-DD date (§7)")
+            err("E006", doc.rel, "every `## ` heading must be an ISO 8601 YYYY-MM-DD date (§9)")
         if dates != sorted(dates, reverse=True):
             err("E007", doc.rel, "log entries must be newest-first")
 
-    # §5.3 — broken links are tolerated by consumers, but usually a typo here.
+    # §6.1 — broken links are tolerated by consumers, but usually a typo here.
     # Inbound links (for W011) are counted only from concepts, logs and
     # hand-curated (`okf:manual`) indexes: `index --write` links every concept
     # from its directory's index, so auto-generated indexes would satisfy the
@@ -792,11 +859,9 @@ def matched_sources(
     doc: Doc, repo: Path, tracked: list[str], gitlinks: frozenset[str]
 ) -> tuple[list[str], list[str]]:
     """A concept's normalized `sources` patterns, and the tracked files they match."""
-    raw_sources = doc.meta.get("sources")
+    raw_sources = code_sources(doc.meta.get("sources"))
     if not raw_sources:
         return [], []
-    if not isinstance(raw_sources, list):
-        raw_sources = [raw_sources]
     patterns = normalize_sources(raw_sources, repo, gitlinks)
     if not patterns:
         return [], []
@@ -1082,10 +1147,99 @@ def pin(bundle: Bundle, names: list[str], migrate: bool) -> dict:
             skipped.append({"concept": doc.rel, "reason": "`sources` matches no tracked file (S005)"})
         else:
             spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
-            digest = digest_of(working_entries(repo, [f for f in worktree_files(repo) if spec.match_file(f)]))
+            counted = [f for f in worktree_files(repo) if spec.match_file(f)]
+            digest = digest_of(working_entries(repo, counted))
             write_pin(doc, digest)
-            pinned.append({"concept": doc.rel, DIGEST_KEY: digest})
+            item = {"concept": doc.rel, DIGEST_KEY: digest}
+            # A file git has not been told about is counted, so a new file does not
+            # flip the page when it is added. A stray one is counted too, quietly
+            # baked into the pin, so the pin says which it took.
+            untracked = [f for f in counted if f not in set(tracked)]
+            if untracked:
+                item["untracked"] = untracked[:PRUNE_PATHS_SHOWN]
+            pinned.append(item)
     return {"pinned": pinned, "skipped": skipped}
+
+
+# ---------------------------------------------------------------------------
+# upgrade
+# ---------------------------------------------------------------------------
+
+
+def yaml_scalar(value: str) -> str:
+    """`value` as a YAML scalar, quoted only where a plain one would not parse.
+
+    A glob that starts with `*` is an alias in YAML, so `**/Makefile` has to be
+    quoted; `src/auth/**` does not.
+    """
+    plain = (
+        value
+        and value != "~"
+        and value[0] not in "*&!|>%@`'\"{[,#?:"
+        and not value.startswith("- ")
+        and ":" not in value
+        and not re.search(r"\s", value)
+    )
+    return value if plain else json.dumps(value)
+
+
+def upgrade_frontmatter(lines: list[str], meta: dict) -> tuple[list[str], list[str]]:
+    """v0.1 frontmatter lines as v0.2, and a note for each change made."""
+    notes: list[str] = []
+    entries = source_entries(meta.get("sources"))
+    if entries and all(plain and resource for resource, plain in entries):
+        start = next(i for i, l in enumerate(lines) if l.startswith("sources:"))
+        end = sources_block_end(lines) or start + 1
+        block = ["sources:"] + [f"  - resource: {yaml_scalar(r)}" for r, _ in entries if r]
+        lines = lines[:start] + block + lines[end:]
+        notes.append(f"`sources`: {len(entries)} plain string(s) -> `resource` mappings")
+    status = str(meta.get("status") or "").strip().lower()
+    if status in LEGACY_STATUS:
+        target = LEGACY_STATUS[status]
+        idx = next(i for i, l in enumerate(lines) if l.startswith("status:"))
+        if target is None:
+            del lines[idx]
+            notes.append(f"`status: {status}` -> removed (absent means stable)")
+        else:
+            lines[idx] = f"status: {target}"
+            notes.append(f"`status: {status}` -> `{target}`")
+    return lines, notes
+
+
+def upgrade(bundle: Bundle, write: bool) -> list[dict]:
+    """Rewrite v0.1 frontmatter as v0.2, as text edits that leave the rest alone.
+
+    A `sources` list that mixes strings and mappings is left for a person: there
+    is no telling which of the strings was meant as a path. `timestamp` stays; it is
+    a legacy key v0.2 still reads, and `lint` no longer asks for it.
+    """
+    changes: list[dict] = []
+
+    def rewrite(doc: Doc, transform) -> None:
+        with open(doc.path, encoding="utf-8", newline="") as handle:
+            text = handle.read()
+        match = FRONTMATTER_RE.match(text)
+        if match is None:
+            return
+        eol = "\r\n" if "\r\n" in match.group(1) else "\n"
+        lines, notes = transform(match.group(1).split(eol))
+        if not notes:
+            return
+        changes.append({"file": doc.rel, "changes": notes})
+        if write:
+            with open(doc.path, "w", encoding="utf-8", newline="") as handle:
+                handle.write(text[: match.start(1)] + eol.join(lines) + text[match.end(1) :])
+
+    for doc in bundle.concepts:
+        if doc.raw_frontmatter is not None and not doc.yaml_error:
+            rewrite(doc, lambda lines, d=doc: upgrade_frontmatter(lines, d.meta))
+    for doc in bundle.indexes:
+        if doc.path.parent == bundle.root and doc.meta.get("okf_version") not in (None, OKF_VERSION):
+            def bump(lines, old=doc.meta["okf_version"]):
+                lines = [f'okf_version: "{OKF_VERSION}"' if l.startswith("okf_version:") else l for l in lines]
+                return lines, [f'`okf_version: "{old}"` -> `"{OKF_VERSION}"`']
+            rewrite(doc, bump)
+    return changes
 
 
 # ---------------------------------------------------------------------------
@@ -1220,7 +1374,10 @@ def render_index(directory: Path, bundle: Bundle) -> str:
 
     lines: list[str] = []
     if is_root:
-        lines += ["---", 'okf_version: "0.1"', "---", ""]
+        declared = next(
+            (d.meta.get("okf_version") for d in bundle.indexes if d.path == directory / "index.md"), None
+        )
+        lines += ["---", f'okf_version: "{declared or OKF_VERSION}"', "---", ""]
 
     def entry_for(doc: Doc) -> str:
         entry = f"* [{doc.title}]({doc.path.name})"
@@ -1344,6 +1501,9 @@ def main() -> int:
 
     sub.add_parser("prune", parents=[common], help="retirement candidates (advisory, read-only)")
 
+    p_up = sub.add_parser("upgrade", parents=[common], help="rewrite v0.1 frontmatter as OKF v0.2")
+    p_up.add_argument("--write", action="store_true", help="write changes (default: dry run)")
+
     p_index = sub.add_parser("index", parents=[common], help="regenerate index.md files")
     p_index.add_argument("--write", action="store_true", help="write changes (default: dry run)")
 
@@ -1374,7 +1534,10 @@ def main() -> int:
                 f"\n{len(bundle.concepts)} concepts, {len(errors)} error(s), {len(warnings)} warning(s)"
             )
             if not errors:
-                print("conformant with OKF v0.1")
+                declared = next(
+                    (d.meta.get("okf_version") for d in bundle.indexes if d.path.parent == bundle.root), None
+                )
+                print(f"conformant with OKF v{declared or OKF_VERSION}")
 
         emit({"errors": errors, "warnings": warnings}, args.json, human)
         return 1 if errors or (args.strict and warnings) else 0
@@ -1408,6 +1571,8 @@ def main() -> int:
         def human(res):
             for item in res["pinned"]:
                 print(f"pinned  {item['concept']}  {DIGEST_KEY}: {item[DIGEST_KEY]}")
+                for f in item.get("untracked", []):
+                    print(f"        counted untracked: {f}")
             for item in res["skipped"]:
                 print(f"skipped {item['concept']}: {item['reason']}")
             if not res["pinned"] and not res["skipped"]:
@@ -1415,6 +1580,21 @@ def main() -> int:
 
         emit(result, args.json, human)
         return 1 if result["skipped"] and not args.migrate else 0
+
+    if args.cmd == "upgrade":
+        changes = upgrade(bundle, write=args.write)
+
+        def human(res):
+            verb = "wrote" if args.write else "would change"
+            for change in res["changes"]:
+                print(f"{verb}: {change['file']}")
+                for note in change["changes"]:
+                    print(f"        {note}")
+            if not res["changes"]:
+                print("nothing to upgrade")
+
+        emit({"changes": changes}, args.json, human)
+        return 0 if args.write or not changes else 1
 
     if args.cmd == "prune":
         candidates = prune(bundle)

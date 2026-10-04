@@ -3,7 +3,20 @@ type: Module
 title: The zip release
 description: Web hosts install a skill from an uploaded zip. Each skill is released alone when its MAJOR.MINOR.PATCH version changes, as a zip built from the commit; README.md's download link is the offer and the list.
 tags: [distribution, release, ci, versioning]
-sources: [tools/release.py, .github/workflows/release.yml, /README.md, /.gitignore]
+sources:
+  - resource: tools/release.py
+  - resource: .github/workflows/release.yml
+  - resource: /README.md
+  - resource: /.gitignore
+  - id: claude-help
+    resource: https://support.claude.com/en/articles/12512198-how-to-create-custom-skills
+    title: Claude Help Center, How to create custom skills
+  - id: openai-help
+    resource: https://help.openai.com/en/articles/20001066-skills-in-chatgpt
+    title: OpenAI Help Center, Skills in ChatGPT
+  - id: git-archive
+    resource: https://git-scm.com/docs/git-archive
+    title: git-archive(1)
 sources_digest: 7c925f0823c71f14
 ---
 
@@ -89,9 +102,9 @@ app's chat does not have. Nor does `work-on-github-issue`, for the same reason.
   them to strangers; `git archive` takes only what is tracked. `check` compares
   the zip's files with the commit's in both directions.
 - **The skill's folder is the zip's top level**, named as the skill, as Claude's
-  help asks, rather than its files loose at the root.
+  help asks,[^claude-help] rather than its files loose at the root.
 - **Stamped with the time of the last commit that touched the skill.** Archiving
-  a folder rather than a commit stamps every file with the moment it was built,
+  a folder rather than a commit stamps every file with the moment it was built,[^git-archive]
   so the same skill came out different each time. With `--mtime` an unchanged
   skill rebuilds to the same bytes. That needs git 2.45 and the whole history in
   CI, not a shallow clone.
@@ -117,14 +130,8 @@ would run.
 # Not verified
 
 No zip had been uploaded to either web host when this was written. The layout
-follows Claude's own help; ChatGPT's help says only that it takes a zip.
+follows Claude's own help;[^claude-help] ChatGPT's help says only that it takes a zip.[^openai-help]
 
-# Citations
-
-- Claude Help Center, *How to create custom skills*: "The ZIP should contain the
-  skill folder as its root (not a subfolder)." —
-  <https://support.claude.com/en/articles/12512198-how-to-create-custom-skills>
-- OpenAI Help Center, *Skills in ChatGPT* —
-  <https://help.openai.com/en/articles/20001066-skills-in-chatgpt>
-- git-archive(1), on a tree rather than a commit: "the current time is used as
-  the modification time of each file in the archive."
+[^claude-help]: "The ZIP should contain the skill folder as its root (not a subfolder)."
+[^openai-help]: Skills in ChatGPT, on uploading a skill as a zip.
+[^git-archive]: On a tree rather than a commit: "the current time is used as the modification time of each file in the archive."

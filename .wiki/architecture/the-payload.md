@@ -3,8 +3,14 @@ type: Module
 title: The skill is a payload
 description: A skill folder is copied out whole and runs where this repository does not exist, on whatever the host provides. What each skill may reach — the network, packages, a newer Python — and why, skill by skill.
 tags: [architecture, distribution]
-sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**, skills/work-on-github-issue/SKILL.md]
-sources_digest: b934d3ff7d597558
+sources:
+  - resource: skills/training-week-meal-plan/**
+  - resource: skills/z-image-turbo-macos/SKILL.md
+  - resource: skills/z-image-turbo-macos/scripts/z_image_turbo.py
+  - resource: skills/llm-wiki/SKILL.md
+  - resource: skills/llm-wiki/scripts/**
+  - resource: skills/work-on-github-issue/SKILL.md
+sources_digest: 3308a69cd66334de
 ---
 
 # The boundary
@@ -130,8 +136,9 @@ and files, as instructions about the host.
 Their scripts' own facts, in the same terms as the others:
 
 - `okf.py` runs `git` in the repository it is pointed at and reads the bundle;
-  it writes nothing but `index.md` files under `index --write`, and a page's
-  `sources_digest` line under `pin`.
+  it writes nothing but `index.md` files under `index --write`, a page's
+  `sources_digest` line under `pin`, and a page's `sources` and `status` lines
+  under `upgrade --write`.
 - `z_image_turbo.py` runs `sysctl` and the Pythons it finds, to learn what the
   machine is. Under Python 3.9's standard library it reads the environment and
   the model cache and writes nothing but a lock file and, in `setup`, the

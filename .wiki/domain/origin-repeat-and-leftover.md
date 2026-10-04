@@ -3,7 +3,9 @@ type: Glossary Term
 title: Origin, repeat and leftover
 description: The three kinds of recipe entry. A repeat cooks the dish again and buys it again; a leftover eats a portion already cooked and buys nothing. Getting that backwards is silent in both directions.
 tags: [domain, plan]
-sources: [skills/training-week-meal-plan/references/fuelling.md, skills/training-week-meal-plan/references/plan-schema.json]
+sources:
+  - resource: skills/training-week-meal-plan/references/fuelling.md
+  - resource: skills/training-week-meal-plan/references/plan-schema.json
 sources_digest: 48ad1b3129e6c323
 ---
 

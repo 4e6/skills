@@ -3,8 +3,9 @@ type: Module
 title: llm-wiki
 description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits behind a gate, why a page is retired on evidence and never on age, and why it is pinned by the content of its sources and not by a commit.
 tags: [architecture, llm-wiki, retirement]
-sources: [skills/llm-wiki/**]
-sources_digest: eb60edbb8851cf37
+sources:
+  - resource: skills/llm-wiki/**
+sources_digest: d0dc1470784f460f
 ---
 
 # What it is for
@@ -57,8 +58,8 @@ subject. That is the last step of folding the reasoning in, not a sweep.
 
 - **Never on age.** A page does not become false by getting old; a three-year-old
   `Gotcha` that still bites is the wiki working. `prune` reads no date.
-- **`prune` only lists.** `P001` sources match nothing, `P002` a superseded or
-  answered page no live page links to, `P003` a page names a repo path no tracked
+- **`prune` only lists.** `P001` sources match nothing, `P002` a deprecated
+  page no live page links to, `P003` a page names a repo path no tracked
   file has. `P003` also catches examples, so it is a prompt to look.
 - **The tombstone names a path and not a commit.** `git log --diff-filter=D --
   <path>` finds a deleted page. A hash written into the log would be one more
@@ -78,6 +79,35 @@ Three consequences are the skill's own:
   touched them whose sources digest to the pin, and names it. After a squash there
   may be none, and the finding says only *changed*.
 - **A Decision is not pinned.** It records an event; see above.
+
+# OKF v0.2
+
+The skill follows v0.2 of the spec, which changed the meaning of two keys it had
+used for its own purposes. `sources` is now a list of mappings with a `resource`,
+and `status` is `draft | stable | deprecated`.
+
+- **`sources` keeps its name and takes the spec's shape.** What the skill meant by
+  it, the code a page describes, is a case of what the spec means, *what a concept
+  derives from*; and a repo path or glob is a scope descriptor, which the spec
+  allows where a consumer cannot follow the `resource`. So one list holds the code
+  and the page's citations, and an entry with no URL scheme and no spaces is the
+  code, the only kind `stale` and `pin` read. A renamed key would have left the
+  spec's own `sources` free and the skill's pages saying the same thing in two.
+- **A retired page is `deprecated`**, and a superseded Decision says where it went
+  in `superseded_by`. An open question has no `status`, since absent is `stable`.
+  An amended decision is `stable` and carries `amends`/`amended_by`, because it
+  still governs.
+- **`generated.at` and `verified` are not used.** The date is left out for the
+  reason `timestamp` was, that git says it, and `verified` records that someone
+  confirmed a page, which a digest taken by a script is not.
+- **Citations are footnotes keyed to a `sources` entry**, and `# Citations` is the
+  v0.1 form it replaced.
+- **`upgrade` converts what it can read without guessing**, and leaves a `sources`
+  list that mixes strings and mappings. `index --write` keeps the version a bundle
+  declares, so upgrading is a decision and regenerating an index is not one. Old
+  bundles keep working: `lint` warns (`W023`, `W024`) and `stale` reads a plain
+  string as a path.
+- **`Attested Computation` is not used.**
 
 # What is not measured
 

@@ -3,7 +3,8 @@ type: Module
 title: Each week's files, and recent weeks' dishes
 description: A run writes plan-<first day>.json and .html, so weekly runs from one folder never overwrite each other. Recent plans are looked for wherever the host keeps them, so lunches and dinners vary; a script that only read the folder was dropped.
 tags: [architecture, files]
-sources: [skills/training-week-meal-plan/SKILL.md]
+sources:
+  - resource: skills/training-week-meal-plan/SKILL.md
 sources_digest: 821fcbbf605f9080
 ---
 
