@@ -1,7 +1,7 @@
 ---
 type: Overview
 title: What this repository is
-description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a training week into meals; z-image-turbo-macos draws images on a Mac; llm-wiki keeps a codebase's wiki; work-on-github-issue turns an issue into a reviewed pull request.
+description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a training week into meals; z-image-turbo-macos draws images on a Mac; llm-wiki keeps a wiki; research-plan-build-review and work-on-github-issue run tasks.
 tags: [overview]
 sources:
   - resource: /README.md
@@ -9,7 +9,8 @@ sources:
   - resource: skills/z-image-turbo-macos/SKILL.md
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/work-on-github-issue/SKILL.md
-sources_digest: 0c46547faf591cc2
+  - resource: skills/research-plan-build-review/SKILL.md
+sources_digest: 60245fc85cc0255a
 ---
 
 # What it is
@@ -20,14 +21,17 @@ A collection of [Agent Skills](https://agentskills.io), one folder each under
 their tokens and on whatever that host happens to provide
 ([the payload](/architecture/the-payload.md)).
 
-There are four. `training-week-meal-plan`, below, is the one most of this bundle
+There are five. `training-week-meal-plan`, below, is the one most of this bundle
 is about. `z-image-turbo-macos` draws images from prompts with one model on one
 kind of machine ([Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md)).
 `llm-wiki` keeps a knowledge base like this one, and this bundle is kept with
-it. `work-on-github-issue` takes a GitHub issue and produces a reviewed pull
-request, ready to merge
-([work on a GitHub issue](/architecture/work-on-github-issue.md)). Those three
-are not pure payloads
+it. `research-plan-build-review` carries any task through research, plan, build
+and review and delivers what was asked for, whether findings, a plan, a change
+or work run ([the loop](/architecture/research-plan-build-review.md)).
+`work-on-github-issue` is that loop with a GitHub issue in and a reviewed pull
+request out, ready to merge
+([work on a GitHub issue](/architecture/work-on-github-issue.md)). `z-image-turbo-macos`, `llm-wiki` and
+`work-on-github-issue` are not pure payloads
 ([where they bend](/architecture/the-payload.md#the-skills-that-cannot-be-pure-payloads)).
 
 # What the meal-plan skill does

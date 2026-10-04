@@ -11,7 +11,7 @@ compatibility: >-
   repository.
 metadata:
   author: 4e6
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Work on a GitHub issue
@@ -23,8 +23,20 @@ issue's repository; for an issue elsewhere, find or make that clone first.
 The end of the run is a pull request that solves the issue, with green checks
 and your reviewer's approval, handed to the user. Merging is theirs to decide.
 
-Reviews below are done by a fresh subagent. Where the host cannot start one,
-review in a separate pass that starts again from the issue and the plan alone.
+The loop this follows — research, plan, build, review, deliver — belongs to the
+`research-plan-build-review` skill: its roles, its stop rules, and what to do
+when you keep meeting the same problem. Follow it, with GitHub as the place the
+work is read, recorded and delivered, and a reviewed pull request as the finish
+line. Without that skill, the loop in brief: plan before code, and have the plan
+read by a fresh reviewer who has not seen your reasoning; hand wide
+investigation to subagents that return only conclusions; have the change
+reviewed the same way before anyone else sees it; end on the reviewer's
+approval, not on its running out of comments; and when the same problem keeps
+coming back, stop and fix it where it is decided. A plan says what changes and
+where, why this approach and which were rejected, how you will know it works,
+what is out of scope and what you could not settle. Where the host cannot start
+a subagent, review in a separate pass that starts again from the issue and the
+plan alone.
 
 ```
 Progress:
@@ -80,33 +92,8 @@ what the project needs before the first test run.
 
 ## 3. Plan, have the plan reviewed, and leave it on the issue
 
-A good implementation will not rescue a bad plan, and a design mistake is far
-cheaper to spot in a plan than in a diff. So plan before writing code.
-
-Read the code the change touches and its callers. For a bug, reproduce it first,
-ideally as a failing test, and find the cause rather than the place it shows.
-
-Write the plan down, briefly:
-
-- what changes, and where;
-- why this approach, and which alternatives you rejected;
-- how you will know it works;
-- what is out of scope;
-- what you could not settle.
-
-When the issue is big — several areas of the code, a long investigation, a
-design with real alternatives — hand the planning to a planner subagent: give
-it the issue, the project's rules and what you already know, and have it hand
-back the plan. Areas that can be investigated apart can go to subagents of
-their own, in parallel. Their reading stays in their context and only the
-conclusions come back, which leaves yours for judging the plan and building
-it. The plan is still yours: read it critically before it goes to review.
-
-Then have it reviewed by a fresh subagent that has not seen your reasoning, nor
-the planner's: give
-it the issue and the plan, and ask for design flaws — a wrong cause, a missed
-caller, a simpler approach, scope creep, a test that would not catch the bug.
-Revise until the reviewer would approve it.
+Research and plan as the loop says. For a bug, reproduce it first, ideally as a
+failing test, and find the cause rather than the place it shows.
 
 Some decisions belong to the user: scope the issue leaves open, behaviour
 visible to the project's users, breaking changes, new dependencies. Ask about
@@ -138,12 +125,9 @@ remotes are shared by every worktree of the clone.
 
 ## 5. Review the change, and open the pull request
 
-Read the diff yourself first, then choose a reviewer suited to the change. A
-fresh subagent fits most changes: give it the issue, the plan and the diff, say
-what to look hardest at, and ask it to report findings rather than edit files or
-post on GitHub. A change to security, concurrency, data migrations or
-performance deserves a reviewer briefed for that. This review is cheap; the
-project's CI and reviewers are not, so it comes first.
+Review the change as the loop says, giving the reviewer the issue, the plan and
+the diff. This review is cheap; the project's CI and reviewers are not, so it
+comes first.
 
 Then open the pull request, filling in the project's template if it has one.
 The body says what changed and why, the decisions made and the alternatives
@@ -161,12 +145,9 @@ reviewer, and from any human or bot review that has arrived — by fixing it or
 by replying with a reason. Verify a finding before acting on it: reviewers are
 wrong too. Have your reviewer read each round of fixes.
 
-**Seek approval, not perfection.** The loop ends when your reviewer approves
-and the checks are green — when the change is good enough to merge, not when
-the reviewer runs out of things to say. Fix what is wrong: the issue not
-solved, a bug, a broken test, a security hole. Take a cheap improvement.
-Decline the rest with a reason, or note it as a follow-up. Do not wait for a
-maintainer's approval; that comes after the hand-over.
+**Seek approval, not perfection**, as the loop says: the loop ends when your
+reviewer approves and the checks are green. Do not wait for a maintainer's
+approval; that comes after the hand-over.
 
 ## 7. Hand over
 
@@ -193,17 +174,3 @@ branch's last commit, so nothing local was left unpushed, force the delete. Do
 not remove a worktree with uncommitted changes until you have seen what they
 are. Leave the worktree before removing it if the session is in it, and leave
 the original checkout as you found it.
-
-## When you keep returning to the same problem
-
-Stop and step back. Ask why you keep making the same mistake.
-
-- **The same kind of finding comes back in a different place**: it is one
-  design error paid for site by site. Name the rule being broken, fix it where
-  it is decided, and check the other sites against it.
-- **A fix keeps failing**: hand the problem, stated crisply, to a fresh
-  subagent. It does not share the assumption you are stuck on.
-- **Your context is long**: it degrades your judgement. Compact it, then carry
-  on from what is written down — the plan, the commits, the pull request.
-- **The plan no longer fits**: go back to step 3.
-- **None of that works**: ask the user, with what you tried and why it failed.
