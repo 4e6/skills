@@ -41,7 +41,7 @@ gets. Read it off the ask:
 |---|---|---|
 | a question; "find out why" | findings, with evidence and what stays unknown | 2, 5, 6 |
 | "how should we"; "make a plan" | a plan with the alternatives rejected, to approve | 2, 3, 6 |
-| a fix, feature, refactor, docs | a change, verified, as a pull request your reviewer has approved | all |
+| a fix, feature, refactor, docs | a change, verified, delivered the way the project takes changes (step 6) | all |
 | work to run: a migration, a batch, an audit | the work done and its result checked | all |
 
 Stages are cut to the ask. A research ask never turns into a change. If two

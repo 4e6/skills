@@ -159,8 +159,9 @@ issue.
 
 Tell the user: the pull request's link, what changed, the decisions they should
 know about, anything left open, and the worktree's path, which can be removed
-once the pull request is merged or closed. Merge only when they say so: "merge", "integrate" or "ship it" in the
-ask itself carries the run through step 8.
+once the pull request is merged or closed. Merge only when they say so. If the
+ask already said "merge", "integrate" or "ship it", they have: do not stop to
+wait, and go on to step 8 once the review is approved and the checks are green.
 
 ## 8. When the user says to merge: merge, and clean up
 

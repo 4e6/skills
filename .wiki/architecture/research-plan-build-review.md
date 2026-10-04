@@ -5,7 +5,7 @@ description: "One loop for any task, ending in what the task asked for: findings
 tags: [architecture, process, agents]
 sources:
   - resource: skills/research-plan-build-review/**
-sources_digest: b4e21b346ee72f93
+sources_digest: 0e5239e1a9bbbc7a
 ---
 
 # Why a skill of its own
