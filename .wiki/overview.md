@@ -10,7 +10,7 @@ sources:
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/work-on-github-issue/SKILL.md
   - resource: skills/research-plan-build-review/SKILL.md
-sources_digest: a92c6917423449e9
+sources_digest: 7043c9d6863f657a
 ---
 
 # What it is

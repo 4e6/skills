@@ -5,7 +5,7 @@ description: Takes a GitHub issue and produces a reviewed pull request, ready to
 tags: [architecture, github, process]
 sources:
   - resource: skills/work-on-github-issue/**
-sources_digest: 6565e89a3097e7d2
+sources_digest: 210f93d4a2cd89e8
 ---
 
 # Guidance, not a fence

@@ -35,7 +35,8 @@ reviewed the same way before anyone else sees it; end on the reviewer's
 approval, not on its running out of comments. A change to security,
 concurrency, data migrations or performance deserves a reviewer briefed for it.
 When the same problem keeps coming back, stop and fix it where it is decided;
-when a fix keeps failing, hand the problem to a fresh subagent; when the plan no
+when a fix keeps failing, hand the problem to a fresh subagent; when your context
+is long, compact it and carry on from what is written down; when the plan no
 longer fits, go back to it; when nothing works, ask the user. A plan says what changes and
 where, why this approach and which were rejected, how you will know it works,
 what is out of scope and what you could not settle. Where the host cannot start
