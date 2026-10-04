@@ -5,7 +5,7 @@ description: "One loop for any task, ending in what the task asked for: findings
 tags: [architecture, process, agents]
 sources:
   - resource: skills/research-plan-build-review/**
-sources_digest: 0e5239e1a9bbbc7a
+sources_digest: 6e70040be5a43304
 ---
 
 # Why a skill of its own
@@ -66,6 +66,16 @@ would be an adapter beside it, not part of it
   where it stands what the user wants out of reach. One word moves the line:
   *integrate*, *merge* or *ship* in the ask itself carries the delivery through
   the merge and the cleanup, so the user says it once, up front.
+- **A worktree on every task, read-only ones included.** The first version asked
+  for one only of the builder, and only "in a repository other agents may share":
+  a condition the agent judged for itself, and judged as not met, so research and
+  review ran in the main checkout. A branch switched or a file edited there by a
+  parallel agent changes what a researcher reads as surely as what a builder
+  builds, and the finding is then wrong with no error. An unconditional rule
+  leaves nothing to judge. It sits before the stage list because it applies to
+  all of them. The issue skill's version
+  ([why](/architecture/work-on-github-issue.md)) is the same rule for a
+  task that always builds.
 - **Work that cannot be undone says how to undo it, or how to check first.** A
   change can be reverted from git; a migration or a batch cannot, and a plan
   that does not say so is a plan nobody reviewed for it.
