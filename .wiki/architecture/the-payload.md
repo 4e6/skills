@@ -10,7 +10,7 @@ sources:
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/llm-wiki/scripts/**
   - resource: skills/work-on-github-issue/SKILL.md
-sources_digest: 3308a69cd66334de
+sources_digest: 986c07361302d448
 ---
 
 # The boundary

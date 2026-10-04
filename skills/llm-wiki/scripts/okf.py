@@ -342,18 +342,23 @@ def source_entries(raw) -> list[tuple[str | None, bool]]:
     return out
 
 
-def code_sources(raw) -> list[str]:
-    """The entries of `sources` that name files in this repository.
+def code_sources(raw) -> tuple[list[str], list[str]]:
+    """The entries of `sources` that may name files in this repository.
 
     `sources` is also where a page cites what is not code: a URL, or a scope
-    descriptor in words (§5.1). A repo path or glob has no scheme and no spaces,
-    which is the whole of the test, so those other entries never reach `git`.
+    descriptor in words (§5.1). An entry with a URL scheme never reaches `git`.
+    One with no spaces is a path or glob for certain. One with spaces is a scope
+    descriptor in words, or a path that has a space in it; the second kind is only
+    told from the first by matching a tracked file, so it comes back apart, as the
+    second list, and counts only if it does.
     """
-    return [
-        resource
-        for resource, _ in source_entries(raw)
-        if resource and not SCHEME_RE.match(resource) and not re.search(r"\s", resource)
-    ]
+    strong: list[str] = []
+    weak: list[str] = []
+    for resource, _ in source_entries(raw):
+        if not resource or SCHEME_RE.match(resource):
+            continue
+        (weak if re.search(r"\s", resource) else strong).append(resource)
+    return strong, weak
 
 
 # ---------------------------------------------------------------------------
@@ -551,7 +556,8 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
                 "W024",
                 doc.rel,
                 "`sources` holds plain strings; v0.2 §5.1 makes each entry a mapping with a "
-                "`resource`. `okf.py upgrade` rewrites a list of only strings; a mixed one is edited by hand",
+                "`resource`. `okf.py upgrade` rewrites a list of only strings; a mixed one, or one with a "
+                "comment inside, is edited by hand",
             )
         if any(resource is None for resource, _ in entries):
             warn("W025", doc.rel, "a `sources` entry has no `resource`, which §5.1 requires")
@@ -565,7 +571,7 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
                     "re-litigate, it is not a decision: write it as a section of the page "
                     "that owns the thing",
                 )
-            if not code_sources(doc.meta.get("sources")):
+            if not any(code_sources(doc.meta.get("sources"))):
                 warn(
                     "W020",
                     doc.rel,
@@ -859,14 +865,17 @@ def matched_sources(
     doc: Doc, repo: Path, tracked: list[str], gitlinks: frozenset[str]
 ) -> tuple[list[str], list[str]]:
     """A concept's normalized `sources` patterns, and the tracked files they match."""
-    raw_sources = code_sources(doc.meta.get("sources"))
-    if not raw_sources:
-        return [], []
-    patterns = normalize_sources(raw_sources, repo, gitlinks)
+    strong, weak = code_sources(doc.meta.get("sources"))
+    patterns = normalize_sources(strong + weak, repo, gitlinks)
     if not patterns:
         return [], []
     spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
-    return patterns, [f for f in tracked if spec.match_file(f)]
+    matched = [f for f in tracked if spec.match_file(f)]
+    if not matched and not strong:
+        # Nothing but words that match no file: a scope descriptor, not a path
+        # that has gone, so there is no code here for `S005` to say is missing.
+        return [], []
+    return patterns, matched
 
 
 def stale(bundle: Bundle, base: str | None = None) -> dict:
@@ -1052,15 +1061,28 @@ def sources_block_end(lines: list[str]) -> int | None:
     for i, line in enumerate(lines):
         if not line.startswith("sources:"):
             continue
-        value = line[len("sources:") :].strip()
+        value = re.split(r"\s#", line[len("sources:") :])[0].strip()
         j = i + 1
         if value.startswith("[") and "]" not in value:
             while j < len(lines) and "]" not in lines[j - 1]:
                 j += 1
         elif not value:
-            # A block sequence: indented lines, or `- ` at the key's own indent.
-            while j < len(lines) and (lines[j].startswith((" ", "\t")) or lines[j].startswith("- ")):
-                j += 1
+            # A block sequence: indented lines, or `- ` at the key's own indent,
+            # and a comment or blank line between two of them.
+            def continues(k: int) -> bool:
+                return lines[k].startswith((" ", "\t")) or lines[k].startswith("- ")
+
+            while j < len(lines):
+                if continues(j):
+                    j += 1
+                    continue
+                k = j
+                while k < len(lines) and (not lines[k].strip() or lines[k].lstrip().startswith("#")):
+                    k += 1
+                if k < len(lines) and k > j and continues(k):
+                    j = k
+                else:
+                    break
         return j
     return None
 
@@ -1120,6 +1142,7 @@ def pin(bundle: Bundle, names: list[str], migrate: bool) -> dict:
     gitlinks = gitlink_paths(repo)
     pinned: list[dict] = []
     skipped: list[dict] = []
+    tracked_set = set(tracked)
 
     if migrate:
         blocked = {f["concept"] for f in stale(bundle)["findings"]}
@@ -1142,7 +1165,7 @@ def pin(bundle: Bundle, names: list[str], migrate: bool) -> dict:
         if is_decision(doc):
             skipped.append({"concept": doc.rel, "reason": "a Decision records an event and is not pinned"})
         elif not patterns:
-            skipped.append({"concept": doc.rel, "reason": "no `sources`"})
+            skipped.append({"concept": doc.rel, "reason": "no `sources` entry that names a file in the repository"})
         elif not matched:
             skipped.append({"concept": doc.rel, "reason": "`sources` matches no tracked file (S005)"})
         else:
@@ -1154,7 +1177,7 @@ def pin(bundle: Bundle, names: list[str], migrate: bool) -> dict:
             # A file git has not been told about is counted, so a new file does not
             # flip the page when it is added. A stray one is counted too, quietly
             # baked into the pin, so the pin says which it took.
-            untracked = [f for f in counted if f not in set(tracked)]
+            untracked = [f for f in counted if f not in tracked_set]
             if untracked:
                 item["untracked"] = untracked[:PRUNE_PATHS_SHOWN]
             pinned.append(item)
@@ -1174,12 +1197,17 @@ def yaml_scalar(value: str) -> str:
     """
     plain = (
         value
-        and value != "~"
         and value[0] not in "*&!|>%@`'\"{[,#?:"
         and not value.startswith("- ")
         and ":" not in value
         and not re.search(r"\s", value)
     )
+    if plain:
+        try:
+            # `null`, `no`, `123` and `~` are all valid plain scalars, and none is a string.
+            plain = yaml.safe_load(value) == value
+        except yaml.YAMLError:
+            plain = False
     return value if plain else json.dumps(value)
 
 
@@ -1190,7 +1218,12 @@ def upgrade_frontmatter(lines: list[str], meta: dict) -> tuple[list[str], list[s
     if entries and all(plain and resource for resource, plain in entries):
         start = next(i for i, l in enumerate(lines) if l.startswith("sources:"))
         end = sources_block_end(lines) or start + 1
-        block = ["sources:"] + [f"  - resource: {yaml_scalar(r)}" for r, _ in entries if r]
+        if any(l.lstrip().startswith("#") for l in lines[start:end]):
+            # Rewriting the block would delete the comment, which is somebody's note.
+            return lines, notes
+        # A note on the key's own line is kept: `sources: # why these`.
+        header = lines[start] if re.search(r"\s#", lines[start]) else "sources:"
+        block = [header] + [f"  - resource: {yaml_scalar(r)}" for r, _ in entries if r]
         lines = lines[:start] + block + lines[end:]
         notes.append(f"`sources`: {len(entries)} plain string(s) -> `resource` mappings")
     status = str(meta.get("status") or "").strip().lower()

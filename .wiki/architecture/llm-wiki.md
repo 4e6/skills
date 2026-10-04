@@ -5,7 +5,7 @@ description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits 
 tags: [architecture, llm-wiki, retirement]
 sources:
   - resource: skills/llm-wiki/**
-sources_digest: d0dc1470784f460f
+sources_digest: 970261d31d943ac4
 ---
 
 # What it is for
@@ -90,8 +90,10 @@ and `status` is `draft | stable | deprecated`.
   it, the code a page describes, is a case of what the spec means, *what a concept
   derives from*; and a repo path or glob is a scope descriptor, which the spec
   allows where a consumer cannot follow the `resource`. So one list holds the code
-  and the page's citations, and an entry with no URL scheme and no spaces is the
-  code, the only kind `stale` and `pin` read. A renamed key would have left the
+  and the page's citations, and an entry with no URL scheme is the code, the only
+  kind `stale` and `pin` read, so long as it has no space or matches a tracked file:
+  a scope in words and a path with a space in it cannot otherwise be told apart,
+  and calling the second a citation would have stopped a page being checked at all. A renamed key would have left the
   spec's own `sources` free and the skill's pages saying the same thing in two.
 - **A retired page is `deprecated`**, and a superseded Decision says where it went
   in `superseded_by`. An open question has no `status`, since absent is `stable`.

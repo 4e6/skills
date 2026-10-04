@@ -106,7 +106,7 @@ superseding one does not strand the other.
 named, no single page that owns it, and the user's yes. Otherwise it is a `# Why`
 section of the page that owns the thing.
 
-Immutable once accepted. Never rewrite the reasoning of an accepted decision —
+Immutable once written. Never rewrite the reasoning of a decision —
 supersede it with a new one and cross-link both. Retire it once its subject is
 gone (SKILL.md A6).
 

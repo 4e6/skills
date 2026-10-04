@@ -154,9 +154,11 @@ amended_by: [0009-mtls.md]      # the mirror, on the revised page, which stays `
 ```
 
 `sources` takes entries of two kinds, told apart by their `resource`. One with no
-URL scheme and no spaces is a path or glob in the repository, and is what `stale`
-and `pin` read; any other entry (a URL, or a scope in words) is a citation they
-ignore. A plain string in the list is a v0.1 entry, still read as a path, and
+URL scheme is a path or glob in the repository, and is what `stale` and `pin`
+read, as long as it matches a tracked file or has no space in it; any other entry
+(a URL, or a scope in words, which needs a space or a scheme to be told from a
+path) is a citation they ignore. A path here is from the repository root, not the
+bundle's (§6.2 would read a leading `/` as the bundle's). A plain string in the list is a v0.1 entry, still read as a path, and
 `lint` says `W024` until `okf.py upgrade` rewrites it. `status` follows §5.4:
 `deprecated` is what a superseded Decision or an answered Open Question is, and
 `index` sinks it under *No longer current*. `generated`, `verified` and
@@ -192,7 +194,7 @@ the commits after it (`S001`, `S002`, `S006`, and `--base` for a branch), and
 that are current, and one that is not is read first.
 
 Link with plain markdown, bundle-absolute: `[auth](/architecture/auth.md)`.
-Not `[[wikilinks]]` — OKF §6. Broken links are legal (§6.1), so linking a page
+Not `[[wikilinks]]`: §6 specifies standard markdown links. Broken links are legal (§6.1), so linking a page
 you intend to write next is fine.
 
 ## Scripts

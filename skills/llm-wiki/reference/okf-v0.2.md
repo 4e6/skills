@@ -129,7 +129,7 @@ TTL, so the decision is a plain comparison.
 
 ## §6 Cross-linking
 
-Plain markdown links — **not** `[[wikilinks]]`. Two forms:
+Standard markdown links. Two forms:
 
 - **Absolute (bundle-relative)** — begins with `/`, resolved from the bundle
   root: `[customers](/tables/customers.md)`. **Recommended**: survives moving
@@ -225,7 +225,9 @@ Two deliberate breaking changes; the rest is additive.
 - **Requires** what §11 requires, and nothing more: `type`. `lint` also asks for a
   `description` inside a budget (an extension, `W013`/`W017`).
 - **Reads** `sources` (each entry's `resource`, when it names files in the
-  repository), `status` (`deprecated` sinks a page in its index), `okf_version`,
+  repository: no URL scheme, and a space only in a path a tracked file has. It is
+  relative to the repository root, where §6.2 would read a leading `/` as the
+  bundle's), `status` (`deprecated` sinks a page in its index), `okf_version`,
   and legacy `timestamp` not at all. It reads `generated`, `verified` and
   `stale_after` not at all, and keeps them if a page has them.
 - **Adds**, as producer extensions §4.1 allows: `sources_digest`,
