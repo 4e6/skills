@@ -21,7 +21,8 @@ or a URL. Without one, ask which issue. The work happens in a clone of the
 issue's repository; for an issue elsewhere, find or make that clone first.
 
 The end of the run is a pull request that solves the issue, with green checks
-and your reviewer's approval, handed to the user. Merging is theirs to decide.
+and your reviewer's approval, handed to the user. Merging is theirs to decide,
+unless the ask already said to integrate, merge or ship it.
 
 The loop this follows — research, plan, build, review, deliver — belongs to the
 `research-plan-build-review` skill: its roles, its stop rules, and what to do
@@ -158,7 +159,8 @@ issue.
 
 Tell the user: the pull request's link, what changed, the decisions they should
 know about, anything left open, and the worktree's path, which can be removed
-once the pull request is merged or closed. Merge only when they say so.
+once the pull request is merged or closed. Merge only when they say so: "merge", "integrate" or "ship it" in the
+ask itself carries the run through step 8.
 
 ## 8. When the user says to merge: merge, and clean up
 

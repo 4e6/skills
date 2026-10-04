@@ -41,7 +41,7 @@ gets. Read it off the ask:
 |---|---|---|
 | a question; "find out why" | findings, with evidence and what stays unknown | 2, 5, 6 |
 | "how should we"; "make a plan" | a plan with the alternatives rejected, to approve | 2, 3, 6 |
-| a fix, feature, refactor, docs | a change, verified, in the form the project takes changes | all |
+| a fix, feature, refactor, docs | a change, verified, as a pull request your reviewer has approved | all |
 | work to run: a migration, a batch, an audit | the work done and its result checked | all |
 
 Stages are cut to the ask. A research ask never turns into a change. If two
@@ -136,8 +136,16 @@ should know about and the alternatives rejected, how it was checked, what is
 still open, and where the written artifacts are. Say plainly what was not done
 or not verified.
 
-Merging, publishing, sending, deploying and deleting are the user's to say.
-Hand the work over ready for them.
+A change is delivered the way the project takes changes. Where that is pull
+requests, the work is not done at a verified diff: commit on a branch, push,
+open the pull request, and work the checks and the review until your reviewer
+approves and the checks are green. Asking for a change is asking for that; keep
+the change local only if the user said to.
+
+Merging, publishing, sending, deploying and deleting are the user's to say, and
+nothing is merged until they do. An ask that says to **integrate**, merge or ship
+carries the delivery through the merge, and then clears away what the work
+made. Without those words, hand the work over ready.
 
 ## When you keep returning to the same problem
 

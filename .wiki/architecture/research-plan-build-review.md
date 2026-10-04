@@ -5,7 +5,7 @@ description: "One loop for any task, ending in what the task asked for: findings
 tags: [architecture, process, agents]
 sources:
   - resource: skills/research-plan-build-review/**
-sources_digest: c14cefe69e33f1f5
+sources_digest: b4e21b346ee72f93
 ---
 
 # Why a skill of its own
@@ -56,10 +56,16 @@ would be an adapter beside it, not part of it
   another comment. The issue skill ends the loop on the reviewer's approval; a
   task with no pull request has no CI and no maintainer to end it either, so the
   cap is there to make it end. Three is a guess, not a measurement.
-- **Merging, publishing, sending, deploying and deleting are the user's.** The
-  issue skill held this for merging alone. In a loop that may run work, the
-  list is longer, and the same reason holds: an agent cannot judge from where it
-  stands what the user wants out of reach.
+- **A change ends in an approved pull request, and merging is a word the user
+  says.** A first version handed over a verified diff and left the pull request
+  and its review to a second instruction, which the user then typed after every
+  run. Asking for a change is asking for the pull request and the reviewer's
+  approval, unless the project does not work that way or the user said to keep it
+  local. Merging, publishing, sending, deploying and deleting stay the user's,
+  for the reason the issue skill gave for merging: an agent cannot judge from
+  where it stands what the user wants out of reach. One word moves the line:
+  *integrate*, *merge* or *ship* in the ask itself carries the delivery through
+  the merge and the cleanup, so the user says it once, up front.
 - **Work that cannot be undone says how to undo it, or how to check first.** A
   change can be reverted from git; a migration or a batch cannot, and a plan
   that does not say so is a plan nobody reviewed for it.
