@@ -1,5 +1,8 @@
 # Wiki Update Log
 
+## 2026-10-04
+* **Update**: llm-wiki 1.2.0 puts a gate in front of the `Decision` type instead of more prose after it ([llm-wiki](/architecture/llm-wiki.md#a-reason-is-not-a-decision)). The request no longer says *record this decision*, `decisions/` is not in the layout, types are picked cheapest-first with `Decision` last, and a Decision page needs two named rejected alternatives and the user's yes; `lint` warns below two (`W019`), on none of `sources` (`W020`) and when Decisions exceed a fifth of the concepts (`W021`). A page is now retired on evidence, a Decision included once its subject is gone, and `okf.py prune` lists the candidates without judging them ([retired on evidence](/architecture/llm-wiki.md#retired-on-evidence)). Unmeasured: no before/after run of fresh agents.
+
 ## 2026-10-03
 * **Update**: A fourth skill, `work-on-github-issue` 1.0.0, takes a GitHub issue and produces a reviewed pull request, ready to merge, in any repository ([work on a GitHub issue](/architecture/work-on-github-issue.md)). It works on the network through `gh`, and has no zip, since it needs a clone ([the payload](/architecture/the-payload.md), [the zip release](/architecture/the-zip-release.md), [overview](/overview.md)). Unmeasured: no eval, no run on Sonnet or Haiku.
 

@@ -2,11 +2,12 @@
 
 ## Contents
 
-- **The type table** below — every `type`, its half-life, what it answers, and its
-  directory. Ordered by half-life, highest first.
-- **`Decision` or `Module`?** — the distinction most often got wrong, the rules
-  that settle it, the common case that is neither, and what to do to an older
-  page whose prose the change has passed by.
+- **Pick the type** — the order to reach for them in, ending at `Decision`, which
+  has a gate.
+- **The types** — every `type`, its half-life, what it answers, and its
+  directory.
+- **`Decision` or `Module`?** — what a `Decision` is, what is neither, and what to
+  do to an older page whose prose a change has passed by.
 - **Templates** for seven of the twelve types: Decision (ADR), Invariant, Module,
   Gotcha, Playbook, Glossary Term, Open Question. The rest — `Integration`,
   `Data Model`, `Convention`, `Overview`, `Reference` — have none; follow the
@@ -16,23 +17,44 @@ OKF leaves `type` free-form (§4.1). This is the vocabulary this skill uses. Sti
 to it unless the project genuinely needs a new kind — a consistent `type` set is
 what makes `index.md` grouping and type-filtered retrieval useful.
 
-Each type below is ordered by **knowledge half-life** — how long the content
-stays true. High half-life first. If a proposed page doesn't fit any of these,
-that is a strong hint it belongs in the code, not the wiki.
+## Pick the type
+
+Ask in this order and stop at the first yes. If a proposed page doesn't fit any
+of them, that is a strong hint it belongs in the code, not the wiki.
+
+1. **Does something have to hold, and break if it doesn't?** `Invariant`.
+2. **Did it cost somebody an afternoon, and will it again?** `Gotcha`.
+3. **Is it what a word means here?** `Glossary Term`.
+4. **Is it how to do a task, step by step?** `Playbook`.
+5. **Is it what a part of the project is for, where its edges are, or why it is
+   shaped so?** `Module` — and the *why*, with the alternatives it turned down, goes
+   in that page's `# Why` and `# Rejected alternatives` sections.
+6. **Is it a fork, taken, between alternatives weighed, that no single page
+   owns?** Only then a `Decision`, and only through the gate in SKILL.md A2.
+
+`Decision` comes last on purpose. It looks the most like what was asked for when
+the request says *record why* and a directory is named after it, and so it is the
+page agents write when the thing they have is a reason. A reason belongs to the
+page it explains.
+
+## The types
+
+Each type below is listed with its **knowledge half-life** — how long the content
+stays true.
 
 | `type` | Half-life | Answers | Directory |
 |---|---|---|---|
-| `Decision` | years | *Why is it this way? What did we reject?* | `decisions/` |
 | `Invariant` | years | *What must always hold?* | `invariants/` |
-| `Glossary Term` | years | *What does this word mean here?* | `domain/` |
 | `Gotcha` | years | *What bites people?* | `gotchas/` |
+| `Glossary Term` | years | *What does this word mean here?* | `domain/` |
 | `Integration` | months | *How do we talk to this third party?* | `integrations/` |
 | `Data Model` | months | *What is stored, and what does it mean?* | `domain/` |
 | `Playbook` | months | *How do I do this operational task?* | `playbooks/` |
 | `Convention` | months | *How do we write code here?* | `conventions/` |
-| `Module` | weeks | *What is this for, where are its edges, and why — where no fork was taken?* | `architecture/` |
+| `Module` | weeks | *What is this for, where are its edges, and why?* | `architecture/` |
 | `Overview` | weeks | *What is this project?* | bundle root |
 | `Open Question` | short | *What don't we know yet?* | `questions/` |
+| `Decision` | years while its subject lives | *Which fork was taken, and what was rejected?* — **gated** | `decisions/`, created when a page passes |
 | `Reference` | — | mirrored external material backing a citation | `references/` |
 
 `Module` and `Overview` have the shortest half-life of the durable types, so they
@@ -41,62 +63,38 @@ boundaries and the reasoning behind both**, never about function signatures.
 
 ## `Decision` or `Module`?
 
-The two most-confused types, and the confusion runs one way: `decisions/` gets
-reached for by default, because the word *decision* appears in the trigger list
-of almost every prompt about recording knowledge. Being a trigger does not make
-it a destination. Four rules and a disposition settle nearly every case.
-
 **A `Decision` is written about something that already happened.** It records a
 fork taken, under the constraints in play at the time, and it is dated and
 numbered because both of those are claims about a moment. An ADR for a design
-that has not been built is a plan with a permanent number on it, and the number
-outlives the plan changing. If no live alternative existed that somebody might
-re-litigate, it is not a decision — whatever else it is.
+that has not been built is a plan with a permanent number on it. **A decision that
+names no alternative it turned down is not a decision**, whatever else it is: with
+nothing to re-litigate it is a description, and it belongs in the page it
+describes. `lint` warns (`W019`) below two alternatives, and again (`W021`) when
+Decisions make up more than a fifth of the concepts.
 
-**Changing something already decided is usually neither.** The two rules above
-sort *new* work, and most work is not new. The test is entailment: **does an
-existing `Decision` already commit the project to this outcome?** If it does, the
-work implements that decision rather than taking one — fixing a bug that made an
-existing decision untrue ends with the project doing what was already written down.
-Weighing alternatives is not deciding either: refusing to overturn a decision
-leaves it standing, and a page recording that refusal adds a number to the ledger
-without adding a fork to it.
-
-Entailment rather than *did anything change*, because plenty changes without a
-fork being taken. Work that only moves which cases fall which side of a rule an
-existing decision already settles is that rule meeting better inputs, and gets no
-ADR. Work that settles something the earlier page left open does get one — so
+**Changing something already decided is usually neither.** The test is
+entailment: **does an existing `Decision` already commit the project to this
+outcome?** If it does, the work implements that decision rather than taking one,
+and the rule that now has to hold is an `Invariant`. Weighing alternatives is not
+deciding either: refusing to overturn a decision leaves it standing. Work that
+only moves which cases fall which side of a rule an existing decision settles
+gets no ADR; work that settles something the earlier page left open does, so
 **narrowing or widening a decision's scope is a fork whenever the earlier page
-did not already commit to the new scope**, and is not when it did. A decision
-that delegates its own scope to a derived list has committed to whatever the list
-says next; one that names its bounds has not.
+did not already commit to the new scope**.
 
-When entailment answers yes, the rule that now has to hold is an `Invariant`, and
-the argument for the behaviour belongs to the page that owns the surface.
+**A decision overtaken by events** has a sentence that is no longer true, the
+mechanism it happened to describe. It stays frozen: correct it in place with a
+short note saying which claim has been passed by and where the live answer is, and
+leave its number, status and reasoning alone. A note is not an amendment; reach
+for `amends`/`amended_by` only when a new page actually revises what the old one
+decided.
 
-**A third disposition, which is neither an ADR nor silence.** Making an entailed
-outcome true often falsifies a *sentence* in some older decision — the mechanism
-it happened to describe. That page is frozen and stays frozen: correct it in
-place with a short note saying which claim has been passed by and where the live
-answer is, and leave its number, its status and its reasoning alone. A note is
-not an amendment; reach for `amends`/`amended_by` only when the new page actually
-revises what the old one decided.
-
-**A new surface is a `Module`, and often a `Module` *and* the decisions behind
-it.** The page says what the thing is, what it owns and where it stops; the ADRs
-say why it is not the alternative. Describing and justifying are different jobs,
-and a `Module` that re-argues its own ADRs — or a `Decision` that inventories a
-surface — is doing the other one badly. Link them instead: the module names its
-decisions in a short section and delegates its *forks* to them, so neither page
-repeats the other and superseding one does not strand the other.
-
-**Delegating forks is not delegating every why.** A `Module` carries the argument
-for behaviour nobody forked over — why the boundary falls there, which case it
-was drawn around, what it costs. Only an argument with a fork behind it
-delegates, and the rules above are what decide that; a live alternative is
-necessary for a `Decision`, never sufficient for one. Read instead as *send all
-rationale to an ADR*, this leaves an author holding an argument with nowhere to
-put it but a new number.
+**A `Module` carries the argument for behaviour nobody forked over** — why the
+boundary falls there, which case it was drawn around, what it costs — and the
+alternatives it turned down, in `# Rejected alternatives`. That is the usual home
+of a *why*. A fork that spans modules and that someone might genuinely reopen gets
+a `Decision`, and the modules link to it in a short `# Decisions` section, so
+superseding one does not strand the other.
 
 ---
 
@@ -104,8 +102,13 @@ put it but a new number.
 
 ### Decision (ADR)
 
+**Only after the gate in SKILL.md A2**: a fork taken, two alternatives weighed and
+named, no single page that owns it, and the user's yes. Otherwise it is a `# Why`
+section of the page that owns the thing.
+
 Immutable once accepted. Never rewrite the reasoning of an accepted decision —
-supersede it with a new one and cross-link both.
+supersede it with a new one and cross-link both. Retire it once its subject is
+gone (SKILL.md A6).
 
 ```markdown
 ---
@@ -115,6 +118,7 @@ description: Chose stateless JWTs over a shared session store for internal RPC.
 status: accepted            # proposed | accepted | amended | superseded
 tags: [auth, security]
 timestamp: 2026-07-10T09:00:00Z
+sources: [src/rpc/**]       # the code the choice shaped; when it is gone, so is the page's subject
 superseded_by: /decisions/0009-mtls.md   # only when status: superseded
 ---
 
@@ -122,14 +126,19 @@ superseded_by: /decisions/0009-mtls.md   # only when status: superseded
 
 What forced a choice. Constraints in play at the time.
 
+# Alternatives considered
+
+Each names the constraint that ruled it out. Two at least, and a straw one does
+not count.
+
+* **Shared session store** — rejected because it puts a Redis dependency on the
+  hot path.
+* **mTLS** — rejected because there is no cert rotation story yet. See [open
+  question](/questions/cert-rotation.md).
+
 # Decision
 
 What we chose, stated in one sentence.
-
-# Alternatives considered
-
-* **Shared session store** — rejected: adds a Redis dependency on the hot path.
-* **mTLS** — deferred: no cert rotation story yet. See [open question](/questions/cert-rotation.md).
 
 # Consequences
 
@@ -176,9 +185,10 @@ Customers are double-charged. See [refund playbook](/playbooks/refunds.md).
 ### Module
 
 Responsibility and edges. **No signatures, no line numbers, no file trees** —
-those are what the code is for, and they rot within days. Name the decisions
-behind the surface and let them carry the forks; keep the reasoning no fork was
-taken over. See [`Decision` or `Module`?](#decision-or-module).
+those are what the code is for, and they rot within days. Keep the reasoning
+here, in `# Why this shape`, with what was turned down in `# Rejected
+alternatives`; a `Decision` page is for a fork that spans modules. See
+[`Decision` or `Module`?](#decision-or-module).
 
 ```markdown
 ---
@@ -202,10 +212,17 @@ records — that is [accounts](/architecture/accounts.md).
   other module reads the session cookie directly.
 * Talks to [Redis](/integrations/redis.md) for the revocation list only.
 
-# Decisions
+# Why this shape
 
-* [JWTs for service-to-service auth](/decisions/0004-jwt-auth.md) — why this is
-  stateless, and what a shared session store would have cost.
+Sessions are stateless JWTs, so a verifier needs no round trip to the issuer.
+Revocation is the cost: it is a list, checked on each request.
+
+# Rejected alternatives
+
+* **Shared session store** — rejected because it puts a Redis dependency on the
+  hot path of every request.
+* **Long-lived tokens with no list** — rejected because a leaked token could not
+  be revoked.
 
 # Invariants
 
@@ -241,7 +258,7 @@ timestamp: 2026-07-10T09:00:00Z
 # Fix
 
 Ensure `chrony` is running. We allow 60s leeway, not more — see
-[decision](/decisions/0004-jwt-leeway.md).
+[auth module](/architecture/auth.md).
 ```
 
 ### Playbook
@@ -283,7 +300,7 @@ timestamp: 2026-07-10T09:00:00Z
 
 Authorization reserves funds; **settlement** moves them. Our `orders.status`
 says `paid` at *authorization*, not settlement — a naming wart we kept for
-backward compatibility. See [decision](/decisions/0007-order-status.md).
+backward compatibility. See [orders](/architecture/orders.md#why-this-shape).
 ```
 
 ### Open Question
@@ -307,5 +324,5 @@ timestamp: 2026-07-10T09:00:00Z
 
 # Question
 
-Blocks [mTLS](/decisions/0009-mtls.md). Nobody has owned this.
+Blocks [mTLS](/architecture/auth.md#rejected-alternatives). Nobody has owned this.
 ```

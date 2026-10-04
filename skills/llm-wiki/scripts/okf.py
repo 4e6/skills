@@ -6,6 +6,7 @@ Subcommands
   lint    Conformance (OKF v0.1 §9) plus link, orphan and index checks.
   stale   Git-derived staleness of concepts, and coverage gaps in the repo.
   index   Regenerate index.md files from concept frontmatter.
+  prune   Candidates for retirement: pages whose subject is gone.
 
 Everything the model cannot reliably eyeball lives here; everything requiring
 judgement (what a concept should say) stays in SKILL.md.
@@ -89,6 +90,21 @@ L0_MIN_CHARS = 40
 RETIRED_STATUS = {"superseded", "answered"}
 RETIRED_HEADING = "No longer current"
 
+# A `Decision` records a fork somebody might re-litigate, so it is only worth a
+# page of its own when it names the alternatives that were turned down. The
+# check is on the shape of the section, not on its truth: it cannot tell a real
+# alternative from a strawman, but it does stop the page that has none, which is
+# the page an agent writes when it files a plain description under `decisions/`.
+DECISION_TYPE = "decision"
+ALTERNATIVES_HEADING_RE = re.compile(r"^#{1,6}\s+alternatives considered\s*$", re.I)
+HEADING_RE = re.compile(r"^#{1,6}\s")
+BULLET_RE = re.compile(r"^\s*(?:[*+-]|\d+[.)])\s+\S")
+MIN_ALTERNATIVES = 2
+# Past this share of the concepts (and at least three), Decision pages are the
+# default type rather than the exception.
+DECISION_SHARE = 0.2
+DECISION_SHARE_MIN = 3
+
 # Paths that never warrant a wiki concept. Overridable via <bundle>/.okfignore.
 # Prose and dotfiles are excluded outright: the wiki *is* the prose layer, and a
 # coverage report that nags about README.md teaches you to ignore it.
@@ -169,6 +185,22 @@ def porcelain_paths(output: str) -> list[str]:
             path = path.split(" -> ", 1)[1]
         paths.append(path.strip('"'))
     return paths
+
+
+def is_decision(doc: "Doc") -> bool:
+    return doc.type.casefold() == DECISION_TYPE
+
+
+def count_alternatives(body: str) -> int:
+    """Bullets under a `# Alternatives considered` heading, up to the next heading."""
+    inside = False
+    count = 0
+    for line in body.splitlines():
+        if HEADING_RE.match(line):
+            inside = bool(ALTERNATIVES_HEADING_RE.match(line.strip()))
+        elif inside and BULLET_RE.match(line):
+            count += 1
+    return count
 
 
 def split_frontmatter(text: str) -> tuple[str | None, str]:
@@ -421,6 +453,32 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
         tags = doc.meta.get("tags")
         if tags is not None and not isinstance(tags, list):
             warn("W015", doc.rel, "`tags` should be a YAML list")
+        if is_decision(doc):
+            if count_alternatives(doc.body) < MIN_ALTERNATIVES:
+                warn(
+                    "W019",
+                    doc.rel,
+                    f"Decision names fewer than {MIN_ALTERNATIVES} rejected alternatives under "
+                    "`# Alternatives considered`. With no live alternative nobody can "
+                    "re-litigate, it is not a decision: write it as a section of the page "
+                    "that owns the thing",
+                )
+            if not doc.meta.get("sources"):
+                warn(
+                    "W020",
+                    doc.rel,
+                    "Decision has no `sources`, so `prune` cannot tell when its subject is "
+                    "gone. Name the code the choice shaped",
+                )
+
+    decisions = [d for d in bundle.concepts if d.raw_frontmatter is not None and is_decision(d)]
+    if len(decisions) >= DECISION_SHARE_MIN and len(decisions) > DECISION_SHARE * len(bundle.concepts):
+        warn(
+            "W021",
+            ".",
+            f"{len(decisions)} of {len(bundle.concepts)} concepts are Decisions. Most forks "
+            "belong in the Module or Invariant that owns them; review the newest for demotion",
+        )
 
     # §6 — index files carry no frontmatter, except okf_version at bundle root.
     for doc in bundle.indexes:
@@ -589,6 +647,22 @@ def unread_commits(
     return commits, files
 
 
+def matched_sources(
+    doc: Doc, repo: Path, tracked: list[str], gitlinks: frozenset[str]
+) -> tuple[list[str], list[str]]:
+    """A concept's normalized `sources` patterns, and the tracked files they match."""
+    raw_sources = doc.meta.get("sources")
+    if not raw_sources:
+        return [], []
+    if not isinstance(raw_sources, list):
+        raw_sources = [raw_sources]
+    patterns = normalize_sources(raw_sources, repo, gitlinks)
+    if not patterns:
+        return [], []
+    spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
+    return patterns, [f for f in tracked if spec.match_file(f)]
+
+
 def stale(bundle: Bundle, base: str | None = None) -> dict:
     repo = bundle.repo
     findings: list[dict] = []
@@ -607,27 +681,21 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
         branch_start = out.strip()
 
     for doc in bundle.concepts:
-        raw_sources = doc.meta.get("sources")
-        if not raw_sources:
-            continue
-        if not isinstance(raw_sources, list):
-            raw_sources = [raw_sources]
-        patterns = normalize_sources(raw_sources, repo, gitlinks)
+        patterns, matched = matched_sources(doc, repo, tracked, gitlinks)
         if not patterns:
             continue
-
-        spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
-        matched = [f for f in tracked if spec.match_file(f)]
         covered.update(matched)
 
         if not matched:
-            findings.append(
-                {
-                    "code": "S005",
-                    "concept": doc.rel,
-                    "message": f"`sources` matches no tracked file: {patterns}",
-                }
-            )
+            message = f"`sources` matches no tracked file: {patterns}"
+            if is_decision(doc):
+                message += " — the subject may be gone: a retirement candidate (A6)"
+            findings.append({"code": "S005", "concept": doc.rel, "message": message})
+            continue
+
+        # A Decision is an event: the code it shaped changing later does not make
+        # it false, so only its subject vanishing (S005) says anything about it.
+        if is_decision(doc):
             continue
 
         # git reads a leading slash as the filesystem root, not the repository's.
@@ -742,6 +810,91 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
             for k, v in sorted(gaps.items())
         ],
     }
+
+
+# ---------------------------------------------------------------------------
+# prune
+# ---------------------------------------------------------------------------
+
+FENCE_RE = re.compile(r"^(```|~~~).*?^\1[ \t]*$", re.S | re.M)
+CODE_SPAN_RE = re.compile(r"`([^`\n]+)`")
+PATH_SHAPE_RE = re.compile(r"\A[\w.@+-]+(?:/[\w.@+-]+)+/?\Z")
+PRUNE_PATHS_SHOWN = 5
+
+
+def is_retired(doc: Doc) -> bool:
+    return str(doc.meta.get("status", "")).lower() in RETIRED_STATUS
+
+
+def named_missing_paths(doc: Doc, tracked: list[str]) -> list[str]:
+    """Repo paths a page's code spans name that no tracked file has.
+
+    Only a span that reads as a path into this repo counts: it has a slash, and
+    its first segment is a file or directory at the repo root. That leaves out
+    `.venv/bin/python`, URLs, and paths in somebody else's tree, which are most
+    of what a page names that is not here. A directory counts when any tracked
+    file is under it.
+    """
+    roots = {f.split("/", 1)[0] for f in tracked}
+    files = set(tracked)
+    missing: list[str] = []
+    for span in CODE_SPAN_RE.findall(FENCE_RE.sub("", doc.body)):
+        span = span.strip()
+        if not PATH_SHAPE_RE.match(span):
+            continue
+        path = span.rstrip("/")
+        if path.split("/", 1)[0] not in roots or path in files:
+            continue
+        if any(f.startswith(path + "/") for f in tracked):
+            continue
+        if path not in missing:
+            missing.append(path)
+    return missing
+
+
+def prune(bundle: Bundle) -> list[dict]:
+    """Retirement candidates. Advisory: each one is a prompt to look, never a verdict.
+
+    Nothing here reads a date. A page does not go false by getting old, so age
+    is the one signal this leaves out; each of these says the world moved.
+    """
+    repo = bundle.repo
+    tracked = tracked_files(repo)
+    gitlinks = gitlink_paths(repo)
+    candidates: list[dict] = []
+
+    def add(code: str, doc: Doc, message: str, **extra) -> None:
+        candidates.append({"code": code, "concept": doc.rel, "message": message, **extra})
+
+    # Who links to whom, among concepts only: an index lists every page and a log
+    # names whatever changed, so neither says a page is still relied on.
+    live_inbound: set[Path] = set()
+    for doc in bundle.concepts:
+        if is_retired(doc):
+            continue
+        for _, resolved in doc_links(doc, bundle):
+            if resolved is not None and resolved.resolve() != doc.path.resolve():
+                live_inbound.add(resolved.resolve())
+
+    for doc in bundle.concepts:
+        patterns, matched = matched_sources(doc, repo, tracked, gitlinks)
+        if patterns and not matched:
+            add("P001", doc, f"`sources` matches no tracked file: {patterns}. The code it described is gone")
+        if is_retired(doc) and doc.path.resolve() not in live_inbound:
+            add(
+                "P002",
+                doc,
+                f"status `{doc.meta.get('status')}` and no live page links to it, so nothing relies on it",
+            )
+        missing = named_missing_paths(doc, tracked)
+        if missing:
+            add(
+                "P003",
+                doc,
+                f"names {len(missing)} repo path(s) no tracked file has — renamed, removed, or an example",
+                paths=missing[:PRUNE_PATHS_SHOWN],
+            )
+    return candidates
 
 
 # ---------------------------------------------------------------------------
@@ -896,6 +1049,8 @@ def main() -> int:
         "once the branch is squashed (e.g. --base origin/main)",
     )
 
+    sub.add_parser("prune", parents=[common], help="retirement candidates (advisory, read-only)")
+
     p_index = sub.add_parser("index", parents=[common], help="regenerate index.md files")
     p_index.add_argument("--write", action="store_true", help="write changes (default: dry run)")
 
@@ -950,6 +1105,20 @@ def main() -> int:
 
         emit(result, args.json, human)
         return 1 if result["findings"] else 0
+
+    if args.cmd == "prune":
+        candidates = prune(bundle)
+
+        def human(res):
+            for item in res["candidates"]:
+                print(f"{item['code']}  {item['concept']}: {item['message']}")
+                for p in item.get("paths", []):
+                    print(f"        ? {p}")
+            if not res["candidates"]:
+                print("no retirement candidates")
+
+        emit({"candidates": candidates}, args.json, human)
+        return 0
 
     if args.cmd == "index":
         changes = run_index(bundle, write=args.write)

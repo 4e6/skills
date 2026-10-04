@@ -2,9 +2,11 @@
 
 Durable knowledge about this project: why things are the way they are, what must
 hold, what words mean here, where the boundaries fall, and what bites people.
-Which of those is a `Decision` is `reference/concept-types.md`'s to say, and it
-is the type that gets over-applied. **Not** documentation of the code
-— the code documents itself, and a page restating it is wrong within a week.
+Which type each is, is `reference/concept-types.md`'s to say. A reason goes in the
+`# Why` section of the page it explains; a `Decision` page is for a fork between
+alternatives that no single page owns, and the user says yes to it first. **Not**
+documentation of the code — the code documents itself, and a page restating it is
+wrong within a week.
 
 **Invoke the `llm-wiki` skill before writing or editing anything here.** It
 carries the frontmatter contract, the concept types, the half-life rule that
