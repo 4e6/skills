@@ -5,7 +5,7 @@ description: A PR changes the code and every page it touches in one squashed com
 tags: [process, wiki]
 timestamp: 2026-10-01T19:00:00Z
 sources: [AGENTS.md, skills/llm-wiki/scripts/okf.py]
-source_commit: 1bf51193ea564f2482ab29e115b0181d95867222
+source_commit: acf5f8692b620671b808e71e6ddea129572655ae
 ---
 
 # The rule

@@ -1,6 +1,6 @@
 ---
 name: llm-wiki
-description: Create and maintain an LLM-wiki — a durable, agent-readable knowledge base for a codebase, stored as an Open Knowledge Format (OKF v0.1) bundle of markdown + YAML frontmatter. Use when the user asks to "create a wiki", "set up an LLM-wiki", "start a knowledge base", "document this project", "sync/update the wiki", "is the wiki stale", "lint the wiki", "record this decision", "add an ADR", or asks a durable question the wiki should answer ("why do we do X", "what does Y mean here", "how do I deploy"). Also consider proactively when the user starts, scaffolds, or initializes a new project, and after any change that alters architecture, a decision, an invariant, a data model, or a third-party integration.
+description: Create and maintain an LLM-wiki — a durable, agent-readable knowledge base for a codebase, stored as an Open Knowledge Format (OKF v0.1) bundle of markdown + YAML frontmatter. Use when the user asks to "create a wiki", "set up an LLM-wiki", "start a knowledge base", "document this project", "sync/update the wiki", "is the wiki stale", "lint the wiki", "record why we did X", "document why we did not do Y", or asks a durable question the wiki should answer ("why do we do X", "what does Y mean here", "how do I deploy"). Also consider proactively when the user starts, scaffolds, or initializes a new project, and after any change that alters architecture, an invariant, a data model, or a third-party integration.
 license: MIT
 compatibility: >-
   Needs git, and Python 3.9 or newer for its one script. The script's two
@@ -9,7 +9,7 @@ compatibility: >-
   bundle is read and written offline.
 metadata:
   author: 4e6
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # LLM-wiki (Open Knowledge Format)
@@ -56,10 +56,11 @@ refactor that preserved behaviour?* If no, it belongs in the code.
 
 The rule governs **admission**. Retirement runs on a different axis: does the
 page record an *event* or a *state of the world*? A `Decision` is an event — "in
-2024 we chose X, having rejected Y" stays true forever, including long after you
-stop doing X, which is why decisions supersede and never delete. Every other
-type asserts how the world currently *is*; when the world moves, those pages do
-not go out of date, they become **false**. Retire them — see A6.
+2024 we chose X, having rejected Y" stays true after you stop doing X, which is
+why a decision whose subject still exists is superseded and never deleted. Every
+other type asserts how the world currently *is*; when the world moves, those
+pages do not go out of date, they become **false**. Retire them — see A6. A
+decision follows once nothing is left for it to explain.
 
 ## The three layers (L0 / L1 / L2)
 
@@ -104,7 +105,6 @@ what lets a single commit change behaviour and the knowledge about it together.
     ├── overview.md      # type: Overview
     ├── .okfignore       # optional; gitignore syntax; tunes coverage reporting
     ├── architecture/    # type: Module
-    ├── decisions/       # type: Decision  (NNNN-slug.md, never renumbered)
     ├── domain/          # type: Glossary Term | Data Model
     ├── invariants/      # type: Invariant
     ├── conventions/     # type: Convention
@@ -116,7 +116,9 @@ what lets a single commit change behaviour and the knowledge about it together.
 ```
 
 Create directories lazily — only when a real page needs one. An empty
-`gotchas/` teaches nothing.
+`gotchas/` teaches nothing. The tree names no `decisions/`: a fork is written
+into the page that owns what it shaped, and `decisions/` (`NNNN-slug.md`, never
+renumbered) appears only once A2's gate lets a page through.
 
 `CLAUDE.md`, `CLAUDE.local.md` and `AGENTS.md` are instructions rather than
 knowledge, so `okf.py` ignores them at every level and in any case: never
@@ -194,8 +196,8 @@ very repository it documents:
 Always invoke as `"$OKF/.venv/bin/python" "$OKF/okf.py"` — never a system Python.
 It shells out to `git`, so run it from inside the target repo: `--bundle` resolves
 against `$PWD` (defaulting to `wiki`, which is wrong for a `.wiki/` bundle — pass
-it explicitly) and `--repo` defaults to the bundle's git root. All three
-subcommands accept `--json`.
+it explicitly) and `--repo` defaults to the bundle's git root. All four
+subcommands (`lint`, `stale`, `index`, `prune`) accept `--json`.
 
 The split is deliberate: the script does what is mechanically checkable
 (conformance, link graph, orphans, git diffs, index rendering). Every judgement
@@ -212,8 +214,7 @@ coverage gap deserves a page — stays with the model.
    group by responsibility.
 3. Write `$WIKI/index.md` (with `okf_version: "0.1"`), `$WIKI/overview.md`, and a
    *small* set of pages you can actually support: typically `overview.md`, one
-   `Module` per genuine subsystem, and any `Decision` / `Gotcha` the user
-   volunteers. **Ten good pages beat sixty generated ones.**
+   `Module` per genuine subsystem, and any `Gotcha` the user volunteers. **Ten good pages beat sixty generated ones.**
 4. For pages with `sources`, set `source_commit` to `git rev-parse HEAD` — on a
    branch, to `git merge-base HEAD <default branch>`, the commit it started from.
 5. Do A5 (wire up the read and write paths), then A4 (index + lint).
@@ -225,13 +226,19 @@ intended.
 
 ### A2 — Ingest (add or extend knowledge)
 
-Triggered by "document X", "record this decision", or by you noticing a durable
+Triggered by "document X", "record why we did Y", or by you noticing a durable
 fact during other work.
 
-1. Decide the `type` from [reference/concept-types.md](reference/concept-types.md).
-   If nothing fits, it probably fails the half-life rule. **The Layout tree above
-   is not a substitute**: it names every type and its directory, which is enough
-   to choose wrongly. `Decision` is the one that gets over-applied.
+1. Decide the `type` from [reference/concept-types.md](reference/concept-types.md),
+   starting from the cheapest page: an `Invariant`, a `Gotcha`, a `Glossary Term`,
+   or a section of the `Module` that owns the thing. If nothing fits, it probably
+   fails the half-life rule. **A reason is not a `Decision`.** The reason a module
+   is shaped as it is, or a rule holds, goes in that page's `# Why` section, with
+   the alternatives it turned down under `# Rejected alternatives`. A `Decision`
+   page passes only this gate: the fork was **taken**, **two alternatives were
+   weighed and each is named with what ruled it out**, **no single page owns it**,
+   and **the user said yes to the page**. Say which of the four a page fails
+   rather than writing it anyway.
 2. Check for an existing page first — **update in place rather than adding a
    near-duplicate**. Two pages that disagree are the main failure mode of a wiki.
 3. Write the page: a `description` inside L0's budget and a body that stops at L1.
@@ -240,12 +247,14 @@ fact during other work.
 4. Cross-link both ways: the new page links its neighbours, and at least one
    existing page links to it. An unlinked page is invisible (`W011`).
 5. Set `timestamp` (`date -u +%Y-%m-%dT%H:%M:%SZ`) and, if it has `sources`,
-   `source_commit`.
+   `source_commit`. A `Decision` names in `sources` the code its choice shaped, so
+   that A6 can tell when nothing is left for it to explain.
 6. Run A4, append to `log.md`.
 
-`Decision` pages are append-only. To reverse one, write a new ADR, set the old
-page's `status: superseded` and `superseded_by:`, and leave its reasoning intact.
-The record of a wrong decision is worth more than its deletion.
+`Decision` pages are append-only while their subject lives. To reverse one,
+write a new ADR, set the old page's `status: superseded` and `superseded_by:`, and
+leave its reasoning intact: a wrong decision's record stops the next person trying
+it again. Once the subject is gone, A6 retires it.
 
 **Revising one in part is not reversing it.** Use `status: amended` and the
 `amends`/`amended_by` pair, which `okf.py` treats differently on purpose: an
@@ -253,21 +262,19 @@ amended decision still governs, so `index` leaves it among the live pages where
 `superseded` sinks it under *No longer current*. Marking a still-governing
 decision `superseded` hides a live answer.
 
-**That holds for a mis-filed one too**: a `Decision` that turns out to record no
-fork is still a page somebody has read and linked, so correct it in place — the
-way a decision overtaken by events is corrected — rather than removing it. The
-exception is narrow and is about your own working copy: a page you added and have
-not merged, you may simply take back out. Not for free either, since every
-inbound link and every page edited to point at it comes back out with it — a cost
-paid when the page was written, which is the argument for choosing the type
-first. (This is the one removal `decisions/` allows; A6's *retire* covers every
-other type.)
+**A `Decision` that records no fork is demoted** (`lint` says `W019` when it names
+fewer than two rejected alternatives). Move its reasoning into a `# Why` section
+of the page that owns the thing, point every link that named it there, delete it,
+and log a `**Deprecation**`. It costs more the longer it stays, since each link
+made to it has to be moved too. A decision merely overtaken by events is another
+case, and is corrected in place with a short note saying which claim has been
+passed by and where the live answer is.
 
 ### A3 — Sync with the code (the important one)
 
 The wiki drifts silently. Run this on request ("sync the wiki", "is the wiki
 stale?"), and proactively after committing a change that touched architecture,
-a decision, an invariant, a data model, or an integration — on a branch, before
+an invariant, a data model, or an integration — on a branch, before
 it merges.
 
 ```bash
@@ -320,8 +327,10 @@ Then, per finding:
   that touched them: `git log -1 --format=%H -- <sources>`.
 
 - **`S005` `sources` matches nothing** — the code it described is gone. This is
-  the only retirement the script can detect; resolve it exactly as A6 does —
-  rewrite, retire, or supersede.
+  the only retirement `stale` can detect; resolve it exactly as A6 does —
+  rewrite, retire, or supersede. A `Decision` is never reported stale for its
+  sources changing, since it records an event; `S005` is all it can raise, and it
+  means the decision is a retirement candidate.
 
 - **`S006` `source_commit` unreachable or not an ancestor of HEAD** — history was
   rewritten (rebase, squash, amend), so the diff is meaningless. Re-review the
@@ -372,8 +381,8 @@ it if absent), matching the bundle's actual directory name:
 ```markdown
 ## Project knowledge
 
-Durable knowledge about this project — architecture boundaries, decisions and
-their rationale, invariants, domain vocabulary, gotchas — lives in an OKF
+Durable knowledge about this project — architecture boundaries and why they fall
+where they do, invariants, domain vocabulary, gotchas — lives in an OKF
 knowledge bundle at [wiki/](wiki/). **Start at [wiki/index.md](wiki/index.md)**
 and drill down; don't read the whole bundle.
 
@@ -439,9 +448,26 @@ is the only signal there will ever be. Act on it rather than reading past it:
   scar. A workaround for a bug since fixed is a live page, not a dead one: say
   the workaround can now be removed.
 - **Retire** when it is simply false: delete it, fix inbound links, log a
-  `**Deprecation**` entry. Deletion is cheap — `git log` still has the page and
-  `log.md` is the tombstone. A false page costs more than a missing one.
-- **Supersede** for a `Decision`, never delete (A2).
+  `**Deprecation**` entry naming the page's path and why, so `git log
+  --diff-filter=D -- <path>` finds it again (a commit hash would not survive a
+  squash). Deletion is cheap — `git log` still has the page and `log.md` is the
+  tombstone. A false page costs more than a missing one.
+- **Supersede** a `Decision` whose subject still exists, never delete (A2).
+- **Retire a `Decision`** once its subject is gone, and only then: its `sources`
+  match nothing (`S005`, `P001`), no live page links to it as governing, and
+  any rejected alternative still worth warning against has moved to a `Gotcha`,
+  an `Invariant` or the page that replaced the subject. Do it as the last step of
+  folding that reasoning in, never as a sweep of its own.
+
+```bash
+"$OKF/.venv/bin/python" "$OKF/okf.py" --bundle "$WIKI" prune
+```
+
+`prune` is read-only. It lists pages whose `sources` match nothing (`P001`),
+superseded or answered pages that no live page links to (`P002`), and pages that
+name a repo path no tracked file has (`P003`, which also catches examples).
+Each is a prompt to look and never a verdict; run it with A3 and when `S005` hits
+a `Decision`.
 
 Never retire on age alone. A three-year-old `Gotcha` that is still true is the
 wiki working exactly as intended; only evidence retires a page.
