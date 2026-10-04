@@ -5,7 +5,7 @@ description: Takes a GitHub issue and produces a reviewed pull request, ready to
 tags: [architecture, github, process]
 sources:
   - resource: skills/work-on-github-issue/**
-sources_digest: a35cb6da6786dbb0
+sources_digest: 210f93d4a2cd89e8
 ---
 
 # Guidance, not a fence
@@ -25,27 +25,34 @@ behaviour is named only where an agent would otherwise get it wrong.
 It keeps no state of its own. A run's state is what GitHub and git already
 hold, so a session that dies leaves work another can pick up by looking.
 
+# The loop is another skill's
+
+Until 1.2.0 the skill carried the whole loop: a reviewed plan, planner
+subagents, a fresh reviewer, approval over perfection, stepping back when
+circling. A task without an issue could not use any of it, so the loop moved to
+[research-plan-build-review](/architecture/research-plan-build-review.md), where
+the reason for each rule now lives. This skill is what that loop becomes when
+the finish line is a reviewed pull request on GitHub.
+
+It still carries the loop in a paragraph, because delegation must not cost a
+skill that works alone: an install of this skill without the other behaves as
+before. The paragraph is a copy, and the price of one — change the loop's rules
+there and change it here.
+
 # Why each rule is there
+
+What stayed is what is about GitHub:
 
 - **A worktree, always.** Several agents may share one clone, and a branch
   switched or a file edited under another agent breaks its work with no error.
-- **A reviewed plan before code.** A good implementation does not rescue a bad
-  plan, and a design mistake is cheaper to see in a plan than in a diff. The
-  reviewer is fresh because it has not absorbed the author's assumptions.
-- **A big issue is planned by subagents.** Investigating a wide issue fills a
-  context with code read on the way, and the same context then has to judge
-  the plan and build it. Subagents return only their conclusions.
-- **The user is asked only what is theirs**, so the user is not a bottleneck on
-  choices the code settles.
 - **The plan is left on the issue.** A session's reasoning dies with it, and a
   pull request is found only by someone who already knows to look for it; the
   issue is where the next person to work on or investigate that code starts.
-- **A reviewer suited to the change.** A general reviewer misses what a
-  specialist would catch, and a specialist on a typo is waste.
-- **Approval, not perfection.** A reviewer always has another comment, so the
-  loop ends on a judgement that the change is good enough to merge. The
-  judgement is the agent's own reviewer's, not a maintainer's, who may take
-  days: an agent told to wait for one waits, or polls, with nothing to do.
+- **The user is asked only what is theirs**, and with nobody in the session the
+  questions go on the issue, so the user is not a bottleneck on choices the code
+  settles.
+- **Approval is the agent's reviewer's, not a maintainer's.** A maintainer may
+  take days: an agent told to wait for one waits, or polls, with nothing to do.
 - **The merge cleans up after the work.** Worktrees and branches pile up in a
   clone that several agents share, each one a question for the next agent
   about whose it is and whether it is still live. The run that made them is
@@ -53,15 +60,14 @@ hold, so a session that dies leaves work another can pick up by looking.
   nothing it did not make. It names the squash merge because that is where an
   agent goes wrong: git calls a squashed branch unmerged, and the safe-looking
   delete fails, inviting a force without the check that makes it safe.
-- **Step back when circling.** The same kind of finding in a new place is one
-  design error paid for per site. A fresh subagent does not share the
-  assumption the agent is stuck on, and a long context degrades judgement.
 
 # How it bends the payload
 
 It is not a pure [payload](/architecture/the-payload.md): its whole job is on
 the network, through `gh`. It has no zip
-([why](/architecture/the-zip-release.md#readmemds-link-is-the-list)).
+([why](/architecture/the-zip-release.md#readmemds-link-is-the-list)). It is
+also the one skill that names another, and only softly: without
+`research-plan-build-review` it follows the paragraph it carries.
 
 # Not measured
 
