@@ -1,6 +1,6 @@
 ---
 name: llm-wiki
-description: Create and maintain an LLM-wiki — a durable, agent-readable knowledge base for a codebase, stored as an Open Knowledge Format (OKF v0.1) bundle of markdown + YAML frontmatter. Use when the user asks to "create a wiki", "set up an LLM-wiki", "start a knowledge base", "document this project", "sync/update the wiki", "is the wiki stale", "lint the wiki", "record why we did X", "document why we did not do Y", or asks a durable question the wiki should answer ("why do we do X", "what does Y mean here", "how do I deploy"). Also consider proactively when the user starts, scaffolds, or initializes a new project, and after any change that alters architecture, an invariant, a data model, or a third-party integration.
+description: Create and maintain an LLM-wiki — a durable, agent-readable knowledge base for a codebase, stored as an Open Knowledge Format (OKF v0.2) bundle of markdown + YAML frontmatter. Use when the user asks to "create a wiki", "set up an LLM-wiki", "start a knowledge base", "document this project", "sync/update the wiki", "is the wiki stale", "lint the wiki", "record why we did X", "document why we did not do Y", or asks a durable question the wiki should answer ("why do we do X", "what does Y mean here", "how do I deploy"). Also consider proactively when the user starts, scaffolds, or initializes a new project, and after any change that alters architecture, an invariant, a data model, or a third-party integration.
 license: MIT
 compatibility: >-
   Needs git, and Python 3.9 or newer for its one script. The script's two
@@ -9,7 +9,7 @@ compatibility: >-
   bundle is read and written offline.
 metadata:
   author: 4e6
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # LLM-wiki (Open Knowledge Format)
@@ -18,11 +18,11 @@ An **LLM-wiki** is a knowledge base an agent both writes and reads: durable fact
 about a project distilled into small, cross-linked markdown pages. Unlike RAG,
 the synthesis happens once, at ingest, and compounds.
 
-**Open Knowledge Format (OKF)** is that pattern, specified. Google Cloud's OKF
-v0.1 names "LLM 'wiki' repositories" as the practice it standardizes, so the
-wiki *is* an OKF bundle: readable by any agent or human, diffable in git, no SDK.
+**Open Knowledge Format (OKF)** is that pattern, specified: a directory of markdown
+files with YAML frontmatter, so the wiki *is* an OKF bundle, readable by any agent
+or human, diffable in git, no SDK. This skill follows v0.2.
 
-Read [reference/okf-v0.1.md](reference/okf-v0.1.md) before writing any page. Read
+Read [reference/okf-v0.2.md](reference/okf-v0.2.md) before writing any page. Read
 [reference/concept-types.md](reference/concept-types.md) before choosing a `type`.
 
 > **Scope note.** This skill operates on whatever project you are in, not on the
@@ -64,7 +64,7 @@ decision follows once nothing is left for it to explain.
 
 ## The three layers (L0 / L1 / L2)
 
-Progressive disclosure (§6) works because knowledge is stored at three
+Progressive disclosure (§8) works because knowledge is stored at three
 resolutions. Always know which one you are writing or reading:
 
 | Layer | Lives in | Size | Read when |
@@ -100,7 +100,7 @@ what lets a single commit change behaviour and the knowledge about it together.
 └── wiki/                # the OKF bundle root (some projects use .wiki/)
     ├── CLAUDE.md        # how to edit this bundle — loads on demand (see A5)
     ├── AGENTS.md        # the same, for agents that do not read CLAUDE.md
-    ├── index.md         # okf_version: "0.1"; the only index with frontmatter
+    ├── index.md         # okf_version: "0.2"; the only index with frontmatter
     ├── log.md           # newest-first, ISO-dated change history
     ├── overview.md      # type: Overview
     ├── .okfignore       # optional; gitignore syntax; tunes coverage reporting
@@ -128,8 +128,9 @@ file will be linted as a page missing its `type`.
 
 ## Frontmatter contract
 
-OKF requires **only `type`** (§4.1). Everything else is recommended or a
-producer extension. Use these, and nothing else, so the scripts can reason:
+OKF requires **only `type`** (§4.1). Everything else is recommended, one of v0.2's
+optional families (§5), or a producer extension. Use these so the scripts can
+reason:
 
 ```yaml
 ---
@@ -139,19 +140,35 @@ description: One or two.        # recommended — this is L0, ≤250 chars; inde
 tags: [auth]                    # recommended
 resource: https://…             # only if a canonical external asset exists
 # --- producer extensions this skill defines ---
-sources: [src/auth/**]          # repo-relative gitignore-syntax globs — the page's L2
-sources_digest: 9f2c4e7a1b3d5f60 # written by `okf.py pin`, never by hand — digest of the sources as last read
-status: accepted                # Decision / Open Question only
-superseded_by: /decisions/0009-mtls.md
+sources:                        # §5.1: what the page derives from
+  - resource: src/auth/**       # a repo path or gitignore-syntax glob — the page's L2
+  - id: rfc7519                 # anything else: a URL, cited in the body as [^rfc7519]
+    resource: https://www.rfc-editor.org/rfc/rfc7519
+    title: JSON Web Token
+sources_digest: 9f2c4e7a1b3d5f60 # written by `okf.py pin`, never by hand — digest of the code as last read
+status: stable                  # §5.4: draft | stable (the default) | deprecated
+superseded_by: /decisions/0009-mtls.md   # with `status: deprecated`
 amends: [0004-tokens.md]        # Decision only — the pages this one revises in part
-amended_by: [0009-mtls.md]      # the mirror, on the revised page. `status: amended`
+amended_by: [0009-mtls.md]      # the mirror, on the revised page, which stays `stable`
 ---
 ```
+
+`sources` takes entries of two kinds, told apart by their `resource`. One with no
+URL scheme is a path or glob in the repository, and is what `stale` and `pin`
+read, as long as it matches a tracked file or has no space in it; any other entry
+(a URL, or a scope in words, which needs a space or a scheme to be told from a
+path) is a citation they ignore. A path here is from the repository root, not the
+bundle's (§6.2 would read a leading `/` as the bundle's). A plain string in the list is a v0.1 entry, still read as a path, and
+`lint` says `W024` until `okf.py upgrade` rewrites it. `status` follows §5.4:
+`deprecated` is what a superseded Decision or an answered Open Question is, and
+`index` sinks it under *No longer current*. `generated`, `verified` and
+`stale_after` are legal and kept if a page has them; the skill neither writes nor
+reads them.
 
 The bundle may also hold `CLAUDE.md`, `CLAUDE.local.md` and `AGENTS.md`, which
 carry no frontmatter and are not concepts. That is a **deviation from OKF §3.1**,
 not an extension of it, and it is written down in
-[reference/okf-v0.1.md](reference/okf-v0.1.md) beside the clause it breaks.
+[reference/okf-v0.2.md](reference/okf-v0.2.md) beside the clause it breaks.
 
 `sources` + `sources_digest` are the entire sync mechanism. A page with `sources`
 is stale when a digest of its sources' content no longer equals the one it was
@@ -177,7 +194,7 @@ the commits after it (`S001`, `S002`, `S006`, and `--base` for a branch), and
 that are current, and one that is not is read first.
 
 Link with plain markdown, bundle-absolute: `[auth](/architecture/auth.md)`.
-Not `[[wikilinks]]` — OKF §5. Broken links are legal (§5.3), so linking a page
+Not `[[wikilinks]]`: §6 specifies standard markdown links. Broken links are legal (§6.1), so linking a page
 you intend to write next is fine.
 
 ## Scripts
@@ -206,8 +223,15 @@ very repository it documents:
 Always invoke as `"$OKF/.venv/bin/python" "$OKF/okf.py"` — never a system Python.
 It shells out to `git`, so run it from inside the target repo: `--bundle` resolves
 against `$PWD` (defaulting to `wiki`, which is wrong for a `.wiki/` bundle — pass
-it explicitly) and `--repo` defaults to the bundle's git root. All five
-subcommands (`lint`, `stale`, `index`, `prune`, `pin`) accept `--json`.
+it explicitly) and `--repo` defaults to the bundle's git root. All six
+subcommands (`lint`, `stale`, `index`, `prune`, `pin`, `upgrade`) accept `--json`.
+
+A bundle written for OKF v0.1 is moved to v0.2 by `okf.py upgrade`, a dry run until
+`--write`: it rewrites plain-string `sources` as `resource` mappings, maps the old
+`status` values onto `draft | stable | deprecated`, and raises `okf_version`. It
+leaves a `sources` list that mixes strings and mappings, and any `timestamp`, for a
+person. `index --write` keeps the version a bundle declares, so nothing is upgraded
+by regenerating an index.
 
 The split is deliberate: the script does what is mechanically checkable
 (conformance, link graph, orphans, git diffs, index rendering). Every judgement
@@ -222,7 +246,7 @@ coverage gap deserves a page — stays with the model.
    it isn't obvious; a wiki seeded from a misread is worse than none.
 2. Explore the repo to find real subsystems. Do not mirror the directory tree —
    group by responsibility.
-3. Write `$WIKI/index.md` (with `okf_version: "0.1"`), `$WIKI/overview.md`, and a
+3. Write `$WIKI/index.md` (with `okf_version: "0.2"`), `$WIKI/overview.md`, and a
    *small* set of pages you can actually support: typically `overview.md`, one
    `Module` per genuine subsystem, and any `Gotcha` the user volunteers. **Ten good pages beat sixty generated ones.**
 4. For pages with `sources`, run `okf.py pin <page>…` (A3) once you have read what
@@ -252,8 +276,8 @@ fact during other work.
 2. Check for an existing page first — **update in place rather than adding a
    near-duplicate**. Two pages that disagree are the main failure mode of a wiki.
 3. Write the page: a `description` inside L0's budget and a body that stops at L1.
-   Prefer headings/lists/tables over prose (§4.2). Cite external claims under
-   `# Citations` (§8).
+   Prefer headings/lists/tables over prose (§4.2). Cite an external claim with a
+   footnote keyed to a `sources` entry (§5.1), not a `# Citations` list.
 4. Cross-link both ways: the new page links its neighbours, and at least one
    existing page links to it. An unlinked page is invisible (`W011`).
 5. If it has `sources`, pin it (`okf.py pin`, A3). A `Decision` names in `sources` the code its choice shaped, so
@@ -261,15 +285,14 @@ fact during other work.
 6. Run A4, append to `log.md`.
 
 `Decision` pages are append-only while their subject lives. To reverse one,
-write a new ADR, set the old page's `status: superseded` and `superseded_by:`, and
+write a new ADR, set the old page's `status: deprecated` and `superseded_by:`, and
 leave its reasoning intact: a wrong decision's record stops the next person trying
 it again. Once the subject is gone, A6 retires it.
 
-**Revising one in part is not reversing it.** Use `status: amended` and the
-`amends`/`amended_by` pair, which `okf.py` treats differently on purpose: an
-amended decision still governs, so `index` leaves it among the live pages where
-`superseded` sinks it under *No longer current*. Marking a still-governing
-decision `superseded` hides a live answer.
+**Revising one in part is not reversing it.** Use the `amends`/`amended_by` pair
+and leave both pages `stable`: an amended decision still governs, so `index` keeps
+it among the live pages where `deprecated` sinks it under *No longer current*.
+Marking a still-governing decision `deprecated` hides a live answer.
 
 **A `Decision` that records no fork is demoted** (`lint` says `W019` when it names
 fewer than two rejected alternatives). Move its reasoning into a `# Why` section
@@ -349,7 +372,7 @@ Always run both, in this order, after any wiki edit:
 `type`, entries reusing each page's L0), preserving hand-written descriptions it
 cannot derive. An `index.md` containing `<!-- okf:manual -->` is left untouched.
 
-`lint` enforces OKF §9 conformance (`E…`) and reports rot (`W…`): broken links,
+`lint` enforces OKF §11 conformance (`E…`) and reports rot (`W…`): broken links,
 orphans, concepts missing from their index, directories with no index, absent
 `description`, and `W018` — a concept hidden behind an instruction
 file's name (A5). Errors mean the bundle is non-conformant — fix them.
@@ -455,7 +478,7 @@ is the only signal there will ever be. Act on it rather than reading past it:
 ```
 
 `prune` is read-only. It lists pages whose `sources` match nothing (`P001`),
-superseded or answered pages that no live page links to (`P002`), and pages that
+deprecated pages that no live page links to (`P002`), and pages that
 name a repo path no tracked file has (`P003`, which also catches examples).
 Each is a prompt to look and never a verdict; run it with A3 and when `S005` hits
 a `Decision`.
@@ -466,7 +489,7 @@ wiki working exactly as intended; only evidence retires a page.
 ## Gotchas
 
 - `index.md` and `log.md` are **reserved** (§3.1) — never a concept. Only the
-  **root** `index.md` may carry frontmatter (§6); `E004` catches the rest.
+  **root** `index.md` may carry frontmatter (§8); `E004` catches the rest.
   `CLAUDE.md`, `CLAUDE.local.md` and `AGENTS.md` are skipped for a different
   reason — they are instructions, not knowledge (A5). Nothing else is exempt.
 - `sources` globs are **gitignore syntax** matched against `git ls-files`, so

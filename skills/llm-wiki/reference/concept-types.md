@@ -106,7 +106,7 @@ superseding one does not strand the other.
 named, no single page that owns it, and the user's yes. Otherwise it is a `# Why`
 section of the page that owns the thing.
 
-Immutable once accepted. Never rewrite the reasoning of an accepted decision —
+Immutable once written. Never rewrite the reasoning of a decision —
 supersede it with a new one and cross-link both. Retire it once its subject is
 gone (SKILL.md A6).
 
@@ -115,10 +115,11 @@ gone (SKILL.md A6).
 type: Decision
 title: Use JWTs for service-to-service auth
 description: Chose stateless JWTs over a shared session store for internal RPC.
-status: accepted            # proposed | accepted | amended | superseded
+status: stable              # draft | stable | deprecated (once superseded)
 tags: [auth, security]
-sources: [src/rpc/**]       # the code the choice shaped; when it is gone, so is the page's subject
-superseded_by: /decisions/0009-mtls.md   # only when status: superseded
+sources:                    # the code the choice shaped; when it is gone, so is the page's subject
+  - resource: src/rpc/**
+superseded_by: /decisions/0009-mtls.md   # only with status: deprecated
 ---
 
 # Context
@@ -158,7 +159,8 @@ type: Invariant
 title: Every order has exactly one payment intent
 description: Orders and payment intents are 1:1; a second intent means a bug upstream.
 tags: [billing]
-sources: [src/billing/**]
+sources:
+  - resource: src/billing/**
 sources_digest: 9f2c4e7a1b3d5f60
 ---
 
@@ -194,7 +196,8 @@ type: Module
 title: Auth
 description: Issues and verifies sessions for the web and mobile clients.
 tags: [auth]
-sources: [src/auth/**]
+sources:
+  - resource: src/auth/**
 sources_digest: 9f2c4e7a1b3d5f60
 ---
 
@@ -300,10 +303,11 @@ backward compatibility. See [orders](/architecture/orders.md#why-this-shape).
 ### Open Question
 
 Explicitly recording what you don't know is what stops the wiki from
-confabulating. When it is answered, set `status: answered` and write the answer
-where it belongs — a `Decision` only if answering it took a fork, and otherwise
-an `Invariant`, a `Module` or whichever type the answer is. `okf.py` sinks an
-answered question under *No longer current* rather than deleting it: it is still
+confabulating. While it is open it has no `status` (absent means `stable`). When
+it is answered, set `status: deprecated` and write the answer where it belongs — a
+`Decision` only if answering it took a fork, and otherwise an `Invariant`, a
+`Module` or whichever type the answer is. `okf.py` sinks a deprecated question
+under *No longer current* rather than deleting it: it is still
 a true record of what was once unknown.
 
 ```markdown
@@ -311,7 +315,6 @@ a true record of what was once unknown.
 type: Open Question
 title: How do we rotate mTLS certs?
 description: No rotation story exists; blocks the mTLS decision.
-status: open
 tags: [security]
 ---
 

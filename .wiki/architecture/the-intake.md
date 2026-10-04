@@ -3,7 +3,9 @@ type: Module
 title: The intake
 description: Step 1 asks for the week, the weight, three optional things and which days — on a menu where the host has one, in one message where it does not. Why each row is the row it is, and how the days are settled.
 tags: [architecture, intake]
-sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/fuelling.md]
+sources:
+  - resource: skills/training-week-meal-plan/SKILL.md
+  - resource: skills/training-week-meal-plan/references/fuelling.md
 sources_digest: 0c65279997992a3a
 ---
 

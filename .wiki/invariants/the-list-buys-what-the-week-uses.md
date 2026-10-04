@@ -3,7 +3,10 @@ type: Invariant
 title: The shopping list buys what the week uses
 description: Each row's quantity is what the recipes cook with, less what the fridge holds, and its days are the days that eat what it buys. One amount of food per row, never a pack size, and a count rounded up to a whole; a staple is the jar, with no days.
 tags: [plan-quality, shopping, validation]
-sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
+sources:
+  - resource: skills/training-week-meal-plan/scripts/validate.py
+  - resource: skills/training-week-meal-plan/scripts/render.py
+  - resource: skills/training-week-meal-plan/references/fuelling.md
 sources_digest: edf09a8445b14b4f
 ---
 

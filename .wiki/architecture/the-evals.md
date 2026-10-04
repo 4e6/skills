@@ -3,7 +3,8 @@ type: Module
 title: The evals
 description: On-demand behavioural tests for training-week-meal-plan, outside the skill and never released. A headless agent, kept to its own folder, plans a fixed athlete's race week or an ordinary week abroad; script checks and a judge grade it.
 tags: [architecture, testing, evals]
-sources: [evals/**]
+sources:
+  - resource: evals/**
 sources_digest: e04972e1496ddb79
 ---
 

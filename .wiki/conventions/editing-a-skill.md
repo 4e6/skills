@@ -3,7 +3,9 @@ type: Convention
 title: Editing a skill
 description: Re-read the upstream guides before editing and never copy them here. The skill states the rule and this bundle carries the argument. Prose is not cut on argument alone; a change to behaviour or to the page is judged by running it.
 tags: [skills, authoring, review]
-sources: [skills/training-week-meal-plan/SKILL.md, skills/z-image-turbo-macos/SKILL.md]
+sources:
+  - resource: skills/training-week-meal-plan/SKILL.md
+  - resource: skills/z-image-turbo-macos/SKILL.md
 sources_digest: f02fd4585a009281
 ---
 

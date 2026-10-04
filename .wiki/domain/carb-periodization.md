@@ -3,7 +3,8 @@ type: Glossary Term
 title: Carb periodization
 description: Carbohydrate scaled to each day's training, hardest days fed hardest, and fuel stated per session as sourced guidance with example food. What each figure is, where it comes from, and which need a professional.
 tags: [nutrition, domain]
-sources: [skills/training-week-meal-plan/references/fuelling.md]
+sources:
+  - resource: skills/training-week-meal-plan/references/fuelling.md
 sources_digest: fa9167c3da20c637
 ---
 

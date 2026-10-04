@@ -3,7 +3,8 @@ type: Module
 title: Work on a GitHub issue
 description: Takes a GitHub issue and produces a reviewed pull request, ready to merge. Why it guides a capable agent rather than banning, and the reason behind each of its rules.
 tags: [architecture, github, process]
-sources: [skills/work-on-github-issue/**]
+sources:
+  - resource: skills/work-on-github-issue/**
 sources_digest: a35cb6da6786dbb0
 ---
 
