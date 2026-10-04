@@ -100,7 +100,9 @@ RETIRED_HEADING = "No longer current"
 DECISION_TYPE = "decision"
 ALTERNATIVES_HEADING_RE = re.compile(r"^#{1,6}\s+alternatives considered\s*$", re.I)
 HEADING_RE = re.compile(r"^#{1,6}\s")
-BULLET_RE = re.compile(r"^\s*(?:[*+-]|\d+[.)])\s+\S")
+# Top-level bullets only: a sub-bullet elaborates an alternative, it is not another.
+BULLET_RE = re.compile(r"^ {0,1}(?:[*+-]|\d+[.)])\s+\S")
+FENCE_LINE_RE = re.compile(r"^\s*(```|~~~)")
 MIN_ALTERNATIVES = 2
 # Past this share of the concepts (and at least three), Decision pages are the
 # default type rather than the exception.
@@ -202,6 +204,13 @@ def porcelain_paths(output: str) -> list[str]:
     return paths
 
 
+def read_digest(doc: "Doc") -> str:
+    """`sources_digest` as written. YAML would read 16 digits as a number, and an
+    octal one when it starts with 0, so the line is read as text."""
+    match = re.search(rf"^{DIGEST_KEY}:[ \t]*[\"']?([0-9A-Za-z]+)", doc.raw_frontmatter or "", re.M)
+    return match.group(1) if match else ""
+
+
 def is_decision(doc: "Doc") -> bool:
     return doc.type.casefold() == DECISION_TYPE
 
@@ -209,9 +218,14 @@ def is_decision(doc: "Doc") -> bool:
 def count_alternatives(body: str) -> int:
     """Bullets under a `# Alternatives considered` heading, up to the next heading."""
     inside = False
+    fenced = False
     count = 0
     for line in body.splitlines():
-        if HEADING_RE.match(line):
+        if FENCE_LINE_RE.match(line):
+            fenced = not fenced
+        elif fenced:
+            continue
+        elif HEADING_RE.match(line):
             inside = bool(ALTERNATIVES_HEADING_RE.match(line.strip()))
         elif inside and BULLET_RE.match(line):
             count += 1
@@ -463,7 +477,7 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
                 f"`description` is only {len(doc.description)} chars — a stub, or truncated by "
                 "an unquoted `#` starting a YAML comment. Quote it and check it reads whole",
             )
-        if doc.meta.get("source_commit") and not doc.meta.get(DIGEST_KEY):
+        if doc.meta.get("source_commit") and not read_digest(doc) and not is_decision(doc):
             warn(
                 "W022",
                 doc.rel,
@@ -668,6 +682,17 @@ def unread_commits(
     return commits, files
 
 
+def worktree_files(repo: Path) -> list[str]:
+    """Tracked files plus untracked ones git does not ignore.
+
+    A page is pinned before the change is committed, and a file the change adds is
+    untracked until it is staged. Left out of the digest it would flip the page to
+    stale the moment it is added, so the digest sees what `git add .` would.
+    """
+    code, out = git(repo, "ls-files", "--cached", "--others", "--exclude-standard")
+    return sorted(set(line for line in out.splitlines() if line)) if code == 0 else []
+
+
 def digest_of(entries: list[tuple[str, str, str]]) -> str:
     """Digest of (mode, blob id, path) entries: the shape of a tree listing."""
     h = hashlib.sha256()
@@ -695,7 +720,8 @@ def working_entries(repo: Path, matched: list[str]) -> list[tuple[str, str, str]
     entries: list[tuple[str, str, str]] = []
     regular: list[str] = []
     for path in matched:
-        mode, oid = index.get(path, ("100644", ""))
+        default_mode = "100755" if os.access(repo / path, os.X_OK) and (repo / path).is_file() else "100644"
+        mode, oid = index.get(path, (default_mode, ""))
         if mode in ("120000", "160000"):
             entries.append((mode, oid, path))
         elif (repo / path).is_file():
@@ -816,12 +842,13 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
         # git reads a leading slash as the filesystem root, not the repository's.
         pathspecs = [f":(glob){p.lstrip('/')}" for p in patterns]
         recorded = str(doc.meta.get("source_commit") or "").strip()
-        digest = str(doc.meta.get(DIGEST_KEY) or "").strip()
+        digest = read_digest(doc)
 
         if digest:
             # The current form: compare content, so there is no history to be
             # rewritten, and a dirty working tree is simply judged as it is.
-            current = digest_of(working_entries(repo, matched))
+            spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
+            current = digest_of(working_entries(repo, [f for f in worktree_files(repo) if spec.match_file(f)]))
             if current != digest:
                 finding = {
                     "code": "S001",
@@ -979,10 +1006,13 @@ def write_pin(doc: Doc, digest: str) -> None:
     A text edit and not a YAML round trip, so the rest of the frontmatter keeps
     its order, comments and quoting. The line goes straight after `sources`.
     """
-    text = doc.path.read_text(encoding="utf-8")
+    # newline="" keeps a CRLF page CRLF: the edit adds one line and nothing else.
+    with open(doc.path, encoding="utf-8", newline="") as handle:
+        text = handle.read()
     match = FRONTMATTER_RE.match(text)
     assert match is not None
-    lines = match.group(1).split("\n")
+    eol = "\r\n" if "\r\n" in match.group(1) else "\n"
+    lines = match.group(1).split(eol)
     lines = [l for l in lines if not l.startswith("source_commit:")]
     pin_line = f"{DIGEST_KEY}: {digest}"
     existing = [i for i, l in enumerate(lines) if l.startswith(f"{DIGEST_KEY}:")]
@@ -991,7 +1021,8 @@ def write_pin(doc: Doc, digest: str) -> None:
     else:
         end = sources_block_end(lines)
         lines.insert(len(lines) if end is None else end, pin_line)
-    doc.path.write_text(text[: match.start(1)] + "\n".join(lines) + text[match.end(1) :], encoding="utf-8")
+    with open(doc.path, "w", encoding="utf-8", newline="") as handle:
+        handle.write(text[: match.start(1)] + eol.join(lines) + text[match.end(1) :])
 
 
 def resolve_pages(bundle: Bundle, names: list[str]) -> tuple[list[Doc], list[str]]:
@@ -1001,6 +1032,9 @@ def resolve_pages(bundle: Bundle, names: list[str]) -> tuple[list[Doc], list[str
         wanted = {Path(name).expanduser().resolve(), (bundle.root / name).resolve(),
                   (bundle.root / f"{name}.md").resolve()}
         hit = next((d for d in bundle.concepts if d.path.resolve() in wanted), None)
+        if hit is None:
+            same_name = [d for d in bundle.concepts if d.path.stem == name]
+            hit = same_name[0] if len(same_name) == 1 else None
         if hit is None:
             unknown.append(name)
         elif hit not in docs:
@@ -1026,7 +1060,7 @@ def pin(bundle: Bundle, names: list[str], migrate: bool) -> dict:
         blocked = {f["concept"] for f in stale(bundle)["findings"]}
         docs = [
             d for d in bundle.concepts
-            if d.meta.get("source_commit") and not d.meta.get(DIGEST_KEY) and not is_decision(d)
+            if d.meta.get("source_commit") and not read_digest(d) and not is_decision(d)
         ]
         names_skipped = {d.rel for d in docs if d.rel in blocked}
         skipped += [
@@ -1047,7 +1081,8 @@ def pin(bundle: Bundle, names: list[str], migrate: bool) -> dict:
         elif not matched:
             skipped.append({"concept": doc.rel, "reason": "`sources` matches no tracked file (S005)"})
         else:
-            digest = digest_of(working_entries(repo, matched))
+            spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
+            digest = digest_of(working_entries(repo, [f for f in worktree_files(repo) if spec.match_file(f)]))
             write_pin(doc, digest)
             pinned.append({"concept": doc.rel, DIGEST_KEY: digest})
     return {"pinned": pinned, "skipped": skipped}
@@ -1067,7 +1102,7 @@ def is_retired(doc: Doc) -> bool:
     return str(doc.meta.get("status", "")).lower() in RETIRED_STATUS
 
 
-def named_missing_paths(doc: Doc, tracked: list[str]) -> list[str]:
+def named_missing_paths(doc: Doc, tracked: list[str], gitlinks: frozenset[str] = frozenset()) -> list[str]:
     """Repo paths a page's code spans name that no tracked file has.
 
     Only a span that reads as a path into this repo counts: it has a slash, and
@@ -1084,7 +1119,14 @@ def named_missing_paths(doc: Doc, tracked: list[str]) -> list[str]:
         if not PATH_SHAPE_RE.match(span):
             continue
         path = span.rstrip("/")
-        if path.split("/", 1)[0] not in roots or path in files:
+        segments = path.split("/")
+        if segments[0] not in roots or path in files:
+            continue
+        # A dot-directory (`.venv`, `.git`) is the environment, not the project,
+        # and nothing inside a submodule is tracked here.
+        if any(seg.startswith(".") and seg not in ("..",) for seg in segments[1:]) or any(
+            path.startswith(link + "/") for link in gitlinks
+        ):
             continue
         if any(f.startswith(path + "/") for f in tracked):
             continue
@@ -1127,7 +1169,7 @@ def prune(bundle: Bundle) -> list[dict]:
                 doc,
                 f"status `{doc.meta.get('status')}` and no live page links to it, so nothing relies on it",
             )
-        missing = named_missing_paths(doc, tracked)
+        missing = named_missing_paths(doc, tracked, gitlinks)
         if missing:
             add(
                 "P003",

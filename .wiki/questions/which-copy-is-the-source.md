@@ -5,7 +5,7 @@ description: Two skills here have a second copy elsewhere. training-week-meal-pl
 tags: [process, distribution]
 status: open
 sources: [skills/training-week-meal-plan/**, skills/llm-wiki/**]
-sources_digest: 35d7444ee58c0f58
+sources_digest: 6fd07a1bb0ab6297
 ---
 
 # The question

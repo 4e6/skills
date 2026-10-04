@@ -4,7 +4,7 @@ title: A change and its wiki are one commit
 description: A PR changes the code and every page it touches in one squashed commit, and pins each page to the content of its sources, so nothing is pinned after a merge.
 tags: [process, wiki]
 sources: [AGENTS.md, skills/llm-wiki/scripts/okf.py]
-sources_digest: 6960f59053bb6fdb
+sources_digest: 2010d656102cd1f9
 ---
 
 # The rule
@@ -44,7 +44,9 @@ CRLF line endings: all clean.
 
 - **Pin last.** The digest is of the sources on disk, so pin after the final edit
   to them; a source edited after the pin is stale again. The page may be edited
-  afterwards.
+  afterwards. A file the change adds counts before it is staged: the digest sees
+  what `git add .` would, so the pin needs no `git add` first and does not flip
+  when the file is added.
 - **Pin only what was read.** `pin` takes pages by name and has no "all" form;
   the one bulk form, `--migrate`, converts only pages that are current under the
   old commit pin. A pin is the statement that the sources were read and the page

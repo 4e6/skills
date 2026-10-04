@@ -313,7 +313,8 @@ Then, per finding:
   starts lying, and why `pin` takes pages by name and has no "all" form.
 
   **Pin last.** The digest is of the sources as they are on disk, so pin after the
-  final edit to them: a source edited after the pin makes the page stale again. On a
+  final edit to them: a source edited after the pin makes the page stale again. A
+  file the change adds counts before it is staged, so pin needs no `git add` first. On a
   branch that means the pin is the last thing before the commit that lands, and
   if the default branch changed the same sources in the meantime the pin is
   wrong there, which is the page doing its job. Run `stale` on the merged result.

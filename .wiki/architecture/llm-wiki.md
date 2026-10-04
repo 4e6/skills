@@ -4,7 +4,7 @@ title: llm-wiki
 description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits behind a gate, why a page is retired on evidence and never on age, and why it is pinned by the content of its sources and not by a commit.
 tags: [architecture, llm-wiki, retirement]
 sources: [skills/llm-wiki/**]
-sources_digest: b11bbfe1d59c9c4b
+sources_digest: eb60edbb8851cf37
 ---
 
 # What it is for

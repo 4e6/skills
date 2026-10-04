@@ -4,7 +4,7 @@ title: The skill is a payload
 description: A skill folder is copied out whole and runs where this repository does not exist, on whatever the host provides. What each skill may reach — the network, packages, a newer Python — and why, skill by skill.
 tags: [architecture, distribution]
 sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**, skills/work-on-github-issue/SKILL.md]
-sources_digest: 139e5563f2d4ac70
+sources_digest: b934d3ff7d597558
 ---
 
 # The boundary
