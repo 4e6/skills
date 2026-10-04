@@ -3,9 +3,8 @@ type: Module
 title: Work on a GitHub issue
 description: Takes a GitHub issue and produces a reviewed pull request, ready to merge. Why it guides a capable agent rather than banning, and the reason behind each of its rules.
 tags: [architecture, github, process]
-timestamp: 2026-10-03T14:00:00Z
 sources: [skills/work-on-github-issue/**]
-source_commit: 30a0fcd2cde2ff691ac22f1d233bb25ef33a633b
+sources_digest: a35cb6da6786dbb0
 ---
 
 # Guidance, not a fence

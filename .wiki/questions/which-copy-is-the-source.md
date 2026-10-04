@@ -3,10 +3,9 @@ type: Open Question
 title: Which copy of a skill is the one to edit?
 description: Two skills here have a second copy elsewhere. training-week-meal-plan's kept its tests and schema generator; llm-wiki's is where it was developed, though the author's assistant now loads this one. Until one side is the source, they drift.
 tags: [process, distribution]
-timestamp: 2026-10-01T12:19:17Z
 status: open
 sources: [skills/training-week-meal-plan/**, skills/llm-wiki/**]
-source_commit: acf5f8692b620671b808e71e6ddea129572655ae
+sources_digest: 6fd07a1bb0ab6297
 ---
 
 # The question

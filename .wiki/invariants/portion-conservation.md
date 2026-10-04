@@ -3,9 +3,8 @@ type: Invariant
 title: Every cooked portion is eaten within the plan
 description: A recipe's pot must map every portion to a named meal on a day the plan covers, nothing eaten before it is cooked or more than four days after. Held in code, because a plan that over-cooks costs money and trust.
 tags: [plan-quality, validation]
-timestamp: 2026-09-30T14:00:00Z
 sources: [skills/training-week-meal-plan/scripts/validate.py, skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/references/fuelling.md]
-source_commit: 3d9b7b7cc609f46bdb4ba7a90778593b47dcb3a2
+sources_digest: edf09a8445b14b4f
 ---
 
 # Statement

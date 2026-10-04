@@ -3,9 +3,8 @@ type: Module
 title: The printable page
 description: render.py writes one self-contained HTML file for print, a phone and a wide screen. Plain rules, weight and space; the glance first; one column that never splits a recipe; a byte-compared example.
 tags: [architecture, rendering]
-timestamp: 2026-10-02T15:10:00Z
 sources: [skills/training-week-meal-plan/scripts/render.py, skills/training-week-meal-plan/assets/plan.css, skills/training-week-meal-plan/examples/**]
-source_commit: 635f8044b6bb2e6e93e7134443d8caa370898f78
+sources_digest: 1753c95bba320638
 ---
 
 # One file, and Cmd-P

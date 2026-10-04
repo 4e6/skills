@@ -3,9 +3,8 @@ type: Module
 title: The handover, and what the athlete reads along the way
 description: The progress checklist is the host's and never the athlete's. The athlete is handed the page — published, else attached, else opened and pointed at — and, with no page, a reply designed as one for a phone.
 tags: [architecture, conversation]
-timestamp: 2026-10-02T15:10:00Z
 sources: [skills/training-week-meal-plan/SKILL.md, skills/training-week-meal-plan/references/when-there-is-no-page.md, skills/training-week-meal-plan/references/photos.md]
-source_commit: e5ae3bf78ef71fa3efb195ca7b30307aea5865c5
+sources_digest: df1f36afc2872674
 ---
 
 # Progress is the host's, and the reply is the athlete's

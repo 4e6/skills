@@ -6,6 +6,7 @@ Subcommands
   lint    Conformance (OKF v0.1 §9) plus link, orphan and index checks.
   stale   Git-derived staleness of concepts, and coverage gaps in the repo.
   index   Regenerate index.md files from concept frontmatter.
+  pin     Record the digest of a page's sources, once its sources have been read.
   prune   Candidates for retirement: pages whose subject is gone.
 
 Everything the model cannot reliably eyeball lives here; everything requiring
@@ -19,6 +20,7 @@ call — so `stale` reports them but they never affect the exit code.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -98,12 +100,25 @@ RETIRED_HEADING = "No longer current"
 DECISION_TYPE = "decision"
 ALTERNATIVES_HEADING_RE = re.compile(r"^#{1,6}\s+alternatives considered\s*$", re.I)
 HEADING_RE = re.compile(r"^#{1,6}\s")
-BULLET_RE = re.compile(r"^\s*(?:[*+-]|\d+[.)])\s+\S")
+# Top-level bullets only: a sub-bullet elaborates an alternative, it is not another.
+BULLET_RE = re.compile(r"^ {0,1}(?:[*+-]|\d+[.)])\s+\S")
+FENCE_LINE_RE = re.compile(r"^\s*(```|~~~)")
 MIN_ALTERNATIVES = 2
 # Past this share of the concepts (and at least three), Decision pages are the
 # default type rather than the exception.
 DECISION_SHARE = 0.2
 DECISION_SHARE_MIN = 3
+
+# A page's pin is a digest of its sources' content, not a commit. A commit is a
+# name for history, and history is what a squash merge, a rebase and a shallow
+# clone each rewrite or cut off; the content of the files is the same on the other
+# side of all three. Sixteen hex characters of SHA-256 is far more than telling
+# "unchanged" from "changed" needs, and short enough to read in a frontmatter line.
+DIGEST_KEY = "sources_digest"
+DIGEST_LEN = 16
+# How many commits that touched a page's sources are tried when looking for the
+# one the pin was taken at, so a stale page can say what changed since.
+BASELINE_SEARCH = 50
 
 # Paths that never warrant a wiki concept. Overridable via <bundle>/.okfignore.
 # Prose and dotfiles are excluded outright: the wiki *is* the prose layer, and a
@@ -166,8 +181,10 @@ def git(repo: Path, *args: str) -> tuple[int, str]:
     Only the trailing newline is stripped: `git status --porcelain` encodes the
     status in columns 0-1, so a leading space is significant.
     """
+    # Paths verbatim: with git's default quoting a non-ASCII file name arrives
+    # as an escaped string that matches no file on disk.
     proc = subprocess.run(
-        ["git", "-C", str(repo), *args],
+        ["git", "-C", str(repo), "-c", "core.quotePath=false", *args],
         capture_output=True,
         text=True,
     )
@@ -187,6 +204,13 @@ def porcelain_paths(output: str) -> list[str]:
     return paths
 
 
+def read_digest(doc: "Doc") -> str:
+    """`sources_digest` as written. YAML would read 16 digits as a number, and an
+    octal one when it starts with 0, so the line is read as text."""
+    match = re.search(rf"^{DIGEST_KEY}:[ \t]*[\"']?([0-9A-Za-z]+)", doc.raw_frontmatter or "", re.M)
+    return match.group(1) if match else ""
+
+
 def is_decision(doc: "Doc") -> bool:
     return doc.type.casefold() == DECISION_TYPE
 
@@ -194,9 +218,14 @@ def is_decision(doc: "Doc") -> bool:
 def count_alternatives(body: str) -> int:
     """Bullets under a `# Alternatives considered` heading, up to the next heading."""
     inside = False
+    fenced = False
     count = 0
     for line in body.splitlines():
-        if HEADING_RE.match(line):
+        if FENCE_LINE_RE.match(line):
+            fenced = not fenced
+        elif fenced:
+            continue
+        elif HEADING_RE.match(line):
             inside = bool(ALTERNATIVES_HEADING_RE.match(line.strip()))
         elif inside and BULLET_RE.match(line):
             count += 1
@@ -448,8 +477,14 @@ def lint(bundle: Bundle) -> tuple[list[dict], list[dict]]:
                 f"`description` is only {len(doc.description)} chars — a stub, or truncated by "
                 "an unquoted `#` starting a YAML comment. Quote it and check it reads whole",
             )
-        if not doc.meta.get("timestamp"):
-            warn("W014", doc.rel, "no `timestamp`")
+        if doc.meta.get("source_commit") and not read_digest(doc) and not is_decision(doc):
+            warn(
+                "W022",
+                doc.rel,
+                f"pinned by `source_commit`, which a squash merge or a rebase invalidates; "
+                f"`okf.py pin --migrate` converts the pages that are current, and one that is "
+                f"not is read and pinned by name for `{DIGEST_KEY}`",
+            )
         tags = doc.meta.get("tags")
         if tags is not None and not isinstance(tags, list):
             warn("W015", doc.rel, "`tags` should be a YAML list")
@@ -647,6 +682,112 @@ def unread_commits(
     return commits, files
 
 
+def worktree_files(repo: Path) -> list[str]:
+    """Tracked files plus untracked ones git does not ignore.
+
+    A page is pinned before the change is committed, and a file the change adds is
+    untracked until it is staged. Left out of the digest it would flip the page to
+    stale the moment it is added, so the digest sees what `git add .` would.
+    """
+    code, out = git(repo, "ls-files", "--cached", "--others", "--exclude-standard")
+    return sorted(set(line for line in out.splitlines() if line)) if code == 0 else []
+
+
+def digest_of(entries: list[tuple[str, str, str]]) -> str:
+    """Digest of (mode, blob id, path) entries: the shape of a tree listing."""
+    h = hashlib.sha256()
+    for mode, oid, path in sorted(entries, key=lambda e: e[2]):
+        h.update(f"{mode} {oid} {path}\n".encode())
+    return h.hexdigest()[:DIGEST_LEN]
+
+
+def working_entries(repo: Path, matched: list[str]) -> list[tuple[str, str, str]]:
+    """The matched files as they are on disk now, as (mode, blob id, path).
+
+    Regular files are hashed from the working tree through `git hash-object`,
+    which applies the same clean filters as `git add`, so a clean checkout
+    digests the same as the commit it is at whatever its line endings. A symlink
+    or a submodule keeps the id the index records, and a file deleted from the
+    working tree counts as a change. Reading the disk and not the commit is what
+    lets a page be pinned before the change is committed.
+    """
+    _, staged = git(repo, "ls-files", "--stage")
+    index: dict[str, tuple[str, str]] = {}
+    for line in staged.splitlines():
+        meta, _, path = line.partition("\t")
+        mode, oid, _stage = meta.split()
+        index.setdefault(path, (mode, oid))
+    entries: list[tuple[str, str, str]] = []
+    regular: list[str] = []
+    for path in matched:
+        default_mode = "100755" if os.access(repo / path, os.X_OK) and (repo / path).is_file() else "100644"
+        mode, oid = index.get(path, (default_mode, ""))
+        if mode in ("120000", "160000"):
+            entries.append((mode, oid, path))
+        elif (repo / path).is_file():
+            regular.append(path)
+            entries.append((mode, "", path))
+        else:
+            entries.append((mode, "deleted", path))
+    if regular:
+        proc = subprocess.run(
+            ["git", "-C", str(repo), "hash-object", "--stdin-paths"],
+            input="\n".join(regular) + "\n", capture_output=True, text=True,
+        )
+        hashes = iter(proc.stdout.split())
+        entries = [(m, next(hashes) if o == "" else o, p) for m, o, p in entries]
+    return entries
+
+
+def commit_entries(
+    repo: Path, commit: str, patterns: list[str]
+) -> list[tuple[str, str, str]]:
+    """The files `patterns` match in `commit`'s tree, as (mode, blob id, path)."""
+    prefixes: set[str] = set()
+    for pattern in patterns:
+        literal = GLOB_CHARS.split(pattern.lstrip("/"), 1)[0]
+        prefixes.add(literal if literal == pattern.lstrip("/") else literal.rpartition("/")[0])
+    # A pattern with no directory in front of its first wildcard needs the whole tree.
+    narrow = [p for p in sorted(prefixes) if p] if "" not in prefixes else []
+    _, out = git(repo, "-c", "core.quotePath=false", "ls-tree", "-r", commit, "--", *narrow)
+    spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
+    entries = []
+    for line in out.splitlines():
+        meta, _, path = line.partition("\t")
+        mode, kind, oid = meta.split()
+        if kind in ("blob", "commit") and spec.match_file(path):
+            entries.append((mode, oid, path))
+    return entries
+
+
+def pin_baseline(repo: Path, recorded: str, patterns: list[str], pathspecs: list[str]) -> dict:
+    """The newest commit whose sources digest to `recorded`, and what changed since.
+
+    The digest says *that* the sources changed and nothing about how. The commit
+    that has them as they were when the page was read is the base for the diff the
+    reader has to look at, and it is found by digesting the commits that touched
+    the sources, newest first. It is not always there: a squash merge leaves no
+    commit with the branch's intermediate state, and a shallow clone cuts the walk
+    short. The answer is then only "changed", which is still true.
+    """
+    quiet = ("-c", "core.quotePath=false")
+    _, listed = git(
+        repo, "log", "--first-parent", f"-n{BASELINE_SEARCH}", "--format=%H", "--", *pathspecs
+    )
+    for commit in listed.split():
+        if digest_of(commit_entries(repo, commit, patterns)) == recorded:
+            _, subjects = git(
+                repo, *quiet, "log", "--first-parent", "--format=%h %s", f"{commit}..HEAD", "--", *pathspecs
+            )
+            _, names = git(repo, *quiet, "diff", "--name-only", commit, "HEAD", "--", *pathspecs)
+            return {
+                "baseline": commit[:12],
+                "commits": subjects.splitlines()[:10],
+                "files": names.splitlines()[:20],
+            }
+    return {}
+
+
 def matched_sources(
     doc: Doc, repo: Path, tracked: list[str], gitlinks: frozenset[str]
 ) -> tuple[list[str], list[str]]:
@@ -701,6 +842,28 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
         # git reads a leading slash as the filesystem root, not the repository's.
         pathspecs = [f":(glob){p.lstrip('/')}" for p in patterns]
         recorded = str(doc.meta.get("source_commit") or "").strip()
+        digest = read_digest(doc)
+
+        if digest:
+            # The current form: compare content, so there is no history to be
+            # rewritten, and a dirty working tree is simply judged as it is.
+            spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
+            current = digest_of(working_entries(repo, [f for f in worktree_files(repo) if spec.match_file(f)]))
+            if current != digest:
+                finding = {
+                    "code": "S001",
+                    "concept": doc.rel,
+                    "message": f"sources changed since the page was pinned ({digest} -> {current})",
+                }
+                if has_head:
+                    baseline = pin_baseline(repo, digest, patterns, pathspecs)
+                    if baseline:
+                        finding["message"] += (
+                            f"; read `git diff {baseline['baseline']} -- <sources>`"
+                        )
+                        finding.update(baseline)
+                findings.append(finding)
+            continue
 
         # Uncommitted edits in the concept's sources.
         _, dirty = git(repo, "status", "--porcelain", "--", *pathspecs)
@@ -722,7 +885,7 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
                 {
                     "code": "S003",
                     "concept": doc.rel,
-                    "message": "has `sources` but no `source_commit`; cannot tell if it is current",
+                    "message": f"has `sources` but no `{DIGEST_KEY}`; cannot tell if it is current",
                 }
             )
             continue
@@ -813,6 +976,119 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# pin
+# ---------------------------------------------------------------------------
+
+PIN_KEYS = ("source_commit", DIGEST_KEY)
+
+
+def sources_block_end(lines: list[str]) -> int | None:
+    """Index just past the `sources:` entry in a frontmatter's lines, or None."""
+    for i, line in enumerate(lines):
+        if not line.startswith("sources:"):
+            continue
+        value = line[len("sources:") :].strip()
+        j = i + 1
+        if value.startswith("[") and "]" not in value:
+            while j < len(lines) and "]" not in lines[j - 1]:
+                j += 1
+        elif not value:
+            # A block sequence: indented lines, or `- ` at the key's own indent.
+            while j < len(lines) and (lines[j].startswith((" ", "\t")) or lines[j].startswith("- ")):
+                j += 1
+        return j
+    return None
+
+
+def write_pin(doc: Doc, digest: str) -> None:
+    """Set `sources_digest` in the page's frontmatter and drop `source_commit`.
+
+    A text edit and not a YAML round trip, so the rest of the frontmatter keeps
+    its order, comments and quoting. The line goes straight after `sources`.
+    """
+    # newline="" keeps a CRLF page CRLF: the edit adds one line and nothing else.
+    with open(doc.path, encoding="utf-8", newline="") as handle:
+        text = handle.read()
+    match = FRONTMATTER_RE.match(text)
+    assert match is not None
+    eol = "\r\n" if "\r\n" in match.group(1) else "\n"
+    lines = match.group(1).split(eol)
+    lines = [l for l in lines if not l.startswith("source_commit:")]
+    pin_line = f"{DIGEST_KEY}: {digest}"
+    existing = [i for i, l in enumerate(lines) if l.startswith(f"{DIGEST_KEY}:")]
+    if existing:
+        lines[existing[0]] = pin_line
+    else:
+        end = sources_block_end(lines)
+        lines.insert(len(lines) if end is None else end, pin_line)
+    with open(doc.path, "w", encoding="utf-8", newline="") as handle:
+        handle.write(text[: match.start(1)] + eol.join(lines) + text[match.end(1) :])
+
+
+def resolve_pages(bundle: Bundle, names: list[str]) -> tuple[list[Doc], list[str]]:
+    """Concepts named by path (from here or from the bundle) or by concept id."""
+    docs, unknown = [], []
+    for name in names:
+        wanted = {Path(name).expanduser().resolve(), (bundle.root / name).resolve(),
+                  (bundle.root / f"{name}.md").resolve()}
+        hit = next((d for d in bundle.concepts if d.path.resolve() in wanted), None)
+        if hit is None:
+            same_name = [d for d in bundle.concepts if d.path.stem == name]
+            hit = same_name[0] if len(same_name) == 1 else None
+        if hit is None:
+            unknown.append(name)
+        elif hit not in docs:
+            docs.append(hit)
+    return docs, unknown
+
+
+def pin(bundle: Bundle, names: list[str], migrate: bool) -> dict:
+    """Pin pages to the content of their sources as it is now.
+
+    Pinning is the act of saying *I have read these sources and the page is right
+    about them*, so it takes pages by name and never defaults to all of them. The
+    one bulk form, `--migrate`, only converts pages that are current under the old
+    commit pin, which changes how a page is pinned and vouches for nothing new.
+    """
+    repo = bundle.repo
+    tracked = tracked_files(repo)
+    gitlinks = gitlink_paths(repo)
+    pinned: list[dict] = []
+    skipped: list[dict] = []
+
+    if migrate:
+        blocked = {f["concept"] for f in stale(bundle)["findings"]}
+        docs = [
+            d for d in bundle.concepts
+            if d.meta.get("source_commit") and not read_digest(d) and not is_decision(d)
+        ]
+        names_skipped = {d.rel for d in docs if d.rel in blocked}
+        skipped += [
+            {"concept": r, "reason": "not current under its `source_commit`; read what changed, then pin it by name"}
+            for r in sorted(names_skipped)
+        ]
+        docs = [d for d in docs if d.rel not in names_skipped]
+    else:
+        docs, unknown = resolve_pages(bundle, names)
+        skipped += [{"concept": n, "reason": "no such concept in the bundle"} for n in unknown]
+
+    for doc in docs:
+        patterns, matched = matched_sources(doc, repo, tracked, gitlinks)
+        if is_decision(doc):
+            skipped.append({"concept": doc.rel, "reason": "a Decision records an event and is not pinned"})
+        elif not patterns:
+            skipped.append({"concept": doc.rel, "reason": "no `sources`"})
+        elif not matched:
+            skipped.append({"concept": doc.rel, "reason": "`sources` matches no tracked file (S005)"})
+        else:
+            spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
+            digest = digest_of(working_entries(repo, [f for f in worktree_files(repo) if spec.match_file(f)]))
+            write_pin(doc, digest)
+            pinned.append({"concept": doc.rel, DIGEST_KEY: digest})
+    return {"pinned": pinned, "skipped": skipped}
+
+
+# ---------------------------------------------------------------------------
 # prune
 # ---------------------------------------------------------------------------
 
@@ -826,7 +1102,7 @@ def is_retired(doc: Doc) -> bool:
     return str(doc.meta.get("status", "")).lower() in RETIRED_STATUS
 
 
-def named_missing_paths(doc: Doc, tracked: list[str]) -> list[str]:
+def named_missing_paths(doc: Doc, tracked: list[str], gitlinks: frozenset[str] = frozenset()) -> list[str]:
     """Repo paths a page's code spans name that no tracked file has.
 
     Only a span that reads as a path into this repo counts: it has a slash, and
@@ -843,7 +1119,14 @@ def named_missing_paths(doc: Doc, tracked: list[str]) -> list[str]:
         if not PATH_SHAPE_RE.match(span):
             continue
         path = span.rstrip("/")
-        if path.split("/", 1)[0] not in roots or path in files:
+        segments = path.split("/")
+        if segments[0] not in roots or path in files:
+            continue
+        # A dot-directory (`.venv`, `.git`) is the environment, not the project,
+        # and nothing inside a submodule is tracked here.
+        if any(seg.startswith(".") and seg not in ("..",) for seg in segments[1:]) or any(
+            path.startswith(link + "/") for link in gitlinks
+        ):
             continue
         if any(f.startswith(path + "/") for f in tracked):
             continue
@@ -886,7 +1169,7 @@ def prune(bundle: Bundle) -> list[dict]:
                 doc,
                 f"status `{doc.meta.get('status')}` and no live page links to it, so nothing relies on it",
             )
-        missing = named_missing_paths(doc, tracked)
+        missing = named_missing_paths(doc, tracked, gitlinks)
         if missing:
             add(
                 "P003",
@@ -1049,6 +1332,16 @@ def main() -> int:
         "once the branch is squashed (e.g. --base origin/main)",
     )
 
+    p_pin = sub.add_parser(
+        "pin", parents=[common], help="record the digest of the sources a page was written from"
+    )
+    p_pin.add_argument("pages", nargs="*", help="concept paths or ids; pin only pages whose sources you have read")
+    p_pin.add_argument(
+        "--migrate",
+        action="store_true",
+        help="convert every page that is current under its old `source_commit`",
+    )
+
     sub.add_parser("prune", parents=[common], help="retirement candidates (advisory, read-only)")
 
     p_index = sub.add_parser("index", parents=[common], help="regenerate index.md files")
@@ -1105,6 +1398,23 @@ def main() -> int:
 
         emit(result, args.json, human)
         return 1 if result["findings"] else 0
+
+    if args.cmd == "pin":
+        if bool(args.pages) == bool(args.migrate):
+            print("error: name the pages to pin, or pass --migrate (not both)", file=sys.stderr)
+            return 2
+        result = pin(bundle, args.pages, args.migrate)
+
+        def human(res):
+            for item in res["pinned"]:
+                print(f"pinned  {item['concept']}  {DIGEST_KEY}: {item[DIGEST_KEY]}")
+            for item in res["skipped"]:
+                print(f"skipped {item['concept']}: {item['reason']}")
+            if not res["pinned"] and not res["skipped"]:
+                print("nothing to pin")
+
+        emit(result, args.json, human)
+        return 1 if result["skipped"] and not args.migrate else 0
 
     if args.cmd == "prune":
         candidates = prune(bundle)

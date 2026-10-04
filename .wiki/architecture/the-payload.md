@@ -3,9 +3,8 @@ type: Module
 title: The skill is a payload
 description: A skill folder is copied out whole and runs where this repository does not exist, on whatever the host provides. What each skill may reach — the network, packages, a newer Python — and why, skill by skill.
 tags: [architecture, distribution]
-timestamp: 2026-10-03T11:31:49Z
 sources: [skills/training-week-meal-plan/**, skills/z-image-turbo-macos/SKILL.md, skills/z-image-turbo-macos/scripts/z_image_turbo.py, skills/llm-wiki/SKILL.md, skills/llm-wiki/scripts/**, skills/work-on-github-issue/SKILL.md]
-source_commit: acf5f8692b620671b808e71e6ddea129572655ae
+sources_digest: b934d3ff7d597558
 ---
 
 # The boundary
@@ -120,8 +119,9 @@ that can hold it.
 `llm-wiki` bends less. Its one script parses YAML and gitignore patterns with
 two packages from PyPI, installed once into a venv in its own `scripts/` folder:
 the only network use, and the only write into the folder. The venv ignores
-itself, because the folder may sit inside the repository the skill documents. It needs `git`, since
-staleness is read from history. Its instructions name Claude Code's own paths
+itself, because the folder may sit inside the repository the skill documents. It needs `git`,
+to list the files it tracks and hash them, and to read history for the diff a stale
+page is to be checked against. Its instructions name Claude Code's own paths
 and files, as instructions about the host.
 
 `work-on-github-issue` ships no script; its work is on the network, through
@@ -130,7 +130,8 @@ and files, as instructions about the host.
 Their scripts' own facts, in the same terms as the others:
 
 - `okf.py` runs `git` in the repository it is pointed at and reads the bundle;
-  it writes nothing but `index.md` files, and only under `index --write`.
+  it writes nothing but `index.md` files under `index --write`, and a page's
+  `sources_digest` line under `pin`.
 - `z_image_turbo.py` runs `sysctl` and the Pythons it finds, to learn what the
   machine is. Under Python 3.9's standard library it reads the environment and
   the model cache and writes nothing but a lock file and, in `setup`, the

@@ -12,7 +12,7 @@ wrong within a week.
 carries the frontmatter contract, the concept types, the half-life rule that
 decides what may be written at all, and the index and lint steps that follow
 every edit. Without it you will produce a page that looks fine and is not:
-missing `type`, an unpinned `source_commit`, absent from its index.
+missing `type`, an unpinned `sources_digest`, absent from its index.
 
 Reading needs no skill. Start at `index.md` and drill down; don't read the whole
 bundle. If a page contradicts the code, reality wins — say so rather than reading
