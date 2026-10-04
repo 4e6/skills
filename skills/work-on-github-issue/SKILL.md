@@ -32,8 +32,11 @@ line. Without that skill, the loop in brief: plan before code, and have the plan
 read by a fresh reviewer who has not seen your reasoning; hand wide
 investigation to subagents that return only conclusions; have the change
 reviewed the same way before anyone else sees it; end on the reviewer's
-approval, not on its running out of comments; and when the same problem keeps
-coming back, stop and fix it where it is decided. A plan says what changes and
+approval, not on its running out of comments. A change to security,
+concurrency, data migrations or performance deserves a reviewer briefed for it.
+When the same problem keeps coming back, stop and fix it where it is decided;
+when a fix keeps failing, hand the problem to a fresh subagent; when the plan no
+longer fits, go back to it; when nothing works, ask the user. A plan says what changes and
 where, why this approach and which were rejected, how you will know it works,
 what is out of scope and what you could not settle. Where the host cannot start
 a subagent, review in a separate pass that starts again from the issue and the
@@ -127,7 +130,8 @@ remotes are shared by every worktree of the clone.
 ## 5. Review the change, and open the pull request
 
 Review the change as the loop says, giving the reviewer the issue, the plan and
-the diff. This review is cheap; the project's CI and reviewers are not, so it
+the diff, and asking it to report findings rather than edit files or post on
+GitHub. This review is cheap; the project's CI and reviewers are not, so it
 comes first.
 
 Then open the pull request, filling in the project's template if it has one.
