@@ -13,7 +13,7 @@ compatibility: >-
   role is a separate pass by the same agent. Uses no network of its own.
 metadata:
   author: 4e6
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Research, plan, build, review
@@ -78,7 +78,9 @@ judgement on the strongest.
   context and only conclusions come back.
 - **Planner.** You, from the findings; for a big task, a planner subagent whose
   plan you then read critically.
-- **Builder.** Follows the plan and verifies, in the worktree.
+- **Builder.** Follows the plan and verifies, in the worktree. Steps that touch
+  separate files and share no open interface go to builders in parallel, each in
+  a worktree of its own; you merge their work and verify the whole.
 - **Reviewer.** A fresh agent that has not seen anyone's reasoning. Gets the ask
   and the artifact — findings, plan or result — and says what to hunt: a wrong
   cause, a missed caller, a claim with no evidence, a simpler way, scope creep, a
@@ -109,7 +111,7 @@ evidence that would overturn it.
 A good build will not rescue a bad plan, and a mistake in a plan is far cheaper
 to see than one in a diff. Write it briefly:
 
-- what changes, and where;
+- what changes, and where, and which steps are independent of each other;
 - why this approach, and which alternatives you rejected;
 - how you will know it works;
 - what is out of scope;
