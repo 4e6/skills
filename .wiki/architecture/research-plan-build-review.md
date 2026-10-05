@@ -5,7 +5,7 @@ description: "One loop for any task, ending in what the task asked for: findings
 tags: [architecture, process, agents]
 sources:
   - resource: skills/research-plan-build-review/**
-sources_digest: 6e70040be5a43304
+sources_digest: b8bad3064154e349
 ---
 
 # Why a skill of its own
@@ -34,6 +34,12 @@ would be an adapter beside it, not part of it
   subagent. The fallback — the same agent, in a separate pass that starts again
   from the written artifact — is the one the issue skill already used, and it
   works because the artifact is all the next pass gets.
+- **A builder step may be split, but only along independent steps.** Researchers
+  already fanned out; a plan with steps on separate files was still built by one
+  agent, one step after another. The plan marks which steps are independent, so
+  the split is read off it and not judged mid-build. Each parallel builder has a
+  worktree of its own for the reason every task does, and one agent merges and
+  verifies the whole, because a pass in each part says nothing about their sum.
 - **Every stage ends in something written down.** A subagent's context and a
   session's reasoning die with them; the next role, and the user, have only the
   artifact. It is written where the user will find it, because the skill keeps no
@@ -96,8 +102,8 @@ would be an adapter beside it, not part of it
   place in the repository and its own release path
   ([the zip release](/architecture/the-zip-release.md)).
 - **Agent teams or a workflow script for the loop.** The loop is sequential, and
-  the one parallel part — researchers, and reviewers with different lenses — is
-  what subagents do. A script that runs the loop belongs to a host that has one.
+  the parallel parts — researchers, reviewers with different lenses, builders on
+  independent steps — are what subagents do. A script that runs the loop belongs to a host that has one.
 
 # Not measured
 
