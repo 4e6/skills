@@ -5,7 +5,7 @@ description: "One loop for any task, ending in what the task asked for: findings
 tags: [architecture, process, agents]
 sources:
   - resource: skills/research-plan-build-review/**
-sources_digest: b8bad3064154e349
+sources_digest: 7ddbdc7ae0015791
 ---
 
 # Why a skill of its own
@@ -81,6 +81,20 @@ would be an adapter beside it, not part of it
   all of them. The issue skill's version
   ([why](/architecture/work-on-github-issue.md)) is the same rule for a
   task that always builds.
+- **A subagent stops what it starts in the background, and delivery looks for
+  what is left.** Whatever a subagent starts — a shell loop, a monitor, a server,
+  a clone — is not in its final report, so the orchestrator cannot know it exists
+  and nothing stops it. In one long session a builder's two polling loops waited
+  on `pgrep -f` of their own command line, which matches itself and so never
+  became true, and ran for over five hours; builders left about 9 GB of clones.
+  The rule sits at both ends because neither covers the other: the subagent is
+  the only one that knows what it started, and the orchestrator's own loops and
+  a forgetful subagent are caught only by a look at the end. A subagent that has
+  to leave something running says so in its report, since a flat "stop it all"
+  would kill a batch the task was to run. A role resumed hours later, or waiting
+  on another builder's branch, acts on stale context, so it re-reads the
+  artifact first and a reviewer is pinned to a commit SHA. Unmeasured: whether
+  agents follow it.
 - **Work that cannot be undone says how to undo it, or how to check first.** A
   change can be reverted from git; a migration or a batch cannot, and a plan
   that does not say so is a plan nobody reviewed for it.

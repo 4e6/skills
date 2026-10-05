@@ -5,7 +5,7 @@ description: Takes a GitHub issue and delivers a reviewed pull request, merged. 
 tags: [architecture, github, process]
 sources:
   - resource: skills/work-on-github-issue/**
-sources_digest: b4d7dbf59afe640a
+sources_digest: 4311500f823e533a
 ---
 
 # Guidance, not a fence
@@ -46,6 +46,9 @@ request, asking and waiting, and a reviewer that may not post on GitHub, so the
 two gave opposite instructions to the same agent. 1.3.0 takes those three rules
 from the loop, and its paragraph names each, so the next change to the loop has
 a line here to be checked against.
+1.4.0 follows the loop's rule on background work in the same way: subagents are
+told to stop what they start, with a deadline on every wait, and step 7 lists and
+stops what is left before the run ends.
 
 # Why each rule is there
 
