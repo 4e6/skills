@@ -188,9 +188,9 @@ means the way the project takes changes, carried to the end:
    verify) and report; do not leave a broken deploy for the user.
 4. **Clear away what the work made**: worktrees, branches, scratch files,
    temporary state. Before the final report, list background tasks and agents
-   (processes you started, monitors, resumable agents) and stop what is left;
-   keep a monitor only if the delivery still depends on it. Leave what you did
-   not make.
+   (processes you or your subagents started, monitors, resumable agents) and stop
+   what is left, except what the ask or plan says must keep running and a monitor
+   the delivery still depends on. Leave what you did not make.
 
 Handing over the task is the authority for this path. These are not: deleting
 data you did not create, rotating or exposing credentials, changing something

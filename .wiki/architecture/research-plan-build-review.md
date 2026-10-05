@@ -5,7 +5,7 @@ description: "One loop for any task, ending in what the task asked for: findings
 tags: [architecture, process, agents]
 sources:
   - resource: skills/research-plan-build-review/**
-sources_digest: d607d38204f53af8
+sources_digest: 8f4b26bcdc8f2c0c
 ---
 
 # Why a skill of its own
@@ -93,8 +93,7 @@ would be an adapter beside it, not part of it
   subagent that has to leave something running says so in its report, since a flat
   "stop it all" would kill a batch the task was to run. A role resumed hours
   later, or waiting on another builder's branch, acts on stale context, so it
-  re-reads the artifact first and a reviewer is pinned to a commit SHA. Not
-  measured: whether agents follow it.
+  re-reads the artifact first and a reviewer is pinned to a commit SHA.
 - **Work that cannot be undone says how to undo it, or how to check first.** A
   change can be reverted from git; a migration or a batch cannot, and a plan
   that does not say so is a plan nobody reviewed for it.
@@ -120,8 +119,8 @@ would be an adapter beside it, not part of it
 
 # Not measured
 
-Nothing here has an eval. Three things are open: whether the `description`
+Nothing here has an eval. Four things are open: whether the `description`
 triggers on the tasks it should and stays quiet on a one-step edit, which a
 skill cannot guarantee for a user who wants the loop on every task, who is better
 served by a line in their own instructions file; whether a task given the loop
-beats the same task without it; and whether three rounds is the right cap.
+beats the same task without it; whether three rounds is the right cap; and whether agents stop their background work when told to, which has been seen to fail and not yet to hold.

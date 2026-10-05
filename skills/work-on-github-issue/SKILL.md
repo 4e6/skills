@@ -35,8 +35,8 @@ is out of scope; have a fresh reviewer who has not seen your reasoning read the
 plan, then the change, and post its verdict on the pull request with the commit
 SHA it covered; hand wide investigation to subagents that return only
 conclusions, and steps that touch separate files to parallel builders, each in a
-worktree of its own, told to stop what they start in the background, with a
-deadline on every wait; end on the reviewer's approval of the head commit, not on
+worktree of its own, told to stop what they start in the background or to report
+what must keep running, with a deadline on every wait; end on the reviewer's approval of the head commit, not on
 its running out of comments, and review again after any push; merge, then deploy
 where the project documents a way to and prove it landed; do not stop to ask, but
 take the smallest reversible option and say so at delivery; when the same problem
@@ -173,9 +173,9 @@ refused it and what would unlock it.
 Once merged, remove what the work left behind: the worktree, its branch, locally and on
 the remote it was pushed to, and every other worktree or branch made along the
 way, such as a subagent's or a branch for an abandoned approach. List the
-background tasks and agents you started (processes, monitors, resumable agents)
-and stop what is left, keeping a monitor only if the delivery still depends on
-it. Leave alone what this work did not make: other agents share the clone.
+background tasks and agents you or your subagents started (processes, monitors,
+resumable agents) and stop what is left, keeping a monitor only if the delivery
+still depends on it. Leave alone what this work did not make: other agents share the clone.
 
 After a squash or rebase merge, git sees the branch as unmerged and refuses a
 plain delete. The merged pull request is the proof: once its last commit is the

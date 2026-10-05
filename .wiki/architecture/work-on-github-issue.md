@@ -5,7 +5,7 @@ description: Takes a GitHub issue and delivers a reviewed pull request, merged. 
 tags: [architecture, github, process]
 sources:
   - resource: skills/work-on-github-issue/**
-sources_digest: 4311500f823e533a
+sources_digest: ca89f0c5b4ff9c51
 ---
 
 # Guidance, not a fence
