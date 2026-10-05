@@ -96,8 +96,10 @@ judgement on the strongest.
 
 Brief every subagent to stop anything it starts in the background (shells,
 loops, servers, clones) before it reports, or, if the work needs something to
-keep running, to say so in its report and how to stop it. Every waiting loop
-needs a deadline; never match your own command line with `pgrep -f`.
+keep running, to say so in its report and how to stop it: what it leaves
+running is not in its report, so nobody else knows to stop it. Every waiting
+loop needs a deadline; never match your own command line with `pgrep -f`, which
+matches the loop itself and so never ends.
 
 Every stage ends in something written down, and the next role starts from that
 and the ask, not from the last role's conversation. Write it where the user will
