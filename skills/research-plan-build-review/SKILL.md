@@ -13,7 +13,7 @@ compatibility: >-
   role is a separate pass by the same agent. Uses no network of its own.
 metadata:
   author: 4e6
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # Research, plan, build, review
@@ -94,10 +94,19 @@ judgement on the strongest.
   task done. It has read the whole session and so shares your assumptions: it
   does not replace the reviewer, and the reviewer does not replace it.
 
+Brief every subagent to stop anything it starts in the background (shells,
+loops, servers, clones) before it reports, or, if the work needs something to
+keep running, to say so in its report and how to stop it: what it leaves
+running is not in its report, so nobody else knows to stop it. Every waiting
+loop needs a deadline; never match your own command line with `pgrep -f`, which
+matches the loop itself and so never ends.
+
 Every stage ends in something written down, and the next role starts from that
 and the ask, not from the last role's conversation. Write it where the user will
 find it: in the reply, a file in the working folder, or the thread the task came
-from.
+from. A role resumed later, or waiting on another role's output, re-reads that
+artifact or fetches that branch first, and a reviewer is pinned to an exact
+commit SHA.
 
 ## 2. Research
 
@@ -178,7 +187,10 @@ means the way the project takes changes, carried to the end:
    only the exit code. If the proof fails, roll back (revert the change, redeploy,
    verify) and report; do not leave a broken deploy for the user.
 4. **Clear away what the work made**: worktrees, branches, scratch files,
-   temporary state. Leave what you did not make.
+   temporary state. Before the final report, list background tasks and agents
+   (processes you or your subagents started, monitors, resumable agents) and stop
+   what is left, except what the ask or plan says must keep running and a monitor
+   the delivery still depends on. Leave what you did not make.
 
 Handing over the task is the authority for this path. These are not: deleting
 data you did not create, rotating or exposing credentials, changing something

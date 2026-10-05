@@ -1,6 +1,7 @@
 # Wiki Update Log
 
 ## 2026-10-05
+* **Update**: `research-plan-build-review` and `work-on-github-issue` 1.4.0 stop background work: a subagent stops what it starts before it reports (or says what must keep running), every wait has a deadline, and delivery lists and stops what is left ([why](/architecture/research-plan-build-review.md#why-each-rule-is-there)).
 * **Update**: `work-on-github-issue` 1.3.0 follows the loop's 1.1.0 rules it had not taken: the run ends merged and cleaned up unless the ask says to stop earlier, the user's decisions are taken as the smallest reversible option and named on the issue instead of asked and waited for, and the reviewer's verdict goes on the pull request with its commit SHA ([why](/architecture/work-on-github-issue.md#the-loop-is-another-skills)).
 ## 2026-10-04
 * **Update**: `research-plan-build-review` 1.2.0 works in a git worktree on every task, read-only ones too: the 1.1.0 wording asked for one only of a builder in a shared repository, and agents judged the condition unmet and read the main checkout ([why](/architecture/research-plan-build-review.md#why-each-rule-is-there)).

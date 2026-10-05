@@ -11,7 +11,7 @@ sources:
   - resource: skills/llm-wiki/scripts/**
   - resource: skills/work-on-github-issue/SKILL.md
   - resource: skills/research-plan-build-review/SKILL.md
-sources_digest: 467e323aba9d03bd
+sources_digest: 04da166f2ef746b1
 ---
 
 # The boundary
