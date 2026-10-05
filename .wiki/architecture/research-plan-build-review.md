@@ -62,16 +62,15 @@ would be an adapter beside it, not part of it
   another comment. The issue skill ends the loop on the reviewer's approval; a
   task with no pull request has no CI and no maintainer to end it either, so the
   cap is there to make it end. Three is a guess, not a measurement.
-- **A change ends in an approved pull request, and merging is a word the user
-  says.** A first version handed over a verified diff and left the pull request
-  and its review to a second instruction, which the user then typed after every
-  run. Asking for a change is asking for the pull request and the reviewer's
-  approval, unless the project does not work that way or the user said to keep it
-  local. Merging, publishing, sending, deploying and deleting stay the user's,
-  for the reason the issue skill gave for merging: an agent cannot judge from
-  where it stands what the user wants out of reach. One word moves the line:
-  *integrate*, *merge* or *ship* in the ask itself carries the delivery through
-  the merge and the cleanup, so the user says it once, up front.
+- **A change ends delivered: merged, and deployed where the project has a path.**
+  Earlier versions handed over a verified diff, then an open pull request, and
+  left the merge to a second instruction, which the user typed after every run.
+  Handing the task over is the authority for that path, so the skill carries it
+  through merge, deploy and clean-up, and "draft" or "don't merge" in the ask
+  stops it where they say. What the handover does not cover — deleting data the
+  work did not make, rotating credentials, changing what other people consume,
+  spending — is left out and listed. A step the permission layer or the project
+  refuses is not tried another way: the run stops and says what would unlock it.
 - **A worktree on every task, read-only ones included.** The first version asked
   for one only of the builder, and only "in a repository other agents may share":
   a condition the agent judged for itself, and judged as not met, so research and

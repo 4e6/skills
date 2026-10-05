@@ -9,7 +9,7 @@ the format.
 | [training-week-meal-plan](skills/training-week-meal-plan/) | Turns one week of endurance training, described in your own words, into a week of meals that tracks it: recipes, a shopping list by aisle, and a printable page. |
 | [llm-wiki](skills/llm-wiki/) | Keeps a knowledge base for a codebase inside its repository, as an Open Knowledge Format bundle: why things are the way they are, what must hold, what words mean. Checks it for broken links, and against git for pages the code has moved past. |
 | [research-plan-build-review](skills/research-plan-build-review/) | Carries any task bigger than a quick answer through research, plan, build and review, with fresh subagents and reviewers, and delivers what was asked for: findings, a plan, a change, or work run. No issue needed. |
-| [work-on-github-issue](skills/work-on-github-issue/) | Takes a GitHub issue and produces a reviewed pull request, ready to merge, in any GitHub repository. |
+| [work-on-github-issue](skills/work-on-github-issue/) | Takes a GitHub issue and delivers a reviewed pull request, merged, in any GitHub repository. |
 | [z-image-turbo-macos](skills/z-image-turbo-macos/) | Generates images from text prompts on your own Apple Silicon Mac, with one model — Z-Image Turbo — on the Mac's GPU. Offline after a one-time setup of about 12 GB; Apple Silicon only. |
 
 ## Installing
