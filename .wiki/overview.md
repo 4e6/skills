@@ -10,7 +10,7 @@ sources:
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/work-on-github-issue/SKILL.md
   - resource: skills/research-plan-build-review/SKILL.md
-sources_digest: 38172de33bc30a3a
+sources_digest: 7051f785d9db4601
 ---
 
 # What it is
@@ -29,7 +29,7 @@ it. `research-plan-build-review` carries any task through research, plan, build
 and review and delivers what was asked for, whether findings, a plan, a change
 or work run ([the loop](/architecture/research-plan-build-review.md)).
 `work-on-github-issue` is that loop with a GitHub issue in and a reviewed pull
-request out, ready to merge
+request out, merged
 ([work on a GitHub issue](/architecture/work-on-github-issue.md)). `z-image-turbo-macos`, `llm-wiki` and
 `work-on-github-issue` are not pure payloads
 ([where they bend](/architecture/the-payload.md#the-skills-that-cannot-be-pure-payloads)).

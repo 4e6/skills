@@ -1,8 +1,8 @@
 ---
 name: work-on-github-issue
 description: >-
-  Takes a GitHub issue and produces a reviewed pull request, ready to merge,
-  in any GitHub repository. Use when the user asks to work on, fix, implement,
+  Takes a GitHub issue and delivers a reviewed pull request, merged, in any
+  GitHub repository. Use when the user asks to work on, fix, implement,
   resolve or pick up a GitHub issue, or gives an issue number, reference or
   URL.
 license: MIT
@@ -11,7 +11,7 @@ compatibility: >-
   repository.
 metadata:
   author: 4e6
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Work on a GitHub issue
@@ -20,28 +20,28 @@ The input is one issue: a number in the current repository, `owner/repo#123`,
 or a URL. Without one, ask which issue. The work happens in a clone of the
 issue's repository; for an issue elsewhere, find or make that clone first.
 
-The end of the run is a pull request that solves the issue, with green checks
-and your reviewer's approval, handed to the user. Merging is theirs to decide,
-unless the ask already said to integrate, merge or ship it.
+The end of the run is the issue solved: a pull request with green checks and
+your reviewer's approval, merged, deployed and verified where the project has a
+deploy path, and cleaned up. Words in the ask that narrow it
+— "draft", "don't merge", "open a PR only" — stop the run where they say.
 
 The loop this follows — research, plan, build, review, deliver — belongs to the
 `research-plan-build-review` skill: its roles, its stop rules, and what to do
 when you keep meeting the same problem. Follow it, with GitHub as the place the
-work is read, recorded and delivered, and a reviewed pull request as the finish
-line. Without that skill, the loop in brief: plan before code, and have the plan
-read by a fresh reviewer who has not seen your reasoning; hand wide
-investigation to subagents that return only conclusions; have the change
-reviewed the same way before anyone else sees it; end on the reviewer's
-approval, not on its running out of comments. A change to security,
-concurrency, data migrations or performance deserves a reviewer briefed for it.
-When the same problem keeps coming back, stop and fix it where it is decided;
-when a fix keeps failing, hand the problem to a fresh subagent; when your context
-is long, compact it and carry on from what is written down; when the plan no
-longer fits, go back to it; when nothing works, ask the user. A plan says what changes and
-where, why this approach and which were rejected, how you will know it works,
-what is out of scope and what you could not settle. Where the host cannot start
-a subagent, review in a separate pass that starts again from the issue and the
-plan alone.
+work is read, recorded and delivered, and a merged pull request as the finish
+line. Without that skill, the loop in brief: plan before code, saying what
+changes, why this and not the alternatives, how you will know it works and what
+is out of scope; have a fresh reviewer who has not seen your reasoning read the
+plan, then the change, and post its verdict on the pull request with the commit
+SHA it covered; hand wide investigation to subagents that return only
+conclusions, and steps that touch separate files to parallel builders, each in a
+worktree of its own; end on the reviewer's approval of the head commit, not on
+its running out of comments, and review again after any push; merge, then deploy
+where the project documents a way to and prove it landed; do not stop to ask, but
+take the smallest reversible option and say so at delivery; when the same problem
+keeps coming back, fix it where it is decided, and when nothing works, ask the
+user. Where the host cannot start a subagent, review in a separate pass that
+starts again from the issue and the plan alone.
 
 ```
 Progress:
@@ -51,8 +51,7 @@ Progress:
 - [ ] 4. Implement and verify
 - [ ] 5. Review the change, and open the pull request
 - [ ] 6. Work the review until it is approved
-- [ ] 7. Hand over
-- [ ] 8. When the user says to merge: merge, and clean up
+- [ ] 7. Deliver: merge, and clean up
 ```
 
 ## 1. Understand the issue
@@ -64,16 +63,17 @@ links to.
 
 Check whether the work has already started — a pull request for the issue, a
 branch, an assignee. If it has, continue that work rather than starting over;
-if it looks like someone else is actively on it, ask the user before touching
-it. A closed issue is not worked: say so and stop.
+if it looks like someone else is actively on it, say so on the issue, leave
+their branch alone and do only what does not collide with it. A closed issue is
+not worked: say so and stop.
 
 Read the project's own rules before its code: `CONTRIBUTING.md`, the agent
 instructions file (`AGENTS.md` or the host's equivalent), the pull request
 template, the CI workflows. Where they differ from this skill, they win.
 
 Then state the issue in your own words: what is wrong or missing, and what will
-be true when it is done. If you cannot, the issue is underspecified — that is a
-question for the user, not a guess to build on.
+be true when it is done. If you cannot, the issue is underspecified: post the
+question on the issue and stop, since there is nothing to build on.
 
 ## 2. Set up a worktree
 
@@ -101,10 +101,9 @@ Research and plan as the loop says. For a bug, reproduce it first, ideally as a
 failing test, and find the cause rather than the place it shows.
 
 Some decisions belong to the user: scope the issue leaves open, behaviour
-visible to the project's users, breaking changes, new dependencies. Ask about
-those and wait for the answer. If nobody is in the session to answer, post the
-questions as a comment on the issue and stop there. Decide everything else
-yourself.
+visible to the project's users, breaking changes, new dependencies. Do not wait
+for them: take the smallest, most reversible option, or leave that part out, and
+name it in the plan as a decision for the user. Decide everything else yourself.
 
 Post the final plan as a comment on the issue. The thread is where the next
 person to work on or investigate this code will look, long after this session
@@ -131,13 +130,13 @@ remotes are shared by every worktree of the clone.
 ## 5. Review the change, and open the pull request
 
 Review the change as the loop says, giving the reviewer the issue, the plan and
-the diff, and asking it to report findings rather than edit files or post on
-GitHub. This review is cheap; the project's CI and reviewers are not, so it
-comes first.
+the diff, and asking it to report findings rather than edit files. This review
+is cheap; the project's CI and reviewers are not, so it comes first.
 
 Then open the pull request, filling in the project's template if it has one.
 The body says what changed and why, the decisions made and the alternatives
-rejected, how it was verified, and `Closes #<n>`.
+rejected, how it was verified, and `Closes #<n>`. Post the reviewer's verdict on
+it, as a comment or review, with the commit SHA it covered.
 
 ## 6. Work the review until it is approved
 
@@ -145,36 +144,35 @@ Wait for the checks. They can take a minute to be reported after the pull
 request opens, so none yet is not the same as none at all; a repository with no
 CI has none to wait for. Checks that wait on a maintainer — a project may hold a
 fork's workflow runs until one approves them — will not arrive on their own:
-run the same commands locally and say at the hand-over that CI has not run.
+run the same commands locally. That CI will not go green on its own: finish
+what does not depend on it, stop at step 7, and say that CI has not run and what
+would unlock it.
 Then answer every finding — from the checks, from your
 reviewer, and from any human or bot review that has arrived — by fixing it or
 by replying with a reason. Verify a finding before acting on it: reviewers are
-wrong too. Have your reviewer read each round of fixes.
+wrong too. Have your reviewer read each round of fixes, and
+post its verdict on the pull request again: a push after approval, a one-line fix
+included, needs a new review.
 
 **Seek approval, not perfection**, as the loop says: the loop ends when your
-reviewer approves and the checks are green. Do not wait for a maintainer's
-approval; that comes after the hand-over.
+reviewer approves the head commit and the checks are green. Do not wait for a
+maintainer's approval unless the project requires one to merge; then step 7
+stops there.
 
-## 7. Hand over
+## 7. Deliver: merge, and clean up
 
-The run ends with the pull request open, its checks green — or, where they
-wait on a maintainer, passing locally — and its review answered. If the work turned up something the next person would want and the
-code does not say — a dead end, a surprising cause, a follow-up — add it to the
-issue.
+Merge when the loop's conditions hold: the checks are green on the head commit,
+your reviewer approved that commit with the verdict on the pull request, every
+finding is fixed or answered with a reason, and the diff is inside the plan.
+Merge the way the project merges. Where it documents a deploy path, follow it,
+prove it landed, and roll back if the proof fails, as the loop says. If the merge
+is refused — a protected branch, a required human review — stop and say what
+refused it and what would unlock it.
 
-Tell the user: the pull request's link, what changed, the decisions they should
-know about, anything left open, and the worktree's path, which can be removed
-once the pull request is merged or closed. Merge only when they say so. If the
-ask already said "merge", "integrate" or "ship it", they have: do not stop to
-wait, and go on to step 8 once the review is approved and the checks are green.
-
-## 8. When the user says to merge: merge, and clean up
-
-Merge the way the project merges. Then remove what the work left behind: the
-worktree, its branch, locally and on the remote it was pushed to, and every
-other worktree or branch made along the way, such as a subagent's or a branch
-for an abandoned approach. Leave alone what this work did not make: other
-agents share the clone.
+Once merged, remove what the work left behind: the worktree, its branch, locally and on
+the remote it was pushed to, and every other worktree or branch made along the
+way, such as a subagent's or a branch for an abandoned approach. Leave alone what
+this work did not make: other agents share the clone.
 
 After a squash or rebase merge, git sees the branch as unmerged and refuses a
 plain delete. The merged pull request is the proof: once its last commit is the
@@ -182,3 +180,10 @@ branch's last commit, so nothing local was left unpushed, force the delete. Do
 not remove a worktree with uncommitted changes until you have seen what they
 are. Leave the worktree before removing it if the session is in it, and leave
 the original checkout as you found it.
+
+Tell the user: the pull request's link, what changed, the decisions they should
+know about, anything left open or not verified, and, if the run stopped short of
+the merge, the worktree's path, which can be removed once the pull request is
+merged or closed. If the work turned up something the next person would want and
+the code does not say — a dead end, a surprising cause, a follow-up — add it to
+the issue.
