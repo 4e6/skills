@@ -17,7 +17,7 @@ sources:
   - id: git-archive
     resource: https://git-scm.com/docs/git-archive
     title: git-archive(1)
-sources_digest: 6c452221282a3217
+sources_digest: ee3828e636537791
 ---
 
 # Why there is a zip at all
@@ -92,7 +92,7 @@ Linux sandbox, and the skill works only on the user's Mac
 every time.
 
 `llm-wiki` has none either: it works on a project's git checkout, which a web
-app's chat does not have. Nor does `work-on-github-issue`, for the same reason.
+app's chat does not have.
 
 # Built from the commit, not the folder
 

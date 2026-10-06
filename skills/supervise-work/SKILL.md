@@ -1,43 +1,69 @@
 ---
-name: research-plan-build-review
+name: supervise-work
 description: >-
-  Carries a task through research, plan, build and review, using fresh
+  Supervises a task through research, plan, build and review, using fresh
   subagents and reviewers, and delivers whatever the task asked for: findings,
-  a plan, a change, or work run. Use for any task bigger than a quick answer or
-  a one-step edit — investigating a problem, choosing between approaches,
-  fixing a bug, building a feature, migrating, auditing — whether or not an
-  issue or ticket exists.
+  a plan, a merged change, or work run. Use for any task bigger than a quick
+  answer or a one-step edit — investigating a problem, choosing between
+  approaches, fixing a bug, building a feature, migrating, auditing — and when
+  asked to work on, fix, implement, resolve or pick up a GitHub issue, given as
+  a number, reference or URL, or a pull request. Also use when the user asks to
+  "supervise work on" something, to "schedule work on" it with no time or repeat
+  given, or to keep them in the loop: the user then watches and steers the
+  supervisor as it goes. A request to run
+  something at a time or on a repeat belongs to a scheduler, not here.
 license: MIT
 compatibility: >-
-  Works in any assistant. Best where it can start subagents; without them each
-  role is a separate pass by the same agent. Uses no network of its own.
+  Works in any assistant. Best where it can start subagents, and run them in the
+  background for a supervised session; without them each role is a separate pass
+  by the same agent. Uses no network of its own; a GitHub issue or pull request
+  needs git and an authenticated GitHub CLI (gh).
 metadata:
   author: 4e6
-  version: "1.4.0"
+  version: "1.0.0"
 ---
 
-# Research, plan, build, review
+# Supervise work
 
-A task of any size goes through the same loop. What differs is where it stops
-and what is handed over. A small task gets the loop at small scale, and a task
-that is one step skips it, roles and all: just do it.
+A task of any size goes through the same loop: research, plan, build, review,
+deliver. What differs is where it stops and what is handed over. A small task
+gets the loop at small scale, and a task that is one step skips it, roles and
+all: just do it. You are the supervisor: you drive the loop and give each stage's
+work to a role.
 
-**Run to the end without stopping to ask.** Handing a task over means the user is
-not at the keyboard. Decide what you can, record each decision and the
-alternative you rejected, and keep going. A question that blocks the work is the
-last resort, not a step: park it in the delivery and do everything that does not
-depend on it.
+**Two ways to run.** *Unattended* is the default. Handing a task over means the
+user is not at the keyboard, so run to the end without stopping to ask. Decide
+what you can, record each decision and the alternative you rejected, and keep
+going. A question that blocks the work is the last resort, not a step: park it in
+the delivery and do everything that does not depend on it. Two things are stops
+and not questions: a task too thin to state, or a closed one, where there is
+nothing to build, and a delivery step that is refused (step 6). Stop there and
+say what is missing.
+
+*Supervised* is for when the user asks you to supervise the work, to schedule it
+with no time or repeat given, or to keep them in the loop: they are at the
+keyboard, and they watch and steer by talking to you while the work goes on. Read
+[references/supervised.md](references/supervised.md) before the first step. It
+changes how you talk to the user, and lifts the rules here that say not to ask;
+everything else holds in both.
 
 **Work in a git worktree of your own, on every task, read-only ones too.** Other
 agents may share the checkout, and a branch switched or a file edited under you
-changes what you read as well as what you build. Create the worktree before the
-first read, do everything in it, and leave the original checkout as you found it.
+changes what you read as well as what you build. Create the worktree before you read
+the project's files, do everything in it, and leave the original checkout as you
+found it. Reading an issue or pull request, or listing branches and worktrees,
+needs none, and is how you learn whether you are continuing work.
+If the host can create a worktree and move the session into it, use that. Start
+a new branch from the freshly fetched default branch, unless you are continuing
+work that exists (step 1). A fresh worktree has none of the
+ignored files the main checkout has — installed dependencies, build output, local
+environment files — so set up what the project needs before the first test run.
 Subagents work in yours; a builder running beside another builder gets a
 worktree of its own. Step 6 removes them.
 
 ```
 Progress:
-- [ ] 1. Name the finish line
+- [ ] 1. Name the finish line, and find where the work stands
 - [ ] 2. Research
 - [ ] 3. Plan, and have the plan reviewed
 - [ ] 4. Build and verify
@@ -45,7 +71,7 @@ Progress:
 - [ ] 6. Deliver
 ```
 
-## 1. Name the finish line
+## 1. Name the finish line, and find where the work stands
 
 Say in one sentence what will be true when the task is done, and what the user
 gets. Read it off the ask:
@@ -62,6 +88,24 @@ readings of the ask would produce different work, take the cheaper one, say so,
 and carry on. Words in the ask that narrow the finish line win over this table:
 "draft", "don't merge", "keep it local", "don't deploy" stop delivery where they
 say.
+
+**If the task names a GitHub issue or pull request, or its change will be
+delivered as a GitHub pull request, read [references/github.md](references/github.md)
+now.** It says where each step is read, recorded and delivered there; the finish
+line for an issue that asks for a change is the merged pull request that closes
+it; a question about an issue gets findings, posted on it.
+
+Then find where the work stands. A task may arrive part done: a conversation that
+reached a plan, an issue thread with findings, a branch or pull request someone
+began, a plan nobody has reviewed. Read all of it, and start at the first stage
+whose output is not written down or, for a plan or a result, has not been read by
+a reviewer who did not write it. A plan that exists only in the conversation is
+written down and goes to a reviewer before it is built: the user agreeing to it is
+not a reviewer hunting for what is wrong. Skipping research never skips reading
+the project's own rules (step 2). Mark each stage you skip in the progress list, with what stands in for
+it. A later stage can send you back: if the build finds a gap, add the research
+it needs and do not guess. If someone else is actively on the work, say so and do
+only what does not collide with it.
 
 ## Roles
 
@@ -110,10 +154,12 @@ commit SHA.
 
 ## 2. Research
 
-Read before deciding. Read the project's own rules before its code. For a bug,
-reproduce it first, ideally as a failing test, and find the cause rather than the
-place it shows. For a question, find the evidence that would settle it and the
-evidence that would overturn it.
+Read before deciding. Read the project's own rules before its code: the agent
+instructions file, `CONTRIBUTING`, the pull request template, the CI workflows.
+Where they differ from this skill, they win. For a bug, reproduce it first,
+ideally as a failing test, and find the cause rather than the place it shows. For
+a question, find the evidence that would settle it and the evidence that would
+overturn it.
 
 ## 3. Plan, and have the plan reviewed
 
