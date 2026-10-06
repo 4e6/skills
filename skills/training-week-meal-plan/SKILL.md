@@ -505,9 +505,9 @@ Then say, in a few lines:
 - anything you assumed because they had not said;
 - whether the plan was checked, and what the check found, in your own words;
 - the page to print: the link, or the file as attached, else its full path;
-- where the page has no photos, or fewer than the dishes, say so and why in a
-  plain clause: nothing here makes pictures, the drawing failed, or a quota ran
-  out.
+- where there is a page and it has no photos, or fewer than the dishes, say so
+  and why in a plain clause: nothing here makes pictures, the drawing failed,
+  or a quota ran out. With no page, say nothing about photos.
 
 **Hand over the page, not the document.** `plan-<date>.json` is scaffolding, and
 two paths leave the athlete working out which one is their week. Where they open

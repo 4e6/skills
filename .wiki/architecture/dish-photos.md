@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/references/photos.md
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: 867a2b4466aa4630
+sources_digest: f187fa5560b8f4c2
 ---
 
 # Why the renderer does it
@@ -136,13 +136,17 @@ first; square and top-down, describing the food and never the athlete; stop at
 the first quota, rate-limit or billing error; render once — again only after
 fixing a name that matched no dish or a photo over the cap, or with the photos
 linked where step 7 publishes — one handover, never edit the page and never read
-it back except where a publishing tool asks to read the linked copy; one line in the report, and another whenever the page went out with none
-or fewer, with the reason in a plain clause — nothing there makes pictures, the
-drawing failed, or a quota ran out. It used to say nothing about photos where
-none were drawn, so an athlete never learned a feature had been skipped; the
-silence was right only while "no tool" meant a host that could not draw, and it
-hid the host that did not look. The reason names no tool, as the one line before
-drawing does not.
+it back except where a publishing tool asks to read the linked copy; one line
+in the report, and another whenever a page went out with none or fewer, with
+the reason in a plain clause — nothing there makes pictures, the drawing
+failed, or a quota ran out. It used to say nothing about photos where none
+were drawn, so an athlete never learned a feature had been skipped; the
+silence was right only while "no tool" meant a host that could not draw, and
+it hid the host that did not look. Where there is no page — no Python, so
+`photos.md` was never read — the reply says nothing about photos: there is
+nothing to be missing from, and "nothing here makes pictures" would be false
+of a host that was never asked. The reason names no tool, as the one line
+before drawing does not.
 
 # Measured, 2026-09-29
 
