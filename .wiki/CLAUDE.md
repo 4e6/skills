@@ -18,6 +18,10 @@ Reading needs no skill. Start at `index.md` and drill down; don't read the whole
 bundle. If a page contradicts the code, reality wins — say so rather than reading
 past it.
 
+**To change a skill, read `conventions/editing-a-skill.md` first.** It has the
+upstream guides to re-read, this repository's own rules for a skill, and how a
+change is judged.
+
 Three things hold either way:
 
 - `index.md` and `log.md` are reserved names, and `CLAUDE.md`, `CLAUDE.local.md`
