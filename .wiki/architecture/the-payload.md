@@ -11,7 +11,7 @@ sources:
   - resource: skills/llm-wiki/scripts/**
   - resource: skills/supervise-work/SKILL.md
   - resource: skills/supervise-work/references/github.md
-sources_digest: 52f65b546c6dfc91
+sources_digest: 1694b2a07ed2b389
 ---
 
 # The boundary
@@ -132,7 +132,7 @@ page is to be checked against. Its instructions name Claude Code's own paths
 and files, as instructions about the host.
 
 `supervise-work` ships no script and is a pure payload in `SKILL.md`: no network of
-its own, and no host and no host's tools named. For a GitHub issue it reads
+its own, and no host and no host's tools named. For a GitHub issue or pull request it reads
 `references/github.md`, which works on the network through `gh` and names GitHub
 and `gh` because they are its subject; a task that touches no issue and no GitHub
 pull request never loads it ([supervise work](/architecture/supervise-work.md)).

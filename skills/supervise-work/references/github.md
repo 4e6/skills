@@ -37,9 +37,10 @@ question on the issue and stop, since there is nothing to build on.
 
 ## A pull request you were handed
 
-Work on its branch and do not open a second pull request. Read its description,
-every review comment and the state of its checks before the code. The reviews on
-it are findings to answer, as below.
+Work on its branch and do not open a second pull request: skip opening one, and
+put the plan in its description or a comment. Read its description, every review
+comment and the state of its checks before the code. The reviews on it are
+findings to answer, as below.
 
 ## The worktree
 
@@ -97,7 +98,8 @@ refused — a protected branch, a required human review — stop and say what re
 it and what would unlock it.
 
 Once merged, remove what the work left behind: the worktree, its branch, locally
-and on the remote it was pushed to, and every other worktree or branch made along
+and on the remote it was pushed to (unless the project's merge already deletes it),
+and every other worktree or branch made along
 the way, such as a subagent's or a branch for an abandoned approach. Leave alone
 what this work did not make: other agents share the clone.
 
@@ -111,4 +113,5 @@ original checkout as you found it.
 Tell the user the pull request's link, and, if the run stopped short of the merge,
 the worktree's path, which can be removed once the pull request is merged or
 closed. If the work turned up something the next person would want and the code
-does not say — a dead end, a surprising cause, a follow-up — add it to the issue.
+does not say — a dead end, a surprising cause, a follow-up — add it to the issue,
+or to the pull request if there is none.

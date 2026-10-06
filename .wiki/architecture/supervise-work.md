@@ -5,7 +5,7 @@ description: "One skill for any task: research, plan, build, review and deliver,
 tags: [architecture, process, agents, github]
 sources:
   - resource: skills/supervise-work/**
-sources_digest: aeb28726078a07ea
+sources_digest: 23a11c452e7593ac
 ---
 
 # Why one skill, and why this shape
@@ -68,8 +68,12 @@ wrong.
   where the agent does each stage's work in the conversation cannot be steered:
   the user types into a silence. So roles run in the background where the host
   allows, the supervisor reports as they finish, and the stage list becomes a
-  written backlog that the user's messages edit. It is the progress list made
+  written backlog, holding further tasks too, that the user's messages edit. It is the progress list made
   visible, in the reply or a file, so the skill still keeps no state of its own.
+- **Too thin to state, closed, refused: a stop, not a question.** Where there is
+  nothing to build or nothing allowed, asking does not unblock the work, so the
+  unattended run stops and says what is missing; a supervised one asks in chat and
+  carries on with what does not depend on the answer.
 - **Supervised is not an approval gate.** The user steers; they are not asked to
   approve each stage, and their presence is not approval of a merge. The
   delivery conditions are the same in both modes, so a watched run is not a
@@ -103,6 +107,10 @@ wrong.
   of the finished artifact does not. Each covers what the other cannot, so the
   skill says neither replaces the other. It names the advisor by what it does, not
   by a host's setting.
+- **The reviewer's verdict goes on the pull request, with the commit SHA.** For a change
+  delivered as one, it is what the merge condition reads, and what a maintainer or the next agent can
+  check without the session. A push after it makes it a verdict on an older
+  commit, so it is asked for again.
 - **Models by role, where the host allows.** Reading and editing are most of the
   tokens and need the least judgement; the plan and the final call need the most.
   This is guidance in one sentence, not a configuration, since the skill cannot
@@ -153,10 +161,6 @@ do:
   take days: an agent told to wait for one waits, or polls, with nothing to do. A
   project that requires one to merge refuses the merge, and the rule for a refusal
   applies.
-- **The reviewer's verdict goes on the pull request, with the commit SHA.** It is
-  what the merge condition reads, and what a maintainer or the next agent can
-  check without the session. A push after it makes it a verdict on an older
-  commit, so it is asked for again.
 - **The merge is the agent's, and so is the clean-up after it.** Worktrees and
   branches pile up in a clone that several agents share, each one a question for
   the next agent about whose it is and whether it is still live. The run that made
