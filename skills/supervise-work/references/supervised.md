@@ -44,8 +44,9 @@ Read each message as a command on the backlog, or a question about it:
 - **Add work**, including "schedule work on …" with no time or repeat: queue it,
   say where it goes and why. A time or a repeat ("at nine", "every night") is
   the host's scheduler's, not the backlog's; say so.
-- **Reorder, drop, pause, skip a stage, stop.** Say what it does to work that is
-  running before you do it, and wait for a yes only if it would discard any.
+- **Reorder, drop, pause, skip a stage, stop.** Do what was asked, and say what it
+  did to work in progress. If the user's words do not make clear that they mean to
+  discard work that is running or done, say what would be lost and confirm first.
 - **Change the plan or the finish line.** Go back to step 3: revise the plan, have
   the reviewer read it, then carry on. A change that only adds independent work
   does not need that; queue it, and run it beside what is running when it shares

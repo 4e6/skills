@@ -5,7 +5,7 @@ description: "One skill for any task: research, plan, build, review and deliver,
 tags: [architecture, process, agents, github]
 sources:
   - resource: skills/supervise-work/**
-sources_digest: e6cd53646bcd3734
+sources_digest: cda083b5ea690d76
 ---
 
 # Why one skill, and why this shape
@@ -63,7 +63,7 @@ wrong.
   Subagents and headless runs have no user to talk to at all. Making supervision
   the default would break both, so it is a mode the user names ("supervise",
   "schedule", "keep me in the loop"), and the rules that say not to ask are
-  lifted in `supervised.md` alone.
+  lifted by `supervised.md`, and by nothing else.
 - **A supervisor stays available, and the backlog is its state.** A session
   where the agent does each stage's work in the conversation cannot be steered:
   the user types into a silence. So roles run in the background where the host
