@@ -9,9 +9,9 @@ sources:
   - resource: skills/z-image-turbo-macos/scripts/z_image_turbo.py
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/llm-wiki/scripts/**
-  - resource: skills/work-on-github-issue/SKILL.md
-  - resource: skills/research-plan-build-review/SKILL.md
-sources_digest: 04da166f2ef746b1
+  - resource: skills/supervise-work/SKILL.md
+  - resource: skills/supervise-work/references/github.md
+sources_digest: cb806aa72b2ff51b
 ---
 
 # The boundary
@@ -131,13 +131,11 @@ to list the files it tracks and hash them, and to read history for the diff a st
 page is to be checked against. Its instructions name Claude Code's own paths
 and files, as instructions about the host.
 
-`work-on-github-issue` ships no script; its work is on the network, through
-`gh`, and it names GitHub and `gh` because they are its subject ([work on a GitHub issue](/architecture/work-on-github-issue.md#how-it-bends-the-payload)).
-
-`research-plan-build-review` is a pure payload: no script, no network of its
-own, and it names no host and no host's tools ([the loop](/architecture/research-plan-build-review.md)).
-`work-on-github-issue` names it, the only case of one skill naming another, and
-carries a paragraph of the loop so it works without it.
+`supervise-work` ships no script and is a pure payload in `SKILL.md`: no network of
+its own, and no host and no host's tools named. For a GitHub issue it reads
+`references/github.md`, which works on the network through `gh` and names GitHub
+and `gh` because they are its subject; a task with no issue never loads it
+([supervise work](/architecture/supervise-work.md)).
 
 Their scripts' own facts, in the same terms as the others:
 
