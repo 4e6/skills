@@ -17,7 +17,7 @@ compatibility: >-
   without it you still get the plan. The plan is written in English.
 metadata:
   author: 4e6
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # A week of meals that tracks the training
@@ -414,7 +414,10 @@ Two things that are never the repair:
 
 ## Step 6 — make it printable
 
-**Where your host can make a picture from a written description, read [photos.md](references/photos.md) now:** the page shows each dish.
+**List the tools and skills your host has that make a picture from a written
+description, and where there is any, read [photos.md](references/photos.md)
+now:** the page shows each dish. Look at what is there; do not decide from
+memory that there is none.
 
 ```
 python3 <this skill's directory>/scripts/render.py plan-<date>.json plan-<date>.html
@@ -478,19 +481,7 @@ the photos, step 6's command with `plan-<date>-web.html` as the page, since a
 link without the photos still beats a file with them. A file attached is
 always `plan-<date>.html`, which carries its photos.
 
-Where the host can neither publish nor attach, open it:
-
-```
-open plan-<date>.html       # macOS
-xdg-open plan-<date>.html   # Linux
-start plan-<date>.html      # Windows
-```
-
-**Try it once, then offer.** A host may hand over no shell at all, the opener
-may not be there, and a session on a machine that is not the athlete's opens a
-browser nobody is sitting in front of — the three look identical from here, so a
-second attempt tells you nothing. When it will not run, say where the page is
-and give them the line to run themselves.
+Where the host can neither publish nor attach, open it once.
 
 **Claim only what you saw.** A command that exits cleanly is not a window that
 appeared: *I have opened it; if no window came up, it is at …*.
@@ -501,7 +492,8 @@ Then say, in a few lines:
 - which day you made the biggest fuel day, and what led you to that;
 - anything you assumed because they had not said;
 - whether the plan was checked, and what the check found, in your own words;
-- the page to print: the link, or the file as attached, else its full path.
+- the page to print: the link, or the file as attached, else its full path;
+- if the page has no photos, say why.
 
 **Hand over the page, not the document.** `plan-<date>.json` is scaffolding, and
 two paths leave the athlete working out which one is their week. Where they open

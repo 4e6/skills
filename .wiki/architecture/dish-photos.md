@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/references/photos.md
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: 708e8aee97233473
+sources_digest: 14a812b454f78a22
 ---
 
 # Why the renderer does it
@@ -120,17 +120,31 @@ it once did only on a page with photos.
 
 # What the skill tells the host
 
-Step 6's pointer names a capability — *where your host can make a picture from a
+Step 6 names a capability — the tools and skills *that make a picture from a
 written description* — never a host, and is worded so a host whose only tool is
-Python does not try to plot a plate. `photos.md` is loaded only where it applies:
+Python does not try to plot a plate. It tells the host to **list** what it has
+and read `photos.md` if anything is there. It once said *where your host can make
+a picture*, which left the judgement to the host: in a real run an agent skipped
+the photos without looking, though a local image skill was installed, and never
+told the athlete. A condition about what the host can do is answered from memory;
+a list is answered from the session. No tool is named, since one that exists on
+one host is wrong on the next, and no example is given, as
+[editing a skill](/conventions/editing-a-skill.md) allows only those every page
+would accept. `photos.md` is loaded only where it applies:
 draw only where step 4's check ran, whatever it found; one line to the athlete
 first; square and top-down, describing the food and never the athlete; stop at
 the first quota, rate-limit or billing error; render once — again only after
 fixing a name that matched no dish or a photo over the cap, or with the photos
 linked where step 7 publishes — one handover, never edit the page and never read
-it back except where a publishing tool asks to read the linked copy; one line in the report, and another only if the athlete was told
-photos were coming and the page went out with none or fewer. A host that drew
-none says nothing about photos.
+it back except where a publishing tool asks to read the linked copy; one line
+in the report, and another whenever a page went out with no photos, saying
+why. It used to say nothing about photos where none were drawn, so an athlete
+never learned a feature had been skipped; the silence was right only while "no
+tool" meant a host that could not draw, and it hid the host that did not look.
+The rule is about a page, so where there is none — no Python, so `photos.md`
+was never read — the reply says nothing about photos: there is nothing to be
+missing from. It is left to the host to word the reason, and it names no tool,
+as the one line before drawing does not.
 
 # Measured, 2026-09-29
 
