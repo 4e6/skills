@@ -6,7 +6,7 @@ tags: [plan-quality, intake]
 sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: 0c65279997992a3a
+sources_digest: fd7d89c8b33843af
 ---
 
 # Statement

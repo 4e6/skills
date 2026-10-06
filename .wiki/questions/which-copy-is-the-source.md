@@ -6,7 +6,7 @@ tags: [process, distribution]
 sources:
   - resource: skills/training-week-meal-plan/**
   - resource: skills/llm-wiki/**
-sources_digest: bda5f5d71bdbd5bb
+sources_digest: 28499179cb3f90e2
 ---
 
 # The question
