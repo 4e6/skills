@@ -481,13 +481,7 @@ the photos, step 6's command with `plan-<date>-web.html` as the page, since a
 link without the photos still beats a file with them. A file attached is
 always `plan-<date>.html`, which carries its photos.
 
-Where the host can neither publish nor attach, open it.
-
-**Try it once, then offer.** A host may hand over no shell at all, the opener
-may not be there, and a session on a machine that is not the athlete's opens a
-browser nobody is sitting in front of — the three look identical from here, so a
-second attempt tells you nothing. When it will not run, say where the page is
-and give them the command to open it themselves.
+Where the host can neither publish nor attach, open it once.
 
 **Claim only what you saw.** A command that exits cleanly is not a window that
 appeared: *I have opened it; if no window came up, it is at …*.

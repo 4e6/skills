@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: abb0e77da7d01ac9
+sources_digest: f846ebe6da60ccb4
 ---
 
 # Progress is the host's, and the reply is the athlete's
@@ -81,14 +81,20 @@ rules for a page (a dark theme, a design pass) did not fit a page the skill
 forbids retyping. Wording alone would have left the first in place, so 1.7.0
 changed what is published as well as the order.
 
-**Where it can do neither, the page is opened** — **tried once**, and where it
-will not run, the full path and the command to open it themselves. The skill
-names no command: the host knows its platform's opener, and a table of the
-three (`open`, `xdg-open`, `start`) was tokens spent on what it already knew.
-Once, because the three ways it fails cannot be told apart from inside the
-session: no shell, no opener installed, or a browser on a machine nobody is
-sitting at. The claim is hedged — *I have opened it; if no window came up, it is
-at …* — because **a command that exits cleanly is not a window that appeared**.
+**Where it can do neither, the page is opened, once.** The skill says only that.
+It names no command, since the host knows its platform's opener,
+and a table of the three (`open`, `xdg-open`, `start`) was tokens spent on what
+it already knew. It says nothing of what to do when the opener will not run: a
+paragraph once did (try once, then give the full path and the command to open it
+themselves), and went on the argument that an agent reports a failure and finds
+its own way round, with the full path already owed by *hand over the page* and the
+honest claim by the next rule. Unmeasured: the evals give a run no opener. What
+stays is **once**, because the three ways it fails cannot be told apart from
+inside the session — no shell, no opener installed, or a browser on a machine
+nobody is sitting at — so a second attempt tells nothing and may open a second
+window on a screen nobody watches. The claim is hedged — *I have opened it; if
+no window came up, it is at …* — because **a command that exits cleanly is not a
+window that appeared**.
 
 **What is still unreached:** a sandbox with neither an opener nor a way to hand
 over a file, where a path reaches nobody. Its fix would be to treat *no page they

@@ -11,7 +11,7 @@ sources:
   - resource: skills/llm-wiki/scripts/**
   - resource: skills/supervise-work/SKILL.md
   - resource: skills/supervise-work/references/github.md
-sources_digest: 7609a8fd50e31e43
+sources_digest: b65cfc6fb3312f1f
 ---
 
 # The boundary
