@@ -20,8 +20,9 @@ start: the stages still to run, each with its role and a status (queued, running
 done, dropped), and what runs first. Start at once; wait only if the user asked
 to say go. The backlog is the progress list made visible, and it is the state of
 the session: keep it written where the user will find it, in the reply or a file
-in the worktree, and keep it current, since the user's messages edit it and a
-resumed session reads it.
+outside every task's worktree and out of the repository, so delivery cannot
+delete it or sweep it into a commit, and keep it current, since the user's
+messages edit it and a resumed session reads it.
 
 ## Stay available
 
@@ -44,7 +45,7 @@ Read each message as a command on the backlog, or a question about it:
   say where it goes and why. A time or a repeat ("at nine", "every night") is
   the host's scheduler's, not the backlog's; say so.
 - **Reorder, drop, pause, skip a stage, stop.** Say what it does to work that is
-  running before you do it, if it would discard any.
+  running before you do it, and wait for a yes only if it would discard any.
 - **Change the plan or the finish line.** Go back to step 3: revise the plan, have
   the reviewer read it, then carry on. A change that only adds independent work
   does not need that; queue it, and run it beside what is running when it shares
@@ -74,6 +75,7 @@ refused step, and the end-of-run clean-up all hold. Being watched is not a
 reason to skip a review, and the user's presence is not approval of a merge:
 merge when step 6's conditions hold, unless the user said not to. A subagent
 still stops what it starts in the background and every wait still has a deadline.
+A task's delivery stops that task's agents only; the rest are stopped at the end.
 Report each task's delivery when it happens. The session ends when the backlog is
 empty or the user says stop; before the final report, stop the background agents
 and list any backlog item that was not done.

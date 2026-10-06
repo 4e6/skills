@@ -7,9 +7,10 @@ description: >-
   answer or a one-step edit — investigating a problem, choosing between
   approaches, fixing a bug, building a feature, migrating, auditing — and when
   asked to work on, fix, implement, resolve or pick up a GitHub issue, given as
-  a number, reference or URL. Also use when the user asks to "supervise work
-  on" something, or to "schedule work on" it with no time or repeat given: the
-  user then watches and steers the supervisor as it goes. A request to run
+  a number, reference or URL, or a pull request. Also use when the user asks to
+  "supervise work on" something, to "schedule work on" it with no time or repeat
+  given, or to keep them in the loop: the user then watches and steers the
+  supervisor as it goes. A request to run
   something at a time or on a repeat belongs to a scheduler, not here.
 license: MIT
 compatibility: >-
@@ -48,8 +49,10 @@ everything else holds in both.
 
 **Work in a git worktree of your own, on every task, read-only ones too.** Other
 agents may share the checkout, and a branch switched or a file edited under you
-changes what you read as well as what you build. Create the worktree before the
-first read, do everything in it, and leave the original checkout as you found it.
+changes what you read as well as what you build. Create the worktree before you read
+the project's files, do everything in it, and leave the original checkout as you
+found it. Reading an issue or pull request, or listing branches and worktrees,
+needs none, and is how you learn whether you are continuing work.
 If the host can create a worktree and move the session into it, use that. Start
 a new branch from the freshly fetched default branch, unless you are continuing
 work that exists (step 1). A fresh worktree has none of the
@@ -89,15 +92,17 @@ say.
 **If the task names a GitHub issue or pull request, or its change will be
 delivered as a GitHub pull request, read [references/github.md](references/github.md)
 now.** It says where each step is read, recorded and delivered there; the finish
-line for an issue is the merged pull request that closes it.
+line for an issue that asks for a change is the merged pull request that closes
+it; a question about an issue gets findings, posted on it.
 
 Then find where the work stands. A task may arrive part done: a conversation that
 reached a plan, an issue thread with findings, a branch or pull request someone
 began, a plan nobody has reviewed. Read all of it, and start at the first stage
 whose output is not written down or, for a plan or a result, has not been read by
 a reviewer who did not write it. A plan that exists only in the conversation is
-written down before it is built; an unreviewed plan goes to a reviewer, not to a
-builder. Mark each stage you skip in the progress list, with what stands in for
+written down and goes to a reviewer before it is built: the user agreeing to it is
+not a reviewer hunting for what is wrong. Skipping research never skips reading
+the project's own rules (step 2). Mark each stage you skip in the progress list, with what stands in for
 it. A later stage can send you back: if the build finds a gap, add the research
 it needs and do not guess. If someone else is actively on the work, say so and do
 only what does not collide with it.

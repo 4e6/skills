@@ -1,7 +1,7 @@
 # GitHub: an issue, a pull request
 
-GitHub is where the work is read, recorded and delivered, and a merged pull
-request is the finish line. Needs `git` and the GitHub CLI (`gh`), signed in with
+GitHub is where the work is read, recorded and delivered. For a change, a merged
+pull request is the finish line; findings and plans go on the issue. Needs `git` and the GitHub CLI (`gh`), signed in with
 access to the repository. The parts about an issue apply only when there is one:
 a change made without an issue is still delivered as a pull request.
 
@@ -18,7 +18,7 @@ a change made without an issue is still delivered as a pull request.
 ## The issue
 
 The input is one issue: a number in the current repository, `owner/repo#123`, or
-a URL. Without one, there is nothing to work on: ask which. The work happens in a
+a URL. Without one, there is nothing to work on: say so and stop. The work happens in a
 clone of the issue's repository; for an issue elsewhere, find or make that clone
 first.
 
@@ -38,7 +38,7 @@ question on the issue and stop, since there is nothing to build on.
 ## A pull request you were handed
 
 Work on its branch and do not open a second pull request: skip opening one, and
-put the plan in its description or a comment. Read its description, every review
+put the plan in its description or a comment, or on its issue if it has one. Read its description, every review
 comment and the state of its checks before the code. The reviews on it are
 findings to answer, as below.
 
@@ -64,7 +64,7 @@ Run what CI runs — tests, linters, type checks — and check the behaviour the
 task describes, not only the unit tests. Unrelated problems you find are a note
 in the pull request or a new issue.
 
-Push the branch early: work that lives only in a local worktree is invisible to
+Push the branch early, unless the ask says to keep it local: work that lives only in a local worktree is invisible to
 everyone else, and is lost with the session. Without push access to the
 repository, push to a fork. Give the fork's remote a name of its own: by default
 `gh` renames the clone's `origin` to make room for the fork, and remotes are

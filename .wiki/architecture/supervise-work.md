@@ -5,7 +5,7 @@ description: "One skill for any task: research, plan, build, review and deliver,
 tags: [architecture, process, agents, github]
 sources:
   - resource: skills/supervise-work/**
-sources_digest: 23a11c452e7593ac
+sources_digest: e6cd53646bcd3734
 ---
 
 # Why one skill, and why this shape
@@ -62,7 +62,7 @@ wrong.
   has nobody at the keyboard, and an agent that stops to ask waits for nothing.
   Subagents and headless runs have no user to talk to at all. Making supervision
   the default would break both, so it is a mode the user names ("supervise",
-  "schedule", "keep me in the loop"), and the one rule it lifts — do not ask — is
+  "schedule", "keep me in the loop"), and the rules that say not to ask are
   lifted in `supervised.md` alone.
 - **A supervisor stays available, and the backlog is its state.** A session
   where the agent does each stage's work in the conversation cannot be steered:
@@ -152,7 +152,7 @@ do:
 - **The plan is left on the issue.** A session's reasoning dies with it, and a
   pull request is found only by someone who already knows to look for it; the
   issue is where the next person to work on or investigate that code starts.
-- **The user is not asked, and decides afterwards.** What is theirs — scope the
+- **In an unattended run the user is not asked, and decides afterwards.** What is theirs — scope the
   issue leaves open, visible behaviour, breaking changes — is settled by the
   smallest reversible option, named in the plan on the issue, where the user will
   see it. An issue too thin to state is a stop: there is nothing to build, so the

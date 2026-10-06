@@ -11,8 +11,9 @@ By default it runs to the end without asking you anything. Say **"supervise work
 on …"** or **"schedule work on …"** and it becomes a supervisor you talk to
 instead: it keeps a backlog, runs the stages in the background, reports as roles
 finish, and takes your messages as commands, so you can add work, reorder it,
-change the plan or stop. It starts from where the work stands, so a plan you
-reached in conversation is built, and an unreviewed one is reviewed first.
+change the plan or stop. It starts from where the work stands: a plan you
+reached in conversation is written down and reviewed, then built, and one already
+reviewed goes straight to the build.
 
 "Schedule" here means putting work on the supervisor's backlog. A time or a
 repeat ("at nine", "every night") is for your assistant's scheduler.
