@@ -1,12 +1,14 @@
-# A GitHub issue, or a pull request
+# GitHub: an issue, a pull request
 
 GitHub is where the work is read, recorded and delivered, and a merged pull
 request is the finish line. Needs `git` and the GitHub CLI (`gh`), signed in with
-access to the repository.
+access to the repository. The parts about an issue apply only when there is one:
+a change made without an issue is still delivered as a pull request.
 
 ## Contents
 
 - The issue
+- A pull request you were handed
 - The worktree
 - The plan goes on the issue
 - Implement
@@ -16,8 +18,9 @@ access to the repository.
 ## The issue
 
 The input is one issue: a number in the current repository, `owner/repo#123`, or
-a URL. Without one, ask which. The work happens in a clone of the issue's
-repository; for an issue elsewhere, find or make that clone first.
+a URL. Without one, there is nothing to work on: ask which. The work happens in a
+clone of the issue's repository; for an issue elsewhere, find or make that clone
+first.
 
 Read the **whole** thread, not just the description: later comments often answer
 a question and change the scope in the same breath, and earlier work may have
@@ -32,6 +35,12 @@ Then state the issue in your own words: what is wrong or missing, and what will
 be true when it is done. If you cannot, the issue is underspecified: post the
 question on the issue and stop, since there is nothing to build on.
 
+## A pull request you were handed
+
+Work on its branch and do not open a second pull request. Read its description,
+every review comment and the state of its checks before the code. The reviews on
+it are findings to answer, as below.
+
 ## The worktree
 
 To continue an existing branch, look first for a worktree an earlier session left
@@ -41,17 +50,17 @@ where to carry on. A pull request from a fork has its branch on the fork, not on
 
 ## The plan goes on the issue
 
-Post the final plan as a comment on the issue. The thread is where the next
-person to work on or investigate this code will look, long after this session and
-its reasoning are gone; the plan tells them what was found, what was chosen and
-what was ruled out. Decisions that are the user's go in it by name. When the
-build shows the plan to be wrong, post what changed and why.
+If there is an issue, post the final plan as a comment on it. The thread is where
+the next person to work on or investigate this code will look, long after this
+session and its reasoning are gone; the plan tells them what was found, what was
+chosen and what was ruled out. Decisions that are the user's go in it by name.
+When the build shows the plan to be wrong, post what changed and why.
 
 ## Implement
 
 Commit in steps that each make sense on their own, in the project's commit style.
 Run what CI runs — tests, linters, type checks — and check the behaviour the
-issue describes, not only the unit tests. Unrelated problems you find are a note
+task describes, not only the unit tests. Unrelated problems you find are a note
 in the pull request or a new issue.
 
 Push the branch early: work that lives only in a local worktree is invisible to
@@ -62,23 +71,24 @@ shared by every worktree of the clone.
 
 ## The pull request
 
-Have the change reviewed first; this review is cheap, and the project's CI and
-reviewers are not. Then open the pull request, filling in the project's template
-if it has one. The body says what changed and why, the decisions made and the
-alternatives rejected, how it was verified, and `Closes #<n>`. Post the
-reviewer's verdict on it, as a comment or review, with the commit SHA it covered.
+Have the change reviewed before opening it; this review is cheap, and the
+project's CI and reviewers are not. Open it, filling in the project's template if
+it has one. The body says what changed and why, the decisions made and the
+alternatives rejected, how it was verified, and, if there is an issue,
+`Closes #<n>`.
 
 Wait for the checks. They can take a minute to be reported after the pull
 request opens, so none yet is not the same as none at all; a repository with no CI
 has none to wait for. Checks that wait on a maintainer — a project may hold a
-fork's workflow runs until one approves them — will not arrive on their own: run
-the same commands locally, finish what does not depend on them, and say at the end
-that CI has not run and what would unlock it.
+fork's workflow runs until one approves them — will not arrive on their own. That
+is not the same as no CI: run the same commands locally, finish what does not
+depend on them, and **do not merge on local results alone**. Stop before the
+merge and say that CI has not run and what would unlock it.
 
 Answer every finding — from the checks, from your reviewer, and from any human or
-bot review that has arrived — by fixing it or by replying with a reason. Post the
-reviewer's verdict again after each push. Do not wait for a maintainer's approval
-unless the project requires one to merge; then the run stops there, and says so.
+bot review that has arrived — by fixing it or by replying with a reason. Do not
+wait for a maintainer's approval unless the project requires one to merge; then
+the run stops there, and says so.
 
 ## Merge and clean up
 

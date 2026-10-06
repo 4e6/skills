@@ -11,7 +11,7 @@ sources:
   - resource: skills/llm-wiki/scripts/**
   - resource: skills/supervise-work/SKILL.md
   - resource: skills/supervise-work/references/github.md
-sources_digest: cb806aa72b2ff51b
+sources_digest: 52f65b546c6dfc91
 ---
 
 # The boundary
@@ -134,10 +134,10 @@ and files, as instructions about the host.
 `supervise-work` ships no script and is a pure payload in `SKILL.md`: no network of
 its own, and no host and no host's tools named. For a GitHub issue it reads
 `references/github.md`, which works on the network through `gh` and names GitHub
-and `gh` because they are its subject; a task with no issue never loads it
-([supervise work](/architecture/supervise-work.md)).
+and `gh` because they are its subject; a task that touches no issue and no GitHub
+pull request never loads it ([supervise work](/architecture/supervise-work.md)).
 
-Their scripts' own facts, in the same terms as the others:
+The scripts' own facts, in the same terms as the others:
 
 - `okf.py` runs `git` in the repository it is pointed at and reads the bundle;
   it writes nothing but `index.md` files under `index --write`, a page's

@@ -25,11 +25,12 @@ resumed session reads it.
 
 ## Stay available
 
-A supervisor that is busy is not supervising. Give researchers, builders and
-reviewers to background subagents where the host can, and do not do their work in
-the conversation, so the user can talk to you while they run. Where it cannot,
-say so once: the conversation is then open only between stages, so cut the stages
-small.
+A supervisor that is busy is not supervising. Give researchers, planners,
+builders and reviewers to background subagents where the host can, and do not do
+their work in the conversation, so the user can talk to you while they run; the
+plan reaches the user as a short summary, with the written plan beside it. Where
+the host cannot, say so once: the conversation is then open only between stages,
+so cut the stages small.
 
 Report in a line or two when a role finishes, at a stage boundary and when
 something changes the plan: what finished, what it found, what is next. Do not
@@ -51,17 +52,20 @@ Read each message as a command on the backlog, or a question about it:
 - **A question, or a request for status.** Answer from the backlog and the
   written artifacts, not from memory.
 
-Extra research, an extra review, a second look at something: all are queued like
-any other work, and you may add them yourself when the work shows they are
-needed. Tell the user you did.
+An item is a stage of the task in hand, or a further task. A further task has its
+finish line, its worktree and its delivery of its own, and runs after the
+current one, or beside it when the two share no files. Extra research, an extra
+review, a second look at something: all are queued like any other work, and you
+may add them yourself when the work shows they are needed. Tell the user you did.
 
 ## Questions and decisions
 
-The rule that you do not ask is lifted, not reversed. When a decision is the
-user's (step 3) or the work cannot go on without an answer, ask in one short
-message that says what you will do meanwhile, and carry on with everything that
-does not depend on it. Never block on the answer. Record the question and the
-answer where the plan is.
+The rules that you do not ask are lifted, not reversed. When a decision is the
+user's (step 3), when the work cannot go on without an answer, or when a stop
+applies (a task too thin to state, a refused step), ask in one short message that
+says what you will do meanwhile, and carry on with everything that does not
+depend on it. Never block on the answer. Record the question and the answer where
+the plan is, and where the work is tracked (the issue's thread, for an issue).
 
 ## What does not change
 
@@ -70,7 +74,6 @@ refused step, and the end-of-run clean-up all hold. Being watched is not a
 reason to skip a review, and the user's presence is not approval of a merge:
 merge when step 6's conditions hold, unless the user said not to. A subagent
 still stops what it starts in the background and every wait still has a deadline.
-Before the final report, stop the background agents and list any backlog item that
-was not done.
-
-The session ends at delivery, or when the user says stop.
+Report each task's delivery when it happens. The session ends when the backlog is
+empty or the user says stop; before the final report, stop the background agents
+and list any backlog item that was not done.

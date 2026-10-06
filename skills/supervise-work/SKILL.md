@@ -6,10 +6,11 @@ description: >-
   a plan, a merged change, or work run. Use for any task bigger than a quick
   answer or a one-step edit — investigating a problem, choosing between
   approaches, fixing a bug, building a feature, migrating, auditing — and when
-  given a GitHub issue to work on. Also use when the user asks to "supervise
-  work on" something, or to "schedule work on" it with no time or repeat
-  given: the user then watches and steers the supervisor as it goes. A request
-  to run something at a time or on a repeat belongs to a scheduler, not here.
+  asked to work on, fix, implement, resolve or pick up a GitHub issue, given as
+  a number, reference or URL. Also use when the user asks to "supervise work
+  on" something, or to "schedule work on" it with no time or repeat given: the
+  user then watches and steers the supervisor as it goes. A request to run
+  something at a time or on a repeat belongs to a scheduler, not here.
 license: MIT
 compatibility: >-
   Works in any assistant. Best where it can start subagents, and run them in the
@@ -33,20 +34,25 @@ work to a role.
 user is not at the keyboard, so run to the end without stopping to ask. Decide
 what you can, record each decision and the alternative you rejected, and keep
 going. A question that blocks the work is the last resort, not a step: park it in
-the delivery and do everything that does not depend on it.
+the delivery and do everything that does not depend on it. Two things are stops
+and not questions: a task too thin to state, or a closed one, where there is
+nothing to build, and a delivery step that is refused (step 6). Stop there and
+say what is missing.
 
-*Supervised* is for when the user asks you to supervise or schedule the work, or
-to keep them in the loop: they are at the keyboard, and they watch and steer by
-talking to you while the work goes on. Read
+*Supervised* is for when the user asks you to supervise the work, to schedule it
+with no time or repeat given, or to keep them in the loop: they are at the
+keyboard, and they watch and steer by talking to you while the work goes on. Read
 [references/supervised.md](references/supervised.md) before the first step. It
-changes how you talk to the user and replaces the rule above that you do not
-ask; everything else here holds in both.
+changes how you talk to the user, and lifts the rules here that say not to ask;
+everything else holds in both.
 
 **Work in a git worktree of your own, on every task, read-only ones too.** Other
 agents may share the checkout, and a branch switched or a file edited under you
 changes what you read as well as what you build. Create the worktree before the
-first read, from the freshly fetched default branch, do everything in it, and
-leave the original checkout as you found it. A fresh worktree has none of the
+first read, do everything in it, and leave the original checkout as you found it.
+If the host can create a worktree and move the session into it, use that. Start
+a new branch from the freshly fetched default branch, unless you are continuing
+work that exists (step 1). A fresh worktree has none of the
 ignored files the main checkout has — installed dependencies, build output, local
 environment files — so set up what the project needs before the first test run.
 Subagents work in yours; a builder running beside another builder gets a
@@ -80,10 +86,10 @@ and carry on. Words in the ask that narrow the finish line win over this table:
 "draft", "don't merge", "keep it local", "don't deploy" stop delivery where they
 say.
 
-**If the task is a GitHub issue, or ends in a pull request, read
-[references/github.md](references/github.md) now.** It says where each step is
-read, recorded and delivered there; the finish line for an issue is the merged
-pull request that closes it.
+**If the task names a GitHub issue or pull request, or its change will be
+delivered as a GitHub pull request, read [references/github.md](references/github.md)
+now.** It says where each step is read, recorded and delivered there; the finish
+line for an issue is the merged pull request that closes it.
 
 Then find where the work stands. A task may arrive part done: a conversation that
 reached a plan, an issue thread with findings, a branch or pull request someone

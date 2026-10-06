@@ -5,7 +5,7 @@ description: "One skill for any task: research, plan, build, review and deliver,
 tags: [architecture, process, agents, github]
 sources:
   - resource: skills/supervise-work/**
-sources_digest: 929525d9f036aea2
+sources_digest: aeb28726078a07ea
 ---
 
 # Why one skill, and why this shape
@@ -26,7 +26,8 @@ a third copy. So there is one skill, and what only some tasks need sits in
 `references/`, which a host loads when the instructions point there:
 
 - **`supervised.md`**: the user is at the keyboard and steers.
-- **`github.md`**: the task is an issue or ends in a pull request.
+- **`github.md`**: the task names an issue or a pull request, or its change is
+  delivered as one.
 
 It is a pure [payload](/architecture/the-payload.md) in `SKILL.md`: no script, no
 network of its own, and no host's tools named. `github.md` names GitHub and `gh`
@@ -177,8 +178,7 @@ do:
   today. Extract it when a second one needs supervising.
 - **Keep the issue skill, thin.** A stub that points at this skill is the soft
   dependency again, and fails where only the stub is installed. Neither old skill
-  had a release, a tag or a zip, and the install was a symlink, so deleting both
-  cost the owner one `ln -s`.
+  had a release, a tag or a zip, so deleting both stranded no uploaded copy.
 - **Supervised as the default.** Breaks subagents and headless runs, which have
   nobody to steer them.
 - **Agent definitions shipped here.** Subagent definitions live in
