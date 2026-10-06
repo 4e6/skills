@@ -481,19 +481,13 @@ the photos, step 6's command with `plan-<date>-web.html` as the page, since a
 link without the photos still beats a file with them. A file attached is
 always `plan-<date>.html`, which carries its photos.
 
-Where the host can neither publish nor attach, open it:
-
-```
-open plan-<date>.html       # macOS
-xdg-open plan-<date>.html   # Linux
-start plan-<date>.html      # Windows
-```
+Where the host can neither publish nor attach, open it.
 
 **Try it once, then offer.** A host may hand over no shell at all, the opener
 may not be there, and a session on a machine that is not the athlete's opens a
 browser nobody is sitting in front of — the three look identical from here, so a
 second attempt tells you nothing. When it will not run, say where the page is
-and give them the line to run themselves.
+and give them the command to open it themselves.
 
 **Claim only what you saw.** A command that exits cleanly is not a window that
 appeared: *I have opened it; if no window came up, it is at …*.
@@ -505,9 +499,7 @@ Then say, in a few lines:
 - anything you assumed because they had not said;
 - whether the plan was checked, and what the check found, in your own words;
 - the page to print: the link, or the file as attached, else its full path;
-- where there is a page and it has no photos, or fewer than the dishes, say so
-  and why in a plain clause: nothing here makes pictures, the drawing failed,
-  or a quota ran out. With no page, say nothing about photos.
+- if the page has no photos, say why.
 
 **Hand over the page, not the document.** `plan-<date>.json` is scaffolding, and
 two paths leave the athlete working out which one is their week. Where they open

@@ -81,7 +81,6 @@ usage line if the list's name went missing.
 ## In the report
 
 One line in step 7: the photos were made for this plan, so they show the idea
-of each dish rather than their plate. If there is a page and it went out
-with none, or with fewer than the dishes, say so in one more plain line, and why: nothing here
-makes pictures, the drawing failed, or a quota ran out. Name no files and quote
-none of what the command said.
+of each dish rather than their plate. If the page went out with no photos, say
+why in one more plain line. Name no files and quote none of what the command
+said.

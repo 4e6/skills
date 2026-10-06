@@ -6,7 +6,7 @@ tags: [safety, product]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/README.md
-sources_digest: a64d81c16c3c7c8e
+sources_digest: 7cfc9e8cf80a9fd6
 ---
 
 # The question

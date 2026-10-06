@@ -6,7 +6,7 @@ tags: [architecture, intake]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/fuelling.md
-sources_digest: cea8cf4ff2957490
+sources_digest: 6cb717b583cd545f
 ---
 
 # What it asks
