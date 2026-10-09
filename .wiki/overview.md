@@ -16,9 +16,11 @@ sources_digest: 11a072803033c6da
 
 A collection of [Agent Skills](https://agentskills.io), one folder each under
 `skills/`. A skill here is not a program this repository runs. It is a
-**payload**: a folder somebody copies into their own assistant, where it runs on
-their tokens and on whatever that host happens to provide
-([the payload](/architecture/the-payload.md)).
+**payload**: a folder under `skills/` that somebody installs into their own
+assistant, by `npx skills` or a symlink, or for one skill from an uploaded zip.
+It runs there on their tokens and on whatever that host happens to provide, and
+the repository around it does not exist. What each skill may reach is on its own
+page.
 
 There are four. `training-week-meal-plan`, below, is the one most of this bundle
 is about. `z-image-turbo-macos` draws images from prompts with one model on one
@@ -27,9 +29,13 @@ kind of machine ([Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md))
 it. `supervise-work` carries any task, or a GitHub issue, through research, plan,
 build and review and delivers what was asked for, whether findings, a plan, a
 merged change or work run, unattended or with the user steering it
-([supervise work](/architecture/supervise-work.md)). `z-image-turbo-macos` and
-`llm-wiki` are not pure payloads
-([where they bend](/architecture/the-payload.md#the-skills-that-cannot-be-pure-payloads)).
+([supervise work](/architecture/supervise-work.md)). `training-week-meal-plan` and
+`supervise-work` are pure payloads: neither ships a script that reaches the
+network (`supervise-work`'s GitHub reference works through `gh`). `z-image-turbo-macos` and
+`llm-wiki` are not
+([where they bend](/architecture/z-image-turbo-macos.md#it-is-not-a-pure-payload-and-where-it-bends),
+[llm-wiki](/architecture/llm-wiki.md#what-it-may-reach)). The meal-plan skill's
+own boundary is [its page](/architecture/training-week-meal-plan.md).
 
 # What the meal-plan skill does
 

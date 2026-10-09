@@ -48,14 +48,14 @@ On top of what the guides say, and not a restatement of them:
   named;
 - `license`, a `LICENSE` file, `metadata.author` and `metadata.version` are set;
   `allowed-tools` and `disable-model-invocation` are absent
-  ([the payload](/architecture/the-payload.md#frontmatter-the-host-reads));
+  ([why](#why-the-frontmatter-leaves-out-two-fields));
 - `metadata.version` is `MAJOR.MINOR.PATCH`, and a change raises the number
   that says what it is: fix, change or break
   ([what each means](/architecture/the-zip-release.md#what-a-version-number-says));
 - `compatibility` names a runtime exactly when a script needs one, and says what
   the skill does without it; a skill whose own code reaches the network says so
   there, for what and how much, and one that does not says nothing about it
-  ([the payload](/architecture/the-payload.md#nothing-of-its-own-reaches-the-network));
+  ([the meal-plan skill](/architecture/training-week-meal-plan.md#nothing-of-its-own-reaches-the-network));
 - a skill that only works with one model or one kind of machine says so in its
   name, its `description`, its `compatibility` and its first paragraph
   ([why](/architecture/z-image-turbo-macos.md#what-it-is-and-what-it-refuses-to-be));
@@ -68,14 +68,26 @@ On top of what the guides say, and not a restatement of them:
 Nothing in this repository checks any of it yet, though CI now has a place for
 it ([which copy is the source](/questions/which-copy-is-the-source.md)).
 
+# Why the frontmatter leaves out two fields
+
+The specification is what a stranger's client parses, so a mistake in the
+frontmatter is visible outside this repository.
+
+- **`allowed-tools` is absent.** It is experimental and support varies, and
+  narrowing what the host hands over would make a skill ask for a tool that is not
+  there. So whether the agent can run anything, draw anything or publish anything
+  is the host's decision, and every step has a path for the host that cannot
+  ([a missing capability is announced](/architecture/the-validator.md#a-missing-capability-is-announced)).
+- **`disable-model-invocation` is absent**, because a skill exists to be found.
+
 # Where the skill knowingly differs from the guidance
 
 - **The checklist never goes in the response.** The guidance has the agent copy
   it into its reply; here the reply is read by an athlete, not the author the
   pattern assumes ([the handover](/architecture/the-handover.md#progress-is-the-hosts-and-the-reply-is-the-athletes)).
 - **The name is a noun phrase**, not the preferred gerund
-  ([why](/architecture/the-payload.md#frontmatter-the-host-reads)). Renaming it
-  breaks every install, since the folder name must match.
+  ([why](/architecture/training-week-meal-plan.md#the-name-is-a-noun-phrase)).
+  Renaming it breaks every install, since the folder name must match.
 - **It is not tested systematically across models.** The simulated runs
   recorded here are mostly Opus, with some Sonnet and Haiku. That is a known
   gap, not a decision. [The evals](/architecture/the-evals.md) take a model as

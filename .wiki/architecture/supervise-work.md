@@ -29,8 +29,9 @@ a third copy. So there is one skill, and what only some tasks need sits in
 - **`github.md`**: the task names an issue or a pull request, or its change is
   delivered as one.
 
-It is a pure [payload](/architecture/the-payload.md) in `SKILL.md`: no script, no
-network of its own, and no host's tools named. `github.md` names GitHub and `gh`
+It is a pure payload in `SKILL.md` ([the overview](/overview.md) says what that
+means): no script, no network of its own, and no host's tools named. It is
+installed by `npx skills` or a symlink; no zip is offered for it. `github.md` names GitHub and `gh`
 because they are its subject, and the network use is `gh`'s. Anything Claude
 Code-specific — agent definitions with a model and tool list per role, an advisor
 setting — would be an adapter beside it, not part of it

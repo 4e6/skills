@@ -12,9 +12,30 @@ sources_digest: 50bd4e41a0e68ddc
 
 A skill for the agent that writes the wiki and the agent that reads it: small
 pages in the repository, checked against git by one script, `okf.py`. It is
-used on whatever project the host has open, so [the payload](/architecture/the-payload.md)
-says what it may reach. This page carries the reasoning that does not belong in
+used on whatever project the host has open, so [what it may
+reach](#what-it-may-reach) matters. This page carries the reasoning that does not belong in
 a stranger's context window ([editing a skill](/conventions/editing-a-skill.md)).
+
+# What it may reach
+
+It is installed by `npx skills` or a symlink and offered no zip: it works on a
+project's git checkout, which a web app's chat does not have. It bends the rules
+the [meal-plan skill](/architecture/training-week-meal-plan.md) keeps, but less
+than [Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md) does.
+
+- **One script, two packages.** `okf.py` parses YAML and gitignore patterns with
+  two packages from PyPI, installed once into a venv in its own `scripts/`
+  folder: the only network use, and the only write into the folder. The venv
+  ignores itself, because the folder may sit inside the repository the skill
+  documents.
+- **It needs `git`**, to list the files it tracks and hash them, and to read
+  history for the diff a stale page is to be checked against.
+- **What it writes.** `okf.py` runs `git` in the repository it is pointed at and
+  reads the bundle; it writes nothing but `index.md` files under `index --write`,
+  a page's `sources_digest` line under `pin`, and a page's `sources` and `status`
+  lines under `upgrade --write`.
+- **It names the host.** Its instructions name Claude Code's own paths and files,
+  as instructions about the host.
 
 # A reason is not a Decision
 
