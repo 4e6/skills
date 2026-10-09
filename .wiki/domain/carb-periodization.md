@@ -5,7 +5,7 @@ description: Carbohydrate scaled to each day's training, hardest days fed hardes
 tags: [nutrition, domain]
 sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md
-sources_digest: fa9167c3da20c637
+sources_digest: 2f008f0fec3d6e4c
 ---
 
 Rather than a constant daily diet, **carb periodization** scales carbohydrate to
@@ -21,11 +21,13 @@ It is a ranking, so it applies to any run of days, and it gets thinner as the
 window does: over two days it is one hard day and one easy one.
 
 The model ranks the days itself, hardest first, from what the athlete said, and
-first records its reading in `week_load`: one row per day, the hours they stated —
-**0 where they gave none**, meaning unmeasured — the hardest intensity they named
-as a zone, and a load the model computes from those. That comes before any meal. Measured without that step, a shipped example fed its
-fourth-hardest day below an easy Monday, and a live run fed the eve of the week's
-biggest session at 4.3 g/kg. Then:
+first records its reading in `week_load`: one row per day, one entry for each
+session with its hours, its intensity factor and its load, **the athlete's own
+figures copied and only the rest estimated**
+([below](#week_load-copies-what-the-athlete-gave-and-estimates-the-rest)). That comes before any meal.
+Measured without that step, a shipped example fed its fourth-hardest day below an
+easy Monday, and a live run fed the eve of the week's biggest session at 4.3 g/kg.
+Then:
 
 - **The meals are sized by the day.** Hard days get the largest carbohydrate
   portions, easy days are lighter, and the same dish may be a bigger bowl on
@@ -43,6 +45,40 @@ biggest session at 4.3 g/kg. Then:
   ([below](#daily-targets-and-the-snacks-that-reach-them)).
 
 `week_load` is the model's reasoning and **is never printed**.
+
+## `week_load` copies what the athlete gave and estimates the rest
+
+Each entry has `hours`, an optional `intensity_factor` and a `load`.
+
+- **A figure they gave is copied exactly.** A platform that holds the athlete's
+  training (TrainingPeaks, for one) already has a session's time, its intensity
+  factor and its load, by a formula of its own. Recomputing or correcting one
+  would put the model's arithmetic over the athlete's data, so none is, and
+  [the validator](/architecture/the-validator.md#check-9-the-load-table-covers-the-week-and-adds-up)
+  checks no entry against a formula.
+- **Only what they left out is estimated.** Hours are 0 where none were stated.
+  The intensity factor is one average figure for the whole session, warm-up and
+  easy parts included, so intervals inside an easy session land between the two;
+  it is left out where they gave only a load. The load is `hours x IF^2 x 100`,
+  so an hour at threshold is about 100.
+- **The ranking is by load, not by hours.** A long easy ride and a hard hour can
+  score alike and cost very different meals, so load orders the days and never
+  divides the carbohydrate.
+- **An estimate never reaches the athlete.** It stays off the page, the reply,
+  the total and a session's name; one they gave may appear wherever it would
+  anyway ([nothing about the athlete is invented](/invariants/nothing-about-the-athlete-is-invented.md)).
+
+**Why there is no zone.** Until 1.9.0 each entry carried the hardest zone the
+athlete named, an integer, and the load was worked from it. A session of
+*4x4' Z4 + 6' Z3 in 80 minutes* or *Z2 then Z3 over 2h30* has no one zone, the
+integer was a guess with a fallback (*tempo, 3*) for sessions that named none,
+and the guess came back in replies as a word the athlete never used. The zone fed
+nothing but the load. The intensity factor is the same guess made once, as a
+number, on the scale the load is built from.
+[Measured](/architecture/the-evals.md#measurements) on Sonnet 5.5, replies naming
+an estimated zone, *tempo* or load fell from 8 of 48 to none in 47, and the
+judge's *nothing invented* passed 38 of 39 runs against 36 of 39, the gain
+mostly in the long races.
 
 # Fuel is guidance for a session
 
@@ -318,6 +354,13 @@ The one fault was an assumed duration, three times in 21 runs: a 10K's
 40–60 minutes, an Ironman's 10 hours on the bike and run, and a training total
 added up wrong. That breaks the rule that a session's length is printed only
 where the week states one.
+
+**Since 1.9.0 a stated goal time is the race's duration.** The Ironman's 10
+hours came from the 11h30 goal less a swim nobody had timed. The rule sizes the
+`during` example from the goal time as given, never splits it into legs and never
+estimates a duration the athlete did not state. On Sonnet 5.5 the three long
+races' *nothing invented* passed 16 of 17 runs, against 12 of 18 before
+([the evals](/architecture/the-evals.md#measurements)).
 
 # Sources
 

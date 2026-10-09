@@ -33,20 +33,19 @@
                   "type": "number",
                   "description": "The duration they stated, in hours — 75 minutes is 1.25. 0 where they stated none: never estimate one here, because nothing afterwards can tell your estimate from their figure."
                 },
-                "zone": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 5,
-                  "description": "The hardest intensity they described, as a zone: the highest `Z1`–`Z5` they named; otherwise threshold 4, work above it 5, tempo 3, easy or not described 2, recovery 1."
+                "intensity_factor": {
+                  "type": "number",
+                  "minimum": 0.3,
+                  "maximum": 1.3,
+                  "description": "Optional. The session's average intensity as a fraction of threshold effort, where 1.0 is an hour at threshold. Copy theirs where they gave one. Where they gave only a load, leave it out. Otherwise estimate one figure for the whole session from how they described it, warm-up and easy parts included, so a session of hard intervals inside an easy one lands between the two. Anchors: recovery 0.55, easy 0.7, steady 0.85, threshold 0.95, above it 1.05. The same scale for a run or a swim, against threshold pace."
                 },
                 "load": {
                   "type": "number",
-                  "description": "`hours x IF^2 x 100`, rounded, with IF by zone: Z1 0.55, Z2 0.7, Z3 0.85, Z4 0.95, Z5 1.05. An entry with no duration scores 0 — that means unmeasured, not easy."
+                  "description": "Copy the load they gave for this session exactly, whatever formula their software uses. Otherwise `hours x IF^2 x 100`, rounded, so an hour at threshold is about 100. An entry with no duration and no stated load scores 0 — that means unmeasured, not easy."
                 }
               },
               "required": [
                 "hours",
-                "zone",
                 "load"
               ],
               "additionalProperties": false
@@ -55,7 +54,7 @@
           },
           "day_load": {
             "type": "number",
-            "description": "The sum of this day's entry loads."
+            "description": "The sum of this day's entry loads, added up exactly."
           }
         },
         "required": [
@@ -65,7 +64,7 @@
         ],
         "additionalProperties": false
       },
-      "description": "**Work this out before the ranking and before any day or meal** — it comes ahead of them in the document for that reason. One row per day of the plan, in day order, scoring each session the athlete described. The hours are theirs and the zones and loads are your reading of what they wrote; nothing prints the table. A 0 means nobody stated a duration — unmeasured, not easy — and where rows are 0 the order comes from the athlete's own words instead. Say in `training_overview.hard_days` what the order came to, and let it drive the carbohydrate in `days`.",
+      "description": "**Work this out before the ranking and before any day or meal** — it comes ahead of them in the document for that reason. One row per day of the plan, in day order, one entry per session the athlete described. Copy every figure they gave: the time, the intensity factor and the load. Estimate only what they left out. Nothing prints the table, and an estimated figure never reaches the page or your reply. A 0 means nobody stated a duration or a load — unmeasured, not easy — and where rows are 0 the order comes from the athlete's own words instead. Say in `training_overview.hard_days` what the order came to, and let it drive the carbohydrate in `days`.",
       "minItems": 1,
       "maxItems": 7
     },

@@ -36,8 +36,9 @@ do.
 Two things, and it will not invent either:
 
 - **your training week, in your own words** — paste a coach's week, or describe
-  it roughly. Hours, zones or a planned load score against each session make the
-  plan sharper, if you have them. If you have no week to give, say so and it
+  it roughly. Hours, zones, an intensity factor or a load score against each
+  session make the plan sharper, if you have them. Figures you give are used
+  as they are. If you have no week to give, say so and it
   plans easy days and says on the plan that it did — it will not invent a
   week for you;
 - **your body weight**, which is what the carbohydrate targets are built from.

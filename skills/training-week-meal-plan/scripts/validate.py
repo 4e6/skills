@@ -2900,12 +2900,33 @@ CHECK_TITLES = {
 }
 
 
+def week_load_sum(row: dict):
+    """The sum of a row's entry loads, or None where the row cannot be added up.
+
+    A row whose entries or total are not numbers is left alone rather than
+    answered, as everything else here that reads a document the schema forbids.
+    """
+
+    def number(value) -> bool:
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+    entries = row.get("entries")
+    if not isinstance(entries, list) or not number(row.get("day_load")):
+        return None
+    loads = [e.get("load") if isinstance(e, dict) else None for e in entries]
+    if not all(number(load) for load in loads):
+        return None
+    return sum(loads)
+
+
 def check_week_load_days(plan: dict) -> list:
     """Check 9's day codes: `week_load` scores each day of the plan, once.
 
     It matters most on a plan that starts mid-week, which is where a reading of
-    the days before it survives into the table. Each entry's own figures are not
-    checked here.
+    the days before it survives into the table. An entry's own figures are not
+    checked: an athlete's load may come from any formula their software uses.
+    A day's total is, since that is addition and no formula, and it is the
+    figure the ranking is read from.
     """
     findings = []
     run = expected_run(plan)
@@ -2933,6 +2954,18 @@ def check_week_load_days(plan: dict) -> list:
             )
             continue
         seen.add(row["day"])
+        total = week_load_sum(row)
+        if total is not None and abs(total - row["day_load"]) > 0.5 * len(row["entries"]) + 0.5:
+            findings.append(
+                finding(
+                    9,
+                    "week-load-day-sum",
+                    "`week_load` has " + row["day"] + "'s entry loads adding up to " + rendered(total)
+                    + ", and its `day_load` says " + rendered(row["day_load"]) + ". `day_load` is"
+                    + " their sum.",
+                    where,
+                )
+            )
     for day in run:
         if day not in seen:
             findings.append(

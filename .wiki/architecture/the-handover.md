@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: f846ebe6da60ccb4
+sources_digest: b866d71a7f00fc8a
 ---
 
 # Progress is the host's, and the reply is the athlete's
@@ -170,10 +170,11 @@ them:
   Either way each printed line is the written list at its factor, rounded once:
   the same amounts the page would print.
 - **A batch line counts portions, not sittings** — *cook 4* over sittings of
-  1¼, 1¾ and 1 visibly sums; **a repeat says it is cooked fresh**, or *again,
+  1¼, 1¾ and 1 visibly sums; **a repeat says it is cooked fresh**, or *the
   same pot* reads as eggs kept from Monday to Friday.
 - **No plan-wide fuelling block and no `week_load`**, which the page prints
-  neither of, **and no count of tins**: that is the page's to compute from
+  neither of (the athlete's own figures may appear wherever they would anyway,
+  an estimated one never), **and no count of tins**: that is the page's to compute from
   `pack`, so without a page a row is its name and its quantity, a tin's drained
   weight marked as one (`18 oz drained`), since no can's label says it.
 - **The sentence about checking comes after the list**, with the disclaimer, so

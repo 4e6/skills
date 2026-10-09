@@ -6,7 +6,7 @@ tags: [skills, authoring, review]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/z-image-turbo-macos/SKILL.md
-sources_digest: eb3a7a23e0a2e30d
+sources_digest: 0d9cc9e52d99c4b5
 ---
 
 # Read the guides, and point at them
@@ -52,8 +52,10 @@ On top of what the guides say, and not a restatement of them:
 - `metadata.version` is `MAJOR.MINOR.PATCH`, and a change raises the number
   that says what it is: fix, change or break
   ([what each means](/architecture/the-zip-release.md#what-a-version-number-says));
-- `compatibility` says whether the skill uses the network — and when it does, for
-  what and how much — and names a runtime exactly when a script needs one;
+- `compatibility` names a runtime exactly when a script needs one, and says what
+  the skill does without it; a skill whose own code reaches the network says so
+  there, for what and how much, and one that does not says nothing about it
+  ([the payload](/architecture/the-payload.md#nothing-of-its-own-reaches-the-network));
 - a skill that only works with one model or one kind of machine says so in its
   name, its `description`, its `compatibility` and its first paragraph
   ([why](/architecture/z-image-turbo-macos.md#what-it-is-and-what-it-refuses-to-be));
@@ -77,13 +79,19 @@ it ([which copy is the source](/questions/which-copy-is-the-source.md)).
 - **It is not tested systematically across models.** The simulated runs
   recorded here are mostly Opus, with some Sonnet and Haiku. That is a known
   gap, not a decision. [The evals](/architecture/the-evals.md) take a model as
-  an option, and so far cover race weeks only.
+  an option and cover race weeks and an ordinary week abroad; 1.9.0 was
+  measured on Sonnet 5.5 alone, as agent and as judge.
 
 # Do not cut prose on argument alone
 
 Nothing shows that removing a rule costs nothing until it is measured. Where a
 rule's value is unmeasured, leave it; where [the evals](/architecture/the-evals.md)
 have a case for it, run them before and after.
+
+The one time it was run on a cut, a quarter of the skill's words, `SKILL.md`
+by almost half, left every judge question within a run or two
+([the measurement](/architecture/the-evals.md#measurements)). That licenses the
+cut that was measured, not the next one.
 
 # How a change to behaviour is measured
 

@@ -9,7 +9,7 @@ sources:
   - resource: skills/z-image-turbo-macos/SKILL.md
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/supervise-work/SKILL.md
-sources_digest: 4a664f9e5a50e513
+sources_digest: 11a072803033c6da
 ---
 
 # What it is
@@ -69,7 +69,7 @@ A third is a rule the whole skill is organised around:
 [nothing about the athlete is invented](/invariants/nothing-about-the-athlete-is-invented.md).
 
 Whether a host following the rules writes the right plan is measured on demand,
-outside the skill, by [the evals](/architecture/the-evals.md): race weeks so far.
+outside the skill, by [the evals](/architecture/the-evals.md): race weeks and an ordinary week abroad so far.
 
 # Where it came from
 

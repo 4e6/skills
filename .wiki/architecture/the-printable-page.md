@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: 1753c95bba320638
+sources_digest: fd52965f082f2f3b
 ---
 
 # One file, and Cmd-P

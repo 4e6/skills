@@ -6,7 +6,7 @@
       "entries": [
         {
           "hours": 1,
-          "zone": 2,
+          "intensity_factor": 0.7,
           "load": 49
         }
       ],
@@ -17,12 +17,12 @@
       "entries": [
         {
           "hours": 1.5,
-          "zone": 4,
+          "intensity_factor": 0.95,
           "load": 135
         },
         {
           "hours": 0.33,
-          "zone": 2,
+          "intensity_factor": 0.7,
           "load": 16
         }
       ],
@@ -33,12 +33,12 @@
       "entries": [
         {
           "hours": 1.42,
-          "zone": 5,
+          "intensity_factor": 1.05,
           "load": 157
         },
         {
           "hours": 0.33,
-          "zone": 2,
+          "intensity_factor": 0.7,
           "load": 16
         }
       ],
@@ -49,7 +49,7 @@
       "entries": [
         {
           "hours": 1,
-          "zone": 5,
+          "intensity_factor": 1.05,
           "load": 110
         }
       ],
@@ -65,12 +65,12 @@
       "entries": [
         {
           "hours": 2.67,
-          "zone": 4,
+          "intensity_factor": 0.95,
           "load": 241
         },
         {
           "hours": 0.5,
-          "zone": 2,
+          "intensity_factor": 0.7,
           "load": 25
         }
       ],
@@ -81,12 +81,12 @@
       "entries": [
         {
           "hours": 1.5,
-          "zone": 4,
+          "intensity_factor": 0.95,
           "load": 135
         },
         {
           "hours": 1,
-          "zone": 2,
+          "intensity_factor": 0.7,
           "load": 49
         }
       ],

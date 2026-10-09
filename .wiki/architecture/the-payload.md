@@ -11,7 +11,7 @@ sources:
   - resource: skills/llm-wiki/scripts/**
   - resource: skills/supervise-work/SKILL.md
   - resource: skills/supervise-work/references/github.md
-sources_digest: b65cfc6fb3312f1f
+sources_digest: ee3957a471011fac
 ---
 
 # The boundary
@@ -33,7 +33,7 @@ executes, and prose reaches the network as easily as markup does.
 
 The host may still publish the finished page with its own tool, kept private
 ([the handover](/architecture/the-handover.md)). That is the host's network, not
-the payload's, and `compatibility` says so.
+the payload's.
 
 It follows that **the payload cannot measure anything**. There is no link on the
 page and nothing to count arrivals with. Evidence about how the skill behaves
@@ -103,9 +103,10 @@ A single word list cannot express the rules, so there are several:
 | **Machinery the skill does not have** — a computed load field, a calendar brief, *the coach* as a party the skill hears from (a coach's week the athlete pastes is fine), a choice of plan language, localisation fields | the files the host reads as instructions: `SKILL.md`, `references/`, `scripts/`, `examples/` |
 | **Anything outside the folder** — a product it could be read as promoting, repositories, issue numbers, absolute paths, `webcal://` | everything under the folder, except what `z-image-turbo-macos` installs and where ([why](/architecture/z-image-turbo-macos.md#it-is-not-a-pure-payload-and-where-it-bends)) |
 
-`calendar` is on neither: the fuelling rules have to be able to say there is no
-calendar, and that clause is what stops the model looking for one. The page's
-feature is called a *photo*, one word used everywhere; *photographs* is avoided.
+`calendar` is on neither, since *calendar week* is ordinary English, and the skill
+no longer says where the athlete's week came from or what it reads: a week is
+what they hand over. The page's feature is called a *photo*, one word used
+everywhere; *photographs* is avoided.
 
 # The authoring guides bind harder here
 
