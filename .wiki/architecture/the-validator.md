@@ -6,7 +6,7 @@ tags: [architecture, validation]
 sources:
   - resource: skills/training-week-meal-plan/scripts/validate.py
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: d5e969311000876d
+sources_digest: c55898c59fbcf828
 ---
 
 # Why it exists
@@ -119,7 +119,7 @@ aligned, the same plan has 37 shopping-quantity findings.
 checked: one row for each day the plan covers, none for a day it does not
 (`week-load-day-missing`, `week-load-day-not-planned`, `week-load-day-repeated`),
 and a day's `day_load` equal to the sum of its entries' `load`, give or take half
-a point an entry for rounding (`week-load-day-sum`). The sum is arithmetic, and
+a point for the total being written to a whole number (`week-load-day-sum`). The sum is arithmetic, and
 the ranking is read from it.
 
 **No entry's own figures are checked.** An entry's `load` is `hours x IF^2 x 100`

@@ -2955,7 +2955,10 @@ def check_week_load_days(plan: dict) -> list:
             continue
         seen.add(row["day"])
         total = week_load_sum(row)
-        if total is not None and abs(total - row["day_load"]) > 0.5 * len(row["entries"]) + 0.5:
+        # Half a point, once per day: an athlete's loads may have decimals and the
+        # total be written to the whole number. Not once per entry, which would let
+        # three entries of 100 pass a total of 302.
+        if total is not None and abs(total - row["day_load"]) > 0.5 + 1e-9:
             findings.append(
                 finding(
                     9,
