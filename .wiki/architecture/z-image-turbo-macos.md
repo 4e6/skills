@@ -25,8 +25,9 @@ here*, and step 1 tells the host not to substitute anything.
 
 # It is not a pure payload, and where it bends
 
-[The payload](/architecture/the-payload.md) keeps a skill's own files off the
-network and its scripts on Python 3.9's standard library. Neither can hold here:
+[The meal-plan skill](/architecture/training-week-meal-plan.md) keeps its own
+files off the network and its scripts on Python 3.9's standard library. Neither
+can hold here:
 the model is 11 GB, far too big to ship in the folder, and the packages need a
 Python macOS does not provide. What the skill keeps instead:
 
@@ -60,6 +61,18 @@ all of `generate`'s input checks run on the system `python3`, and only then does
 it re-run itself under the environment's Python. Hosts type `python3`; a skill
 that needs them to find `python3.14` first fails on the first run of every host
 that doesn't.
+
+**What its one script does, in those terms.** `z_image_turbo.py` runs `sysctl`
+and the Pythons it finds, to learn what the machine is. Under Python 3.9's
+standard library it reads the environment and the model cache and writes nothing
+but a lock file and, in `setup`, the environment. Only under the environment's
+Python, which it builds, does it import `huggingface_hub` (in `setup`, for the
+model; pip fetches the packages), `mlx`, `mflux` and `PIL`; it writes the images
+it is told to, and nothing else.
+
+**How it is installed.** By `npx skills` or a symlink on a Mac. It is offered no
+zip: a web host runs skills in its own Linux sandbox, where it would install and
+then fail every time ([the zip release](/architecture/the-zip-release.md)).
 
 # Why the pieces are shaped so
 

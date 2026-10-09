@@ -263,6 +263,56 @@ The evals keep the isolated host and give up two things:
 
 # Measurements
 
+**2026-10-08, the thirteen cases three times each on Sonnet 5.5, as agent and as
+judge, on 1.8.0 and on 1.9.0 in three drafts**: a rewrite of the skill to be
+shorter, by a quarter in words (`SKILL.md` by almost half), and a change to
+`week_load` found on the way. Three race cases, six runs each, were added to
+settle the difference the first pool left open. The judge was the same model as
+the agent.
+
+| | 1.8.0 | 1.9.0, text only | 1.9.0, references condensed | 1.9.0 |
+|---|---|---|---|---|
+| judge `yes`, of 342 answers | 330 (96.5%) | 331 (96.8%) | 326 (95.3%) | **332 (97.1%)** |
+| script checks, of 477 | 477 | 477 | 477 | 476 |
+| *nothing invented*, 13 cases of 3 runs | 36 of 39 | 35 of 39 | 33 of 39 | **38 of 39** |
+| *nothing invented*, 3 race cases | 12 of 18 | not run | 13 of 18 | **16 of 17** |
+| replies naming an estimated zone, *tempo*, intensity factor or `week_load` | 8 of 48 | not counted | 12 of 48 | **0 of 47** |
+| cost of the 39 runs, agent and judge | $54.82 | $49.24 | not kept | $45.50 |
+
+The script checks leave out the example-food counts, which fail on the same
+Denver runs in every arm, and the sandbox's refusal check.
+
+- **Shortening alone changed nothing the judge could see.** The first draft cut
+  `SKILL.md` and left the references; 1.8.0 and it were within a run or two on
+  every question. The condensed references did no better on *nothing invented*
+  and a little worse, inside the noise of three runs a case.
+- **The failures that remained were the skill's own forcing.** *Nothing invented*
+  was not failing on the athlete's inputs but on figures the schema made the
+  model produce: a zone for each session, an integer with a fallback (*tempo 3*)
+  that came back in replies about sessions nobody had called tempo, a total of
+  hours added up in the head, a race duration worked out from legs the athlete
+  never timed, and a reply told to list *anything you assumed*, which listed
+  the model's own scoring. 1.9.0 stopped forcing them
+  ([carb periodization](/domain/carb-periodization.md#week_load-copies-what-the-athlete-gave-and-estimates-the-rest)).
+- **The sessions' count and hours are still hand-written.** One of about 50
+  printed totals was wrong, a half Ironman printed as *~11h, 9 sessions* for sessions that add up
+  to 9.84 h in 8, and the judge marked it. Nothing checks the line, and a check
+  would parse free text and could reject a total the athlete's own software
+  gave, so it was left.
+- **The remaining judge `no`s were not this change's.** Oatmeal breakfasts in
+  Osaka and Pune, a date as a snack, milk and a banana: the model's own choices,
+  as in every version above. One US reply still called its load figures
+  *estimates*.
+- **A script failure, probably the checker's.** A vegan Ironman failed the vegan
+  check on *Banana peanut-butter porridge*; the check passes *peanut butter* and
+  appears not to read the hyphenated form. Not confirmed, not changed.
+- **Not measured.** One model, and the same one judging; the intake's menus, the
+  photos and the publishing, which these cases do not exercise; and, as the
+  method above requires, no pairwise judge. `harness-refused-only-open` differed
+  between arms from the sandbox's shared temporary folder and is left out of
+  the table. The race pools are 17 or 18 runs an arm, one set aside as another
+  run's files reached it.
+
 **2026-10-01, the country cases three times each on Opus 5.5, on four versions
 of the line examples** ([#10](https://github.com/4e6/skills/issues/10)): 72 runs,
 about $116, graded together once the second line question existed.

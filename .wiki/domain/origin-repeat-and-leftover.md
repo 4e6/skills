@@ -6,7 +6,7 @@ tags: [domain, plan]
 sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md
   - resource: skills/training-week-meal-plan/references/plan-schema.json
-sources_digest: 48ad1b3129e6c323
+sources_digest: d31119fc9171c533
 ---
 
 Every main meal of every day gets its own recipe entry, so a dish eaten more than

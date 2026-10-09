@@ -6,7 +6,7 @@ tags: [architecture, intake]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/fuelling.md
-sources_digest: 480eb20d71281236
+sources_digest: d5196c2ccefd1cf8
 ---
 
 # What it asks
@@ -74,8 +74,6 @@ sentence that said *five* false at the same moment.
   fridge off, took *just go ahead* on the first menu as the end of the asking,
   and never asked about the fridge. Whatever comes back, *just go ahead*
   included, ends the asking.
-- **A pasted week is said to have come from them.** The skill reads no calendar,
-  so *I've got your week from* a service is a claim about something it never saw.
 
 **Measured, blind, on 2026-09-24**, simulated athletes answering hosts that
 loaded only the skill: twelve intake runs a side, plus two reruns of the revised

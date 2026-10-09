@@ -6,7 +6,7 @@ tags: [architecture, validation]
 sources:
   - resource: skills/training-week-meal-plan/scripts/validate.py
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: 57fbbce56b891a5e
+sources_digest: c55898c59fbcf828
 ---
 
 # Why it exists
@@ -113,6 +113,22 @@ the first eval run exited 0 with Friday breakfast — the day before its race �
 and Sunday lunch each naming a dish the recipe there was not. With the titles
 aligned, the same plan has 37 shopping-quantity findings.
 
+# Check 9: the load table covers the week and adds up
+
+`week_load` is the model's scratch work before any meal, and only its shape is
+checked: one row for each day the plan covers, none for a day it does not
+(`week-load-day-missing`, `week-load-day-not-planned`, `week-load-day-repeated`),
+and a day's `day_load` equal to the sum of its entries' `load`, give or take half
+a point for the total being written to a whole number (`week-load-day-sum`). The sum is arithmetic, and
+the ranking is read from it.
+
+**No entry's own figures are checked.** An entry's `load` is `hours x IF^2 x 100`
+only when the model estimated it; when the athlete gave it, from a platform
+that works it out its own way, it is copied as it stands, and a check of the
+formula would reject the athlete's number. A finding for the sum is an ordinary
+finding, because this script has no warning tier: any finding exits 1 and goes
+to the repair loop ([carb periodization](/domain/carb-periodization.md#week_load-copies-what-the-athlete-gave-and-estimates-the-rest)).
+
 # Check 10: the plan against its own ranking
 
 `training_overview.hard_days` is the plan's answer to *which days did you fuel
@@ -183,7 +199,7 @@ standard library limits how well that can be done:
 2. **No Unicode Script property**, so the mark strip is scoped by character name.
 3. **The Unicode database moves with the interpreter** — 3.9 ships version 13.
 4. **The function-word table is Latin-script only.** The plan is English by
-   promise, stated where the model writes the JSON as well as in `compatibility`.
+   promise, stated in `SKILL.md` and where the model writes the JSON.
    It is not English-only, though: English borrows (`Tuna in brine`, `Chilli con
    carne`, `pico de gallo`), and keeping only English's own function words would
    break both directions — false `ingredient-not-purchasable` on a correct plan,
