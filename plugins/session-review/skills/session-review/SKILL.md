@@ -16,7 +16,7 @@ compatibility: >-
   where it can start subagents; without them each pass is done by the same agent.
 metadata:
   author: 4e6
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Session review
@@ -33,7 +33,8 @@ machine and goes only to subagents of this session.
 - [ ] 3  condense them
 - [ ] 4  observe each
 - [ ] 5  group the observations
-- [ ] 6  report
+- [ ] 6  check the strongest suggestions
+- [ ] 7  report
 ```
 
 The script is `${CLAUDE_SKILL_DIR}/scripts/condense.py`; run it with `python3`.
@@ -56,7 +57,8 @@ By default it takes the current directory's project, and skips headless runs and
 sessions with fewer than 10 tool calls. Leave out this session with
 `--exclude ${CLAUDE_SESSION_ID}`. Show the user the count and the token estimate (an estimate: it counts a continued session's repeated history, which step 3 leaves out). When the scope is
 large, more than about 30 sessions or 500,000 tokens, say what it will cost and
-ask which to narrow before going on. For a theme, choose sessions by title or
+ask which to narrow before going on. The check in step 6 adds about ten subagents
+on the strongest model. For a theme, choose sessions by title or
 `--grep`.
 
 ## 3. Condense
@@ -83,7 +85,11 @@ observations.
 
 Do this on the strongest model, alone or in a subagent. Merge observations
 that are the same thing across sessions. A thing seen in more than one session
-is a **suggestion**; one seen once is a **note**. Give each suggestion one route:
+is a **suggestion**; one seen once is a **note**. Keep each suggestion's
+observations with it: their lines, quotes and evidence. Count its sessions, not
+the observers' counts added up. Rank by sessions, then by the number of
+`correction` observations and interruptions among its observations. Give each
+suggestion one route:
 
 - a change to a skill, as a pull request;
 - a preference, as a line for the user's global instructions file;
@@ -93,13 +99,25 @@ is a **suggestion**; one seen once is a **note**. Give each suggestion one route
 
 Drop what no one can act on.
 
-## 6. Report
+## 6. Check
+
+Check the strongest suggestions, about ten. Give each to a fresh subagent on the
+strongest model, as that judges whether a rule already covers the case. Its brief
+has the suggestion with its observations, its route and the condensed files' paths,
+and says to read `${CLAUDE_SKILL_DIR}/references/checker.md` (give the full path) and
+follow it. Without subagents, follow that file yourself, one suggestion at a time.
+The rest stay one line each.
+
+## 7. Report
 
 In this order:
 
-1. **Suggestions**, strongest first: the change in a line or two, its route, how
-   many times and in how many sessions, and the evidence as `session@YYYY-MM-DD HH:MM`.
-2. **Notes**, one line each, with evidence.
-3. What was read and what was skipped, with the counts.
+1. **Checked suggestions**, strongest first, each in the four parts the checker
+   returns, with its route, sessions and evidence.
+2. **Other suggestions**, one line each: the change, its route, sessions, evidence.
+3. **Already addressed**, including likely addressed: one line each, with where.
+4. **Notes**, one line each, with evidence.
+5. What was read and what was skipped, with the counts.
 
-Then ask which suggestions to act on. Delete the scratch folder.
+Then ask which suggestions to act on. Delete the scratch folder now, not before
+step 6 is done.
