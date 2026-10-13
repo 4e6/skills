@@ -20,7 +20,7 @@ compatibility: >-
   needs git and an authenticated GitHub CLI (gh).
 metadata:
   author: 4e6
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Supervise work
@@ -112,8 +112,9 @@ only what does not collide with it.
 A role is a job, not a headcount. Where you can start subagents, give the role
 to a fresh one with a brief; where you cannot, take it yourself in a separate
 pass that starts again from the written artifact alone. Where you can pick a
-model per role, read and edit on a mid-tier one, and keep the plan and the final
-judgement on the strongest.
+model per role, give research, the plan, review and the final judgement to the
+strongest, building to a mid-tier one, and summarizing or filtering to the
+smallest.
 
 - **Researcher.** Gets the question, where to look and what the answer is for.
   Returns findings with their evidence — file and line, source, command output —
