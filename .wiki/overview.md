@@ -9,7 +9,7 @@ sources:
   - resource: skills/z-image-turbo-macos/SKILL.md
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/supervise-work/SKILL.md
-sources_digest: 03a54051464b9f9d
+sources_digest: d097664db90375eb
 ---
 
 # What it is

@@ -6,7 +6,7 @@ tags: [skills, authoring, review]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/z-image-turbo-macos/SKILL.md
-sources_digest: a07b9dde314c66a1
+sources_digest: b05d09135dd0e114
 ---
 
 # Read the guides, and point at them
