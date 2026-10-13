@@ -33,11 +33,24 @@ jobs:
         run: python3 -m unittest discover -s evals/session-review
       - name: Check the zips
         run: python3 tools/release.py check
-      # Claude Code checks its own plugins: the manifest validator, and the test
-      # runner for a mod, which stands in for the engine. Neither calls a model or
-      # needs a login. The latest release on purpose: when Claude Code changes
-      # under a mod (the API is early access), CI is where that shows first.
-      - uses: actions/setup-node@v4
+
+  # Claude Code checks its own plugins: the manifest validator, and the test
+  # runner for a mod, which stands in for the engine. Neither calls a model or
+  # needs a login. The latest release on purpose: when Claude Code changes under
+  # a mod (the API is early access), CI is where that shows first. A job of its
+  # own, which release does not wait for: such a change turns this red without
+  # holding back a skill's release.
+  plugins:
+    runs-on: ubuntu-latest
+    env:
+      DISABLE_AUTOUPDATER: "1"
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+    steps:
+      # The latest package's install scripts run here; they get no token.
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
       - name: Install Claude Code, latest
