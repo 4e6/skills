@@ -14,7 +14,7 @@ compatibility: >-
   checked and a printable page is rendered; without it you still get the plan.
 metadata:
   author: 4e6
-  version: "1.9.1"
+  version: "1.9.2"
 ---
 
 # A week of meals that tracks the training
@@ -282,9 +282,11 @@ Never:
 
 ## Step 6 — Make it printable
 
-List the tools and skills your host has that draw a picture from a written
-description. Look; do not decide from memory. If there is any, read
-[references/photos.md](references/photos.md) now.
+Look through the tools list and the skills list in your context for any that
+draw a picture from a written description. Look; do not decide from memory. If
+there is any, read [references/photos.md](references/photos.md) now. One that
+needs a setup you have not seen done counts: ask the athlete whether to set it
+up, and render without photos if they decline.
 
 ```
 python3 <this skill's directory>/scripts/render.py plan-<date>.json plan-<date>.html

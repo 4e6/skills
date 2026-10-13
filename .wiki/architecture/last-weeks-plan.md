@@ -5,7 +5,7 @@ description: A run writes plan-<first day>.json and .html, so weekly runs from o
 tags: [architecture, files]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: 0d2e96571305015c
+sources_digest: eb1d9243f7f8cde3
 ---
 
 # Each week's page is named for its first day
