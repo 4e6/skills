@@ -88,7 +88,7 @@ that are the same thing across sessions. A thing seen in more than one session
 is a **suggestion**; one seen once is a **note**. Keep each suggestion's
 observations with it: their lines, quotes and evidence. Count its sessions, not
 the observers' counts added up. Rank by sessions, then by the number of
-`correction` observations and interruptions among its observations. Give each
+`correction` observations among them. Give each
 suggestion one route:
 
 - a change to a skill, as a pull request;
@@ -113,8 +113,10 @@ The rest stay one line each.
 In this order:
 
 1. **Checked suggestions**, strongest first, each in the four parts the checker
-   returns, with its route, sessions and evidence.
-2. **Other suggestions**, one line each: the change, its route, sessions, evidence.
+   returns, with its route, sessions and evidence; those found already or likely
+   addressed go to 3 instead.
+2. **Other suggestions**, one line each: what happened, from its observations'
+   lines, then the change, its route, sessions, evidence.
 3. **Already addressed**, including likely addressed: one line each, with where.
 4. **Notes**, one line each, with evidence.
 5. What was read and what was skipped, with the counts.

@@ -10,7 +10,7 @@ sources:
   - id: hank
     resource: https://github.com/SouthBridgeAI/hankweave-runtime/tree/release/alpha/learning/examples/plan-gen-v2-general
     title: hankweave example plan-gen-v2-general
-sources_digest: aab1462b7c993cd6
+sources_digest: 8b023868b68fd5ab
 ---
 
 # What it is, and what it refuses to be

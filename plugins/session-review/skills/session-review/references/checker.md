@@ -25,7 +25,9 @@ was seen in, and the paths of the condensed files, one per session or slice.
 
 - Pick at most two citations: the one that shows the problem best, and the latest.
 - In its condensed file, grep for the `[HH:MM]` of the citation, with the day
-  marker `--- YYYY-MM-DD ---` above it, and read a range of lines around it.
+  marker `--- YYYY-MM-DD ---` above it, and read a range of lines around it. A
+  citation with no day comes from a slice: take the first match after the slice's
+  start.
 - Never read a whole condensed file.
 - Take the story from what you read. If the observations say more than the
   lines show, say which part you did not see.
@@ -34,9 +36,9 @@ was seen in, and the paths of the condensed files, one per session or slice.
 
 | Route | The target | Where to look |
 |---|---|---|
-| A skill | the copy that ran, and its source | The plugin cache, `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>/skills/<name>`; `~/.claude/skills/<name>`; `<project>/.claude/skills/<name>`; a symlink into a checkout. Name the copy's `metadata.version`. Also look for a source checkout under the user's projects. |
-| A skill synced from claude.ai | someone else's skill | `~/.claude/skills/synced/<id>/<name>`. Route it "suggest upstream", not a pull request, unless a source checkout is under the user's projects. |
-| A skill from a marketplace clone | someone else's skill | `~/.claude/plugins/marketplaces/<marketplace>/…`. Same: "suggest upstream" unless a source checkout is under the user's projects. |
+| A skill | the copy that ran, and its source | The plugin cache, `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>/skills/<name>`; `~/.claude/skills/<name>`; `<project>/.claude/skills/<name>`; a symlink into a checkout. Name the copy's `metadata.version`. Also look for its source checkout: follow `realpath`, and look in the `project:` folders of the condensed headers; search no wider. |
+| A skill synced from claude.ai | someone else's skill | `~/.claude/skills/synced/<id>/<name>`. Route it "suggest upstream", not a pull request, unless a source checkout is found as for a skill above. |
+| A skill from a marketplace clone | someone else's skill | `~/.claude/plugins/marketplaces/<marketplace>/…`. Same: "suggest upstream" unless a source checkout is found as for a skill above. |
 | A preference | the user's global instructions | `~/.claude/CLAUDE.md`, or under `$CLAUDE_CONFIG_DIR` |
 | Project knowledge | the project's own files | The `project:` working directory in the condensed header: `AGENTS.md`, `CLAUDE.md`, a wiki folder |
 | A permission | the allowlist | `permissions.allow` in the four settings scopes: user `settings.json`, user `settings.local.json`, project `.claude/settings.json`, project `.claude/settings.local.json`. A missing file or a missing key means "no allow rule". That is a finding, not an error. |
@@ -54,8 +56,8 @@ came before them.
   the date is unknown.
 - In a checkout: `git log -S'<phrase>' -- <file>`, or blame the line.
 - A commit date is when the source changed, not when the installed copy got it.
-  When the copy that ran is a pinned version, say "likely addressed", not "already
-  addressed".
+  When the rule postdates every incident but the copy that ran is a pinned version,
+  say "likely addressed", not "already addressed".
 
 ## Status
 
@@ -64,7 +66,7 @@ Give exactly one:
 - **open** — the target has no rule for it.
 - **open despite rule** — the target has the rule, and incidents happened after it arrived.
 - **already addressed** — the rule arrived after every incident.
-- **likely addressed** — the rule is in the source, but the copy that ran is a pinned version, so it may not have had it.
+- **likely addressed** — the rule arrived in the source after every incident, but the copy that ran is pinned, so it may not have had it yet. If the copy that ran already holds the rule, judge by the incidents as for open despite rule.
 - **new** — the route has no target: nothing like it exists.
 - **present, date unknown** — the rule is there and cannot be dated.
 - **unknown** — the target was not found.
@@ -72,6 +74,7 @@ Give exactly one:
 ## Privacy
 
 - In One instance, quote only the condensed text, which is redacted.
+- In Status now, name the file and the line, and quote at most the rule's own line.
 - In The change, quote only the target lines the change edits.
 - Never write an `env` value or anything that looks like a token or key.
 
