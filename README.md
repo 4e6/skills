@@ -55,8 +55,8 @@ Keep each folder's name as it is. The format requires it to match the skill's
 
 The `ln -s skills/*` route above does not include it, and there is no zip of
 it. `npx skills` lists it too, and installs it as a plain skill, which only
-Claude Code can use. Update it with `/plugin marketplace update 4e6` and
-`/plugin update session-review@4e6`.
+Claude Code can use. Update it in a terminal with `claude plugin marketplace update 4e6` and
+`claude plugin update session-review@4e6`, then restart Claude Code.
 
 ### In Claude or ChatGPT on the web
 

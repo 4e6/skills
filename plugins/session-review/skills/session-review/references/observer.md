@@ -15,11 +15,20 @@ code, the user or the agent.
 
 ## The record
 
-Lines look like `[HH:MM] USER: …`, `ASSISTANT: …`, `THINK: …`,
-`TOOL <name>#<n>: <input>` followed by `  -> ok|ERROR(kind)|REJECTED: …`, and
-`INTERRUPTED`, `COMPACTED`, `API ERROR`, `/command args`, `[skill <name> loaded]`.
-Long outputs are cut and secrets are redacted. A line is cited by its session id
-and the minute of the last `[HH:MM]` at or above it: `<session-id>@HH:MM`.
+Lines look like `[HH:MM] USER: …`, `ASSISTANT: …`, `THINK: …`, `BRIEF: …` (what
+was told to a subagent), `TOOL <name>#<n>: <input>`, `INTERRUPTED`, `COMPACTED`,
+`API ERROR`, `/command args` and `[skill <name> loaded]`. A tool line is followed
+by its outcome: `  -> ok (size)`, `ok [persisted size]` (output too large, only
+a head kept), `ERROR(kind)` or plain `ERROR`, `REJECTED` (the user refused it),
+`-> (no result recorded)`, or, for a result whose call is not in the file,
+`-> (call not in this file)`. `--- YYYY-MM-DD ---` marks the day for the lines
+below it. A subagent's own work, when present, sits between `=== subagent <id> …
+===` and `=== end subagent <id> ===`, indented. Long outputs are cut and secrets
+are redacted.
+
+A line is cited by its session id, the day and the minute of its `[HH:MM]`:
+`<session-id>@YYYY-MM-DD HH:MM`, the day taken from the nearest `---` line above
+it. A slice with no day line above its first lines is cited `<session-id>@HH:MM`.
 
 A slice starts mid-work. Take what it shows; do not guess what came before.
 
@@ -71,7 +80,7 @@ at the fix.
 One JSON object per line, nothing around it: no heading, no list, no prose.
 
 ```
-{"category": "<id>", "line": "<one line>", "evidence": ["<session-id>@HH:MM", …], "quote": "<one line, or empty>", "involved": "<skill, tool or command, or empty>", "count": <number>}
+{"category": "<id>", "line": "<one line>", "evidence": ["<session-id>@YYYY-MM-DD HH:MM", …], "quote": "<one line, or empty>", "involved": "<skill, tool or command, or empty>", "count": <number>}
 ```
 
 - `line` says what happened, in under 25 words.

@@ -129,6 +129,9 @@ def plugin_faults() -> list[str]:
         if not isinstance(version, str):
             faults.append(f"{manifest} has no version")
             continue
+        if not SEMVER.fullmatch(version):
+            faults.append(f"{manifest} is v{version}; a version is MAJOR.MINOR.PATCH")
+            continue
         skills = sorted(glob.glob(f"{plugin}/skills/*/SKILL.md"))
         if not skills:
             faults.append(f"{plugin} holds no skill, so {manifest}'s version has nothing to match")

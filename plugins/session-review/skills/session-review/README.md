@@ -54,9 +54,11 @@ guarantee, so read the report before you share any of it.
 ## Updating
 
 ```
-/plugin marketplace update 4e6
-/plugin update session-review@4e6
+claude plugin marketplace update 4e6
+claude plugin update session-review@4e6
 ```
+
+Run them in a terminal, then restart Claude Code to apply the update.
 
 Claude Code does not update third-party marketplaces by itself unless you turn
 that on for this one.

@@ -17,7 +17,7 @@ sources_digest: 60961fe03d478fc5
 
 `session-review` reads the Claude Code transcripts a user picks and returns
 suggestions for improving their everyday work, each with evidence
-(`<session>@HH:MM`): a skill to fix, a habit to automate, a preference to write
+(`<session>@YYYY-MM-DD HH:MM`): a skill to fix, a habit to automate, a preference to write
 down, a permission to allow. It is part 1 of
 [issue #48](https://github.com/4e6/skills/issues/48); the watcher is part 2, and
 not built (below).
@@ -69,7 +69,7 @@ marketplaces, so users still run `/plugin update` for a version that did move.
 
 `scripts/condense.py` is one stdlib Python file with no model in it: cheaper and
 deterministic. Its rules rest on a survey of 1962 local transcripts (Claude Code
-2.1.236 to 2.1.296, 2026-09-12 to 10-13). **The format is internal and changes
+2.1.236 to 2.1.296, 2026-09-12 to 10-13), a snapshot taken on 2026-10-13; every figure below is from it. **The format is internal and changes
 between versions**, which is why the parser skips unknown record types and unparseable lines (a live file can end mid-line) and stays in one file.
 
 | Rule | The fact behind it |
@@ -78,6 +78,8 @@ between versions**, which is why the parser skips unknown record types and unpar
 | Assistant records are merged by `message.id`, each block emitted once | one message is written as several records |
 | A tool result is paired with its call by `tool_use_id` | results arrive as later user records |
 | Records are deduped by `uuid` across a run | a continued session copies the history |
+| Sessions are condensed oldest first, in one call | the first one given keeps the shared history, so it must be the original; a continuation then shows only what is new |
+| Every line is cited with its day | a session can span days, and `[HH:MM]` alone repeats; the condenser writes a `--- day ---` line before the first line |
 | Thinking is kept only if non-empty | 97.6% of it is empty |
 | Tool output is cut to a head, errors kept longer | tool output is about 46% of the bytes |
 | Secrets are redacted in every emitted string | transcripts hold them, and the text goes to subagents |
@@ -90,7 +92,8 @@ between versions**, which is why the parser skips unknown record types and unpar
   a person told a subagent is worth more than a shell script), human and assistant
   text 10,000. Chosen to keep what a reviewer cites and drop what only costs
   tokens; not tuned against suggestion quality.
-- **Measured**: 1949 files, 0 crashes, 1.6 GB in and 77 MB out (ratio 0.047).
+- **Measured** (counted at a different time from the survey, so the file count
+  differs): 1949 files, 0 crashes, 1.6 GB in and 77 MB out (ratio 0.047).
 - **Tests** are `evals/session-review/`, outside the skill because whatever is in
   it ships. A synthetic fixture covers each rule, and secret-shaped strings are
   built at run time, never committed whole (push protection, public repo).

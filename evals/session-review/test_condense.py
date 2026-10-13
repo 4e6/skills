@@ -17,6 +17,7 @@ ships with it.
 """
 
 import datetime
+import importlib.util
 import json
 import os
 import shutil
@@ -29,6 +30,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SCRIPT = os.path.join(
     HERE, "..", "..", "plugins", "session-review", "skills", "session-review", "scripts", "condense.py"
 )
+
+_spec = importlib.util.spec_from_file_location("condense", SCRIPT)
+condense = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(condense)
 
 SESSION = "aaaaaaaa-0000-4000-8000-000000000001"
 CWD = "/Users/me/work/app"
@@ -52,6 +57,23 @@ def secrets():
         "assignment": "pass" + "word" + "=" + "correcthorsebattery",
         "json assignment": '"api' + '_key": "' + "zyxwvutsrqponm" + '"',
         "pem": "-----BEGIN RSA PRIV" + "ATE KEY-----\nMIIBOgIBAAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf9Cnzj4p4WGeKLs1Pt8Qu\n-----END RSA PRIV" + "ATE KEY-----",
+    }
+
+
+def risky():
+    """Secrets in the shapes a first pass missed, with what must not survive."""
+    key = "api" + "_key"
+    word = "pass" + "word"
+    return {
+        "escaped json": ('{\\"' + key + '\\": \\"zyxwvutsrqponm\\"}', "zyxwvutsrqponm"),
+        "flag with a space": ("deploy --" + word + " hunter2hunter2 --now", "hunter2hunter2"),
+        "docker login": ("docker login -u me -p hunter2hunter2 registry.example.com", "hunter2hunter2"),
+        "curl user": ("curl -u alice:hunter2hunter2 https://example.com", "hunter2hunter2"),
+        "authorization token": ('-H "Authorization: tok' + 'en ghx1234567890"', "ghx1234567890"),
+        "pass phrase": (word + ": correct horse battery staple", "horse battery"),
+        "quoted pass phrase": (word + '="correct horse battery"', "horse battery"),
+        "digits": ("sec" + "ret_key=1234567890123", "1234567890123"),
+        "pem cut off": ("-----BEGIN PRIV" + "ATE KEY-----\nMIIBOgIBAAJBAKj34GkxFhD90vcNLYLI", "MIIBOgIBAAJBAKj34GkxFhD90vcNLYLI"),
     }
 
 
@@ -343,7 +365,7 @@ class CondenseTest(unittest.TestCase):
         self.assertIn("] API ERROR: API Error: 529 overloaded", self.text)
 
     def test_counts(self):
-        # 9 prompts above the secrets + one per secret shape; calls counted once each.
+        # 4 prompts above the secrets + one per secret shape; calls counted once each.
         shapes = len(secrets())
         self.assertIn("%d prompts" % (4 + shapes), self.text)
         self.assertIn("%d tool calls" % (8 + shapes), self.text)
@@ -356,6 +378,46 @@ class CondenseTest(unittest.TestCase):
             for piece in (value, value.split("\n")[1] if "\n" in value else value[8:-4]):
                 self.assertNotIn(piece, self.text, name)
         self.assertGreaterEqual(self.text.count("[REDACTED]"), len(secrets()) * 4)
+
+    def test_redact_alone_catches_the_shapes_a_first_pass_missed(self):
+        for name, (text, secret) in risky().items():
+            out = condense.redact(text)
+            self.assertNotIn(secret, out, name)
+            self.assertIn("[REDACTED]", out, name)
+            self.assertEqual(condense.redact(out), out, name)  # idempotent
+
+    def test_redact_alone_covers_every_shape(self):
+        for name, value in secrets().items():
+            self.assertNotIn(value.split("\n")[-2] if "\n" in value else value[8:-4], condense.redact("x " + value + " y"), name)
+
+    def test_ordinary_text_is_left_alone(self):
+        for text in (
+            '"max_tokens": 4096',
+            "max_tokens: 123456789",
+            '"total_tokens": 12345678',
+            "--max-tokens 4096",
+            "docker login --pass" + "word-stdin registry.example.com",
+            "the header -----BEGIN PRIV" + "ATE KEY----- is shown, then prose",
+            "pass" + "word: $SECRET_VALUE and more words",
+            "Authorization: required for this endpoint",
+        ):
+            self.assertEqual(condense.redact(text), text)
+
+    def test_a_non_string_id_does_not_crash(self):
+        t = Transcript(os.path.join(self.projects, "-odd", "odd.jsonl"), session="odd")
+        t.user("hello")
+        t.assistant([{"type": "tool_use", "id": ["x"], "name": "Bash", "input": {}}], ["m"], uuid=["u"])
+        t.add({"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": {"a": 1}, "content": "r"}]}}, uuid={"b": 1})
+        t.write()
+        out = run("condense", t.path, "--out", "-")
+        self.assertIn("TOOL Bash#1", out)
+        self.assertIn("(call not in this file)", out)
+
+    def test_every_line_has_a_day(self):
+        lines = self.lines()
+        first = next(i for i, l in enumerate(lines) if l.startswith("["))
+        self.assertEqual(lines[first - 1], "--- 2026-10-06 ---")
+        self.assertIn("cite a line as %s@YYYY-MM-DD HH:MM" % SESSION, self.text)
 
     def test_a_duplicate_uuid_is_written_once(self):
         self.assertEqual(self.text.count("Fix the build please"), 1)
@@ -395,6 +457,19 @@ class CondenseTest(unittest.TestCase):
             second = handle.read()
         self.assertNotIn("Looking at the build now.", second)
         self.assertIn("were already shown earlier in this run", second)
+
+    def test_the_oldest_session_keeps_the_history_whatever_the_order_given(self):
+        other = "bbbbbbbb-0000-4000-8000-000000000002"
+        copy = os.path.join(self.projects, FOLDER, other + ".jsonl")
+        shutil.copy(self.main, copy)
+        later = os.path.getmtime(self.main) + 100
+        os.utime(copy, (later, later))
+        out = os.path.join(self.root, "reversed")
+        run("condense", other, SESSION, "--projects-dir", self.projects, "--out", out)
+        with open(os.path.join(out, SESSION + ".txt"), encoding="utf-8") as handle:
+            self.assertIn("Looking at the build now.", handle.read())
+        with open(os.path.join(out, other + ".txt"), encoding="utf-8") as handle:
+            self.assertNotIn("Looking at the build now.", handle.read())
 
 
 class ListTest(unittest.TestCase):
@@ -450,6 +525,14 @@ class ListTest(unittest.TestCase):
     def test_grep_matches_prompts_and_titles_ignoring_case(self):
         self.assertEqual(self.ids("--project", CWD, "--grep", "REFACTOR"), ["active"])
         self.assertEqual(self.ids("--project", CWD, "--grep", "sibling"), ["sibling"])
+
+    def test_a_secret_in_a_prompt_does_not_reach_the_listing(self):
+        secret = "pass" + "word" + "=" + "correcthorsebattery"
+        build_simple(os.path.join(self.projects, FOLDER, "leaky.jsonl"), "leaky", [], prompt="log in with " + secret)
+        for args in (["--json"], []):
+            out = run("list", "--projects-dir", self.projects, "--project", CWD, *args)
+            self.assertNotIn("correcthorsebattery", out)
+            self.assertIn("log in with", out)
 
     def test_line_and_json_shape(self):
         out = run("list", "--projects-dir", self.projects, "--project", "/Users/me/other")

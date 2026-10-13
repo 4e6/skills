@@ -11,9 +11,9 @@ description: >-
 license: MIT
 compatibility: >-
   Claude Code only: reads the session transcripts Claude Code keeps in
-  ~/.claude/projects (or under CLAUDE_CONFIG_DIR). Its script needs Python 3.
-  Best where it can start subagents; without them each pass is done by the same
-  agent.
+  ~/.claude/projects (or under CLAUDE_CONFIG_DIR). Its script needs Python 3;
+  without it nothing can be condensed and the skill stops and says so. Best
+  where it can start subagents; without them each pass is done by the same agent.
 metadata:
   author: 4e6
   version: "1.0.0"
@@ -37,6 +37,8 @@ machine and goes only to subagents of this session.
 ```
 
 The script is `${CLAUDE_SKILL_DIR}/scripts/condense.py`; run it with `python3`.
+Without Python 3 it cannot run: stop and tell the user, as nothing else reads
+the transcripts safely.
 
 ## 1. Settle the scope
 
@@ -52,7 +54,7 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/condense.py list [--project PATH ...] [--all
 
 By default it takes the current directory's project, and skips headless runs and
 sessions with fewer than 10 tool calls. Leave out this session with
-`--exclude ${CLAUDE_SESSION_ID}`. Show the user the count and the token estimate. When the scope is
+`--exclude ${CLAUDE_SESSION_ID}`. Show the user the count and the token estimate (an estimate: it counts a continued session's repeated history, which step 3 leaves out). When the scope is
 large, more than about 30 sessions or 500,000 tokens, say what it will cost and
 ask which to narrow before going on. For a theme, choose sessions by title or
 `--grep`.
@@ -63,14 +65,17 @@ ask which to narrow before going on. For a theme, choose sessions by title or
 python3 ${CLAUDE_SKILL_DIR}/scripts/condense.py condense SESSION_ID... --out DIR
 ```
 
-`DIR` is a new scratch folder outside every project. `--subagents` adds each
+Give the whole scope in one call: sessions are written oldest first, and a
+continued session shows only what its parent did not. `DIR` is a new scratch
+folder outside every project. `--subagents` adds each
 subagent's own work; leave it off unless the theme is about subagents.
 
 ## 4. Observe
 
 Give each condensed file to a fresh subagent on the smallest model, a batch of
 small ones to one subagent within its context. Its brief names the files and
-says to read [references/observer.md](references/observer.md) and follow it.
+says to read `${CLAUDE_SKILL_DIR}/references/observer.md` (give the full path, as the
+subagent does not start in this folder) and follow it.
 Without subagents, do one pass per batch yourself, from that file. Collect the
 observations.
 
@@ -93,7 +98,7 @@ Drop what no one can act on.
 In this order:
 
 1. **Suggestions**, strongest first: the change in a line or two, its route, how
-   many times and in how many sessions, and the evidence as `session@HH:MM`.
+   many times and in how many sessions, and the evidence as `session@YYYY-MM-DD HH:MM`.
 2. **Notes**, one line each, with evidence.
 3. What was read and what was skipped, with the counts.
 

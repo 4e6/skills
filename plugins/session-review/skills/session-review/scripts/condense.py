@@ -78,9 +78,15 @@ CHARS_PER_TOKEN = 4
 REDACTED = "[REDACTED]"
 
 SECRET_PATTERNS = [
-    # PEM private keys, whole block; and a block cut off before its end line.
-    (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----.*?-----END [A-Z ]*PRIVATE KEY-----", re.S), REDACTED),
-    (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----.*", re.S), REDACTED),
+    # PEM private keys: the header and its base64 body, to the end line when
+    # there is one (a line break may be the ⏎ of `one_line`). A header with no body after it (a mention) is left alone.
+    (
+        re.compile(
+            r"-----BEGIN [A-Z ]*PRIVATE KEY-----(?:[\s⏎]*[A-Za-z\-]+:[^\n]*)*[\s⏎]*[A-Za-z0-9+/=]{16,}[A-Za-z0-9+/=\s⏎]*"
+            r"(?:-----END [A-Z ]*PRIVATE KEY-----)?"
+        ),
+        REDACTED,
+    ),
     (re.compile(r"\bsk-[A-Za-z0-9_\-]{20,}"), REDACTED),
     (re.compile(r"\bgh[pousr]_[A-Za-z0-9]{30,}"), REDACTED),
     (re.compile(r"\bgithub_pat_[A-Za-z0-9_]{20,}"), REDACTED),
@@ -93,25 +99,49 @@ SECRET_PATTERNS = [
     (re.compile(r"\beyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]*"), REDACTED),
     # Authorization headers keep their scheme so the line still reads.
     (re.compile(r"\b(Bearer|Basic)(\s+)[A-Za-z0-9._~+/=\-]{16,}"), r"\1\2" + REDACTED),
+    # "Authorization: token X": a scheme and a value, or a long bare value.
+    (
+        re.compile(r"""(?i)\b(Authorization\\?["']?\s*[=:]\s*\\?["']?(?:token|bearer|basic|apikey|api-key)\s+)(?![$<{(%\[])[^\s"'\\]{8,}"""),
+        r"\1" + REDACTED,
+    ),
+    (
+        re.compile(r"""(?i)\b(Authorization\\?["']?\s*[=:]\s*\\?["']?)(?![$<{(%\[])(?!(?:token|bearer|basic|apikey|api-key)\b)[^\s"'\\]{20,}"""),
+        r"\1" + REDACTED,
+    ),
+    # A password given to a command on its command line: "--password X",
+    # "docker login -p X", "curl -u user:X".
+    (
+        re.compile(
+            r"""(?i)(--[a-z0-9\-]*?(?:password|passwd|passphrase|secret|token|api-?key)(?!-?(?:stdin|file|env|path)\b)[a-z0-9\-]*\s+)(?![-$<{(%\[]|\d{1,7}\b)["']?[^\s"']{4,}"""
+        ),
+        r"\1" + REDACTED,
+    ),
+    (re.compile(r"""(?i)(\bdocker\s+login\b[^\n|;&]*?\s-p\s+)(?![-$<{(%\[]|\d{1,7}\b)["']?[^\s"']{4,}"""), r"\1" + REDACTED),
+    (re.compile(r"""(\bcurl\b[^\n|;&]*?\s(?:-u|--user)\s+["']?[^\s:"']+:)(?![$<{(%\[])[^\s"']+"""), r"\1" + REDACTED),
     # Credentials inside a URL: scheme://user:password@host.
     (re.compile(r"\b([a-z][a-z0-9+.\-]*://)[^\s/:@]+:[^\s/@]+@"), r"\1" + REDACTED + "@"),
 ]
 
 # NAME=value or "name": "value", where the name says it is a secret. A value
-# shorter than eight characters, all digits, or a reference ($VAR, <placeholder>)
-# is not a secret worth hiding, and hiding it would also eat "max_tokens": 4096.
-KEY_VALUE = re.compile(
-    r"""(?ix)
-    ([A-Za-z0-9_.\-]{0,40}(?:password|passwd|secret|token|api[_\-]?key|apikey)[A-Za-z0-9_.\-]{0,40})
-    (["']?\s*[=:]\s*["']?)
-    ([^\s"'&,;]{8,})
-    """
-)
+# shorter than eight characters or a reference ($VAR, <placeholder>) is not a
+# secret worth hiding, and hiding it would also eat "max_tokens": 4096. All
+# digits is hidden only from eight on, and never after a name ending in
+# "tokens" (a count). The separator allows the quotes of JSON that was itself
+# put inside a JSON string (\").
+_NAME = r"([A-Za-z0-9_.\-]{0,40}(?:password|passwd|passphrase|secret|token|api[_\-]?key|apikey)[A-Za-z0-9_.\-]{0,40})"
+_SEP = r"""(\\?["']?\s*[=:]\s*"""
+KEY_VALUE = re.compile(_NAME + _SEP + r"""\\?["']?)([^\s"'&,;\\]{8,})""", re.I)
+# A quoted value, which may hold spaces: password="two words here".
+KEY_QUOTED = re.compile(_NAME + _SEP + r"""\\?(["']))([^"'\\\n]{8,})(?=\\?\3)""", re.I)
+# A pass phrase written as prose after a colon: "password: correct horse battery".
+KEY_PHRASE = re.compile(r"\b(pass(?:word|wd|phrase)\s*:[ \t]*)([^\s\"'$<{(%\[][^\n]*? [^\n]*)", re.I)
 
 
 def _key_value(m: re.Match) -> str:
     value = m.group(3)
-    if value.isdigit() or value[0] in "$<{(%[":
+    if value[0] in "$<{(%[":
+        return m.group(0)
+    if value.isdigit() and m.group(1).lower().endswith("tokens"):
         return m.group(0)
     return m.group(1) + m.group(2) + REDACTED
 
@@ -120,6 +150,8 @@ def redact(text: str) -> str:
     """Replace anything shaped like a secret. Idempotent."""
     for pattern, replacement in SECRET_PATTERNS:
         text = pattern.sub(replacement, text)
+    text = KEY_QUOTED.sub(lambda m: m.group(0) if m.group(4)[0] in "$<{(%[" else m.group(1) + m.group(2) + REDACTED, text)
+    text = KEY_PHRASE.sub(lambda m: m.group(1) + REDACTED if len(m.group(2)) >= 8 else m.group(0), text)
     return KEY_VALUE.sub(_key_value, text)
 
 
@@ -295,7 +327,8 @@ def parse(path: str, seen: set, subagent: bool = False) -> Session:
         add("user", rec, text=clip(redact(text), HUMAN_TEXT_MAX))
 
     def tool_result(rec, item):
-        call = calls.get(item.get("tool_use_id"))
+        use_id = item.get("tool_use_id")
+        call = calls.get(use_id) if isinstance(use_id, str) else None
         content = result_text(item.get("content"))
         kind = rec.get("toolDenialKind")
         feedback = rec.get("userFeedback")
@@ -324,7 +357,7 @@ def parse(path: str, seen: set, subagent: bool = False) -> Session:
             result["text"] = clip(redact(one_line(content)), RESULT_OK_MAX)
         tool_use_result = rec.get("toolUseResult")
         agent = tool_use_result.get("agentId") if isinstance(tool_use_result, dict) else None
-        if not agent:
+        if not isinstance(agent, str) or not agent:
             found = re.search(r"agentId: ([A-Za-z0-9]+)", content)
             agent = found.group(1) if found else None
         if call is None:
@@ -369,7 +402,7 @@ def parse(path: str, seen: set, subagent: bool = False) -> Session:
         message = rec.get("message")
         if not isinstance(message, dict):
             return
-        key = message.get("id") or rec.get("uuid")
+        key = next((v for v in (message.get("id"), rec.get("uuid")) if isinstance(v, str) and v), None)
         model = message.get("model")
         synthetic = model == "<synthetic>" or bool(rec.get("isApiErrorMessage"))
         if model and model != "<synthetic>" and model not in session.models:
@@ -407,6 +440,8 @@ def parse(path: str, seen: set, subagent: bool = False) -> Session:
                 add("think", rec, text=clip(redact(text.strip()), THINK_MAX))
             elif kind == "tool_use":
                 call_id = block.get("id")
+                if not isinstance(call_id, str):
+                    call_id = None  # only a string can pair a result with its call
                 if call_id is not None and call_id in calls:
                     continue
                 state["tool_n"] += 1
@@ -440,7 +475,7 @@ def parse(path: str, seen: set, subagent: bool = False) -> Session:
         if kind not in ("user", "assistant", "attachment", "system"):
             continue  # bookkeeping, and any record type this script has not met
         uuid = rec.get("uuid")
-        if uuid:
+        if isinstance(uuid, str) and uuid:
             if uuid in seen:
                 session.skipped_seen += 1
                 continue
@@ -575,13 +610,13 @@ def header_lines(session: Session):
     ]
     if session.skipped_seen:
         lines.append("note: %d records were already shown earlier in this run (a continued session copies its history) and are left out" % session.skipped_seen)
-    lines.append("cite a line as %s@HH:MM" % session.id)
+    lines.append("cite a line as %s@YYYY-MM-DD HH:MM, the day from the nearest --- day --- line above it" % session.id)
     return lines
 
 
 def render(session: Session, subagents: bool = False) -> str:
-    start = session.first.date() if session.first else None
-    lines = header_lines(session) + [""] + body_lines(session, subagents, start_day=start)
+    # No start day: the first line gets a day marker, so every line has a day.
+    lines = header_lines(session) + [""] + body_lines(session, subagents)
     # One last pass over everything written, in case a rule above missed a path.
     return redact("\n".join(lines)) + "\n"
 
@@ -725,9 +760,33 @@ def cmd_list(args) -> int:
     return 0
 
 
+def started(path: str):
+    """(when a session began, when its file was written): the first timestamped
+    record, else the file's mtime; the file's mtime breaks a tie, as a copy of a
+    history starts when the original did."""
+    try:
+        written = os.path.getmtime(path)
+    except OSError:
+        written = 0.0
+    try:
+        with open(path, encoding="utf-8", errors="replace") as handle:
+            for raw in handle:
+                try:
+                    rec = json.loads(raw)
+                except ValueError:
+                    continue
+                when = parse_time(rec.get("timestamp")) if isinstance(rec, dict) else None
+                if when:
+                    return (when.timestamp(), written)
+    except OSError:
+        pass
+    return (written, written)
+
+
 def cmd_condense(args) -> int:
     root = projects_dir(args.projects_dir)
     paths = [find_session(root, ref) for ref in args.sessions]
+    paths = sorted(dict.fromkeys(paths), key=started)  # oldest first, so it keeps the shared history
     if args.out == "-":
         if len(paths) != 1:
             raise SystemExit("--out - takes exactly one session")
