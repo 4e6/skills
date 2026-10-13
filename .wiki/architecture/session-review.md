@@ -1,7 +1,7 @@
 ---
 type: Module
 title: Session review
-description: The one plugin here, and the one skill that works only in Claude Code. Why it is a plugin, why its name omits the host, the transcript facts behind the condenser, where the observer prompt came from, and the watcher that is not built.
+description: The first of two plugins here, and the one skill that works only in Claude Code. Why it is a plugin, why its name omits the host, the transcript facts behind the condenser, where the observer prompt came from, and the watcher.
 tags: [architecture, plugin, claude-code, distribution]
 sources:
   - resource: plugins/**
@@ -10,7 +10,7 @@ sources:
   - id: hank
     resource: https://github.com/SouthBridgeAI/hankweave-runtime/tree/release/alpha/learning/examples/plan-gen-v2-general
     title: hankweave example plan-gen-v2-general
-sources_digest: 0f520241c9e6e50c
+sources_digest: 41dc3c4c15b6d5ab
 ---
 
 # What it is, and what it refuses to be
@@ -19,8 +19,8 @@ sources_digest: 0f520241c9e6e50c
 suggestions for improving their everyday work, each with evidence
 (`<session>@YYYY-MM-DD HH:MM`): a skill to fix, a habit to automate, a preference to write
 down, a permission to allow. It is part 1 of
-[issue #48](https://github.com/4e6/skills/issues/48); the watcher is part 2, and
-not built (below).
+[issue #48](https://github.com/4e6/skills/issues/48); the watcher is part 2, built as
+[session-watch](/architecture/session-watch.md).
 
 - **Claude Code only.** The transcripts are Claude Code's own files, so there is
   nothing to read elsewhere. Like [Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md)
@@ -31,8 +31,9 @@ not built (below).
 
 # Why a plugin, and where it lives
 
-The issue's option A: skill and watcher in one plugin, with one observer prompt
-in one file, so the two cannot drift. The skill sits inside the plugin
+The issue's option A was the skill and the watcher in one plugin. The watcher is a
+second plugin, `session-watch`, because enablement is per plugin; the one observer
+prompt lives in one file, which the watcher links, so the two cannot drift. The skill sits inside the plugin
 (`plugins/session-review/skills/session-review/`) and not in `skills/`, because a
 copy in both places is the drift the issue warns of.
 
@@ -64,6 +65,8 @@ invoked as `/session-review:session-review`.
 `version` pins installed copies, so a skill fixed without the plugin's number
 raised reaches nobody. Auto-update is off by default for third-party
 marketplaces, so users still run `/plugin update` for a version that did move.
+
+`observer.md` is also linked by [session-watch](/architecture/session-watch.md#the-shared-prompt-and-the-version-rule), so an edit to it must bump **both** plugins; `release.py check` fails otherwise.
 
 # The condenser, and the transcript facts behind it
 
@@ -116,18 +119,11 @@ depends on the working directory; `${CLAUDE_PLUGIN_ROOT}` is not in Bash's
 environment and would break the plain install. Both variables were checked on a
 real host, 2.1.296: `claude -p --plugin-dir`, and as a project skill.
 
-# Part 2, not built: the watcher
+# Part 2: the watcher
 
-The owner's comment on the issue asks to switch it with `/plugin enable`.
-Enabling is per plugin and persists in a settings scope, so a watcher in this
-plugin would be on whenever the skill is. The likelier shape is a **second
-plugin** with `defaultEnabled: false`, sharing `observer.md` by a symlink inside
-the marketplace. The docs say a symlink is dereferenced on a Git install and
-skipped for local-path installs; no real install has verified it. `claude -p
---bare` accepts only `ANTHROPIC_API_KEY`, so a hooks module calling
-`$.model.complete` and showing `$.ui.toast` or `$.ui.status` is the likelier
-route than a headless child. **Open for the user**, who judges the skill's
-suggestions first.
+Built as a second plugin, `session-watch`, off by default, sharing `observer.md`
+by a symlink. Why, what it shows, and what is still open are on
+[its page](/architecture/session-watch.md).
 
 # The report's shape: a suggestion a reader can judge
 

@@ -7,6 +7,11 @@
       "name": "session-review",
       "source": "./plugins/session-review",
       "description": "Reads your past Claude Code sessions and suggests, with evidence, how to improve your everyday work. Applies nothing."
+    },
+    {
+      "name": "session-watch",
+      "source": "./plugins/session-watch",
+      "description": "Opt-in, off by default. While you work, a small model reads the latest part of the session when it goes idle and shows you what could be improved. Shown to you, never to Claude."
     }
   ]
 }

@@ -36,7 +36,23 @@ build runs in UTC, as CI does, and a zip made on a laptop matches the release.
 installed through the marketplace, not as a zip, and `plugin.json` carries a
 version; Claude Code keeps an installed copy on that version until it changes.
 So a skill fixed without the plugin's number raised reaches nobody, and `check`
-fails when the two differ, whether or not README.md links any zip.
+fails when the two differ, whether or not README.md links any zip. A plugin
+that holds no skill (a mod, which is code) has nothing to match; its version
+must still be MAJOR.MINOR.PATCH.
+
+**A file shared by symlink moves every plugin that links it.** A plugin's folder
+may hold a symlink to a file or a folder elsewhere in the repository, so that
+one text is read by two plugins instead of drifting as two copies. An installed
+copy keeps the version it was installed at, so an edit to the shared path
+reaches nobody unless each plugin that links it is bumped. For each symlink
+committed under plugins/P/ (listed from HEAD's tree, so a directory link counts
+and an uncommitted one does not) `check` reads where it points; a target outside
+the repository is a fault, and so is one that is no longer in HEAD (renamed or
+removed). T is the last commit that touched the target. The plugin's `version`
+at HEAD must differ from its `version` at T's parent; a plugin that did not
+exist there passes. It judges what is committed, not the working tree, so it
+needs the history: in a shallow clone it faults, and says so (CI fetches all of
+it). An edit not yet committed is seen once it is.
 
 Python 3.9, standard library only. It runs git, and writes only under dist/.
 """
@@ -111,11 +127,73 @@ def frontmatter(skill: str) -> tuple[str | None, str | None]:
     return (name[1] if name else None), (version[1] if version else None)
 
 
+def plugin_version_at(plugin: str, rev: str) -> str | None:
+    """The `version` in the plugin's plugin.json at `rev`, or None if it has none there."""
+    path = f"{plugin}/.claude-plugin/plugin.json"
+    if not has_ref(f"{rev}:{path}"):
+        return None
+    try:
+        version = json.loads(git("show", f"{rev}:{path}")).get("version")
+    except ValueError:
+        return None
+    return version if isinstance(version, str) else None
+
+
+def committed_symlinks(plugin: str) -> list[tuple[str, str]]:
+    """Each symlink under the plugin at HEAD, as (path, link text). Directory links included."""
+    found: list[tuple[str, str]] = []
+    for line in git("ls-tree", "-r", "-z", "HEAD", "--", plugin).split("\0"):
+        meta, _, path = line.partition("\t")
+        parts = meta.split()
+        if len(parts) == 3 and parts[0] == "120000":
+            found.append((path, git("cat-file", "blob", parts[2])))
+    return found
+
+
+def symlink_faults(plugin: str) -> list[str]:
+    """Each symlink committed under the plugin whose target changed without the plugin's version."""
+    links = committed_symlinks(plugin)
+    if not links:
+        return []
+    if git("rev-parse", "--is-shallow-repository") == "true":
+        return [
+            f"{plugin} links a file elsewhere in the repository, but this clone is shallow: "
+            f"the history that says when that file last changed is missing. "
+            f"Fetch it all (git fetch --unshallow) and run check again"
+        ]
+    faults: list[str] = []
+    for link, text in links:
+        rel = os.path.normpath(os.path.join(os.path.dirname(link), text))
+        if os.path.isabs(text) or rel == ".." or rel.startswith(".." + os.sep):
+            faults.append(f"{link} points outside the repository")
+            continue
+        if not git("ls-tree", "HEAD", "--", rel):
+            faults.append(
+                f"{link} points at {rel}, which is not in HEAD: it was renamed or removed, "
+                f"or never committed. Point the link at the file's current path"
+            )
+            continue
+        last = git("log", "-1", "--format=%H", "--", rel)
+        if not has_ref(f"{last}^"):
+            continue
+        before = plugin_version_at(plugin, f"{last}^")
+        if before is None:
+            continue
+        if plugin_version_at(plugin, "HEAD") == before:
+            faults.append(
+                f"{link} points at {rel}, last changed in {last[:7]}; {plugin}'s version "
+                f"is still v{before} as it was before that. Bump it, or the change reaches no installed copy"
+            )
+    return faults
+
+
 def plugin_faults() -> list[str]:
     """Each plugin whose version is not that of every skill it holds.
 
     Read from the working tree: the plugin is installed from the marketplace as
     it stands in git, and a version that differs there is the fault, saved or not.
+    A plugin with no skill is allowed; its version must be MAJOR.MINOR.PATCH.
+    The symlink rule (see the module docstring) is judged on commits instead.
     """
     faults: list[str] = []
     for manifest in sorted(glob.glob("plugins/*/.claude-plugin/plugin.json")):
@@ -132,9 +210,8 @@ def plugin_faults() -> list[str]:
         if not SEMVER.fullmatch(version):
             faults.append(f"{manifest} is v{version}; a version is MAJOR.MINOR.PATCH")
             continue
+        faults += symlink_faults(plugin)
         skills = sorted(glob.glob(f"{plugin}/skills/*/SKILL.md"))
-        if not skills:
-            faults.append(f"{plugin} holds no skill, so {manifest}'s version has nothing to match")
         for path in skills:
             with open(path, encoding="utf-8") as f:
                 m = FRONTMATTER.match(f.read())
