@@ -626,13 +626,11 @@ Only their words say which.
 close to a session is its `before` line. Never a meal placed in front of it, and
 never a note saying when to eat.
 
-**Cook what their country eats**, when they have said where they are.
+**Cook what their country eats.**
 
 - Dishes, staples and above all breakfast should be ones an ordinary household
   there cooks. A plan that reads like one for somewhere else with the shop names
   swapped has missed the point.
-- Where they have not said, cook something unremarkable and widely available.
-  Never guess at a cuisine.
 
 **The plan is written in English, whatever country they live in.** Their country
 chooses the food, never the words.
@@ -653,15 +651,12 @@ for a category or two. Name chains that actually trade there.
 
 ## Weights and measures are their country's
 
-**The country picks the measurement system, as it picks the dishes and shops.**
-The unit the athlete gave their own weight in does not. An American who says *78
-kg* still shops in pounds. A Briton who weighs themselves in stone still buys 500
-g of pasta.
+**The country picks the measurement system, as it picks the dishes and shops,
+whatever unit the athlete gave their body weight in.** An American who says *78
+kg* still shops in pounds.
 
-- Three countries never went metric: the United States, Liberia and Myanmar.
-  A plan for one is in US customary units.
-- Every other plan is metric, including one for someone who has not said where
-  they live.
+The plan is written in one of two systems. The United States, Liberia and
+Myanmar use US customary. Every other country uses metric.
 
 **US customary** wherever a quantity is printed: recipe lines, `portion_size`, and
 the list's `qty` and `pack.qty`.

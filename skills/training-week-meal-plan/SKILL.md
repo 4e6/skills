@@ -14,7 +14,7 @@ compatibility: >-
   checked and a printable page is rendered; without it you still get the plan.
 metadata:
   author: 4e6
-  version: "1.9.0"
+  version: "1.9.1"
 ---
 
 # A week of meals that tracks the training
@@ -45,7 +45,7 @@ The checklist is yours. Never show it to the athlete: not in a reply, not as a
 task list.
 
 ```
-- [ ] 1  gather the week, the weight, and the optional answers
+- [ ] 1  gather the week, the weight, the country, and the optional answers
 - [ ] 2  read references/fuelling.md, look for recent plans
 - [ ] 3  write plan-<date>.json
 - [ ] 4  check the plan
@@ -70,22 +70,19 @@ What the athlete hears:
 
 ## Step 1 — Gather
 
-Two things are required:
+Three things are required:
 
 - **The training week, in their words.**
   - Take a pasted week verbatim. Do not tidy it or drop what you cannot parse.
   - Ask once for durations, distances, zones or RPE, and a load score or
     intensity factor. Never wait for them.
 - **Body weight, with units.** No default, no fallback, no plan without it.
+- **Where they live.** It picks the dishes, names the shops and sets the units.
 
-Three are optional. Ask for them once, together with the rest. Any answer,
-*just go ahead* included, ends the asking:
+Two are optional. Ask for them once, together with the rest:
 
 - **Dietary restrictions.**
 - **What is in the fridge.**
-- **Where they live.** It picks the dishes, names the shops and sets the units:
-  pounds and cups in the United States, Liberia and Myanmar, metric elsewhere.
-  The plan stays in English.
 
 Plus **which days** the plan covers, below.
 

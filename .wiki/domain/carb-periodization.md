@@ -5,7 +5,7 @@ description: Carbohydrate scaled to each day's training, hardest days fed hardes
 tags: [nutrition, domain]
 sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md
-sources_digest: 2f008f0fec3d6e4c
+sources_digest: 84552357804264fb
 ---
 
 Rather than a constant daily diet, **carb periodization** scales carbohydrate to
