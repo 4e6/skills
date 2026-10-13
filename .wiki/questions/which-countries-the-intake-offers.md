@@ -5,7 +5,7 @@ description: The place question offers four English-speaking countries and a typ
 tags: [intake, product]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: eb1d9243f7f8cde3
+sources_digest: dab3787d611dd86e
 ---
 
 # The question

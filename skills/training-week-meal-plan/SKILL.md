@@ -286,7 +286,7 @@ Look through the tools list and the skills list in your context for any that
 draw a picture from a written description. Look; do not decide from memory. If
 there is any, read [references/photos.md](references/photos.md) now. One that
 needs a setup you have not seen done counts: ask the athlete whether to set it
-up, and render without photos if they decline.
+up.
 
 ```
 python3 <this skill's directory>/scripts/render.py plan-<date>.json plan-<date>.html

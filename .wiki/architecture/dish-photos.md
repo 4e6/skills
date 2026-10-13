@@ -126,8 +126,7 @@ Python does not try to plot a plate. It tells the host to **list** what it has,
 naming the two places to look, the tools list and the skills list in its context,
 and read `photos.md` if anything is there. A generator that needs a setup the host
 has not seen done counts, and the host asks the athlete before setting it up: a
-long one-time install is the athlete's to agree to, and a page without photos is
-the fallback if they decline. It once said *where your host can make
+long one-time install is the athlete's to agree to. It once said *where your host can make
 a picture*, which left the judgement to the host: in a real run an agent skipped
 the photos without looking, though a local image skill was installed, and never
 told the athlete. A condition about what the host can do is answered from memory;
