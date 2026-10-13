@@ -122,12 +122,17 @@ it once did only on a page with photos.
 
 Step 6 names a capability — the tools and skills *that make a picture from a
 written description* — never a host, and is worded so a host whose only tool is
-Python does not try to plot a plate. It tells the host to **list** what it has
-and read `photos.md` if anything is there. It once said *where your host can make
+Python does not try to plot a plate. It tells the host to **list** what it has,
+naming the two places to look, the tools list and the skills list in its context,
+and read `photos.md` if anything is there. A generator that needs a setup the host
+has not seen done counts, and the host asks the athlete before setting it up: a
+long one-time install is the athlete's to agree to. It once said *where your host can make
 a picture*, which left the judgement to the host: in a real run an agent skipped
 the photos without looking, though a local image skill was installed, and never
 told the athlete. A condition about what the host can do is answered from memory;
-a list is answered from the session. No tool is named, since one that exists on
+a list is answered from the session. A real run in 2026-10 still skipped the
+list on Sonnet 5.5, having taken the tools list for the whole answer while the
+image skill sat in the skills list. No tool is named, since one that exists on
 one host is wrong on the next, and no example is given, as
 [editing a skill](/conventions/editing-a-skill.md) allows only those every page
 would accept. `photos.md` is loaded only where it applies:
