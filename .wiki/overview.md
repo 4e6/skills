@@ -1,7 +1,7 @@
 ---
 type: Overview
 title: What this repository is
-description: Agent Skills that run in somebody else's session. training-week-meal-plan turns a training week into meals; z-image-turbo-macos draws images on a Mac; llm-wiki keeps a wiki; supervise-work runs tasks.
+description: Agent Skills that run in somebody else's session. training-week-meal-plan plans meals; z-image-turbo-macos draws on a Mac; llm-wiki keeps a wiki; supervise-work runs tasks; session-review, a plugin, reviews sessions.
 tags: [overview]
 sources:
   - resource: /README.md
@@ -9,7 +9,8 @@ sources:
   - resource: skills/z-image-turbo-macos/SKILL.md
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/supervise-work/SKILL.md
-sources_digest: 236acce9d0f37056
+  - resource: plugins/session-review/skills/session-review/SKILL.md
+sources_digest: 683ff136a7f72c8d
 ---
 
 # What it is
@@ -22,14 +23,17 @@ It runs there on their tokens and on whatever that host happens to provide, and
 the repository around it does not exist. What each skill may reach is on its own
 page.
 
-There are four. `training-week-meal-plan`, below, is the one most of this bundle
+There are five. `training-week-meal-plan`, below, is the one most of this bundle
 is about. `z-image-turbo-macos` draws images from prompts with one model on one
 kind of machine ([Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md)).
 `llm-wiki` keeps a knowledge base like this one, and this bundle is kept with
 it. `supervise-work` carries any task, or a GitHub issue, through research, plan,
 build and review and delivers what was asked for, whether findings, a plan, a
 merged change or work run, unattended or with the user steering it
-([supervise work](/architecture/supervise-work.md)). `training-week-meal-plan` and
+([supervise work](/architecture/supervise-work.md)). `session-review` reads
+the user's past Claude Code sessions and suggests improvements, applying nothing;
+it works only in Claude Code and is the one skill shipped as a plugin
+([session review](/architecture/session-review.md)). `training-week-meal-plan` and
 `supervise-work` are pure payloads: neither ships a script that reaches the
 network (`supervise-work`'s GitHub reference works through `gh`). `z-image-turbo-macos` and
 `llm-wiki` are not

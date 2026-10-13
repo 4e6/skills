@@ -26,8 +26,12 @@ a list once quietly lost several of its items.
 
 `agentskills validate ./skills/<name>`, from the `skills-ref` package
 (<https://github.com/agentskills/agentskills>), is the authoritative check
-against the specification. CI runs it on every skill, on every pull request
+against the specification. CI runs it on every skill, on every pull request,
+including those inside a plugin, `plugins/*/skills/*/`
 ([the zip release](/architecture/the-zip-release.md#what-ci-checks-and-on-what)).
+A plugin's version moves with its skill's: change `metadata.version` and
+`plugin.json` together, or `release.py check` fails
+([why](/architecture/session-review.md#versioning-the-plugins-number-is-the-skills)).
 
 # The skill states the rule; this bundle carries the argument
 

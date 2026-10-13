@@ -1,4 +1,4 @@
-# Checks every skill against the specification and each zip the README offers,
+# Checks every skill, in skills/ and in a plugin, against the specification and each zip the README offers,
 # and on main releases every linked skill whose version has no tag yet.
 # tools/release.py says why it works the way it does.
 name: Release
@@ -26,7 +26,10 @@ jobs:
       - name: Validate against the Agent Skills specification
         run: |
           pip install skills-ref==0.1.1
-          for skill in skills/*/; do agentskills validate "$skill"; done
+          for skill in skills/*/ plugins/*/skills/*/; do agentskills validate "$skill"; done
+      # The tests sit beside the skill, not in it: whatever is in it ships.
+      - name: Test the session condenser
+        run: python3 -m unittest discover -s evals/session-review
       - name: Check the zips
         run: python3 tools/release.py check
 

@@ -32,12 +32,20 @@ so an unchanged skill rebuilds to the same bytes. That needs `--mtime`, which
 arrived in git 2.45. Zip keeps that time in the builder's local zone, so the
 build runs in UTC, as CI does, and a zip made on a laptop matches the release.
 
+**A plugin's version is its skill's version.** A plugin under plugins/ is
+installed through the marketplace, not as a zip, and `plugin.json` carries a
+version; Claude Code keeps an installed copy on that version until it changes.
+So a skill fixed without the plugin's number raised reaches nobody, and `check`
+fails when the two differ, whether or not README.md links any zip.
+
 Python 3.9, standard library only. It runs git, and writes only under dist/.
 """
 
 from __future__ import annotations
 
 import argparse
+import glob
+import json
 import os
 import re
 import subprocess
@@ -103,6 +111,42 @@ def frontmatter(skill: str) -> tuple[str | None, str | None]:
     return (name[1] if name else None), (version[1] if version else None)
 
 
+def plugin_faults() -> list[str]:
+    """Each plugin whose version is not that of every skill it holds.
+
+    Read from the working tree: the plugin is installed from the marketplace as
+    it stands in git, and a version that differs there is the fault, saved or not.
+    """
+    faults: list[str] = []
+    for manifest in sorted(glob.glob("plugins/*/.claude-plugin/plugin.json")):
+        plugin = os.path.dirname(os.path.dirname(manifest))
+        try:
+            with open(manifest, encoding="utf-8") as f:
+                version = json.load(f).get("version")
+        except (OSError, ValueError) as e:
+            faults.append(f"{manifest} cannot be read: {e}")
+            continue
+        if not isinstance(version, str):
+            faults.append(f"{manifest} has no version")
+            continue
+        skills = sorted(glob.glob(f"{plugin}/skills/*/SKILL.md"))
+        if not skills:
+            faults.append(f"{plugin} holds no skill, so {manifest}'s version has nothing to match")
+        for path in skills:
+            with open(path, encoding="utf-8") as f:
+                m = FRONTMATTER.match(f.read())
+            block = METADATA.search(m[1]) if m else None
+            own = VERSION.search(block[1]) if block else None
+            if own is None:
+                faults.append(f"{path} has no metadata.version")
+            elif own[1] != version:
+                faults.append(
+                    f"{manifest} is v{version}; {path} is v{own[1]}. "
+                    f"Set them equal, or the skill's change reaches no installed copy"
+                )
+    return faults
+
+
 def git_version() -> tuple[int, ...]:
     m = re.search(r"(\d+)\.(\d+)", git("version"))
     return (int(m[1]), int(m[2])) if m else (0, 0)
@@ -146,10 +190,11 @@ def notice(message: str) -> None:
 
 
 def check() -> int:
+    # Before anything that returns early: plugins are checked even with no zip.
+    faults: list[str] = plugin_faults()
     offered = linked()
     if not offered:
         print("README.md links no skill zip")
-    faults: list[str] = []
     for skill, version in sorted(offered.items()):
         name, own = frontmatter(skill)
         if name is None:
