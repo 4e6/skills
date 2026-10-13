@@ -10,7 +10,7 @@ sources:
   - id: hank
     resource: https://github.com/SouthBridgeAI/hankweave-runtime/tree/release/alpha/learning/examples/plan-gen-v2-general
     title: hankweave example plan-gen-v2-general
-sources_digest: 60961fe03d478fc5
+sources_digest: 785ec0a0ee7ecc7c
 ---
 
 # What it is, and what it refuses to be
@@ -131,7 +131,26 @@ suggestions first.
 
 # Measurements
 
-Not yet measured. The quality of the suggestions has no eval; the acceptance run's
-counts will be added here.
+The issue's first check, on 2026-10-13, ran 1.0.0 as shipped: a real headless host
+(`claude -p --plugin-dir`, Claude Code 2.1.296) over every project under one
+prefix of the author's, last 30 days, default filters. It read 114 sessions (about
+4.8M condensed tokens; 222 headless runs and 30 under the activity floor left out)
+in 44 observer batches on Haiku, collected 737 observations, and grouped them into
+24 suggestions and 25 notes, for USD 15.76. The suggestions named the file or rule
+to change, and the routes covered every kind the skill lists. The report stays with
+its owner: it names private projects.
+
+What it does not show:
+
+- **No eval.** Whether a suggestion is worth acting on was judged by reading, once,
+  by the author's agent; nothing scores it.
+- **Counts are loose.** "Seen N times" sums the observers' own counts, so a pattern
+  that one observer counted per tool call looks bigger than one counted per session.
+- **One user, one machine, one model mix.** Smaller observers than Haiku, or another
+  grouping model, were not tried.
+
+The run predates the fixes of the first code review (the observer path became
+`${CLAUDE_SKILL_DIR}`-absolute, session order oldest first, day-stamped citations);
+the host already passed observers an absolute path.
 
 [^hank]: The sentinel is `sentinels/implementation-observer.json` in that example.

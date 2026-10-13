@@ -10,7 +10,7 @@ sources:
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/supervise-work/SKILL.md
   - resource: plugins/session-review/skills/session-review/SKILL.md
-sources_digest: 683ff136a7f72c8d
+sources_digest: 4a2557fa67dd7744
 ---
 
 # What it is
