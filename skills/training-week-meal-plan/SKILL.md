@@ -77,9 +77,7 @@ Three things are required:
   - Ask once for durations, distances, zones or RPE, and a load score or
     intensity factor. Never wait for them.
 - **Body weight, with units.** No default, no fallback, no plan without it.
-- **Where they live.** It picks the dishes, names the shops and sets the units:
-  pounds and cups in the United States, Liberia and Myanmar, metric elsewhere.
-  The plan stays in English.
+- **Where they live.** It picks the dishes, names the shops and sets the units.
 
 Two are optional. Ask for them once, together with the rest:
 
