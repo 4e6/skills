@@ -10,7 +10,7 @@ sources:
   - id: hank
     resource: https://github.com/SouthBridgeAI/hankweave-runtime/tree/release/alpha/learning/examples/plan-gen-v2-general
     title: hankweave example plan-gen-v2-general
-sources_digest: 92bddac9104e0534
+sources_digest: d1483559d1cf86d2
 ---
 
 # What it is, and what it refuses to be
@@ -82,7 +82,7 @@ between versions**, which is why the parser skips unknown record types and unpar
 | Every line is cited with its day | a session can span days, and `[HH:MM]` alone repeats; the condenser writes a `--- day ---` line before the first line |
 | Thinking is kept only if non-empty | 97.6% of it is empty |
 | Tool output is cut to a head, errors kept longer | tool output is about 46% of the bytes |
-| Secrets are redacted in every emitted string | transcripts hold them, and the text goes to subagents |
+| Secrets are redacted in every emitted string, and redaction fails safe | transcripts hold them, and the text goes to subagents. A pattern is never narrowed to spare a false positive if that opens a leak: twice in review, a narrowing meant to keep ordinary text readable let real secrets through (a private key in escaped JSON, a password holding a bracket), and the tests now hold both shapes |
 
 - **Headless runs are skipped by default** (`entrypoint` `sdk-*`): 222 of 365
   sessions in the 4e6 projects. They are scripted work, not how the user works.

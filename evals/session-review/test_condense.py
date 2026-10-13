@@ -82,6 +82,10 @@ def risky():
         "docker quoted": ("docker login -u me -p 'hunter2 hunter2' registry.example.com", "hunter2"),
         "curl quoted password": ("curl --user alice:'pw xyz1' https://example.com", "pw xyz1"),
         "curl quoted pair": ('curl -u "alice:pw xyz1" https://example.com', "pw xyz1"),
+        "bracket in a password": (word + "=Xk9)mQ2vLpR7tY", "mQ2vLpR7tY"),
+        "brace in a key": (key + "=abc}defghijklmnop", "defghijklmnop"),
+        "square bracket in a password": (word + "=ab]cdefghijklmn", "cdefghijklmn"),
+        "pem in doubly escaped json": ('"-----BEGIN PRIV' + "ATE KEY-----\\\\n" + PEM_BODY + '\\\\n-----END PRIV' + 'ATE KEY-----"', PEM_BODY[:24]),
         "pem cut off": ("-----BEGIN PRIV" + "ATE KEY-----\nMIIBOgIBAAJBAKj34GkxFhD90vcNLYLI", "MIIBOgIBAAJBAKj34GkxFhD90vcNLYLI"),
     }
 
@@ -391,7 +395,8 @@ class CondenseTest(unittest.TestCase):
     def test_redact_alone_catches_the_shapes_a_first_pass_missed(self):
         for name, (text, secret) in risky().items():
             out = condense.redact(text)
-            self.assertNotIn(secret, out, name)
+            for word in secret.split():  # every word: half a pass phrase is a leak
+                self.assertNotIn(word, out, name)
             self.assertIn("[REDACTED]", out, name)
             self.assertEqual(condense.redact(out), out, name)  # idempotent
 
