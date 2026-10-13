@@ -17,7 +17,7 @@ sources:
   - id: git-archive
     resource: https://git-scm.com/docs/git-archive
     title: git-archive(1)
-sources_digest: 0f863016853f4470
+sources_digest: 37a2c555c0938c95
 ---
 
 # Why there is a zip at all
@@ -94,6 +94,14 @@ every time.
 `llm-wiki` has none either: it works on a project's git checkout, which a web
 app's chat does not have.
 
+**Plugins are not zipped.** `session-review` is installed through the Claude Code
+marketplace and reads files only Claude Code keeps
+([why](/architecture/session-review.md#why-a-plugin-and-where-it-lives)). The one
+thing `check` holds a plugin to is its version: `plugin.json`'s `version` must
+equal its skill's `metadata.version`, README link or not, because a set version
+pins installed copies and a skill change without it reaches nobody
+([versioning](/architecture/session-review.md#versioning-the-plugins-number-is-the-skills)).
+
 # Built from the commit, not the folder
 
 - **`git archive`, never `zip -r`.** A run made inside the checkout leaves a plan,
@@ -116,10 +124,12 @@ app's chat does not have.
 
 On every pull request and every push to `main`:
 
-- every skill, offered or not, against the specification with `agentskills
-  validate` from the `skills-ref` package (it needs Python 3.11, where the
-  skills need 3.9);
-- every offered zip with `tools/release.py check`.
+- every skill, offered or not, and every skill inside a plugin, against the
+  specification with `agentskills validate` from the `skills-ref` package (it
+  needs Python 3.11, where the skills need 3.9);
+- the session condenser's unit tests, `python3 -m unittest discover -s
+  evals/session-review`;
+- every offered zip, and every plugin's version, with `tools/release.py check`.
 
 Nothing else here is checked yet: not this repository's own rules for a skill
 ([editing a skill](/conventions/editing-a-skill.md)), and not the tests that

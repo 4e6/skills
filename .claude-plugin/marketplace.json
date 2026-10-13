@@ -1,0 +1,12 @@
+{
+  "name": "4e6",
+  "description": "Plugins from 4e6 for Claude Code.",
+  "owner": { "name": "4e6" },
+  "plugins": [
+    {
+      "name": "session-review",
+      "source": "./plugins/session-review",
+      "description": "Reads your past Claude Code sessions and suggests, with evidence, how to improve your everyday work. Applies nothing."
+    }
+  ]
+}
