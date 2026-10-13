@@ -20,7 +20,7 @@ compatibility: >-
   needs git and an authenticated GitHub CLI (gh).
 metadata:
   author: 4e6
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Supervise work
@@ -151,6 +151,7 @@ find it: in the reply, a file in the working folder, or the thread the task came
 from. A role resumed later, or waiting on another role's output, re-reads that
 artifact or fetches that branch first, and a reviewer is pinned to an exact
 commit SHA.
+Mark what is inferred in each artifact, apart from what is known.
 
 ## 2. Research
 
@@ -170,10 +171,13 @@ to see than one in a diff. Write it briefly:
 - why this approach, and which alternatives you rejected;
 - how you will know it works;
 - what is out of scope;
-- what you could not settle.
+- what you could not settle, and what the plan rests on: the sources you read,
+  what you could not see, and what you assumed to fill the gaps.
 
 A plan for work that cannot be undone says how to undo it, or how to check before
 doing it. Have a reviewer read the plan and revise until it would approve.
+Whenever you revise it, change only what is wrong, in place, and do not rewrite or
+summarize the rest; note in the plan what changed and why.
 
 Some decisions are the user's: scope the task leaves open, behaviour its users
 will see, breaking changes, new dependencies, spend, anything that leaves the
