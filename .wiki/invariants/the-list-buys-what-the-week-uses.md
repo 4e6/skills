@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/validate.py
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/references/fuelling.md
-sources_digest: 0e7497aa26f4ef30
+sources_digest: c1a37500ce19753f
 ---
 
 # Statement

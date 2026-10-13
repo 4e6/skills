@@ -9,7 +9,7 @@ sources:
   - resource: skills/z-image-turbo-macos/SKILL.md
   - resource: skills/llm-wiki/SKILL.md
   - resource: skills/supervise-work/SKILL.md
-sources_digest: 11a072803033c6da
+sources_digest: 03a54051464b9f9d
 ---
 
 # What it is
@@ -61,7 +61,7 @@ Seven steps in `SKILL.md`, which the host follows:
 
 | Step | What happens | Page |
 |---|---|---|
-| 1 | Ask for the week, the weight, three optional things and which days | [the intake](/architecture/the-intake.md) |
+| 1 | Ask for the week, the weight, the country, two optional things and which days | [the intake](/architecture/the-intake.md) |
 | 2 | Read the fuelling rules, and look for recent plans to vary the dishes | [carb periodization](/domain/carb-periodization.md), [recent weeks](/architecture/last-weeks-plan.md) |
 | 3 | Write the plan as JSON against the published schema | [origin, repeat and leftover](/domain/origin-repeat-and-leftover.md) |
 | 4–5 | Check it with `validate.py`, repair at most twice | [the validator](/architecture/the-validator.md) |

@@ -6,7 +6,7 @@ tags: [plan-quality, intake]
 sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: d5196c2ccefd1cf8
+sources_digest: c60ae61ad9292f08
 ---
 
 # Statement
@@ -21,7 +21,7 @@ print, and to fuel from.
 # What follows
 
 - **A missing required input is a question.** There is a conversation, so the
-  week and the weight are asked for rather than guessed. Inside the finished
+  week, the weight and the country are asked for rather than guessed. Inside the finished
   document, which is printed and carried into a kitchen, the plan says what it
   assumed and never asks.
 - **Body weight has no fallback.** Every portion scales from it, so a made-up one

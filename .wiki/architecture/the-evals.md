@@ -258,8 +258,6 @@ The evals keep the isolated host and give up two things:
 - Web search, which 1.1 stopped forbidding and which the evals take away.
 - Any agent but Claude Code. The adapter keeps the agent's command line apart
   from everything else, so another can be added.
-- An athlete who names no country, where the skill says to cook something
-  unremarkable rather than guess at a cuisine.
 
 # Measurements
 

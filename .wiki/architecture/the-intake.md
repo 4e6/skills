@@ -1,20 +1,20 @@
 ---
 type: Module
 title: The intake
-description: Step 1 asks for the week, the weight, three optional things and which days — on a menu where the host has one, in one message where it does not. Why each row is the row it is, and how the days are settled.
+description: Step 1 asks for the week, the weight, the country, two optional things and which days — on a menu where the host has one, in one message where it does not. Why each row is the row it is, and how the days are settled.
 tags: [architecture, intake]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/fuelling.md
-sources_digest: d5196c2ccefd1cf8
+sources_digest: c60ae61ad9292f08
 ---
 
 # What it asks
 
-Two things are required and never invented: **the week** and **the body
-weight**. Three are optional and asked anyway: dietary restrictions, what is in
-the fridge, and where they live. And, where the athlete has not said, **which
-days** the plan covers ([nothing about the athlete is invented](/invariants/nothing-about-the-athlete-is-invented.md)).
+Three things are required and never invented: **the week**, **the body
+weight** and **the country**. Two are optional and asked anyway: dietary
+restrictions and what is in the fridge. And, where the athlete has not said,
+**which days** the plan covers ([nothing about the athlete is invented](/invariants/nothing-about-the-athlete-is-invented.md)).
 
 # A menu where there is one, and never a requirement
 
@@ -66,14 +66,20 @@ sentence that said *five* false at the same moment.
   typed row.** Hosts told to offer *three or four broad regions* each invented
   their own, and athletes typed a country anyway. A region picks no dish and
   names no shop. The four are where an English plan reads without a language gap ([which countries is open](/questions/which-countries-the-intake-offers.md)).
-- **The optional three are asked even when the required two came first**, once,
+- **The optional two are asked even when the required three came first**, once,
   together, on one menu — the fridge included. *Ask only for what is missing*
   was read as licence to skip them, and an athlete who opened with weight and
   week got porridge, mince and a generic shop. *The fridge included* because the
   two-menu split is for a cold start: a host that applied it here split the
   fridge off, took *just go ahead* on the first menu as the end of the asking,
-  and never asked about the fridge. Whatever comes back, *just go ahead*
-  included, ends the asking.
+  and never asked about the fridge.
+- **The country is required, not optional.** It used to be the third optional
+  question, closed with the others by *any answer, just go ahead included, ends
+  the asking*. On 2026-10-13 an athlete opened with the task, the weight, no
+  restrictions and a fridge, and a host read that as the asking done: the
+  country was never put to them, and the plan came out metric, with generic
+  dishes. Naming it required removes the ambiguity, and the sentence that
+  closed the asking is gone. Unmeasured: the evals were not run.
 
 **Measured, blind, on 2026-09-24**, simulated athletes answering hosts that
 loaded only the skill: twelve intake runs a side, plus two reruns of the revised
