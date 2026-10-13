@@ -3,7 +3,9 @@
 A [Claude Code](https://code.claude.com) plugin with one skill that reads your
 past Claude Code sessions and suggests how to improve your everyday work: skills
 to fix, habits to automate, preferences to write down, permissions to allow.
-Each suggestion comes with the places in your sessions that back it. It applies
+The strongest suggestions come with what happened, one quoted instance, whether
+the file they would change already covers it, and the change itself; the rest
+come with what happened, in a line, and the places that back it. It applies
 nothing; you choose what to act on.
 
 It works **only in Claude Code**. It reads the transcripts Claude Code keeps in

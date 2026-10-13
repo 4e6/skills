@@ -10,7 +10,7 @@ sources:
   - id: hank
     resource: https://github.com/SouthBridgeAI/hankweave-runtime/tree/release/alpha/learning/examples/plan-gen-v2-general
     title: hankweave example plan-gen-v2-general
-sources_digest: d1483559d1cf86d2
+sources_digest: 0f520241c9e6e50c
 ---
 
 # What it is, and what it refuses to be
@@ -129,6 +129,42 @@ skipped for local-path installs; no real install has verified it. `claude -p
 route than a headless child. **Open for the user**, who judges the skill's
 suggestions first.
 
+# The report's shape: a suggestion a reader can judge
+
+1.0.0 reported each suggestion as a line, a count and `session@time` references.
+The owner's feedback on the first run was that a suggestion without context was
+hard to judge: reading it meant reopening the cited sessions and rebuilding the
+story. Two faults sat behind that.
+
+- **It never looked at the file it wanted changed.** One suggestion, that a push
+  after approval needs a fresh review, is already a rule in this repository's
+  `supervise-work` (step 6). The report could not tell that apart from a rule
+  that is in place and still broken, and the two call for different actions: the
+  first needs nothing, the second needs the rule reworded.
+- **"Seen N times" summed the observers' own counts.** An observer counting per
+  tool call made a pattern look heavier than one counted per session, so it
+  measured how the logging went, not the weight. Grouping now counts sessions
+  and ranks by them, then by the `correction` observations among them. A continued session has its own id and counts as a second one.
+
+So grouping keeps each suggestion's observations, and step 6 hands about ten of the
+strongest to a checker each, on the strongest model, because it judges whether a rule
+covers a case. The checker reads one or two cited places and the target as it is
+today, dates a rule against the incidents where git allows, and writes four
+parts: what happened, one instance, status now, the change. The rest stay one
+line, which starts with what happened. A checked suggestion found already or
+likely addressed moves to its own short list. The brief is `references/checker.md`, a file like `observer.md`, so a host
+without subagents follows it itself.
+
+- **Cost is an estimate, not a measurement.** About ten strongest-model
+  subagents, each reading a few hundred lines of condensed text and a target
+  file, on top of the observers.
+- **Status is dated only where git reaches.** A commit date is when the source
+  changed, not when an installed copy got it, so a pinned copy is "likely
+  addressed". Git is never run in the plugin cache or a marketplace clone.
+- **Rejected:** richer observer lines (an observer sees one session, and context
+  needs the cross-session view and the target); checking every suggestion (cost
+  follows the long tail); checking on the smallest model (it is a judgement).
+
 # Measurements
 
 The issue's first check, on 2026-10-13, ran 1.0.0 as shipped: a real headless host
@@ -144,10 +180,13 @@ What it does not show:
 
 - **No eval.** Whether a suggestion is worth acting on was judged by reading, once,
   by the author's agent; nothing scores it.
-- **Counts are loose.** "Seen N times" sums the observers' own counts, so a pattern
-  that one observer counted per tool call looks bigger than one counted per session.
+- **Counts were loose.** 1.0.0's "seen N times" summed the observers' own counts, so a
+  pattern that one observer counted per tool call looked bigger than one counted per
+  session. 1.1.0 counts sessions.
 - **One user, one machine, one model mix.** Smaller observers than Haiku, or another
   grouping model, were not tried.
+
+**1.1.0 is not measured**: there was no run of it, by the owner's choice, and the new report shape is untested on real data.
 
 The run predates the fixes of the first code review (the observer path became
 `${CLAUDE_SKILL_DIR}`-absolute, session order oldest first, day-stamped citations);
