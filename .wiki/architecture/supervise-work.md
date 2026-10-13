@@ -5,7 +5,7 @@ description: "One skill for any task: research, plan, build, review and deliver,
 tags: [architecture, process, agents, github]
 sources:
   - resource: skills/supervise-work/**
-sources_digest: cda083b5ea690d76
+sources_digest: ba2e0e1117f6be5e
 ---
 
 # Why one skill, and why this shape
@@ -98,6 +98,16 @@ wrong.
   session's reasoning die with them; the next role, and the user, have only the
   artifact. It is written where the user will find it, because the skill keeps no
   state of its own.
+- **What is inferred is marked apart from what is known, in every artifact.** The
+  next role starts from the artifact alone and cannot ask its author which claims
+  were read off a file or a command and which were reasoned to. Unmarked, an
+  inference is taken as a fact, built on, and checked by nobody; a reviewer told
+  which lines are inferred knows where to look. This rule and the two plan rules
+  below come from the instructions to the plan writers in Southbridge's hankweave
+  example hank `plan-gen-v2-general` (`codons/system-prompt-broad.md` in
+  <https://github.com/SouthBridgeAI/hankweave-runtime/tree/release/alpha/learning/examples/plan-gen-v2-general>). The hank asks this of its plans; this skill asks it of findings
+  and review reports too, since they are read cold in the same way, and that
+  widening is this repository's choice.
 - **A researcher returns evidence and what it could not establish.** A research
   deliverable has no test to catch it being wrong, so the reviewer's only check is
   each claim against its evidence, and a claim with none is a finding.
@@ -144,6 +154,19 @@ wrong.
 - **Work that cannot be undone says how to undo it, or how to check first.** A
   change can be reverted from git; a migration or a batch cannot, and a plan
   that does not say so is a plan nobody reviewed for it.
+- **A plan says what it rests on.** Its sources, what the planner could not see,
+  and what it assumed to fill the gaps are what a reviewer needs to tell a wrong
+  plan from one built on a wrong premise, and what the builder needs to know which
+  steps to doubt when the work disagrees. The hank gives this a section of its
+  own, "Information Available"; here it extends the bullet for what could not be
+  settled, since the two are the same question asked from both ends.
+- **A plan is revised by targeted edits, with a note of what changed and why.** A
+  rewrite or a summary of a plan drops what its author did not think to carry
+  over: a caveat, a rejected alternative, a reason that looked settled. A targeted
+  edit leaves the rest as the reviewer read it. The note says what the next reader
+  would otherwise have to find by comparing versions, and why, which no comparison
+  shows. The rule sits once in step 3, because the build finding the plan wrong
+  and the step back when the same problem returns both go back there.
 
 ## What is about GitHub
 
@@ -208,3 +231,9 @@ happen; whether background subagents keep a supervised conversation open enough 
 steer, which depends on the host; and whether three rounds is the right cap. The
 GitHub rules come from running issues to pull requests by hand, and none has been
 tested on Sonnet or Haiku.
+
+The plan rules of 1.1.0 — what a plan rests on, revision by targeted edits with a
+note of what changed, and the inferred marked apart from the known — are not
+measured either. They are taken from the hank's instructions, whose own results
+were not measured here, and nothing yet shows whether they make a reviewer's
+findings better or only make plans longer.
