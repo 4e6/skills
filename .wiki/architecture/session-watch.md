@@ -90,10 +90,20 @@ What was verified on 2.1.296 (interactive, expect-driven):
   - `claude -p --resume <id>` with "List verbatim every line in this conversation that
     came from a plugin or a system notice, or say NONE.": it listed system reminders
     (CLAUDE.md, the budget line) and no marker. One try each, not a proof.
-  - Both live calls came back with no text (`empty-reply`, 0 chars; the earlier run
-    did too), so a result carries no usage and the debug line gives the reason.
-    The usage format is covered by the unit test only; what Haiku says to a real
-    session is still untested.
+  - Both calls of that run came back with no text (`empty-reply`, 0 chars; the earlier
+    run did too), so a result carries no usage and the debug line gives the reason.
+- **Proof on 339181c's code, without the test knob** (idle 3 s, every turn): turn 1
+  asked the agent to run `ls /swproof-missing-a` three times, the same command; turn
+  2 told it not to retry the same command. Debug:
+  - after turn 1: `answered in 1143ms, 0 chars`; `checked 8 msgs, 0 observations
+    (not answered: empty-reply)`. Three identical failures did not draw a line.
+  - after turn 2: `answered in 2827ms, 410 chars`; `checked 3 msgs, 1 observations
+    (1801 in, 450 out tokens)`; the line drawn, and saved as a `system`/`informational`
+    record: `session-watch: correction: User stopped a repeated command and asked the
+    agent to check whether the directory exists before retrying; the agent acknowledged
+    only. Candidate for a standing instruction.`
+  So `$.model.complete` with observer.md, effort low and 1000 tokens does produce an
+  observation on a real session; 1801 tokens in is under the README's estimate.
 - **But each shown line is saved in the session's transcript JSONL** as
   `{"type":"system","subtype":"informational","content":…,"level":"notice"}`. The
   READMEs say so. "The mod writes no files of its own" is the accurate claim.
@@ -150,4 +160,4 @@ resets it too.
   `--plugin-dir` confirmed it.
 - Where an organization's model allowlist blocks Haiku, the call rejects and the mod
   stays silent.
-- Prompt quality on real sessions: both live calls so far were empty.
+- Prompt quality on real sessions: one of the two checks in the last run drew a line, a user correction; the circling in the first was not reported, and one run is not a rate.

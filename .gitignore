@@ -10,3 +10,6 @@ photos/
 /dist/
 # What the evals write: every run's plan, reply, transcript and grades.
 /evals/*/results/
+
+# The host writes this under --plugin-dir when it loads a mod.
+plugins/*/tsconfig.json
