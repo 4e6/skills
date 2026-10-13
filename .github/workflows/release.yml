@@ -1,4 +1,5 @@
 # Checks every skill, in skills/ and in a plugin, against the specification and each zip the README offers,
+# checks each plugin and runs its tests with Claude Code itself,
 # and on main releases every linked skill whose version has no tag yet.
 # tools/release.py says why it works the way it does.
 name: Release
@@ -32,6 +33,28 @@ jobs:
         run: python3 -m unittest discover -s evals/session-review
       - name: Check the zips
         run: python3 tools/release.py check
+      # Claude Code checks its own plugins: the manifest validator, and the test
+      # runner for a mod, which stands in for the engine. Neither calls a model or
+      # needs a login. The latest release on purpose: when Claude Code changes
+      # under a mod (the API is early access), CI is where that shows first.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Claude Code, latest
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+      - name: Validate the marketplace and each plugin
+        run: |
+          claude plugin validate --strict .
+          for plugin in plugins/*/; do claude plugin validate --strict "$plugin"; done
+      - name: Run each plugin's tests
+        run: |
+          for plugin in plugins/*/; do
+            if find "$plugin" -name '*.test.ts' -o -name '*.test.tsx' | grep -q .; then
+              claude plugin test "$plugin"
+            fi
+          done
 
   release:
     needs: check

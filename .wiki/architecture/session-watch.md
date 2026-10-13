@@ -130,7 +130,8 @@ allowed; its version must still be MAJOR.MINOR.PATCH.
 
 - `claude plugin validate --strict plugins/session-watch` and `.`; `claude plugin
   test plugins/session-watch` runs `test/*.test.ts` with a mock clock and stubbed
-  `$` calls. The validator wants helpers that take `$` to be top-level functions.
+  `$` calls, with no model and no login. CI runs both on every pull request
+  ([what CI checks](/architecture/the-zip-release.md#what-ci-checks-and-on-what)). The validator wants helpers that take `$` to be top-level functions.
 - `--plugin-dir` does not load a `defaultEnabled: false` plugin unless given
   `--settings '{"enabledPlugins":{"session-watch@inline":true}}'`.
 - Knobs, for tests: `SESSION_WATCH_IDLE_MS` (at least 2000), `SESSION_WATCH_EVERY`

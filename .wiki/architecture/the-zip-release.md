@@ -17,7 +17,7 @@ sources:
   - id: git-archive
     resource: https://git-scm.com/docs/git-archive
     title: git-archive(1)
-sources_digest: b8007503ec7b9280
+sources_digest: 93817e427af6be82
 ---
 
 # Why there is a zip at all
@@ -138,7 +138,14 @@ On every pull request and every push to `main`:
   needs Python 3.11, where the skills need 3.9);
 - the session condenser's unit tests, `python3 -m unittest discover -s
   evals/session-review`;
-- every offered zip, and every plugin's version, with `tools/release.py check`.
+- every offered zip, and every plugin's version, with `tools/release.py check`;
+- the marketplace and each plugin with `claude plugin validate --strict`, and
+  each plugin that has tests with `claude plugin test`. Claude Code is installed
+  from npm at its latest release, on purpose: a mod's API is early access, and CI
+  is where a release that moves it shows first, as a red build with no change
+  here (the job prints the version). Neither command calls a model or needs a
+  login: the tests answer every call the mod makes, and they passed with an
+  empty home and no credentials on 2.1.296.
 
 Nothing else here is checked yet: not this repository's own rules for a skill
 ([editing a skill](/conventions/editing-a-skill.md)), and not the tests that
