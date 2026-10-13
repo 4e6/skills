@@ -17,7 +17,7 @@ sources:
   - id: git-archive
     resource: https://git-scm.com/docs/git-archive
     title: git-archive(1)
-sources_digest: b781ba1524413f10
+sources_digest: fe72276f71593380
 ---
 
 # Why there is a zip at all
@@ -104,11 +104,12 @@ pins installed copies and a skill change without it reaches nobody
 ([versioning](/architecture/session-review.md#versioning-the-plugins-number-is-the-skills)).
 
 **A symlink moves every plugin that links it.** `plugins/session-watch/observer.md`
-links session-review's prompt. For each symlink under a plugin, `check` resolves it
-(a target outside the repository is a fault), finds the target's last commit T, and
-fails unless the plugin's `version` at HEAD differs from its value at T's parent (a
-plugin that did not exist then passes). It judges what is committed, so CI needs the
-whole history ([session watch](/architecture/session-watch.md#the-shared-prompt-and-the-version-rule)).
+links session-review's prompt. For each symlink committed under a plugin (listed from
+HEAD's tree, so a directory link counts), `check` reads where it points (a target
+outside the repository, or no longer in HEAD, is a fault), finds the target's last
+commit T, and fails unless the plugin's `version` at HEAD differs from its value at
+T's parent (a plugin that did not exist then passes). It judges what is committed, so
+CI needs the whole history, and a shallow clone faults, saying why ([session watch](/architecture/session-watch.md#the-shared-prompt-and-the-version-rule)).
 
 # Built from the commit, not the folder
 

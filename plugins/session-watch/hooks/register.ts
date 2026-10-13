@@ -19,8 +19,12 @@ const ERROR_CUT = 600
 const WINDOW_CAP = 24_000
 // The cheapest model, the reply cap and the time limit of the one call a check makes.
 const MODEL = 'haiku'
-const MAX_TOKENS = 600
+const MAX_TOKENS = 1000
 const TIMEOUT_MS = 30_000
+// Longest category and line the mod will draw, in characters.
+const CATEGORY_CUT = 40
+const LINE_CUT = 300
+const INVOLVED_CUT = 80
 // The prompt file must open with this, or the link did not resolve to the observer.
 const GUARD = '# Observer'
 // One fixed observation, drawn after the real call when SESSION_WATCH_TEST_OBSERVATION=1.
@@ -34,7 +38,12 @@ let timer: Timer | undefined
 let inFlight = false
 let observer: string | undefined
 let guardLogged = false
+let idleNoticed = false
 let anchor: { id: string; after: number } | undefined
+// How many messages the last check saw; where to start when no tool use anchors the cursor.
+let seenCount = 0
+// Bumped by every session.end, so a check begun before it does not write state after it.
+let epoch = 0
 let testPending = true
 const shown = new Set<string>()
 const keysSeen = new Set<string>()
@@ -44,6 +53,11 @@ type Observation = { category: string; line: string; involved: string }
 function cut(text: string, n: number): string {
   const one = text.replace(/\s+/g, ' ').trim()
   return one.length > n ? `${one.slice(0, n)}…` : one
+}
+
+// Model text is drawn in the user's terminal: no control characters or ESC, and cut.
+function clean(text: string, n: number): string {
+  return cut(text.replace(/[\t\n\r]+/g, ' ').replace(/[\u0000-\u001f\u007f-\u009f]/g, ''), n)
 }
 
 function clock(ms: number): string {
@@ -85,7 +99,11 @@ function parse(reply: string): Observation[] {
     try {
       const o = JSON.parse(t) as Record<string, unknown>
       if (typeof o.category === 'string' && typeof o.line === 'string' && o.category !== '' && o.line !== '') {
-        out.push({ category: o.category, line: o.line, involved: typeof o.involved === 'string' ? o.involved : '' })
+        const category = clean(o.category, CATEGORY_CUT)
+        const line = clean(o.line, LINE_CUT)
+        if (category !== '' && line !== '') {
+          out.push({ category, line, involved: typeof o.involved === 'string' ? clean(o.involved, INVOLVED_CUT) : '' })
+        }
       }
     } catch {
       // not an observation
@@ -95,16 +113,19 @@ function parse(reply: string): Observation[] {
 }
 
 // Where the new part starts: after the last tool use seen at the previous check
-// plus the messages seen after it. Not found, or never anchored: the last MAX_ENTRIES.
+// plus the messages seen after it. With no anchor (a session without tool use) or
+// one not found, after the messages already seen, if the conversation has not
+// shrunk below that; else the last MAX_ENTRIES.
 function start(all: readonly SessionMessage[]): number {
   const fallback = Math.max(0, all.length - MAX_ENTRIES)
-  if (anchor === undefined) return fallback
-  for (let i = all.length - 1; i >= 0; i--) {
-    if (all[i]!.toolUses.some(u => u.tool_use_id === anchor!.id)) {
-      return Math.max(i + 1 + anchor.after, fallback)
+  if (anchor !== undefined) {
+    for (let i = all.length - 1; i >= 0; i--) {
+      if (all[i]!.toolUses.some(u => u.tool_use_id === anchor!.id)) {
+        return Math.max(i + 1 + anchor.after, fallback)
+      }
     }
   }
-  return fallback
+  return seenCount <= all.length ? Math.max(seenCount, fallback) : fallback
 }
 
 function reanchor(all: readonly SessionMessage[]): void {
@@ -148,6 +169,10 @@ async function loadObserver($: EngineInterface): Promise<boolean> {
       { to: 'debug' },
     )
   }
+  if (observer === '' && !idleNoticed) {
+    idleNoticed = true
+    $.ui.log('observer.md missing — session-watch is idle; reinstall the plugin')
+  }
   return observer !== ''
 }
 
@@ -170,6 +195,7 @@ function surface($: EngineInterface, found: Observation[]): void {
 async function check($: EngineInterface): Promise<void> {
   if (inFlight) return
   inFlight = true
+  const mine = epoch
   try {
     if ((await $.session.surfaces()).length === 0) return
     if (!(await loadObserver($))) return
@@ -179,7 +205,9 @@ async function check($: EngineInterface): Promise<void> {
     if (turns < every && errors(win) < EVERY_ERRORS) return
     turns = 0
     reanchor(all)
+    seenCount = all.length
     const observations: Observation[] = []
+    let spent = 'no call'
     if (win.length > 0) {
       let id = 'unknown'
       try {
@@ -193,16 +221,23 @@ async function check($: EngineInterface): Promise<void> {
           { text: observer! },
           { text: render(id, win, await $.clock.now()) },
         ],
+        effort: 'low',
         maxTokens: MAX_TOKENS,
         timeoutMs: TIMEOUT_MS,
       })
-      if (r.isAnswered) observations.push(...parse(r.text))
+      if (r.isAnswered) {
+        observations.push(...parse(r.text))
+        spent = `${r.usage.input_tokens} in, ${r.usage.output_tokens} out tokens`
+      } else {
+        spent = `not answered: ${r.reason}`
+      }
     }
+    if (mine !== epoch) return
     if (testPending && (await $.env.get('SESSION_WATCH_TEST_OBSERVATION')) === '1') {
       testPending = false
       observations.push(...parse(TEST_LINE))
     }
-    $.ui.log(`checked ${win.length} msgs, ${observations.length} observations`, { to: 'debug' })
+    $.ui.log(`checked ${win.length} msgs, ${observations.length} observations (${spent})`, { to: 'debug' })
     surface($, observations)
   } catch {
     // The session may be gone, the model blocked, the call slow: stay silent.
@@ -233,7 +268,11 @@ export const register: Register = on => {
   on('turn.complete', async ($, e, next) => {
     if (e.agentId === undefined) {
       turns += 1
-      await arm($)
+      try {
+        await arm($)
+      } catch {
+        // no timer this turn; the turn itself goes on
+      }
     }
     return next(e)
   })
@@ -245,14 +284,19 @@ export const register: Register = on => {
   })
 
   on('session.end', ($, e, next) => {
-    if (e.reason === 'clear') {
-      timer?.cancel()
-      timer = undefined
-      turns = 0
-      anchor = undefined
-      shown.clear()
-      keysSeen.clear()
-    }
+    // Whatever the reason, the next session starts clean.
+    epoch += 1
+    timer?.cancel()
+    timer = undefined
+    turns = 0
+    anchor = undefined
+    seenCount = 0
+    shown.clear()
+    keysSeen.clear()
+    testPending = true
+    observer = undefined
+    guardLogged = false
+    idleNoticed = false
     return next(e)
   })
 }

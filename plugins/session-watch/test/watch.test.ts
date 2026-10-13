@@ -10,6 +10,7 @@ const OBS = (category: string, line: string, involved = '') =>
 type Setup = {
   clock: ReturnType<typeof mock.clock>
   prompts: string[]
+  reqs: Record<string, unknown>[]
   blocks: unknown[]
   logs: { text: string; to: string }[]
   toasts: string[]
@@ -19,7 +20,7 @@ type Setup = {
 function setup(on: Parameters<Parameters<typeof test>[1]>[1], env: Record<string, string> = {}): Setup {
   const clock = mock.clock(on)
   mock.env(on, { SESSION_WATCH_IDLE_MS: '2000', SESSION_WATCH_EVERY: '1', ...env })
-  const s: Setup = { clock, prompts: [], blocks: [], logs: [], toasts: [], state: { messages: [], surfaces: ['terminal'], reply: '', reads: 0, file: OBSERVER, model: undefined } }
+  const s: Setup = { clock, prompts: [], reqs: [], blocks: [], logs: [], toasts: [], state: { messages: [], surfaces: ['terminal'], reply: '', reads: 0, file: OBSERVER, model: undefined } }
   on('turn.complete', async (_$, e) => ({ text: e.answer }))
   on('session.start', async (_$, e) => ({ cwd: e.cwd }))
   on('session.end', async (_$, e) => ({ sessionId: e.sessionId }))
@@ -30,6 +31,7 @@ function setup(on: Parameters<Parameters<typeof test>[1]>[1], env: Record<string
   on('session.messages', async () => { s.state.reads += 1; return { value: s.state.messages } })
   on('model.complete', async (_$, e) => {
     s.prompts.push(e.prompt)
+    s.reqs.push(e as never)
     if (s.state.model) return s.state.model() as never
     return { value: { isAnswered: true, text: s.state.reply, usage: USAGE } }
   })
@@ -163,7 +165,7 @@ test('the renderer follows the observer grammar, cuts lines and caps the window'
     for (let j = 0; j < 10; j++) uses.push({ tool_use_id: `c${i}-${j}`, tool: `T${i}x${j}`, input: { v: 'y'.repeat(500) }, text: 'fine' })
     many.push(asst('', uses))
   }
-  s.state.messages = many
+  s.state.messages = [...s.state.messages, ...many]
   await $.turn.complete(TURN)
   await s.clock.advance(2000)
   const q = s.prompts[1]!
@@ -211,10 +213,47 @@ test('a /clear resets the cursor', async ($, on) => {
   await $.turn.complete(TURN)
   await s.clock.advance(2000)
   await $.session.end({ reason: 'clear', sessionId: 'sess-1', resume: {} as never })
-  s.state.messages = [user('after-clear')]
+  // the new conversation still holds the old anchor's id, then new entries
+  s.state.messages = [user('before'), asst('', [use('a1', 'Bash', 'ok')]), user('after-clear')]
   await $.turn.complete(TURN)
   await s.clock.advance(2000)
   expect(s.prompts[1]).toContain('after-clear')
+  expect(s.prompts[1]).toContain('before')
+})
+
+test('any session end resets the cursor, the seen lines and the wait', async ($, on) => {
+  const s = setup(on)
+  s.state.messages = [user('a'), asst('', [use('a1', 'Bash', 'ok')])]
+  s.state.reply = OBS('circling', 'same thing', 'x')
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  await $.turn.complete(TURN) // a wait is pending
+  await $.session.end({ reason: 'logout', sessionId: 'sess-1', resume: {} as never })
+  await s.clock.advance(60000)
+  expect(s.prompts.length).toBe(1) // the pending wait was cancelled
+  s.state.messages = [user('a'), asst('', [use('a1', 'Bash', 'ok')]), user('new')]
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  expect(s.prompts[1]).toContain('USER: a')
+  expect(s.logs.filter(l => l.to === 'transcript').length).toBe(2)
+})
+
+test('the cursor: a session without tool use sends only the new messages, and does not toast', async ($, on) => {
+  const s = setup(on)
+  s.state.reply = OBS('circling', 'same thing', 'x')
+  s.state.messages = [user('one'), asst('two')]
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  expect(s.prompts[0]).toContain('one')
+  s.state.messages = [...s.state.messages, user('three'), asst('four')]
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  const q = s.prompts[1]!
+  expect(q).toContain('three')
+  expect(q).toContain('four')
+  expect(q).not.toContain('USER: one')
+  expect(q).not.toContain('ASSISTANT: two')
+  expect(s.toasts.length).toBe(0)
 })
 
 test('the guard: a file that is not the observer means no check', async ($, on) => {
@@ -226,6 +265,9 @@ test('the guard: a file that is not the observer means no check', async ($, on) 
   await s.clock.advance(60000)
   expect(s.prompts.length).toBe(0)
   expect(s.logs.filter(l => l.to === 'debug' && l.text.includes('missing or not the observer prompt')).length).toBe(1)
+  // and one visible line, once
+  const seen = s.logs.filter(l => l.to === 'transcript')
+  expect(seen.map(l => l.text)).toEqual(['observer.md missing — session-watch is idle; reinstall the plugin'])
 })
 
 test('output parsing ignores junk lines', async ($, on) => {
@@ -244,7 +286,7 @@ test('every check writes the debug line; a first occurrence logs, a repeat toast
   s.state.reply = OBS('permission', 'denied Bash', 'Bash')
   await $.turn.complete(TURN)
   await s.clock.advance(2000)
-  expect(s.logs).toContainEqual({ text: 'checked 1 msgs, 1 observations', to: 'debug' })
+  expect(s.logs).toContainEqual({ text: 'checked 1 msgs, 1 observations (1 in, 1 out tokens)', to: 'debug' })
   expect(s.logs.filter(l => l.to === 'transcript').length).toBe(1)
   expect(s.toasts.length).toBe(0)
 
@@ -289,6 +331,43 @@ test('a failing model call stays silent and the session goes on', async ($, on) 
   await s.clock.advance(2000)
   expect(s.logs.filter(l => l.to === 'transcript').length).toBe(0)
   expect(s.toasts.length).toBe(0)
+  // the session goes on: the next check still runs
+  s.state.model = undefined
+  s.state.reply = OBS('circling', 'later', 'x')
+  s.state.messages = [...s.state.messages, user('b')]
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  expect(s.prompts.length).toBe(2)
+  expect(s.logs.filter(l => l.to === 'transcript').map(l => l.text)).toEqual(['circling: later'])
+})
+
+test('the model call asks for low effort and 1000 tokens; the debug line carries usage or the reason', async ($, on) => {
+  const s = setup(on)
+  s.state.messages = [user('a')]
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  expect(s.reqs[0]!.effort).toBe('low')
+  expect(s.reqs[0]!.maxTokens).toBe(1000)
+  expect(s.logs).toContainEqual({ text: 'checked 1 msgs, 0 observations (1 in, 1 out tokens)', to: 'debug' })
+  s.state.model = async () => ({ value: { isAnswered: false, reason: 'empty-reply', usage: USAGE } })
+  s.state.messages = [...s.state.messages, user('b')]
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  expect(s.logs.some(l => l.to === 'debug' && l.text.includes('not answered: empty-reply'))).toBe(true)
+})
+
+test('model text is drawn clean: no control characters or ESC, and cut', async ($, on) => {
+  const s = setup(on)
+  s.state.reply = OBS('circ\u001b[31mling', 'bad \u001b[2J\u0007line\nnext ' + 'z'.repeat(500), 'x') + '\n' + OBS('c'.repeat(100), 'ok')
+  s.state.messages = [user('a')]
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  const shown = s.logs.filter(l => l.to === 'transcript').map(l => l.text)
+  expect(shown.length).toBe(2)
+  for (const t of shown) expect(/[\u0000-\u001f\u007f-\u009f]/.test(t)).toBe(false)
+  expect(shown[0]!.startsWith('circ[31mling: bad [2Jline next z')).toBe(true)
+  expect(shown[0]!.length <= 'circ[31mling: '.length + 301).toBe(true)
+  expect(shown[1]).toBe('c'.repeat(40) + '…: ok')
 })
 
 test('the test knob adds one fixed observation after the real call, once', async ($, on) => {

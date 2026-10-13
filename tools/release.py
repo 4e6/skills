@@ -41,15 +41,18 @@ that holds no skill (a mod, which is code) has nothing to match; its version
 must still be MAJOR.MINOR.PATCH.
 
 **A file shared by symlink moves every plugin that links it.** A plugin's folder
-may hold a symlink to a file elsewhere in the repository, so that one text is
-read by two plugins instead of drifting as two copies. An installed copy keeps
-the version it was installed at, so an edit to the shared file reaches nobody
-unless each plugin that links it is bumped. For each symlink under plugins/P/
-`check` resolves it (os.path.realpath); a target outside the repository is a
-fault. T is the last commit that touched the target. The plugin's `version` at
-HEAD must differ from its `version` at T's parent; a plugin that did not exist
-there passes. It judges what is committed, not the working tree, so it needs
-the history (CI fetches all of it); an edit not yet committed is seen once it is.
+may hold a symlink to a file or a folder elsewhere in the repository, so that
+one text is read by two plugins instead of drifting as two copies. An installed
+copy keeps the version it was installed at, so an edit to the shared path
+reaches nobody unless each plugin that links it is bumped. For each symlink
+committed under plugins/P/ (listed from HEAD's tree, so a directory link counts
+and an uncommitted one does not) `check` reads where it points; a target outside
+the repository is a fault, and so is one that is no longer in HEAD (renamed or
+removed). T is the last commit that touched the target. The plugin's `version`
+at HEAD must differ from its `version` at T's parent; a plugin that did not
+exist there passes. It judges what is committed, not the working tree, so it
+needs the history: in a shallow clone it faults, and says so (CI fetches all of
+it). An edit not yet committed is seen once it is.
 
 Python 3.9, standard library only. It runs git, and writes only under dist/.
 """
@@ -136,34 +139,51 @@ def plugin_version_at(plugin: str, rev: str) -> str | None:
     return version if isinstance(version, str) else None
 
 
+def committed_symlinks(plugin: str) -> list[tuple[str, str]]:
+    """Each symlink under the plugin at HEAD, as (path, link text). Directory links included."""
+    found: list[tuple[str, str]] = []
+    for line in git("ls-tree", "-r", "-z", "HEAD", "--", plugin).split("\0"):
+        meta, _, path = line.partition("\t")
+        parts = meta.split()
+        if len(parts) == 3 and parts[0] == "120000":
+            found.append((path, git("cat-file", "blob", parts[2])))
+    return found
+
+
 def symlink_faults(plugin: str) -> list[str]:
-    """Each symlink under the plugin whose target changed without the plugin's version."""
+    """Each symlink committed under the plugin whose target changed without the plugin's version."""
+    links = committed_symlinks(plugin)
+    if not links:
+        return []
+    if git("rev-parse", "--is-shallow-repository") == "true":
+        return [
+            f"{plugin} links a file elsewhere in the repository, but this clone is shallow: "
+            f"the history that says when that file last changed is missing. "
+            f"Fetch it all (git fetch --unshallow) and run check again"
+        ]
     faults: list[str] = []
-    root = os.path.realpath(".")
-    for dirpath, _, names in os.walk(plugin):
-        for name in names:
-            link = os.path.join(dirpath, name)
-            if not os.path.islink(link):
-                continue
-            target = os.path.realpath(link)
-            if os.path.commonpath([root, target]) != root:
-                faults.append(f"{link} points outside the repository")
-                continue
-            rel = os.path.relpath(target, root)
-            last = git("log", "-1", "--format=%H", "--", rel)
-            if not last:
-                faults.append(f"{link} points at {rel}, which is not committed")
-                continue
-            if not has_ref(f"{last}^"):
-                continue
-            before = plugin_version_at(plugin, f"{last}^")
-            if before is None:
-                continue
-            if plugin_version_at(plugin, "HEAD") == before:
-                faults.append(
-                    f"{link} points at {rel}, last changed in {last[:7]}; {plugin}'s version "
-                    f"is still v{before} as it was before that. Bump it, or the change reaches no installed copy"
-                )
+    for link, text in links:
+        rel = os.path.normpath(os.path.join(os.path.dirname(link), text))
+        if os.path.isabs(text) or rel == ".." or rel.startswith(".." + os.sep):
+            faults.append(f"{link} points outside the repository")
+            continue
+        if not git("ls-tree", "HEAD", "--", rel):
+            faults.append(
+                f"{link} points at {rel}, which is not in HEAD: it was renamed or removed, "
+                f"or never committed. Point the link at the file's current path"
+            )
+            continue
+        last = git("log", "-1", "--format=%H", "--", rel)
+        if not has_ref(f"{last}^"):
+            continue
+        before = plugin_version_at(plugin, f"{last}^")
+        if before is None:
+            continue
+        if plugin_version_at(plugin, "HEAD") == before:
+            faults.append(
+                f"{link} points at {rel}, last changed in {last[:7]}; {plugin}'s version "
+                f"is still v{before} as it was before that. Bump it, or the change reaches no installed copy"
+            )
     return faults
 
 

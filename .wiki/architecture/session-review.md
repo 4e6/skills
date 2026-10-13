@@ -1,7 +1,7 @@
 ---
 type: Module
 title: Session review
-description: The one plugin here, and the one skill that works only in Claude Code. Why it is a plugin, why its name omits the host, the transcript facts behind the condenser, where the observer prompt came from, and the pointer to the watcher, which is built.
+description: The first of two plugins here, and the one skill that works only in Claude Code. Why it is a plugin, why its name omits the host, the transcript facts behind the condenser, where the observer prompt came from, and the watcher.
 tags: [architecture, plugin, claude-code, distribution]
 sources:
   - resource: plugins/**
@@ -10,7 +10,7 @@ sources:
   - id: hank
     resource: https://github.com/SouthBridgeAI/hankweave-runtime/tree/release/alpha/learning/examples/plan-gen-v2-general
     title: hankweave example plan-gen-v2-general
-sources_digest: 0cfbdd2b5729099a
+sources_digest: 5ad05a6075d10a70
 ---
 
 # What it is, and what it refuses to be
@@ -31,8 +31,9 @@ down, a permission to allow. It is part 1 of
 
 # Why a plugin, and where it lives
 
-The issue's option A: skill and watcher in one plugin, with one observer prompt
-in one file, so the two cannot drift. The skill sits inside the plugin
+The issue's option A was the skill and the watcher in one plugin. The watcher is a
+second plugin, `session-watch`, because enablement is per plugin; the one observer
+prompt lives in one file, which the watcher links, so the two cannot drift. The skill sits inside the plugin
 (`plugins/session-review/skills/session-review/`) and not in `skills/`, because a
 copy in both places is the drift the issue warns of.
 

@@ -7,7 +7,7 @@ sources:
   - resource: plugins/session-watch/**
   - resource: tools/release.py
   - resource: .claude-plugin/marketplace.json
-sources_digest: 3d4678c06fe0979e
+sources_digest: 49bf8b52ff824fbf
 ---
 
 # What it is, and what it refuses to be
@@ -45,8 +45,14 @@ On a main-loop `turn.complete` it counts the turn and arms a 20 s timer; a
 `turn.start` cancels it, so a check never competes with a turn. A check is due at 3
 turns, or 2 errored tool uses (a denied call is one) in the new part. It reads at
 most 40 entries, cut, 24 000 characters in all, and makes one call. A cursor (the
-last `tool_use_id` seen plus the messages after it) says what is new; not found, the
-last 40. Any failure is silent. The renderer follows `observer.md`'s grammar, and
+last `tool_use_id` seen plus the messages after it) says what is new. With no anchor
+(a session without tool use) or one not found, it starts after the message count of
+the previous check, unless the conversation shrank below it; then the last 40. Model
+text is cleaned before it is drawn (control characters and ESC stripped; line cut to
+300 characters, category to 40). The call asks for low effort and at most 1000 tokens,
+and the debug line records the tokens used or the reason it was not answered. Any
+failure is silent, except a missing `observer.md`, which shows one visible line per
+session. The renderer follows `observer.md`'s grammar, and
 every line carries the time of the check, since messages carry none. A reply line
 that is not a JSON object with a category and a line is dropped.
 
@@ -62,24 +68,33 @@ What was verified on 2.1.296 (interactive, expect-driven):
 
 - The idle check fires in a real session; the Haiku call is answered in about a
   second.
-- Claude, asked in the same session and after `--resume`, had not seen a line. A
-  line is not sent to the model.
+- Claude, asked in the same session, had not seen a line. The claim that a line is
+  not sent to the model rests on that, on the `$.ui.log` contract ("not sent to the
+  model"), and on the record type below, which session-review's condenser drops
+  (`condense.py` lines 482 and 522: `system` records count only for
+  `compact_boundary`). The earlier `--resume` evidence was invalid (the question
+  held the marker's prefix, and earlier turns held the marker), so no resume claim
+  is made.
 - **But each shown line is saved in the session's transcript JSONL** as
   `{"type":"system","subtype":"informational","content":…,"level":"notice"}`. The
   READMEs say so. "The mod writes no files of its own" is the accurate claim.
-- The host logs no token counts for the call, so caching cannot be shown. The
-  `cache: true` mark was dropped; the README's cost is an estimate from the window
-  cap and Haiku 5.5's list price.
+- The `cache: true` mark was dropped (no caching was shown). The README's cost,
+  about a tenth of a cent per check at the cap, is an estimate from the window cap
+  and Haiku 5.5's list price (USD 0.10 / 0.50 per million tokens); the debug line
+  now records the tokens each call used.
 
 # The shared prompt, and the version rule
 
 `plugins/session-watch/observer.md` is a relative symlink to session-review's
 `observer.md`, so the two cannot drift. It is read with `$.fs.read`, and must begin
-`# Observer` or the mod logs once to the debug log and makes no checks. An installed
+`# Observer` or the mod logs once to the debug log, shows one visible line, and makes
+no checks. An installed
 copy keeps its version, so editing the prompt reaches nobody unless every linking
 plugin is bumped: `tools/release.py check` fails a symlink whose target's last commit
 is newer than the last commit that changed the plugin's `version`
-([the zip release](/architecture/the-zip-release.md)). A plugin with no skill is
+([the zip release](/architecture/the-zip-release.md)). The rule lists symlinks from
+HEAD's tree (a directory link counts), faults on a target no longer in HEAD, and
+faults in a shallow clone, which lacks the history it needs. A plugin with no skill is
 allowed; its version must still be MAJOR.MINOR.PATCH.
 
 # Testing it
@@ -105,7 +120,8 @@ Spike facts are from 2026-10-13 on Claude Code 2.1.296: a model call from a time
 resolves on the session's login; `-p` does not wait for timers, and a timer can fire
 after the session is unbound, so the whole callback sits in one try. Module state
 (counters, cursor, seen set, timer) is in memory: a reload resets it, at worst one
-extra check and repeats toasting afresh; `/clear` resets it too.
+extra check and repeats toasting afresh; every `session.end`, whatever its reason,
+resets it too.
 
 # Open
 

@@ -70,7 +70,7 @@ claude plugin enable session-watch@4e6 --scope local    # or project, or user
 Enabling persists in the scope you choose, so it runs in every new interactive
 session there until `/plugin disable session-watch@4e6`. Each line it shows is
 also saved in the session's transcript file as a system notice that Claude is not
-sent (checked on Claude Code 2.1.296, in an interactive session and on resume);
+sent (checked on Claude Code 2.1.296, in an interactive session);
 the mod writes no files of its own. See
 [its README](plugins/session-watch/README.md).
 
