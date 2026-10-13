@@ -10,7 +10,7 @@ sources:
   - id: hank
     resource: https://github.com/SouthBridgeAI/hankweave-runtime/tree/release/alpha/learning/examples/plan-gen-v2-general
     title: hankweave example plan-gen-v2-general
-sources_digest: 8b023868b68fd5ab
+sources_digest: 0f520241c9e6e50c
 ---
 
 # What it is, and what it refuses to be
@@ -144,15 +144,15 @@ story. Two faults sat behind that.
 - **"Seen N times" summed the observers' own counts.** An observer counting per
   tool call made a pattern look heavier than one counted per session, so it
   measured how the logging went, not the weight. Grouping now counts sessions
-  and ranks by them, then by corrections and interruptions among the
-  observations. A continued session has its own id and counts as a second one.
+  and ranks by them, then by the `correction` observations among them. A continued session has its own id and counts as a second one.
 
-So grouping keeps each suggestion's observations, and step 6 hands the strongest
-ten to a checker each, on the strongest model, because it judges whether a rule
+So grouping keeps each suggestion's observations, and step 6 hands about ten of the
+strongest to a checker each, on the strongest model, because it judges whether a rule
 covers a case. The checker reads one or two cited places and the target as it is
 today, dates a rule against the incidents where git allows, and writes four
 parts: what happened, one instance, status now, the change. The rest stay one
-line. The brief is `references/checker.md`, a file like `observer.md`, so a host
+line, which starts with what happened. A checked suggestion found already or
+likely addressed moves to its own short list. The brief is `references/checker.md`, a file like `observer.md`, so a host
 without subagents follows it itself.
 
 - **Cost is an estimate, not a measurement.** About ten strongest-model
