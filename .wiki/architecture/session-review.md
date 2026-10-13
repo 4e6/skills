@@ -10,7 +10,7 @@ sources:
   - id: hank
     resource: https://github.com/SouthBridgeAI/hankweave-runtime/tree/release/alpha/learning/examples/plan-gen-v2-general
     title: hankweave example plan-gen-v2-general
-sources_digest: 785ec0a0ee7ecc7c
+sources_digest: 92bddac9104e0534
 ---
 
 # What it is, and what it refuses to be
@@ -69,7 +69,7 @@ marketplaces, so users still run `/plugin update` for a version that did move.
 
 `scripts/condense.py` is one stdlib Python file with no model in it: cheaper and
 deterministic. Its rules rest on a survey of 1962 local transcripts (Claude Code
-2.1.236 to 2.1.296, 2026-09-12 to 10-13), a snapshot taken on 2026-10-13; every figure below is from it. **The format is internal and changes
+2.1.236 to 2.1.296, 2026-09-12 to 10-13), a snapshot taken on 2026-10-13; the survey figures below are from it (the robustness and acceptance measurements were taken the same day, at different times). **The format is internal and changes
 between versions**, which is why the parser skips unknown record types and unparseable lines (a live file can end mid-line) and stays in one file.
 
 | Rule | The fact behind it |
@@ -78,7 +78,7 @@ between versions**, which is why the parser skips unknown record types and unpar
 | Assistant records are merged by `message.id`, each block emitted once | one message is written as several records |
 | A tool result is paired with its call by `tool_use_id` | results arrive as later user records |
 | Records are deduped by `uuid` across a run | a continued session copies the history |
-| Sessions are condensed oldest first, in one call | the first one given keeps the shared history, so it must be the original; a continuation then shows only what is new |
+| Sessions are condensed oldest first, in one call | the oldest keeps the shared history, whatever the order given; a continuation then shows only what is new |
 | Every line is cited with its day | a session can span days, and `[HH:MM]` alone repeats; the condenser writes a `--- day ---` line before the first line |
 | Thinking is kept only if non-empty | 97.6% of it is empty |
 | Tool output is cut to a head, errors kept longer | tool output is about 46% of the bytes |

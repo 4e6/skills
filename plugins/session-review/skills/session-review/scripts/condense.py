@@ -79,10 +79,12 @@ REDACTED = "[REDACTED]"
 
 SECRET_PATTERNS = [
     # PEM private keys: the header and its base64 body, to the end line when
-    # there is one (a line break may be the ⏎ of `one_line`). A header with no body after it (a mention) is left alone.
+    # there is one. A line break may be the ⏎ of `one_line` or, in JSON that
+    # was put inside a string, a literal backslash and n or r. A header with no
+    # body after it (a mention) is left alone.
     (
         re.compile(
-            r"-----BEGIN [A-Z ]*PRIVATE KEY-----(?:[\s⏎]*[A-Za-z\-]+:[^\n]*)*[\s⏎]*[A-Za-z0-9+/=]{16,}[A-Za-z0-9+/=\s⏎]*"
+            r"-----BEGIN [A-Z ]*PRIVATE KEY-----(?:(?:[\s⏎]|\\[nr])*[A-Za-z\-]+:[^\n]*)*(?:[\s⏎]|\\[nr])*[A-Za-z0-9+/=]{16,}(?:[A-Za-z0-9+/=\s⏎]|\\[nr])*"
             r"(?:-----END [A-Z ]*PRIVATE KEY-----)?"
         ),
         REDACTED,
@@ -112,12 +114,14 @@ SECRET_PATTERNS = [
     # "docker login -p X", "curl -u user:X".
     (
         re.compile(
-            r"""(?i)(--[a-z0-9\-]*?(?:password|passwd|passphrase|secret|token|api-?key)(?!-?(?:stdin|file|env|path)\b)[a-z0-9\-]*\s+)(?![-$<{(%\[]|\d{1,7}\b)["']?[^\s"']{4,}"""
+            r"""(?i)(--[a-z0-9\-]*?(?:password|passwd|passphrase|secret|token|api-?key)(?!-?(?:stdin|file|env|path)\b)[a-z0-9\-]*\s+)(?![-$<{(%\[]|\d{1,7}\b)(?:(["'])[^"'\n]{4,}\2|["']?[^\s"']{4,})"""
         ),
         r"\1" + REDACTED,
     ),
-    (re.compile(r"""(?i)(\bdocker\s+login\b[^\n|;&]*?\s-p\s+)(?![-$<{(%\[]|\d{1,7}\b)["']?[^\s"']{4,}"""), r"\1" + REDACTED),
-    (re.compile(r"""(\bcurl\b[^\n|;&]*?\s(?:-u|--user)\s+["']?[^\s:"']+:)(?![$<{(%\[])[^\s"']+"""), r"\1" + REDACTED),
+    (re.compile(r"""(?i)(\bdocker\s+login\b[^\n|;&]*?\s-p\s+)(?![-$<{(%\[]|\d{1,7}\b)(?:(["'])[^"'\n]{4,}\2|["']?[^\s"']{4,})"""), r"\1" + REDACTED),
+    (re.compile(r"""(\bcurl\b[^\n|;&]*?\s(?:-u|--user)\s+["']?[^\s:"']+:)(?![$<{(%\[])(?:(["'])[^"'\n]+\2|[^\s"']+)"""), r"\1" + REDACTED),
+    # The whole "user:password with spaces" in quotes.
+    (re.compile(r"""(\bcurl\b[^\n|;&]*?\s(?:-u|--user)\s+(["'])[^\s:"']+:)(?![$<{(%\[])[^"'\n]+(?=\2)"""), r"\1" + REDACTED),
     # Credentials inside a URL: scheme://user:password@host.
     (re.compile(r"\b([a-z][a-z0-9+.\-]*://)[^\s/:@]+:[^\s/@]+@"), r"\1" + REDACTED + "@"),
 ]
@@ -130,7 +134,7 @@ SECRET_PATTERNS = [
 # put inside a JSON string (\").
 _NAME = r"([A-Za-z0-9_.\-]{0,40}(?:password|passwd|passphrase|secret|token|api[_\-]?key|apikey)[A-Za-z0-9_.\-]{0,40})"
 _SEP = r"""(\\?["']?\s*[=:]\s*"""
-KEY_VALUE = re.compile(_NAME + _SEP + r"""\\?["']?)([^\s"'&,;\\]{8,})""", re.I)
+KEY_VALUE = re.compile(_NAME + _SEP + r"""\\?["']?)([^\s"'&,;\\}\])]{8,})""", re.I)
 # A quoted value, which may hold spaces: password="two words here".
 KEY_QUOTED = re.compile(_NAME + _SEP + r"""\\?(["']))([^"'\\\n]{8,})(?=\\?\3)""", re.I)
 # A pass phrase written as prose after a colon: "password: correct horse battery".

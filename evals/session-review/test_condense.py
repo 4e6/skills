@@ -40,6 +40,9 @@ CWD = "/Users/me/work/app"
 FOLDER = "-Users-me-work-app"
 
 
+PEM_BODY = "MIIBOgIBAAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf9Cnzj4p4WGeKLs1Pt8Qu"
+
+
 def secrets():
     """One secret of each shape, built so that no whole one is in this file."""
     return {
@@ -57,6 +60,7 @@ def secrets():
         "assignment": "pass" + "word" + "=" + "correcthorsebattery",
         "json assignment": '"api' + '_key": "' + "zyxwvutsrqponm" + '"',
         "pem": "-----BEGIN RSA PRIV" + "ATE KEY-----\nMIIBOgIBAAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf9Cnzj4p4WGeKLs1Pt8Qu\n-----END RSA PRIV" + "ATE KEY-----",
+        "pem in escaped json": '{"private' + '_key": "-----BEGIN PRIV' + "ATE KEY-----\\n" + PEM_BODY + "\\n-----END PRIV" + 'ATE KEY-----\\n"}',
     }
 
 
@@ -73,6 +77,11 @@ def risky():
         "pass phrase": (word + ": correct horse battery staple", "horse battery"),
         "quoted pass phrase": (word + '="correct horse battery"', "horse battery"),
         "digits": ("sec" + "ret_key=1234567890123", "1234567890123"),
+        "quoted flag value": ("deploy --" + word + " 'hunter2 hunter2' --now", "hunter2"),
+        "double-quoted flag value": ("deploy --api-" + 'key "hunter2 hunter2"', "hunter2"),
+        "docker quoted": ("docker login -u me -p 'hunter2 hunter2' registry.example.com", "hunter2"),
+        "curl quoted password": ("curl --user alice:'pw xyz1' https://example.com", "pw xyz1"),
+        "curl quoted pair": ('curl -u "alice:pw xyz1" https://example.com', "pw xyz1"),
         "pem cut off": ("-----BEGIN PRIV" + "ATE KEY-----\nMIIBOgIBAAJBAKj34GkxFhD90vcNLYLI", "MIIBOgIBAAJBAKj34GkxFhD90vcNLYLI"),
     }
 
@@ -390,8 +399,30 @@ class CondenseTest(unittest.TestCase):
         for name, value in secrets().items():
             self.assertNotIn(value.split("\n")[-2] if "\n" in value else value[8:-4], condense.redact("x " + value + " y"), name)
 
+    def test_a_pem_key_in_escaped_json_leaves_no_body(self):
+        value = secrets()["pem in escaped json"]
+        out = condense.redact("x " + value + " y")
+        self.assertNotIn(PEM_BODY[:20], out)
+        self.assertNotIn(PEM_BODY[-20:], out)
+        self.assertIn("[REDACTED]", out)
+        self.assertEqual(condense.redact(out), out)
+        # Through condense, where the text is JSON-encoded once more.
+        self.assertNotIn(PEM_BODY[:20], self.text)
+        self.assertNotIn(PEM_BODY[-20:], self.text)
+
+    def test_a_prose_pass_phrase_is_hidden_on_purpose(self):
+        # Deliberate over-redaction: a pass phrase with spaces cannot be told
+        # from prose, and hiding a line of UI text costs less than leaking one.
+        out = condense.redact("Pass" + "word: must be at least 12 characters long")
+        self.assertIn("[REDACTED]", out)
+        self.assertNotIn("characters long", out)
+
     def test_ordinary_text_is_left_alone(self):
         for text in (
+            '{"tokens": 12345678}',
+            '{"usage": {"output_tokens": 99999999}}',
+            "[1, {'total_tokens': 12345678}]",
+            "(max_tokens=12345678)",
             '"max_tokens": 4096',
             "max_tokens: 123456789",
             '"total_tokens": 12345678',
