@@ -17,7 +17,7 @@ sources:
   - id: git-archive
     resource: https://git-scm.com/docs/git-archive
     title: git-archive(1)
-sources_digest: 37a2c555c0938c95
+sources_digest: b781ba1524413f10
 ---
 
 # Why there is a zip at all
@@ -98,9 +98,17 @@ app's chat does not have.
 marketplace and reads files only Claude Code keeps
 ([why](/architecture/session-review.md#why-a-plugin-and-where-it-lives)). The one
 thing `check` holds a plugin to is its version: `plugin.json`'s `version` must
-equal its skill's `metadata.version`, README link or not, because a set version
+equal its skill's `metadata.version` (a plugin with no skill, like `session-watch`,
+needs only a MAJOR.MINOR.PATCH one), README link or not, because a set version
 pins installed copies and a skill change without it reaches nobody
 ([versioning](/architecture/session-review.md#versioning-the-plugins-number-is-the-skills)).
+
+**A symlink moves every plugin that links it.** `plugins/session-watch/observer.md`
+links session-review's prompt. For each symlink under a plugin, `check` resolves it
+(a target outside the repository is a fault), finds the target's last commit T, and
+fails unless the plugin's `version` at HEAD differs from its value at T's parent (a
+plugin that did not exist then passes). It judges what is committed, so CI needs the
+whole history ([session watch](/architecture/session-watch.md#the-shared-prompt-and-the-version-rule)).
 
 # Built from the commit, not the folder
 

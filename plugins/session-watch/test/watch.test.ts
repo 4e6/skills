@@ -235,7 +235,7 @@ test('output parsing ignores junk lines', async ($, on) => {
   await $.turn.complete(TURN)
   await s.clock.advance(2000)
   const visible = s.logs.filter(l => l.to === 'transcript')
-  expect(visible.map(l => l.text)).toEqual(['session-watch: circling: tried twice'])
+  expect(visible.map(l => l.text)).toEqual(['circling: tried twice'])
 })
 
 test('every check writes the debug line; a first occurrence logs, a repeat toasts, an identical line is not shown twice', async ($, on) => {
@@ -244,7 +244,7 @@ test('every check writes the debug line; a first occurrence logs, a repeat toast
   s.state.reply = OBS('permission', 'denied Bash', 'Bash')
   await $.turn.complete(TURN)
   await s.clock.advance(2000)
-  expect(s.logs).toContainEqual({ text: 'session-watch: checked 1 msgs, 1 observations', to: 'debug' })
+  expect(s.logs).toContainEqual({ text: 'checked 1 msgs, 1 observations', to: 'debug' })
   expect(s.logs.filter(l => l.to === 'transcript').length).toBe(1)
   expect(s.toasts.length).toBe(0)
 
@@ -259,8 +259,8 @@ test('every check writes the debug line; a first occurrence logs, a repeat toast
   await $.turn.complete(TURN)
   await s.clock.advance(2000)
   expect(s.logs.filter(l => l.to === 'transcript').length).toBe(2)
-  expect(s.toasts).toEqual(['session-watch: permission: denied Edit as well'])
-  expect(s.logs.filter(l => l.text.startsWith('session-watch: checked')).length).toBe(3)
+  expect(s.toasts).toEqual(['permission: denied Edit as well'])
+  expect(s.logs.filter(l => l.text.startsWith('checked')).length).toBe(3)
 })
 
 test('no second call while one is in flight', async ($, on) => {
@@ -304,4 +304,37 @@ test('the test knob adds one fixed observation after the real call, once', async
   await $.turn.complete(TURN)
   await s.clock.advance(2000)
   expect(s.logs.filter(l => l.to === 'transcript').length).toBe(1)
+})
+
+test('after an early return the in-flight flag is clear: the next check runs', async ($, on) => {
+  const s = setup(on, { SESSION_WATCH_EVERY: '2' })
+  s.state.messages = [user('a')]
+  await $.turn.complete(TURN) // 1 turn of 2: returns early
+  await s.clock.advance(2000)
+  expect(s.prompts.length).toBe(0)
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  expect(s.prompts.length).toBe(1)
+})
+
+test('a /clear forgets what was shown: the same line is shown again, as a first occurrence', async ($, on) => {
+  const s = setup(on)
+  s.state.messages = [user('a')]
+  s.state.reply = OBS('circling', 'same thing', 'x')
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  await $.session.end({ reason: 'clear', sessionId: 'sess-1', resume: {} as never })
+  s.state.messages = [user('b')]
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  expect(s.logs.filter(l => l.to === 'transcript').length).toBe(2)
+  expect(s.toasts.length).toBe(0)
+})
+
+test('the observer prompt comes first in what is sent', async ($, on) => {
+  const s = setup(on)
+  s.state.messages = [user('a')]
+  await $.turn.complete(TURN)
+  await s.clock.advance(2000)
+  expect(s.prompts[0]!.indexOf('# Observer')).toBe(0)
 })

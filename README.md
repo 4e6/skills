@@ -11,7 +11,7 @@ the format, except where its row says otherwise.
 | [supervise-work](skills/supervise-work/) | Supervises any task bigger than a quick answer, or a GitHub issue, through research, plan, build and review, with fresh subagents and reviewers, and delivers what was asked for: findings, a plan, a merged change, or work run. Say "supervise work on …" to watch and steer it as it goes. |
 | [z-image-turbo-macos](skills/z-image-turbo-macos/) | Generates images from text prompts on your own Apple Silicon Mac, with one model — Z-Image Turbo — on the Mac's GPU. Offline after a one-time setup of about 12 GB; Apple Silicon only. |
 | [session-review](plugins/session-review/skills/session-review/) | **Claude Code only.** Reads your past Claude Code sessions and suggests, with evidence, how to improve your everyday work: skills to fix, habits to automate, preferences to write down. Applies nothing. A plugin, installed from the marketplace below. |
-| [session-watch](plugins/session-watch/) | **Claude Code only, interactive sessions.** The live counterpart of session-review: when your session goes idle, a small model reads the new part and shows you, in the terminal, what could be improved. Off by default; shown to you, never to Claude; applies nothing. A plugin. |
+| [session-watch](plugins/session-watch/) | **Claude Code only, interactive sessions.** The live counterpart of session-review: when your session goes idle, a small model reads the new part and shows you, in the terminal, what could be improved. Off by default; shown to you, not sent to Claude (the lines are also saved in the session's transcript file); applies nothing. A plugin. |
 
 ## Installing
 
@@ -68,7 +68,10 @@ claude plugin enable session-watch@4e6 --scope local    # or project, or user
 ```
 
 Enabling persists in the scope you choose, so it runs in every new interactive
-session there until `/plugin disable session-watch@4e6`. See
+session there until `/plugin disable session-watch@4e6`. Each line it shows is
+also saved in the session's transcript file as a system notice that Claude is not
+sent (checked on Claude Code 2.1.296, in an interactive session and on resume);
+the mod writes no files of its own. See
 [its README](plugins/session-watch/README.md).
 
 ### In Claude or ChatGPT on the web

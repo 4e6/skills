@@ -50,32 +50,41 @@ one, is not verified; restart to be sure.
   have passed since the last look. It reads at most the last 40 entries of the
   conversation, cut short, 24 000 characters in all.
 - It makes one call to Haiku with the observer prompt and that slice.
-- Each observation is one line in the terminal, starting `session-watch:` and
-  its category. If the same category and tool or skill was seen earlier in the
+- Each observation is one line in the terminal, `session-watch: <category>: <line>`
+  (Claude Code puts the plugin's name in front). If the same category and tool or skill was seen earlier in the
   session, it also draws a toast: once is a note, a repeat is worth a look.
 - Anything that goes wrong (the session ends, the model is blocked by your
   organization, the call is slow) is silent.
 
 ## What it costs
 
-One Haiku call per look, on the plan or key the session already uses. An estimate:
-about 7 000 input tokens at the 24 000-character cap (the prompt is about 1 500
-of them) and at most 600 out, which at Haiku's rates is about a cent or less.
-Quiet sessions look rarely.
+One Haiku call per look, on the plan or key the session already uses. An estimate,
+not a measurement (the host logs no token counts for the call): at the
+24 000-character cap the slice is about 6 000 tokens and the prompt about 1 500,
+so about 7 500 tokens in, and at most 600 out. At Haiku 5.5's list price (USD 0.10
+per million input tokens, 0.50 per million output, for prompts under 100 000
+tokens) that is under a tenth of a cent per look. Most looks read less than the cap, and
+quiet sessions look rarely. No prompt caching is claimed: the prompt is probably
+below the minimum length that gets cached, and nothing showed it being cached.
 
 ## Where it shows, and that Claude never sees it
 
-Lines are written to the terminal as notices, which Claude Code does not send to
-the model, and the toast is a toast. The mod never submits a prompt, runs a
-command or appends to the conversation. A line is also written to the debug log
-(`claude --debug`), and may appear in the session's transcript file on disk. It
-is a record for you, not input for Claude.
+Each line is written to the terminal as a system notice, which Claude Code does not
+send to the model, and a repeat is also shown as a toast. The mod never submits a
+prompt, runs a command or appends to the conversation.
+
+Checked on Claude Code 2.1.296, in an interactive session and after `--resume`:
+Claude, asked, had not seen any such line. **Each shown line is also saved in the
+session's transcript file on disk**, as a system notice
+(`"type":"system","subtype":"informational"`), which is not sent to the model; and
+the debug log (`claude --debug`) has it too. So it is a record for you, not input
+for Claude, but it is not unwritten.
 
 ## Privacy
 
 The slice goes to the same provider the session already talks to, under the same
 terms; it was in the session's context already. The mod writes no files of its
-own, and keeps its counters in memory only: restarting the session or reloading
+own (the host saves the lines it shows, as above), and keeps its counters in memory only: restarting the session or reloading
 plugins resets them, at worst one extra look and a repeat toasting afresh.
 
 ## Requirements and limits

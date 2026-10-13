@@ -23,8 +23,6 @@ const MAX_TOKENS = 600
 const TIMEOUT_MS = 30_000
 // The prompt file must open with this, or the link did not resolve to the observer.
 const GUARD = '# Observer'
-// Starts every line shown to the user: ASCII, so it can be searched for.
-const MARKER = 'session-watch:'
 // One fixed observation, drawn after the real call when SESSION_WATCH_TEST_OBSERVATION=1.
 const TEST_LINE =
   '{"category":"environment","line":"swtest-marker-Q7X drawn by the test knob","evidence":[],"quote":"","involved":"swtest","count":1}'
@@ -145,8 +143,8 @@ async function loadObserver($: EngineInterface): Promise<boolean> {
     guardLogged = true
     $.ui.log(
       observer !== ''
-        ? `session-watch: observer.md read OK (${observer.length} chars)`
-        : 'session-watch: observer.md missing or not the observer prompt; no checks this session',
+        ? `observer.md read OK (${observer.length} chars)`
+        : 'observer.md missing or not the observer prompt; no checks this session',
       { to: 'debug' },
     )
   }
@@ -156,7 +154,8 @@ async function loadObserver($: EngineInterface): Promise<boolean> {
 function surface($: EngineInterface, found: Observation[]): void {
   const fresh = new Set<string>()
   for (const o of found) {
-    const text = `${MARKER} ${o.category}: ${o.line}`
+    // The host puts the plugin's name before a transcript line and above a toast.
+    const text = `${o.category}: ${o.line}`
     if (shown.has(text)) continue
     shown.add(text)
     const key = `${o.category}|${o.involved}`
@@ -170,6 +169,7 @@ function surface($: EngineInterface, found: Observation[]): void {
 
 async function check($: EngineInterface): Promise<void> {
   if (inFlight) return
+  inFlight = true
   try {
     if ((await $.session.surfaces()).length === 0) return
     if (!(await loadObserver($))) return
@@ -177,7 +177,6 @@ async function check($: EngineInterface): Promise<void> {
     const win = all.slice(start(all))
     const every = await number($, 'every')
     if (turns < every && errors(win) < EVERY_ERRORS) return
-    inFlight = true
     turns = 0
     reanchor(all)
     const observations: Observation[] = []
@@ -191,7 +190,7 @@ async function check($: EngineInterface): Promise<void> {
       const r = await $.model.complete({
         model: MODEL,
         prompt: [
-          { text: observer!, cache: true },
+          { text: observer! },
           { text: render(id, win, await $.clock.now()) },
         ],
         maxTokens: MAX_TOKENS,
@@ -203,7 +202,7 @@ async function check($: EngineInterface): Promise<void> {
       testPending = false
       observations.push(...parse(TEST_LINE))
     }
-    $.ui.log(`session-watch: checked ${win.length} msgs, ${observations.length} observations`, { to: 'debug' })
+    $.ui.log(`checked ${win.length} msgs, ${observations.length} observations`, { to: 'debug' })
     surface($, observations)
   } catch {
     // The session may be gone, the model blocked, the call slow: stay silent.
@@ -251,6 +250,8 @@ export const register: Register = on => {
       timer = undefined
       turns = 0
       anchor = undefined
+      shown.clear()
+      keysSeen.clear()
     }
     return next(e)
   })
