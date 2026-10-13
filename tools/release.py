@@ -36,7 +36,20 @@ build runs in UTC, as CI does, and a zip made on a laptop matches the release.
 installed through the marketplace, not as a zip, and `plugin.json` carries a
 version; Claude Code keeps an installed copy on that version until it changes.
 So a skill fixed without the plugin's number raised reaches nobody, and `check`
-fails when the two differ, whether or not README.md links any zip.
+fails when the two differ, whether or not README.md links any zip. A plugin
+that holds no skill (a mod, which is code) has nothing to match; its version
+must still be MAJOR.MINOR.PATCH.
+
+**A file shared by symlink moves every plugin that links it.** A plugin's folder
+may hold a symlink to a file elsewhere in the repository, so that one text is
+read by two plugins instead of drifting as two copies. An installed copy keeps
+the version it was installed at, so an edit to the shared file reaches nobody
+unless each plugin that links it is bumped. For each symlink under plugins/P/
+`check` resolves it (os.path.realpath); a target outside the repository is a
+fault. T is the last commit that touched the target. The plugin's `version` at
+HEAD must differ from its `version` at T's parent; a plugin that did not exist
+there passes. It judges what is committed, not the working tree, so it needs
+the history (CI fetches all of it); an edit not yet committed is seen once it is.
 
 Python 3.9, standard library only. It runs git, and writes only under dist/.
 """
@@ -111,11 +124,56 @@ def frontmatter(skill: str) -> tuple[str | None, str | None]:
     return (name[1] if name else None), (version[1] if version else None)
 
 
+def plugin_version_at(plugin: str, rev: str) -> str | None:
+    """The `version` in the plugin's plugin.json at `rev`, or None if it has none there."""
+    path = f"{plugin}/.claude-plugin/plugin.json"
+    if not has_ref(f"{rev}:{path}"):
+        return None
+    try:
+        version = json.loads(git("show", f"{rev}:{path}")).get("version")
+    except ValueError:
+        return None
+    return version if isinstance(version, str) else None
+
+
+def symlink_faults(plugin: str) -> list[str]:
+    """Each symlink under the plugin whose target changed without the plugin's version."""
+    faults: list[str] = []
+    root = os.path.realpath(".")
+    for dirpath, _, names in os.walk(plugin):
+        for name in names:
+            link = os.path.join(dirpath, name)
+            if not os.path.islink(link):
+                continue
+            target = os.path.realpath(link)
+            if os.path.commonpath([root, target]) != root:
+                faults.append(f"{link} points outside the repository")
+                continue
+            rel = os.path.relpath(target, root)
+            last = git("log", "-1", "--format=%H", "--", rel)
+            if not last:
+                faults.append(f"{link} points at {rel}, which is not committed")
+                continue
+            if not has_ref(f"{last}^"):
+                continue
+            before = plugin_version_at(plugin, f"{last}^")
+            if before is None:
+                continue
+            if plugin_version_at(plugin, "HEAD") == before:
+                faults.append(
+                    f"{link} points at {rel}, last changed in {last[:7]}; {plugin}'s version "
+                    f"is still v{before} as it was before that. Bump it, or the change reaches no installed copy"
+                )
+    return faults
+
+
 def plugin_faults() -> list[str]:
     """Each plugin whose version is not that of every skill it holds.
 
     Read from the working tree: the plugin is installed from the marketplace as
     it stands in git, and a version that differs there is the fault, saved or not.
+    A plugin with no skill is allowed; its version must be MAJOR.MINOR.PATCH.
+    The symlink rule (see the module docstring) is judged on commits instead.
     """
     faults: list[str] = []
     for manifest in sorted(glob.glob("plugins/*/.claude-plugin/plugin.json")):
@@ -132,9 +190,8 @@ def plugin_faults() -> list[str]:
         if not SEMVER.fullmatch(version):
             faults.append(f"{manifest} is v{version}; a version is MAJOR.MINOR.PATCH")
             continue
+        faults += symlink_faults(plugin)
         skills = sorted(glob.glob(f"{plugin}/skills/*/SKILL.md"))
-        if not skills:
-            faults.append(f"{plugin} holds no skill, so {manifest}'s version has nothing to match")
         for path in skills:
             with open(path, encoding="utf-8") as f:
                 m = FRONTMATTER.match(f.read())

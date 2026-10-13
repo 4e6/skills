@@ -1,0 +1,10 @@
+{
+  "name": "session-watch",
+  "version": "1.0.0",
+  "description": "While you work, a small model reads the latest part of the conversation when the session goes idle and shows what could be improved in how the work is set up. Off by default; Claude Code only; shown to you, never to Claude.",
+  "author": { "name": "4e6" },
+  "homepage": "https://github.com/4e6/skills",
+  "repository": "https://github.com/4e6/skills",
+  "license": "MIT",
+  "defaultEnabled": false
+}
