@@ -82,7 +82,8 @@ Claude, asked, had not seen any such line. The API says `$.ui.log` shows a line
 to the user and it is "not sent to the model". And the line is saved as a record
 of type `system`, subtype `informational`, which session-review's condenser drops
 (`condense.py` keeps `system` records only for `compact_boundary`, lines 482 and
-522). Whether a line is also absent after `--resume` is not shown here.
+522). After `--resume` of that session (asked a question that did not contain the
+marker), Claude listed no plugin line either; that is one try, not a proof.
 
 **Each shown line is also saved in the session's transcript file on disk**, and the
 debug log (`claude --debug`) has it too. So it is a record for you, not input for

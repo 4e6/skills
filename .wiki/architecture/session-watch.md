@@ -7,7 +7,7 @@ sources:
   - resource: plugins/session-watch/**
   - resource: tools/release.py
   - resource: .claude-plugin/marketplace.json
-sources_digest: 49bf8b52ff824fbf
+sources_digest: 5497291d2f4a88cd
 ---
 
 # What it is, and what it refuses to be
@@ -73,8 +73,27 @@ What was verified on 2.1.296 (interactive, expect-driven):
   model"), and on the record type below, which session-review's condenser drops
   (`condense.py` lines 482 and 522: `system` records count only for
   `compact_boundary`). The earlier `--resume` evidence was invalid (the question
-  held the marker's prefix, and earlier turns held the marker), so no resume claim
-  is made.
+  held the marker's prefix, and earlier turns held the marker); it was redone, see
+  the re-run below.
+- **Re-run on 2bf8147** (the code of the review fix; the run happened with the wiki
+  edits of that commit not yet committed, which the mod does not read), with the
+  fixed marker `swtest-marker-Q7X`, debug log and transcript read afterwards:
+  - debug: `checked 6 msgs, 1 observations (not answered: empty-reply)`, then the
+    marker line drawn once: `[session-watch] $.ui.log: environment: swtest-marker-Q7X
+    drawn by the test knob`, with no doubled prefix; the transcript record is
+    `{"type":"system","subtype":"informational","content":"session-watch: environment:
+    swtest-marker-Q7X drawn by the test knob"}`, the marker in one record only, written
+    before the question below.
+  - in-session question, without the marker text ("Has any plugin or system line in
+    this conversation shown you a line you did not write yourself?"): Claude said yes
+    and quoted only the global CLAUDE.md; no swtest.
+  - `claude -p --resume <id>` with "List verbatim every line in this conversation that
+    came from a plugin or a system notice, or say NONE.": it listed system reminders
+    (CLAUDE.md, the budget line) and no marker. One try each, not a proof.
+  - Both live calls came back with no text (`empty-reply`, 0 chars; the earlier run
+    did too), so a result carries no usage and the debug line gives the reason.
+    The usage format is covered by the unit test only; what Haiku says to a real
+    session is still untested.
 - **But each shown line is saved in the session's transcript JSONL** as
   `{"type":"system","subtype":"informational","content":…,"level":"notice"}`. The
   READMEs say so. "The mod writes no files of its own" is the accurate claim.
@@ -131,4 +150,4 @@ resets it too.
   `--plugin-dir` confirmed it.
 - Where an organization's model allowlist blocks Haiku, the call rejects and the mod
   stays silent.
-- Prompt quality on real sessions.
+- Prompt quality on real sessions: both live calls so far were empty.
