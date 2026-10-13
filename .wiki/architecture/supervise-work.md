@@ -5,7 +5,7 @@ description: "One skill for any task: research, plan, build, review and deliver,
 tags: [architecture, process, agents, github]
 sources:
   - resource: skills/supervise-work/**
-sources_digest: ba2e0e1117f6be5e
+sources_digest: 6004204e31279c88
 ---
 
 # Why one skill, and why this shape
@@ -122,10 +122,16 @@ wrong.
   delivered as one, it is what the merge condition reads, and what a maintainer or the next agent can
   check without the session. A push after it makes it a verdict on an older
   commit, so it is asked for again.
-- **Models by role, where the host allows.** Reading and editing are most of the
-  tokens and need the least judgement; the plan and the final call need the most.
-  This is guidance in one sentence, not a configuration, since the skill cannot
-  set a model.
+- **Models by role, where the host allows.** Research goes to the strongest with
+  the plan, review and the final call: findings have no test to catch them
+  wrong, and the plan is built on them, so a weak finding costs more than the
+  tokens it saved. Building follows a written plan that a reviewer then checks,
+  so it needs less judgement and goes to a mid-tier model. Summarizing and
+  filtering, a reading whose output is checked by whoever reads it next, go to
+  the smallest. Up to 1.1.0 reading went to the mid-tier with editing, as most of
+  the tokens and least of the judgement; that put the research a plan rests on
+  on the weaker model. Named by tier, never by a host's model names, and guidance
+  in one sentence, not a configuration, since the skill cannot set a model.
 - **Approval, not perfection, with a cap of three rounds.** A reviewer always has
   another comment. A task with no pull request has no CI and no maintainer to end
   the loop either, so the cap is there to make it end. Three is a guess, not a
