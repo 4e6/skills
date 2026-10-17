@@ -5,8 +5,13 @@ description: On-demand behavioural tests for training-week-meal-plan, outside th
 tags: [architecture, testing, evals]
 sources:
   - resource: evals/**
-sources_digest: 0887698bfb9768e9
+sources_digest: 7ee87b4aa707b497
 ---
+
+`evals/session-review/` is a different thing: the unit tests of
+[session review](/architecture/session-review.md)'s condenser, kept outside the
+skill because whatever is inside ships. Unlike the meal-plan evals below they are
+fast and deterministic, and CI runs them.
 
 # What they are for
 

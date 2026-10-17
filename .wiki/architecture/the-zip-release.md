@@ -17,7 +17,7 @@ sources:
   - id: git-archive
     resource: https://git-scm.com/docs/git-archive
     title: git-archive(1)
-sources_digest: 0f863016853f4470
+sources_digest: f325b2f1bdc5e7cb
 ---
 
 # Why there is a zip at all
@@ -94,6 +94,23 @@ every time.
 `llm-wiki` has none either: it works on a project's git checkout, which a web
 app's chat does not have.
 
+**Plugins are not zipped.** `session-review` is installed through the Claude Code
+marketplace and reads files only Claude Code keeps
+([why](/architecture/session-review.md#why-a-plugin-and-where-it-lives)). The one
+thing `check` holds a plugin to is its version: `plugin.json`'s `version` must
+equal its skill's `metadata.version` (a plugin with no skill, like `session-watch`,
+needs only a MAJOR.MINOR.PATCH one), README link or not, because a set version
+pins installed copies and a skill change without it reaches nobody
+([versioning](/architecture/session-review.md#versioning-the-plugins-number-is-the-skills)).
+
+**A symlink moves every plugin that links it.** `plugins/session-watch/observer.md`
+links session-review's prompt. For each symlink committed under a plugin (listed from
+HEAD's tree, so a directory link counts), `check` reads where it points (a target
+outside the repository, or no longer in HEAD, is a fault), finds the target's last
+commit T, and fails unless the plugin's `version` at HEAD differs from its value at
+T's parent (a plugin that did not exist then passes). It judges what is committed, so
+CI needs the whole history, and a shallow clone faults, saying why ([session watch](/architecture/session-watch.md#the-shared-prompt-and-the-version-rule)).
+
 # Built from the commit, not the folder
 
 - **`git archive`, never `zip -r`.** A run made inside the checkout leaves a plan,
@@ -116,10 +133,23 @@ app's chat does not have.
 
 On every pull request and every push to `main`:
 
-- every skill, offered or not, against the specification with `agentskills
-  validate` from the `skills-ref` package (it needs Python 3.11, where the
-  skills need 3.9);
-- every offered zip with `tools/release.py check`.
+- every skill, offered or not, and every skill inside a plugin, against the
+  specification with `agentskills validate` from the `skills-ref` package (it
+  needs Python 3.11, where the skills need 3.9);
+- the session condenser's unit tests, `python3 -m unittest discover -s
+  evals/session-review`;
+- every offered zip, and every plugin's version, with `tools/release.py check`;
+- the marketplace and each plugin with `claude plugin validate --strict`, and
+  each plugin that has tests with `claude plugin test`. Claude Code is installed
+  from npm at its latest release, on purpose: a mod's API is early access, and CI
+  is where a release that moves it shows first, as a red build with no change
+  here (the job prints the version). These run in a job of their own, `plugins`,
+  which the release does not wait for, so such a break never holds back a
+  skill's release; the job checks out without keeping the token, since the
+  latest package's install scripts run there, and turns off the auto-updater and
+  non-essential traffic. Neither command calls a model or needs a
+  login: the tests answer every call the mod makes, and they passed with an
+  empty home and no credentials on 2.1.296.
 
 Nothing else here is checked yet: not this repository's own rules for a skill
 ([editing a skill](/conventions/editing-a-skill.md)), and not the tests that

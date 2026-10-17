@@ -1,0 +1,9 @@
+{
+  "name": "session-review",
+  "version": "1.1.0",
+  "description": "Reads your past Claude Code sessions and suggests, with evidence, how to improve your everyday work. Claude Code only; applies nothing.",
+  "author": { "name": "4e6" },
+  "homepage": "https://github.com/4e6/skills",
+  "repository": "https://github.com/4e6/skills",
+  "license": "MIT"
+}
