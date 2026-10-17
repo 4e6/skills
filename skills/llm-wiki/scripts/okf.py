@@ -831,13 +831,19 @@ def normalized_content(path: str, data: bytes) -> bytes | None:
     end = frontmatter_end(lines)
     if not end:
         return None
-    kept, in_metadata, dropped = [], False, False
+    kept, in_metadata, child, dropped = [], False, "", False
     for line in lines[1 : end - 1]:
         if line and not line[0].isspace():
             in_metadata = re.match(r"metadata:[ \t]*(#.*)?$", line) is not None
-        elif in_metadata and re.match(r"[ \t]+version:", line):
-            dropped = True
-            continue
+            child = ""
+        elif in_metadata and line.strip():
+            indent = line[: len(line) - len(line.lstrip())]
+            # The first indented line sets the depth of `metadata`'s own keys,
+            # so a `version:` nested further down, in a mapping of its own, stays.
+            child = child or indent
+            if indent == child and line.lstrip().startswith("version:"):
+                dropped = True
+                continue
         kept.append(line)
     if not dropped:
         return None
@@ -851,27 +857,43 @@ def normalized_id(path: str, data: bytes) -> str | None:
 
 
 def heading_slug(text: str, seen: dict[str, int]) -> str:
-    """The anchor GitHub gives a heading, `-1`, `-2` on for a repeat."""
+    """The anchor GitHub gives a heading, `-1`, `-2` on for a repeat.
+
+    A suffixed slug is itself recorded as taken, as GitHub's slugger does, so a
+    heading whose own text slugs to `step-2-1` never shares an anchor with the
+    second `Step 2`.
+    """
     text = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", text)
     text = re.sub(r"<[^>]+>", "", text)
     slug = re.sub(r"[^\w\- ]", "", text.strip().lower()).replace(" ", "-")
-    count = seen.get(slug, 0)
-    seen[slug] = count + 1
-    return slug if count == 0 else f"{slug}-{count}"
+    result = slug
+    while result in seen:
+        seen[slug] += 1
+        result = f"{slug}-{seen[slug]}"
+    seen[result] = 0
+    return result
 
 
 def markdown_sections(text: str) -> dict[str, str]:
     """Each ATX heading's slug, and its section: the heading to the next of its level or above.
 
-    A section holds its subsections. The frontmatter and fenced blocks are
-    skipped, since a YAML comment or a shell comment there reads as a heading.
+    A section holds its subsections. The frontmatter, fenced blocks and HTML
+    comments are skipped, since a YAML comment, a shell comment or a commented-out
+    heading there reads as a heading and would end a section early.
     """
     lines = text.replace("\r\n", "\n").split("\n")
     heads: list[tuple[int, int, str]] = []
     seen: dict[str, int] = {}
     fence = ""
+    comment = False
     for i in range(frontmatter_end(lines), len(lines)):
         line = lines[i]
+        if comment:
+            comment = "-->" not in line
+            continue
+        if re.match(r" {0,3}<!--", line):
+            comment = "-->" not in line[line.index("<!--") + 4 :]
+            continue
         if fence:
             close = FENCE_CLOSE_RE.match(line)
             if close and close.group(1)[0] == fence[0] and len(close.group(1)) >= len(fence):
@@ -1018,7 +1040,9 @@ def commit_entries(
             blobs[path] = oid
         if kind in ("blob", "commit") and spec.match_file(path):
             entries.append((mode, oid, path))
-    needed = [blobs[p] for p in blobs if (normalize and is_markdown(p)) or any(p == s for s, _ in sections)]
+    section_files = {path for path, _ in sections}
+    needed = [o for m, o, p in entries if normalize and is_markdown(p) and m != "160000"]
+    needed += [blobs[p] for p in section_files if p in blobs]
     contents = blob_contents(repo, needed)
     if normalize:
         entries = [
@@ -1190,6 +1214,7 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
                 continue
             current = digest_of(entries)
             baseline: dict = {}
+            searched = False
             if current != digest and not sections:
                 # A pin taken before `metadata.version` was left out is still
                 # good while the files are byte for byte what it read, and
@@ -1198,6 +1223,7 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
                     current = digest
                 elif has_head:
                     baseline = pin_baseline(repo, digest, whole, sections, pathspecs)
+                    searched = True
                     if baseline.get("legacy") and digest_of(
                         commit_entries(repo, baseline["full"], whole)[0]
                     ) == current:
@@ -1209,7 +1235,8 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
                     "message": f"sources changed since the page was pinned ({digest} -> {current})",
                 }
                 if has_head:
-                    baseline = baseline or pin_baseline(repo, digest, whole, sections, pathspecs)
+                    if not searched:
+                        baseline = pin_baseline(repo, digest, whole, sections, pathspecs)
                     baseline = {k: v for k, v in baseline.items() if k not in ("full", "legacy")}
                     if baseline:
                         finding["message"] += (

@@ -5,7 +5,7 @@ description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits 
 tags: [architecture, llm-wiki, retirement]
 sources:
   - resource: skills/llm-wiki/**
-sources_digest: bcc165089ebafbcc
+sources_digest: 4226ee445171fb27
 ---
 
 # What it is for
@@ -105,9 +105,10 @@ Three consequences are the skill's own:
 
 A page flagged by every edit to a file it names gets re-pinned unread, and then
 the pin vouches for nothing. Whole-file digests did that here: the meal-plan
-skill's 1.10.0 changed one paragraph of `fuelling.md` and the version line of
-`SKILL.md`, and seventeen pages went stale, of which one needed new text. The
-other sixteen were re-pinned after a search for the changed words, not a reading.
+skill's 1.10.0 changed one paragraph of `fuelling.md`, the version line of
+`SKILL.md` and the README's release link, and eighteen pages went stale, of
+which one needed new text. Most of the rest were re-pinned after a search for
+the changed words, not a reading.
 So from 1.5.0 two kinds of edit no longer reach a digest:
 
 - **A section is a source.** `path#slug` digests one markdown section, the
