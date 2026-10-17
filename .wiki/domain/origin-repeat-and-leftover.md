@@ -4,9 +4,12 @@ title: Origin, repeat and leftover
 description: The three kinds of recipe entry. A repeat cooks the dish again and buys it again; a leftover eats a portion already cooked and buys nothing. Getting that backwards is silent in both directions.
 tags: [domain, plan]
 sources:
-  - resource: skills/training-week-meal-plan/references/fuelling.md
+  - resource: skills/training-week-meal-plan/references/fuelling.md#three-kinds-of-recipe-entry
+  - resource: skills/training-week-meal-plan/references/fuelling.md#every-cooked-portion-gets-eaten
+  - resource: skills/training-week-meal-plan/references/fuelling.md#the-shopping-list
+  - resource: skills/training-week-meal-plan/references/fuelling.md#a-meal-is-a-list-of-dishes
   - resource: skills/training-week-meal-plan/references/plan-schema.json
-sources_digest: c62d688fcc657fb9
+sources_digest: 742dda362cf8e221
 ---
 
 Every main meal of every day gets its own recipe entry, so a dish eaten more than

@@ -6,8 +6,14 @@ tags: [plan-quality, shopping, validation]
 sources:
   - resource: skills/training-week-meal-plan/scripts/validate.py
   - resource: skills/training-week-meal-plan/scripts/render.py
-  - resource: skills/training-week-meal-plan/references/fuelling.md
-sources_digest: 9b212f03c8bb4777
+  - resource: skills/training-week-meal-plan/references/fuelling.md#the-shopping-list
+  - resource: skills/training-week-meal-plan/references/fuelling.md#weights-and-measures-are-their-countrys
+  - resource: skills/training-week-meal-plan/references/fuelling.md#three-kinds-of-recipe-entry
+  - resource: skills/training-week-meal-plan/references/fuelling.md#a-meal-is-a-list-of-dishes
+  - resource: skills/training-week-meal-plan/references/fuelling.md#a-container-you-open-is-a-container-the-week-finishes
+  - resource: skills/training-week-meal-plan/references/fuelling.md#fuel-belongs-to-a-session
+  - resource: skills/training-week-meal-plan/references/fuelling.md#snacks-top-each-day-up-to-its-target
+sources_digest: d8c6e1f9da8f3551
 ---
 
 # Statement

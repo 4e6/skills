@@ -5,9 +5,10 @@ description: Answered with a line of snacks per day. Published daily bands are w
 tags: [nutrition, product]
 status: deprecated
 sources:
-  - resource: skills/training-week-meal-plan/references/fuelling.md
+  - resource: skills/training-week-meal-plan/references/fuelling.md#snacks-top-each-day-up-to-its-target
+  - resource: skills/training-week-meal-plan/references/fuelling.md#the-one-rule-that-makes-this-worth-doing
   - resource: skills/training-week-meal-plan/examples/sample-plan.json
-sources_digest: 742b49be865d34fd
+sources_digest: df4e06add08f40bd
 ---
 
 # The answer

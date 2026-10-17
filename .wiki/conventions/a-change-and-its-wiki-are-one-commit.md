@@ -6,7 +6,7 @@ tags: [process, wiki]
 sources:
   - resource: AGENTS.md
   - resource: skills/llm-wiki/scripts/okf.py
-sources_digest: df5178d5a93e1e2c
+sources_digest: 9ee2c27cef7ca70b
 ---
 
 # The rule
@@ -35,7 +35,9 @@ rebase and a shallow clone each rewrite or cut off history:
   rewritten by the squash like the hash beside it, and one derived from git is
   the merge time.
 
-`sources_digest` is a digest of the content of the files `sources` matches. It
+`sources_digest` is a digest of the content of the files `sources` matches, or
+of the sections it names, less a skill's version line
+([why](/architecture/llm-wiki.md#a-pin-is-only-as-good-as-it-is-quiet)). It
 is the same on main as on the branch whenever those files are the same, so the
 squash, a rebase and a shallow clone leave it alone, and no commit follows the
 merge. The tests that showed this ran a two-commit branch squashed after main

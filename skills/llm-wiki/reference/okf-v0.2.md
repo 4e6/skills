@@ -227,7 +227,9 @@ Two deliberate breaking changes; the rest is additive.
 - **Reads** `sources` (each entry's `resource`, when it names files in the
   repository: no URL scheme, and a space only in a path a tracked file has. It is
   relative to the repository root, where §6.2 would read a leading `/` as the
-  bundle's), `status` (`deprecated` sinks a page in its index), `okf_version`,
+  bundle's. A `#slug` after a markdown file's path names one section of it,
+  the way a link's fragment names an anchor; the spec gives a `resource` no
+  fragment, so this is an extension), `status` (`deprecated` sinks a page in its index), `okf_version`,
   and legacy `timestamp` not at all. It reads `generated`, `verified` and
   `stale_after` not at all, and keeps them if a page has them.
 - **Adds**, as producer extensions §4.1 allows: `sources_digest`,

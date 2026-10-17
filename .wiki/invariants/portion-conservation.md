@@ -6,8 +6,13 @@ tags: [plan-quality, validation]
 sources:
   - resource: skills/training-week-meal-plan/scripts/validate.py
   - resource: skills/training-week-meal-plan/scripts/render.py
-  - resource: skills/training-week-meal-plan/references/fuelling.md
-sources_digest: 9b212f03c8bb4777
+  - resource: skills/training-week-meal-plan/references/fuelling.md#every-cooked-portion-gets-eaten
+  - resource: skills/training-week-meal-plan/references/fuelling.md#three-kinds-of-recipe-entry
+  - resource: skills/training-week-meal-plan/references/fuelling.md#a-container-you-open-is-a-container-the-week-finishes
+  - resource: skills/training-week-meal-plan/references/fuelling.md#days-the-athlete-is-away
+  - resource: skills/training-week-meal-plan/references/fuelling.md#meals-the-athlete-eats-elsewhere
+  - resource: skills/training-week-meal-plan/references/fuelling.md#the-days-this-plan-covers
+sources_digest: f3b9315117f61817
 ---
 
 # Statement
