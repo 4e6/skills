@@ -321,8 +321,7 @@ Rules:
 
 - A link beats a file, even on the athlete's own machine.
 - A way that fails falls back to the next, in one plain line.
-- Publish and attach are private unless they ask to share. Run no opener. Name
-  no path.
+- Publish and attach are private unless they ask to share. Name no path.
 - Publish the page the renderer wrote, as it stands. Do not redesign, restyle or
   retype it.
 - A file attached is always `plan-<date>.html`. It carries its photos.

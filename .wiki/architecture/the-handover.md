@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: 0324ed6f6fddfea4
+sources_digest: a700bb985a74f6c8
 ---
 
 # Progress is the host's, and the reply is the athlete's
@@ -56,8 +56,10 @@ falling back to the next in one plain line, and the page is:
   renderer wrote; the shopping list comes last, which is the part a truncated
   copy loses;
 - **private**, unless they ask to share it — it carries their weight and diet;
-- **no opener and no path.** Without *name no path*, the smaller models handed
-  the file over and recited its sandbox path beside it;
+- **no path.** Without *name no path*, the smaller models handed the file over
+  and recited its sandbox path beside it. A sentence beside it, *run no
+  opener*, was dropped in 1.11.0: the third way already opens the page only
+  where the host can neither publish nor attach;
 - **published as the renderer wrote it** — not redesigned, restyled or retyped
   to suit a publishing tool's rules for a page written by hand
   ([publishing a page with photos](#publishing-a-page-with-photos)).
