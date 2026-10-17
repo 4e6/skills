@@ -139,6 +139,14 @@ COUNTRY_QUESTIONS = [
      "might have instead, and not merely something on sale there? Sports products "
      "count as typical anywhere. Name any line whose food a local would find an "
      "unusual choice, and what they would more likely have."),
+    ("main-meals-varied",
+     "Does at least one of the plan's distinct lunch and dinner dishes come from a "
+     "cuisine other than {country}'s own that is popular there? A dish that began "
+     "elsewhere counts, however everyday it has become in {country}. Name each such "
+     "dish and its cuisine."),
+    ("buyable-locally",
+     "Could every item on the shopping list be bought in an ordinary supermarket in "
+     "{country}, without a specialist import shop? Name any that could not."),
     ("shops-trade-there",
      "Does every supermarket or shop chain the plan or the reply names trade in "
      "{country}? Answer yes if none is named."),
