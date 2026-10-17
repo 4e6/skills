@@ -4,8 +4,8 @@ title: Which countries should the intake offer as rows?
 description: The place question offers four English-speaking countries and a typed row. Naming rows stopped hosts inventing regions, but an athlete in Lisbon found nothing near her on them.
 tags: [intake, product]
 sources:
-  - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: 6b94e97c271b9edb
+  - resource: skills/training-week-meal-plan/SKILL.md#step-1--gather
+sources_digest: 466a0bc2aab60985
 ---
 
 # The question

@@ -4,9 +4,14 @@ title: Nothing about the athlete is invented
 description: No figure about the athlete's week that they did not give may be printed, and a missing required input is a question, never a guess. What they did give is theirs to print and to fuel from.
 tags: [plan-quality, intake]
 sources:
-  - resource: skills/training-week-meal-plan/references/fuelling.md
+  - resource: skills/training-week-meal-plan/references/fuelling.md#the-one-rule-that-makes-this-worth-doing
+  - resource: skills/training-week-meal-plan/references/fuelling.md#fuel-belongs-to-a-session
+  - resource: skills/training-week-meal-plan/references/fuelling.md#the-days-this-plan-covers
+  - resource: skills/training-week-meal-plan/references/fuelling.md#what-you-have-and-what-you-must-not-invent
+  - resource: skills/training-week-meal-plan/references/fuelling.md#you-can-ask-but-the-plan-cannot
+  - resource: skills/training-week-meal-plan/references/fuelling.md#body-weight-is-the-number-every-target-is-built-from
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: cf3e05b366e5eab0
+sources_digest: ef8283d301a89e0d
 ---
 
 # Statement

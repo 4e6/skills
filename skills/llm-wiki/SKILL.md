@@ -9,7 +9,7 @@ compatibility: >-
   bundle is read and written offline.
 metadata:
   author: 4e6
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # LLM-wiki (Open Knowledge Format)
@@ -142,6 +142,7 @@ resource: https://…             # only if a canonical external asset exists
 # --- producer extensions this skill defines ---
 sources:                        # §5.1: what the page derives from
   - resource: src/auth/**       # a repo path or gitignore-syntax glob — the page's L2
+  - resource: docs/auth.md#token-rotation   # one section of a markdown file
   - id: rfc7519                 # anything else: a URL, cited in the body as [^rfc7519]
     resource: https://www.rfc-editor.org/rfc/rfc7519
     title: JSON Web Token
@@ -183,6 +184,16 @@ A page with no `sources` (a `Gotcha`, a `Glossary Term`) is timeless and is
 never reported stale. **Only add `sources` to a page whose truth actually
 depends on that code, and name the files it depends on.** A broad glob is stale
 whenever anything under it changes, so over-tagging manufactures false staleness.
+
+**Where a page rests on part of a long markdown file, name the sections.**
+`path#slug` digests one section: its heading, as GitHub slugs it (`## Step 2 —
+Plan` is `#step-2--plan`, a repeat takes `-1`), through to the next heading of
+its level or above, subsections included. Only a literal markdown file takes a
+fragment, never a glob. Name one entry per section, and the whole file when the
+page rests on its shape or on rules scattered through it: a section pin that
+misses a dependency goes stale silently, which is worse than noise. A
+`version:` under a markdown file's frontmatter `metadata:` is never digested,
+so a release alone flags no page.
 
 There is no `timestamp` to keep. A hand-set date is one more thing that is wrong
 a week later, and `git log -1 --format=%cI -- <page>` says when a page last
@@ -350,6 +361,11 @@ Then, per finding:
   rewrite, retire, or supersede. A `Decision` is never reported stale for its
   sources changing, since it records an event; `S005` is all it can raise, and it
   means the decision is a retirement candidate.
+
+- **`S007` a section is gone** — `sources` names `path#slug` and the file has
+  no such heading: renamed, removed, or moved under another. Read the file, point
+  the entry at the section the page now rests on, then pin. `pin` refuses the
+  page until then.
 
 - **`S004` coverage gap** — tracked code no page claims. Do **not** create one
   page per file. Ask whether the gap is a real subsystem worth a `Module`, or

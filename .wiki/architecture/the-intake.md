@@ -5,8 +5,13 @@ description: Step 1 asks for the week, the weight, the country, two optional thi
 tags: [architecture, intake]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
-  - resource: skills/training-week-meal-plan/references/fuelling.md
-sources_digest: cf3e05b366e5eab0
+  - resource: skills/training-week-meal-plan/references/fuelling.md#the-days-this-plan-covers
+  - resource: skills/training-week-meal-plan/references/fuelling.md#what-you-have-and-what-you-must-not-invent
+  - resource: skills/training-week-meal-plan/references/fuelling.md#you-can-ask-but-the-plan-cannot
+  - resource: skills/training-week-meal-plan/references/fuelling.md#body-weight-is-the-number-every-target-is-built-from
+  - resource: skills/training-week-meal-plan/references/fuelling.md#weights-and-measures-are-their-countrys
+  - resource: skills/training-week-meal-plan/references/fuelling.md#a-dietary-restriction-outranks-everything-here
+sources_digest: 0fa4340b96ef0c86
 ---
 
 # What it asks

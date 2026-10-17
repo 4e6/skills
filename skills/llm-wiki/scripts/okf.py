@@ -128,8 +128,20 @@ DECISION_SHARE_MIN = 3
 # clone each rewrite or cut off; the content of the files is the same on the other
 # side of all three. Sixteen hex characters of SHA-256 is far more than telling
 # "unchanged" from "changed" needs, and short enough to read in a frontmatter line.
+#
+# A digest is only as useful as it is quiet: a page flagged by every edit to a
+# file it names gets re-pinned unread. So two things that change a file without
+# changing what a page could say about it are left out. A source may name one
+# section of a markdown file, `path#heading-slug`, and only that section is
+# digested. And a `version:` under a markdown file's frontmatter `metadata:` is
+# dropped, since a skill bumps it on every release and no page rests on it.
 DIGEST_KEY = "sources_digest"
 DIGEST_LEN = 16
+# Marks the id of a whole file read through `normalized_content` and of a
+# section, so neither is mistaken for a git blob id.
+NORMALIZED_ID = "n:"
+SECTION_ID = "s:"
+SECTION_MODE = "section"
 # How many commits that touched a page's sources are tried when looking for the
 # one the pin was taken at, so a stale page can say what changed since.
 BASELINE_SEARCH = 50
@@ -786,7 +798,131 @@ def digest_of(entries: list[tuple[str, str, str]]) -> str:
     return h.hexdigest()[:DIGEST_LEN]
 
 
-def working_entries(repo: Path, matched: list[str]) -> list[tuple[str, str, str]]:
+MARKDOWN_SUFFIXES = (".md", ".markdown")
+ATX_HEADING_RE = re.compile(r"^ {0,3}(#{1,6})(?:[ \t]+(.*?))?(?:[ \t]+#+)?[ \t]*$")
+FENCE_OPEN_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+FENCE_CLOSE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
+
+
+def is_markdown(path: str) -> bool:
+    return path.lower().endswith(MARKDOWN_SUFFIXES)
+
+
+def frontmatter_end(lines: list[str]) -> int:
+    """Index of the first line after a leading `---` frontmatter block, or 0."""
+    if lines and lines[0].rstrip() == "---":
+        for i in range(1, len(lines)):
+            if lines[i].rstrip() in ("---", "..."):
+                return i + 1
+    return 0
+
+
+def normalized_content(path: str, data: bytes) -> bytes | None:
+    """A markdown file without its frontmatter's `metadata.version`, or None if it has none.
+
+    By text and not a YAML round trip, so every other edit to the frontmatter,
+    a description included, still changes the digest. Only a `version:`
+    indented under a top-level `metadata:` goes; a top-level `version:` or
+    `okf_version` is a page's own, and stays.
+    """
+    if not is_markdown(path):
+        return None
+    lines = data.decode("utf-8", errors="surrogateescape").replace("\r\n", "\n").split("\n")
+    end = frontmatter_end(lines)
+    if not end:
+        return None
+    kept, in_metadata, dropped = [], False, False
+    for line in lines[1 : end - 1]:
+        if line and not line[0].isspace():
+            in_metadata = re.match(r"metadata:[ \t]*(#.*)?$", line) is not None
+        elif in_metadata and re.match(r"[ \t]+version:", line):
+            dropped = True
+            continue
+        kept.append(line)
+    if not dropped:
+        return None
+    text = "\n".join(lines[:1] + kept + lines[end - 1 :])
+    return text.encode("utf-8", errors="surrogateescape")
+
+
+def normalized_id(path: str, data: bytes) -> str | None:
+    content = normalized_content(path, data)
+    return None if content is None else NORMALIZED_ID + hashlib.sha256(content).hexdigest()[:40]
+
+
+def heading_slug(text: str, seen: dict[str, int]) -> str:
+    """The anchor GitHub gives a heading, `-1`, `-2` on for a repeat."""
+    text = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", text)
+    text = re.sub(r"<[^>]+>", "", text)
+    slug = re.sub(r"[^\w\- ]", "", text.strip().lower()).replace(" ", "-")
+    count = seen.get(slug, 0)
+    seen[slug] = count + 1
+    return slug if count == 0 else f"{slug}-{count}"
+
+
+def markdown_sections(text: str) -> dict[str, str]:
+    """Each ATX heading's slug, and its section: the heading to the next of its level or above.
+
+    A section holds its subsections. The frontmatter and fenced blocks are
+    skipped, since a YAML comment or a shell comment there reads as a heading.
+    """
+    lines = text.replace("\r\n", "\n").split("\n")
+    heads: list[tuple[int, int, str]] = []
+    seen: dict[str, int] = {}
+    fence = ""
+    for i in range(frontmatter_end(lines), len(lines)):
+        line = lines[i]
+        if fence:
+            close = FENCE_CLOSE_RE.match(line)
+            if close and close.group(1)[0] == fence[0] and len(close.group(1)) >= len(fence):
+                fence = ""
+            continue
+        opening = FENCE_OPEN_RE.match(line)
+        if opening:
+            fence = opening.group(1)
+            continue
+        heading = ATX_HEADING_RE.match(line)
+        if heading:
+            heads.append((i, len(heading.group(1)), heading_slug(heading.group(2) or "", seen)))
+    sections: dict[str, str] = {}
+    for k, (start, level, slug) in enumerate(heads):
+        end = next((i for i, lvl, _ in heads[k + 1 :] if lvl <= level), len(lines))
+        sections.setdefault(slug, "\n".join(lines[start:end]).rstrip("\n"))
+    return sections
+
+
+def section_entry(path: str, slug: str, data: bytes | None) -> tuple[str, str, str] | None:
+    """A section as a digest entry, or None when the file has no heading with that slug."""
+    if data is None or not is_markdown(path):
+        return None
+    body = markdown_sections(data.decode("utf-8", errors="surrogateescape")).get(slug)
+    if body is None:
+        return None
+    oid = SECTION_ID + hashlib.sha256(body.encode("utf-8", errors="surrogateescape")).hexdigest()[:40]
+    return (SECTION_MODE, oid, f"{path}#{slug}")
+
+
+def current_entries(
+    repo: Path, whole: list[str], sections: list[tuple[str, str]], normalize: bool = True
+) -> tuple[list[tuple[str, str, str]], list[str], list[str]]:
+    """What a page's sources digest to now: (entries, sections not found, whole files counted)."""
+    files: list[str] = []
+    if whole:
+        spec = pathspec.PathSpec.from_lines("gitwildmatch", whole)
+        files = [f for f in worktree_files(repo) if spec.match_file(f)]
+    entries = working_entries(repo, files, normalize)
+    missing: list[str] = []
+    for path, slug in sections:
+        source = repo / path
+        entry = section_entry(path, slug, source.read_bytes() if source.is_file() else None)
+        if entry is None:
+            missing.append(f"{path}#{slug}")
+        else:
+            entries.append(entry)
+    return entries, missing, files
+
+
+def working_entries(repo: Path, matched: list[str], normalize: bool = True) -> list[tuple[str, str, str]]:
     """The matched files as they are on disk now, as (mode, blob id, path).
 
     Regular files are hashed from the working tree through `git hash-object`,
@@ -821,31 +957,88 @@ def working_entries(repo: Path, matched: list[str]) -> list[tuple[str, str, str]
         )
         hashes = iter(proc.stdout.split())
         entries = [(m, next(hashes) if o == "" else o, p) for m, o, p in entries]
+    if normalize:
+        entries = [
+            (m, (normalized_id(p, (repo / p).read_bytes()) or o) if p in regular and is_markdown(p) else o, p)
+            for m, o, p in entries
+        ]
     return entries
 
 
+# Blob contents by id, read once per run: a blob id names the same bytes forever.
+_BLOBS: dict[str, bytes] = {}
+
+
+def blob_contents(repo: Path, oids: list[str]) -> dict[str, bytes]:
+    """The contents of blobs, through one `git cat-file --batch`."""
+    wanted = [o for o in dict.fromkeys(oids) if o not in _BLOBS]
+    if wanted:
+        proc = subprocess.run(
+            ["git", "-C", str(repo), "cat-file", "--batch"],
+            input=("\n".join(wanted) + "\n").encode(), capture_output=True,
+        )
+        out, pos = proc.stdout, 0
+        for oid in wanted:
+            newline = out.find(b"\n", pos)
+            if newline < 0:
+                break
+            header = out[pos:newline].split()
+            pos = newline + 1
+            if len(header) < 3:
+                continue
+            size = int(header[2])
+            _BLOBS[oid] = out[pos : pos + size]
+            pos += size + 1
+    return {o: _BLOBS[o] for o in oids if o in _BLOBS}
+
+
 def commit_entries(
-    repo: Path, commit: str, patterns: list[str]
-) -> list[tuple[str, str, str]]:
-    """The files `patterns` match in `commit`'s tree, as (mode, blob id, path)."""
+    repo: Path, commit: str, patterns: list[str], sections: list[tuple[str, str]] = (), normalize: bool = True
+) -> tuple[list[tuple[str, str, str]], list[str]]:
+    """What `patterns` and `sections` digest to in `commit`'s tree: (entries, sections not found).
+
+    The same entries `current_entries` makes from the working tree, so that the
+    commit a page was pinned at can be found again.
+    """
     prefixes: set[str] = set()
     for pattern in patterns:
         literal = GLOB_CHARS.split(pattern.lstrip("/"), 1)[0]
         prefixes.add(literal if literal == pattern.lstrip("/") else literal.rpartition("/")[0])
+    prefixes.update(path for path, _ in sections)
     # A pattern with no directory in front of its first wildcard needs the whole tree.
     narrow = [p for p in sorted(prefixes) if p] if "" not in prefixes else []
     _, out = git(repo, "-c", "core.quotePath=false", "ls-tree", "-r", commit, "--", *narrow)
     spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
     entries = []
+    blobs: dict[str, str] = {}
     for line in out.splitlines():
         meta, _, path = line.partition("\t")
         mode, kind, oid = meta.split()
+        if kind == "blob":
+            blobs[path] = oid
         if kind in ("blob", "commit") and spec.match_file(path):
             entries.append((mode, oid, path))
-    return entries
+    needed = [blobs[p] for p in blobs if (normalize and is_markdown(p)) or any(p == s for s, _ in sections)]
+    contents = blob_contents(repo, needed)
+    if normalize:
+        entries = [
+            (m, normalized_id(p, contents[o]) or o, p) if is_markdown(p) and o in contents else (m, o, p)
+            for m, o, p in entries
+        ]
+    missing: list[str] = []
+    for path, slug in sections:
+        oid = blobs.get(path)
+        entry = section_entry(path, slug, contents.get(oid) if oid else None)
+        if entry is None:
+            missing.append(f"{path}#{slug}")
+        else:
+            entries.append(entry)
+    return entries, missing
 
 
-def pin_baseline(repo: Path, recorded: str, patterns: list[str], pathspecs: list[str]) -> dict:
+def pin_baseline(
+    repo: Path, recorded: str, whole: list[str], sections: list[tuple[str, str]], pathspecs: list[str]
+) -> dict:
     """The newest commit whose sources digest to `recorded`, and what changed since.
 
     The digest says *that* the sources changed and nothing about how. The commit
@@ -860,7 +1053,13 @@ def pin_baseline(repo: Path, recorded: str, patterns: list[str], pathspecs: list
         repo, "log", "--first-parent", f"-n{BASELINE_SEARCH}", "--format=%H", "--", *pathspecs
     )
     for commit in listed.split():
-        if digest_of(commit_entries(repo, commit, patterns)) == recorded:
+        entries, missing = commit_entries(repo, commit, whole, sections)
+        found = not missing and digest_of(entries) == recorded
+        legacy = False
+        if not found and not sections:
+            # A pin taken before `metadata.version` was left out.
+            legacy = found = digest_of(commit_entries(repo, commit, whole, normalize=False)[0]) == recorded
+        if found:
             _, subjects = git(
                 repo, *quiet, "log", "--first-parent", "--format=%h %s", f"{commit}..HEAD", "--", *pathspecs
             )
@@ -869,21 +1068,64 @@ def pin_baseline(repo: Path, recorded: str, patterns: list[str], pathspecs: list
                 "baseline": commit[:12],
                 "commits": subjects.splitlines()[:10],
                 "files": names.splitlines()[:20],
+                # For `stale` alone, which drops them before reporting.
+                "full": commit,
+                "legacy": legacy,
             }
     return {}
+
+
+def split_fragment(resource: str, repo: Path) -> tuple[str, str | None]:
+    """`path#slug` as (path, slug) when `path` is a file in the working tree.
+
+    Only a literal file takes a fragment: a glob or a directory has no one
+    section to name. Anything else comes back whole, so a `#` in a path that is
+    not followed by a section still matches the file it names, and a sectioned
+    file that has gone matches nothing, which `S005` reports.
+    """
+    path, sep, slug = resource.rpartition("#")
+    if not sep or not slug or not path or GLOB_CHARS.search(path):
+        return resource, None
+    if not (repo / path.strip("/")).is_file():
+        return resource, None
+    return path.strip("/"), slug
+
+
+def split_sources(
+    doc: Doc, repo: Path, gitlinks: frozenset[str]
+) -> tuple[list[str], list[str], list[tuple[str, str]]]:
+    """(patterns read whole, of which those certain to be paths, sections as (path, slug))."""
+    strong, weak = code_sources(doc.meta.get("sources"))
+    whole_strong: list[str] = []
+    whole_weak: list[str] = []
+    sections: list[tuple[str, str]] = []
+    for group, out in ((strong, whole_strong), (weak, whole_weak)):
+        for resource in group:
+            path, slug = split_fragment(resource, repo)
+            if slug is None:
+                out.append(resource)
+            elif (path, slug) not in sections:
+                sections.append((path, slug))
+    whole = normalize_sources(whole_strong + whole_weak, repo, gitlinks)
+    return whole, normalize_sources(whole_strong, repo, gitlinks), sections
 
 
 def matched_sources(
     doc: Doc, repo: Path, tracked: list[str], gitlinks: frozenset[str]
 ) -> tuple[list[str], list[str]]:
-    """A concept's normalized `sources` patterns, and the tracked files they match."""
-    strong, weak = code_sources(doc.meta.get("sources"))
-    patterns = normalize_sources(strong + weak, repo, gitlinks)
+    """A concept's normalized `sources` patterns, and the tracked files they match.
+
+    A section's file is among both: the page depends on it, and it is covered.
+    """
+    whole, strong, sections = split_sources(doc, repo, gitlinks)
+    # Anchored, as the file the fragment was split from is the one at the root.
+    section_files = normalize_sources([f"/{path}" for path, _ in sections], repo, gitlinks)
+    patterns = whole + [p for p in dict.fromkeys(section_files) if p not in whole]
     if not patterns:
         return [], []
     spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
     matched = [f for f in tracked if spec.match_file(f)]
-    if not matched and not strong:
+    if not matched and not strong and not sections:
         # Nothing but words that match no file: a scope descriptor, not a path
         # that has gone, so there is no code here for `S005` to say is missing.
         return [], []
@@ -933,8 +1175,33 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
         if digest:
             # The current form: compare content, so there is no history to be
             # rewritten, and a dirty working tree is simply judged as it is.
-            spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
-            current = digest_of(working_entries(repo, [f for f in worktree_files(repo) if spec.match_file(f)]))
+            whole, _, sections = split_sources(doc, repo, gitlinks)
+            entries, missing, _ = current_entries(repo, whole, sections)
+            if missing:
+                findings.append(
+                    {
+                        "code": "S007",
+                        "concept": doc.rel,
+                        "message": "`sources` names a section the file no longer has: "
+                        f"{', '.join(missing)}. A heading was renamed or removed: read the "
+                        "file, point the source at the section the page rests on, and pin",
+                    }
+                )
+                continue
+            current = digest_of(entries)
+            baseline: dict = {}
+            if current != digest and not sections:
+                # A pin taken before `metadata.version` was left out is still
+                # good while the files are byte for byte what it read, and
+                # while they differ from what it read only in that line.
+                if digest_of(current_entries(repo, whole, [], normalize=False)[0]) == digest:
+                    current = digest
+                elif has_head:
+                    baseline = pin_baseline(repo, digest, whole, sections, pathspecs)
+                    if baseline.get("legacy") and digest_of(
+                        commit_entries(repo, baseline["full"], whole)[0]
+                    ) == current:
+                        current = digest
             if current != digest:
                 finding = {
                     "code": "S001",
@@ -942,7 +1209,8 @@ def stale(bundle: Bundle, base: str | None = None) -> dict:
                     "message": f"sources changed since the page was pinned ({digest} -> {current})",
                 }
                 if has_head:
-                    baseline = pin_baseline(repo, digest, patterns, pathspecs)
+                    baseline = baseline or pin_baseline(repo, digest, whole, sections, pathspecs)
+                    baseline = {k: v for k, v in baseline.items() if k not in ("full", "legacy")}
                     if baseline:
                         finding["message"] += (
                             f"; read `git diff {baseline['baseline']} -- <sources>`"
@@ -1181,9 +1449,15 @@ def pin(bundle: Bundle, names: list[str], migrate: bool) -> dict:
         elif not matched:
             skipped.append({"concept": doc.rel, "reason": "`sources` matches no tracked file (S005)"})
         else:
-            spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
-            counted = [f for f in worktree_files(repo) if spec.match_file(f)]
-            digest = digest_of(working_entries(repo, counted))
+            whole, _, sections = split_sources(doc, repo, gitlinks)
+            entries, missing, counted = current_entries(repo, whole, sections)
+            if missing:
+                skipped.append({
+                    "concept": doc.rel,
+                    "reason": f"no markdown heading with that slug: {', '.join(missing)}",
+                })
+                continue
+            digest = digest_of(entries)
             write_pin(doc, digest)
             item = {"concept": doc.rel, DIGEST_KEY: digest}
             # A file git has not been told about is counted, so a new file does not

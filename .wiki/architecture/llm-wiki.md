@@ -5,7 +5,7 @@ description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits 
 tags: [architecture, llm-wiki, retirement]
 sources:
   - resource: skills/llm-wiki/**
-sources_digest: 50bd4e41a0e68ddc
+sources_digest: bcc165089ebafbcc
 ---
 
 # What it is for
@@ -100,6 +100,43 @@ Three consequences are the skill's own:
   touched them whose sources digest to the pin, and names it. After a squash there
   may be none, and the finding says only *changed*.
 - **A Decision is not pinned.** It records an event; see above.
+
+# A pin is only as good as it is quiet
+
+A page flagged by every edit to a file it names gets re-pinned unread, and then
+the pin vouches for nothing. Whole-file digests did that here: the meal-plan
+skill's 1.10.0 changed one paragraph of `fuelling.md` and the version line of
+`SKILL.md`, and seventeen pages went stale, of which one needed new text. The
+other sixteen were re-pinned after a search for the changed words, not a reading.
+So from 1.5.0 two kinds of edit no longer reach a digest:
+
+- **A section is a source.** `path#slug` digests one markdown section, the
+  heading through to the next of its level or above, so an edit elsewhere in the
+  file leaves the page alone. Slugs are GitHub's, since those are the anchors a
+  reader can follow. A heading renamed or removed is `S007`, never a quiet
+  pass, and `pin` refuses the page until the entry is repointed. Only markdown:
+  code has no headings, and a symbol-level pin would need a parser per language.
+- **A release is not a change.** A `version:` under a markdown file's
+  frontmatter `metadata:` is dropped before digesting, by text, so every other
+  frontmatter edit, a `description` included, still counts. Everything else
+  that changes on a release is still digested: a README's release link and a
+  `plugin.json` version flip the pages that name those files.
+- **Old pins stay good.** A pin taken before 1.5.0 digests the files as they
+  were, version line and all. `stale` accepts it while the files are unchanged,
+  and after a version-only edit it finds the commit the pin was taken at and
+  compares the two without the line, so upgrading flags nothing while that
+  commit is among the last 50 to touch the sources. A squash can leave it
+  without one, and the page is then flagged once.
+
+**Replayed on that 1.10.0 change**, between its commit and its parent, whole
+files flag 18 pages; leaving out the version line, 12; with seven meal-plan
+pages pointed at the sections three reviewers found they rest on, 6. Of the
+six, the evals page and `carb-periodization` (which rests on most of
+`fuelling.md`) were right to go. The rest are broad sources: two name the whole
+skill folder by glob, and `overview` and `the-zip-release` name `README.md`,
+whose release link changes on every release. Five pages kept the whole of
+`SKILL.md`, because they rest on its frontmatter, on a step-by-step pattern, or
+on something it does not say, which no section can hold.
 
 # OKF v0.2
 
