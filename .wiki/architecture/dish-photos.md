@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/references/photos.md
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: eb33fd72a144d10f
+sources_digest: 1c70d9b17bbe9c61
 ---
 
 # Why the renderer does it

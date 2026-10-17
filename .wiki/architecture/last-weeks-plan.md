@@ -5,7 +5,7 @@ description: A run writes plan-<first day>.json and .html, so weekly runs from o
 tags: [architecture, files]
 sources:
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: 6b94e97c271b9edb
+sources_digest: 48a1f90e4d9c063e
 ---
 
 # Each week's page is named for its first day
@@ -37,7 +37,10 @@ An athlete planning every week should not get last week's dinners back. So step
 2 tells the host to look for plans the skill made for the athlete for the week
 or two before — earlier `plan-*.json` in the working directory, pages it published,
 the conversation, memory — and to keep lunches and dinners different unless the
-athlete asks for a dish again. Breakfasts may repeat. Variety gives way to
+athlete asks for a dish again. A published page is found by its title, which
+begins *Meal plan ·* from 1.11.0 and is the days alone, or `Training week`, before
+it ([why](/architecture/the-handover.md#a-published-page-says-what-it-is)).
+Breakfasts may repeat. Variety gives way to
 restrictions, the fuelling rules and the fridge. When one was found, step 7 says
 so once, among what was assumed.
 

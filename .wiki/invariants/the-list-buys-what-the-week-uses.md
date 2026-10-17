@@ -13,7 +13,7 @@ sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md#a-container-you-open-is-a-container-the-week-finishes
   - resource: skills/training-week-meal-plan/references/fuelling.md#fuel-belongs-to-a-session
   - resource: skills/training-week-meal-plan/references/fuelling.md#snacks-top-each-day-up-to-its-target
-sources_digest: d8c6e1f9da8f3551
+sources_digest: dc3e065e255d8e17
 ---
 
 # Statement

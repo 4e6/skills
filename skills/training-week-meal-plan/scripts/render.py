@@ -199,6 +199,29 @@ def prose(value) -> str:
     return EMPHASIS.sub(_emphasise, esc(value))
 
 
+def plain(value) -> str:
+    """Plan text as one line of plain words: emphasis markers dropped, every run
+    of whitespace one space. Not escaped; the caller does that."""
+    text = EMPHASIS.sub(lambda match: match.group(1) or match.group(2) or "", str(value))
+    return " ".join(text.split())
+
+
+def listing_text(plan):
+    """The page's title and description, as a listing shows them out of context.
+
+    The title says what the page is, which `week_label` alone does not; the
+    description adds only the hard days, because it is shown wherever the page
+    is listed and the rest of the plan is the athlete's. Plain text: document()
+    escapes it.
+    """
+    title = "Meal plan \u00b7 " + plain(plan["week_label"])
+    description = "A training-week meal plan: each day's meals, recipes and a shopping list"
+    hard = plain(plan["training_overview"]["hard_days"])
+    if hard:
+        description += ", fuelled hardest on " + hard
+    return title, description + "."
+
+
 def number(value) -> str:
     """Print a number the same way on every interpreter, escaped like everything else.
 
@@ -1624,6 +1647,7 @@ def load_photos(path, titles, link=False):
 
 
 def document(plan, css, photos=None) -> str:
+    title, description = listing_text(plan)
     return "\n".join(
         [
             "<!doctype html>",
@@ -1631,7 +1655,8 @@ def document(plan, css, photos=None) -> str:
             "<head>",
             '<meta charset="utf-8">',
             '<meta name="viewport" content="width=device-width, initial-scale=1">',
-            "<title>" + esc(plan["week_label"]) + "</title>",
+            "<title>" + esc(title) + "</title>",
+            '<meta name="description" content="' + esc(description) + '">',
             "<style>",
             css,
             "</style>",

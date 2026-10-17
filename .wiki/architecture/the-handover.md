@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: 13586154bf6b7140
+sources_digest: a700bb985a74f6c8
 ---
 
 # Progress is the host's, and the reply is the athlete's
@@ -56,8 +56,10 @@ falling back to the next in one plain line, and the page is:
   renderer wrote; the shopping list comes last, which is the part a truncated
   copy loses;
 - **private**, unless they ask to share it — it carries their weight and diet;
-- **no opener and no path.** Without *name no path*, the smaller models handed
-  the file over and recited its sandbox path beside it;
+- **no path.** Without *name no path*, the smaller models handed the file over
+  and recited its sandbox path beside it. A sentence beside it, *run no
+  opener*, was dropped in 1.11.0: the third way already opens the page only
+  where the host can neither publish nor attach;
 - **published as the renderer wrote it** — not redesigned, restyled or retyped
   to suit a publishing tool's rules for a page written by hand
   ([publishing a page with photos](#publishing-a-page-with-photos)).
@@ -137,6 +139,47 @@ publishes, deliberately, since a run would publish to the author's account, so
 the order is not yet measured; a stub that takes the page and its files and
 publishes nothing would measure it. The evidence for 1.7.0 is the one real run
 above.
+
+## A published page says what it is
+
+**The page was named for its week and nothing else.** `<title>` was
+`week_label`, and a publishing tool names a page from it. In the athlete's
+gallery two published plans were each titled exactly their `week_label`: days
+and a month, and in the other the days and a note that the week was easy, which step
+1 asks the label to say. Neither said *meal plan*, so an agent asked
+to find the athlete's meal plan, whose listing gives a title, a link and a time,
+had nothing to match. The title does the work: the description is a subtitle
+people see, and an agent sees none.
+
+**The fix is in the title.**
+
+- `<title>` is *Meal plan ·* and the label. The `<h1>` and the rail keep the
+  label alone: on the page, the reader knows what they are looking at, and the
+  title is what a listing shows out of context. A longer heading would also
+  grow the print header.
+- `<meta name="description">` says it is a training-week meal plan with meals,
+  recipes and a shopping list, and adds the hard days when the plan has them.
+  Only those: a description is shown wherever the page is listed, and the
+  weight, the diet and the fridge are the athlete's, not a listing's.
+- **No year.** The renderer has none to print: `week_label` carries none, and
+  the file's date is not passed to it. Carrying one would need a new flag or
+  field, and the skill's rule is never to guess a date. The gallery's updated
+  time separates one year's week from the next.
+- **The host is not told to pass them.** A draft had the renderer print the
+  two as `title` and `description` lines and step 7 tell the host to pass them
+  to the publishing tool, never a name of its own. It was dropped before
+  release. A tool that names a page from its `<title>` needs no help, and both
+  plans in the gallery were named exactly that, by hosts never told to. A tool
+  that ignores the meta tag shows no subtitle on the card, but the subtitle is
+  for a person browsing, not for an agent finding the plan. What it would have
+  cost was a rule in every athlete's session and two output lines kept for it.
+- **Older pages are not renamed.** A rename needs a republish, and the files are
+  the athlete's. Step 2 looks for the new title and for the old shape.
+
+**Unmeasured.** The evals give a run no tool that publishes, so nothing shows a
+tool naming a new page from its title, or any tool using the description. The
+sample page and a plan with hostile label and hard days (asterisks, a newline, a
+tab, quotes and angle brackets) were rendered and the head read back well-formed.
 
 # When there is no page
 
