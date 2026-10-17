@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: 96c131a0a8030124
+sources_digest: 0324ed6f6fddfea4
 ---
 
 # Progress is the host's, and the reply is the athlete's
@@ -117,8 +117,8 @@ artifact unprompted and named no path.
 `render.py … --photos photos.json --link-photos` writes a copy whose image
 elements point at each photo's path from the list instead of carrying its bytes
 — 48 KB for that six-photo week, against 663 KB — and prints one `link PATH`
-line per photo, then a `title` and a `description` line. Step 7 publishes it,
-with each of those files beside it at the same path, where the tool takes files beside a page. It is written beside
+line per photo. Step 7 publishes it, with each of those files beside it at the
+same path, where the tool takes files beside a page. It is written beside
 `photos.json`, and refuses to be written anywhere else, so the paths that
 resolve on disk are the paths it is published with. It is the one page a host
 may read back, and only because a publishing tool asks to. Where the tool takes
@@ -149,7 +149,7 @@ to find the athlete's meal plan, whose listing gives a title, a link and a time,
 had nothing to match. The title does the work: the description is a subtitle
 people see, and an agent sees none.
 
-**The fix is in the title, and in telling the host to use it.**
+**The fix is in the title.**
 
 - `<title>` is *Meal plan ·* and the label. The `<h1>` and the rail keep the
   label alone: on the page, the reader knows what they are looking at, and the
@@ -163,17 +163,19 @@ people see, and an agent sees none.
   the file's date is not passed to it. Carrying one would need a new flag or
   field, and the skill's rule is never to guess a date. The gallery's updated
   time separates one year's week from the next.
-- **The host is told, not trusted.** Whether a tool reads the page's `<title>`
-  is the tool's business, and whether it reads the description is not known. So
-  the renderer prints the two as `title` and `description` lines, plain text,
-  one line each with emphasis markers dropped and whitespace collapsed, and step
-  7 says to pass them as printed, never a name of the host's own. That also
-  avoids the host reading the page back, which `photos.md` forbids.
+- **The host is not told to pass them.** A draft had the renderer print the
+  two as `title` and `description` lines and step 7 tell the host to pass them
+  to the publishing tool, never a name of its own. It was dropped before
+  release. A tool that names a page from its `<title>` needs no help, and both
+  plans in the gallery were named exactly that, by hosts never told to. A tool
+  that ignores the meta tag shows no subtitle on the card, but the subtitle is
+  for a person browsing, not for an agent finding the plan. What it would have
+  cost was a rule in every athlete's session and two output lines kept for it.
 - **Older pages are not renamed.** A rename needs a republish, and the files are
   the athlete's. Step 2 looks for the new title and for the old shape.
 
 **Unmeasured.** The evals give a run no tool that publishes, so nothing shows a
-host passing the title or the description, or any host using the description. The
+tool naming a new page from its title, or any tool using the description. The
 sample page and a plan with hostile label and hard days (asterisks, a newline, a
 tab, quotes and angle brackets) were rendered and the head read back well-formed.
 

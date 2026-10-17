@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: 8ab6e846fa7cb92a
+sources_digest: 620b21fc61ce8ef0
 ---
 
 # One file, and Cmd-P
@@ -279,8 +279,8 @@ committed example does not print raw asterisks. **Escaping runs before the
 substitution**, and the order is the security property: afterwards the only
 angle brackets are the ones the substitution inserts, so a dish name containing
 markup cannot become markup. The document title takes the escape alone, after
-its emphasis markers are dropped and its whitespace collapsed: it is plain text, and a literal asterisk in a listing's name would read
-as a fault. **An id is a position, never words** — `recipe-<n>` — because a
+its emphasis markers are dropped and its whitespace collapsed: it is plain
+text, and a literal asterisk in a listing's name would read as a fault. **An id is a position, never words** — `recipe-<n>` — because a
 title would need case mapping to become an id, and plan text never goes in an
 attribute, with one exception: the `<meta name="description">`, which carries
 the hard days, escaped with its quotes
