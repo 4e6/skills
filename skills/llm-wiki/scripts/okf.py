@@ -888,20 +888,21 @@ def markdown_sections(text: str) -> dict[str, str]:
     comment = False
     for i in range(frontmatter_end(lines), len(lines)):
         line = lines[i]
-        if comment:
-            comment = "-->" not in line
-            continue
-        if re.match(r" {0,3}<!--", line):
-            comment = "-->" not in line[line.index("<!--") + 4 :]
-            continue
+        # Fences first: a `<!--` in a code block is code, not a comment.
         if fence:
             close = FENCE_CLOSE_RE.match(line)
             if close and close.group(1)[0] == fence[0] and len(close.group(1)) >= len(fence):
                 fence = ""
             continue
+        if comment:
+            comment = "-->" not in line
+            continue
         opening = FENCE_OPEN_RE.match(line)
         if opening:
             fence = opening.group(1)
+            continue
+        if re.match(r" {0,3}<!--", line):
+            comment = "-->" not in line[line.index("<!--") + 4 :]
             continue
         heading = ATX_HEADING_RE.match(line)
         if heading:
