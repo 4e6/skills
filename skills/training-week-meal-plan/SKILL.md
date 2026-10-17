@@ -14,7 +14,7 @@ compatibility: >-
   checked and a printable page is rendered; without it you still get the plan.
 metadata:
   author: 4e6
-  version: "1.10.0"
+  version: "1.11.0"
 ---
 
 # A week of meals that tracks the training
@@ -198,8 +198,9 @@ Menu rules:
 1. Read [references/fuelling.md](references/fuelling.md) before writing any
    JSON.
 2. Look for plans this skill made for the athlete in the weeks before: earlier
-   `plan-*.json` in the working directory, pages published, the conversation,
-   memory.
+   `plan-*.json` in the working directory, pages published (titled *Meal plan ·*
+   and their days; older ones by their days or `Training week`), the
+   conversation, memory.
 3. Only an earlier calendar week counts. A redo or revision of this week's plan
    does not.
 4. Where you find one, make this week's lunches and dinners different. Breakfasts
@@ -324,6 +325,9 @@ Rules:
   no path.
 - Publish the page the renderer wrote, as it stands. Do not redesign, restyle or
   retype it.
+- Where the publishing tool takes a title or a description, pass the
+  renderer's `title` and `description` lines as printed. Never a name of your
+  own.
 - A file attached is always `plan-<date>.html`. It carries its photos.
 
 With photos and a tool that takes files beside the page, publish a linked copy:

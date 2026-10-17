@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: 13586154bf6b7140
+sources_digest: cab787ed1c2e8668
 ---
 
 # Progress is the host's, and the reply is the athlete's
@@ -117,7 +117,7 @@ artifact unprompted and named no path.
 `render.py … --photos photos.json --link-photos` writes a copy whose image
 elements point at each photo's path from the list instead of carrying its bytes
 — 48 KB for that six-photo week, against 663 KB — and prints one `link PATH`
-line per photo. Step 7 publishes it, with each of those files beside it at the
+line per photo, then a `title` and a `description` line. Step 7 publishes it, with each of those files beside it at the
 same path, where the tool takes files beside a page. It is written beside
 `photos.json`, and refuses to be written anywhere else, so the paths that
 resolve on disk are the paths it is published with. It is the one page a host
@@ -137,6 +137,45 @@ publishes, deliberately, since a run would publish to the author's account, so
 the order is not yet measured; a stub that takes the page and its files and
 publishes nothing would measure it. The evidence for 1.7.0 is the one real run
 above.
+
+## A published page says what it is
+
+**The page was named for its week and nothing else.** `<title>` was
+`week_label`, and a publishing tool names a page from it. In the athlete's
+gallery two published plans were each titled exactly their `week_label`: days
+and a month, and in the other the days and *easy week, no structured training*,
+which step 1 asks the label to say. Neither said *meal plan*, so an agent asked
+to find the athlete's meal plan, whose listing gives a title, a link and a time,
+had nothing to match. The title does the work: the description is a subtitle
+people see, and an agent sees none.
+
+**The fix is in the title, and in telling the host to use it.**
+
+- `<title>` is *Meal plan ·* and the label. The `<h1>` and the rail keep the
+  label alone: on the page, the reader knows what they are looking at, and the
+  title is what a listing shows out of context. A longer heading would also
+  grow the print header.
+- `<meta name="description">` says it is a training-week meal plan with meals,
+  recipes and a shopping list, and adds the hard days when the plan has them.
+  Only those: a description is shown wherever the page is listed, and the
+  weight, the diet and the fridge are the athlete's, not a listing's.
+- **No year.** The renderer has none to print: `week_label` carries none, and
+  the file's date is not passed to it. Carrying one would need a new flag or
+  field, and the skill's rule is never to guess a date. The gallery's updated
+  time separates one year's week from the next.
+- **The host is told, not trusted.** Whether a tool reads the page's `<title>`
+  is the tool's business, and whether it reads the description is not known. So
+  the renderer prints the two as `title` and `description` lines, plain text,
+  one line each with emphasis markers dropped and whitespace collapsed, and step
+  7 says to pass them as printed, never a name of the host's own. That also
+  avoids the host reading the page back, which `photos.md` forbids.
+- **Older pages are not renamed.** A rename needs a republish, and the files are
+  the athlete's. Step 2 looks for the new title and for the old shape.
+
+**Unmeasured.** The evals give a run no tool that publishes, so nothing shows a
+host passing the title or the description, or any host using the description. The
+sample page and a plan with hostile label and hard days (asterisks, a newline, a
+tab, quotes and angle brackets) were rendered and the head read back well-formed.
 
 # When there is no page
 

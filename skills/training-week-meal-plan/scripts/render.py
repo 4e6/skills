@@ -18,6 +18,11 @@ the page is its text alone. It is written beside photos.json, so the paths that
 resolve on disk are the paths the host publishes the photos at, and it prints
 one "link PATH" line per photo it points at: the files to publish beside it.
 
+A page that is written also prints "title TEXT" and "description TEXT": the
+page's <title> and <meta name="description"> as plain text on one line each.
+A listing shows a published page by those, and a page titled by its week alone
+cannot be told from any other page, so the host passes them on as printed.
+
 Exit 0 prints a line saying where it wrote, rather than staying silent — a
 silent success and a crash look identical to anything reading output rather
 than status.
@@ -197,6 +202,29 @@ def prose(value) -> str:
     markup. Doing it the other way round would let the plan inject elements.
     """
     return EMPHASIS.sub(_emphasise, esc(value))
+
+
+def plain(value) -> str:
+    """Plan text as one line of plain words: emphasis markers dropped, every run
+    of whitespace one space. Not escaped; the caller does that where it prints."""
+    text = EMPHASIS.sub(lambda match: match.group(1) or match.group(2) or "", str(value))
+    return " ".join(text.split())
+
+
+def listing_text(plan):
+    """The page's title and description, as a listing shows them out of context.
+
+    The title says what the page is, which `week_label` alone does not; the
+    description adds only the hard days, because it is shown wherever the page
+    is listed and the rest of the plan is the athlete's. Plain text: document()
+    escapes it, and main() prints it for the host to pass to a publishing tool.
+    """
+    title = "Meal plan \u00b7 " + plain(plan["week_label"])
+    description = "A training-week meal plan: each day's meals, recipes and a shopping list"
+    hard = plain(plan["training_overview"]["hard_days"])
+    if hard:
+        description += ", fuelled hardest on " + hard
+    return title, description + "."
 
 
 def number(value) -> str:
@@ -1624,6 +1652,7 @@ def load_photos(path, titles, link=False):
 
 
 def document(plan, css, photos=None) -> str:
+    title, description = listing_text(plan)
     return "\n".join(
         [
             "<!doctype html>",
@@ -1631,7 +1660,8 @@ def document(plan, css, photos=None) -> str:
             "<head>",
             '<meta charset="utf-8">',
             '<meta name="viewport" content="width=device-width, initial-scale=1">',
-            "<title>" + esc(plan["week_label"]) + "</title>",
+            "<title>" + esc(title) + "</title>",
+            '<meta name="description" content="' + esc(description) + '">',
             "<style>",
             css,
             "</style>",
@@ -1835,8 +1865,14 @@ def main(argv=None) -> int:
                 print("the file at " + problem, file=sys.stderr)
         print("wrote " + args.out + " listing " + str(len(titles)) + " dishes")
         return 0
+    # What a publishing tool is given as the page's name and subtitle, as the
+    # page carries them: the host reads them off these lines rather than
+    # working them out from the plan.
+    title, description = listing_text(plan)
     if args.photos is None:
         print("wrote " + args.out)
+        print("title " + title)
+        print("description " + description)
         return 0
     for warning in warnings:
         print(warning, file=sys.stderr)
@@ -1849,6 +1885,8 @@ def main(argv=None) -> int:
         "wrote " + args.out + " with photos of " + str(len(photos)) + " of "
         + str(len(titles)) + " dishes" + (", linked" if args.link_photos else "")
     )
+    print("title " + title)
+    print("description " + description)
     return 0
 
 

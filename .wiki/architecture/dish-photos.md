@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/references/photos.md
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: eb33fd72a144d10f
+sources_digest: b15cc4e94c2c0fe8
 ---
 
 # Why the renderer does it
@@ -41,7 +41,8 @@ page, not the plan.
   publishes the page with its photos beside it: the source is the list's path,
   percent-encoded, and every check above still runs, so a photo the embedded page
   would drop is dropped here too. The page must be written in the list's folder,
-  and prints a `link` line per photo, the files to publish
+  and prints a `link` line per photo, the files to publish, then the page's
+`title` and `description`
   ([publishing a page with photos](/architecture/the-handover.md#publishing-a-page-with-photos)).
 
 **A photo is named for what it shows, never its position** — a short digest of
