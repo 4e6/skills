@@ -11,7 +11,9 @@ one ordinary training week for an athlete in Japan, Brazil, India, Poland, the
 US and the UK, which asks whether the plan cooks what that country eats and
 weighs its food in the units shops there sell by (`cuisine-*`). The gran fondo's
 athlete lives in the US and gives their weight in kilograms, so it asks the
-units question too.
+units question too. `preference-italian-osaka` is the Japan week for an athlete
+who asks for Italian lunches and dinners, and asks whether that request beats
+the country while the country still picks the shops and units.
 
 ## Running them
 
@@ -111,7 +113,9 @@ told once to go ahead, and the run records that it asked.
   questions are asked of every run (the summary, invented figures, restrictions,
   no claim to have varied on earlier weeks, the disclaimer), some of every race
   week, some of every case that names a country (would an ordinary household
-  there cook these breakfasts, these lunches and dinners, this fuel; is the
+  there cook these breakfasts, these lunches and dinners, this fuel; is at
+  least one lunch or dinner from another cuisine popular there; could every
+  item on the list be bought in an ordinary supermarket there; is the
   food after a session and on a snack line what people there typically have,
   not merely what sells there; do the shops named trade there), and some by one
   case.

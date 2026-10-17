@@ -5,7 +5,7 @@ description: On-demand behavioural tests for training-week-meal-plan, outside th
 tags: [architecture, testing, evals]
 sources:
   - resource: evals/**
-sources_digest: 213491f9cb4924fc
+sources_digest: 7ee87b4aa707b497
 ---
 
 `evals/session-review/` is a different thing: the unit tests of
@@ -85,6 +85,38 @@ plan of four versions of the lines; this one told them apart, naming kefir in
 Kraków and a rice ball in Osaka where a plan had chocolate milk. It is noisy:
 the same Kraków chocolate milk drew `no` in two of three runs of one pass and
 `yes` in another, so a difference of one or two runs in eighteen is not one.
+
+**Two more questions ask about a week's spread, from 1.10.0.** The skill asks
+for most lunches and dinners to be what households there cook every week,
+wherever the dish began, and one or two a week from another cuisine popular
+there. `main-meals-varied` asks whether at least one lunch or dinner comes from
+another cuisine popular there, counting a dish by where it began however
+everyday it has become; `main-meals-local` guards the other side.
+`buyable-locally` asks whether every item on the list is sold in an ordinary
+supermarket there, since a foreign dish is where a specialist shop creeps in.
+The skill names no cuisine for this, being an example the model would copy
+([editing a skill](/conventions/editing-a-skill.md#this-repositorys-own-rules-for-a-skill)):
+which foreign food a country loves is the model's to work out, as a line's food
+is.
+
+- **A floor, not a count.** The first wording asked for *one or two* such
+  dishes with the rest local, and failed every UK and US plan on both sides of
+  the change: the judge counted chilli, curry and bolognese as foreign where the
+  skill counts them the country's own. As a floor it passes UK and US, and
+  tells the two skills apart only in India, since 1.9.2 already put a mapo tofu
+  or a penne in most weeks elsewhere. The dishes the judge names are the
+  measure; the rate is not.
+
+**`preference-italian-osaka` asks whether the athlete's word beats the
+country**: `cuisine-japan`'s week, weight and fridge, and *please make all my
+lunches and dinners Italian dishes. Ordinary Japanese breakfasts are fine.* It
+names no `country`, since the country questions would fail a plan that obeys,
+and asks its own: every lunch and dinner Italian, breakfasts Japanese, the reply
+never saying the request was cut back, the shops Japan's, the list buyable in
+Osaka. Units and aisles are checked as for Japan, so the country still has to
+name the shops and set the units. A request is not a restriction: *no Japanese
+food* is something avoided, which the skill already ranks above everything, so
+the case asks for something instead.
 
 # Outside the skill, and run by hand
 
@@ -239,8 +271,9 @@ go, and counting it would grade the account.
   every run. **A question that rests on one of the skill's rules quotes it**,
   since the judge never reads the skill: asked only whether a 10K's fuel lines
   fit the race, it answers from its own idea of sports nutrition. A case that
-  names the athlete's **country** gets four more: breakfasts, lunches and
-  dinners, the line food, and the shops.
+  names the athlete's **country** gets more: breakfasts, lunches and dinners, a
+  dish from another cuisine popular there, the line food, whether the list is
+  sold there, and the shops.
 
 # Against the method the bundle used before
 
@@ -265,6 +298,45 @@ The evals keep the isolated host and give up two things:
   from everything else, so another can be added.
 
 # Measurements
+
+**2026-10-16, the six country cases and `preference-italian-osaka` three times
+each on Opus 5.5**, judged by Opus: 1.9.2 against 1.10.0, whose `fuelling.md`
+says to cook what households there eat now rather than their national menu,
+with one or two lunches or dinners a week from another cuisine popular there.
+About $35 an arm.
+
+| foreign lunch or dinner, per run | 1.9.2 | 1.10.0 |
+|---|---|---|
+| India | none, 3 of 3 | Indo-Chinese noodles or fried rice, 3 of 3 |
+| Japan | mapo tofu once; curry rice always | mapo tofu 3 of 3, a pasta once; curry rice always |
+| Poland | a pasta once; else only Hungarian goulash | bolognese, a pasta or a stir-fry, 3 of 3 |
+| Brazil | stroganoff and spaghetti | the same, and yakisoba 3 of 3 |
+| UK, US | bolognese, chilli, curry, stir-fry; burrito bowl, teriyaki | unchanged |
+
+- **Nothing else moved.** Breakfasts, the line food, the shops, the units and
+  the checker held in every run of both arms, and so did *buyable*. One Brazil
+  lunch, an omelette with rolls, drew `no` on `main-meals-local` on 1.10.0:
+  the noise floor's size, and not a foreign dish.
+- **A first draft of 1.10.0 broke the preference**, 3 of 3 on 1.9.2 and 0 of 3
+  on the draft: every run put one plain salmon or cod with potatoes among the
+  Italian lunches and dinners. The draft had the request as the list's last
+  line, after *most lunches and dinners are dishes households there cook*, and
+  it read as one rule among several. Put first, and said to be every meal it
+  was asked for with the rest of the list for the meals left to the plan, it
+  passed 3 of 3. The draft's runs are kept as `*-after-variety`.
+- **Two questions were reworded after their results were seen.**
+  `main-meals-italian` first asked for dishes *an Italian would recognise as
+  their own*, and failed every plan of 1.9.2 on bolognese and a chicken risotto,
+  which is authenticity, not the request. `main-meals-varied` first asked for
+  one or two (above). Both runs were graded again with the new wording, on
+  copies, and the rerun of 1.10.0 was graded on wording set before it ran.
+- **On 1.9.2 the athlete's request already won**, before any rule said so:
+  three runs of the Italian case, earlier the same day, cooked Italian lunches
+  and dinners, Japanese breakfasts, metric units and Japanese shops.
+
+**What this does not settle.** One model, three runs a case, and no Portugal, the
+country the change was first asked for. A foreign dish people there buy rather
+than cook, such as sushi, is made at home or left out; no case asks whether it is.
 
 **2026-10-08, the thirteen cases three times each on Sonnet 5.5, as agent and as
 judge, on 1.8.0 and on 1.9.0 in three drafts**: a rewrite of the skill to be

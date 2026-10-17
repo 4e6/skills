@@ -626,11 +626,21 @@ Only their words say which.
 close to a session is its `before` line. Never a meal placed in front of it, and
 never a note saying when to eat.
 
-**Cook what their country eats.**
+**Cook what households there eat now, not their national menu.**
 
-- Dishes, staples and above all breakfast should be ones an ordinary household
-  there cooks. A plan that reads like one for somewhere else with the shop names
-  swapped has missed the point.
+- A cuisine or dish the athlete asks for is every meal they asked it for. Their
+  country still names the shops and sets the units. The rest of this list is
+  for the meals they left to you.
+- Breakfast is their country's own.
+- Most lunches and dinners are dishes an ordinary household there cooks every
+  week, wherever the dish began.
+- One or two lunches or dinners a week come from another cuisine popular there,
+  as home cooks there make it.
+- A dish people there buy or eat out rather than cook is made in its home
+  version, or left out.
+- Every ingredient is sold in an ordinary supermarket there.
+- A plan that reads like one for somewhere else with the shop names swapped has
+  missed the point.
 
 **The plan is written in English, whatever country they live in.** Their country
 chooses the food, never the words.

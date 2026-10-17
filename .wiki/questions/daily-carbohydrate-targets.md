@@ -7,7 +7,7 @@ status: deprecated
 sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md
   - resource: skills/training-week-meal-plan/examples/sample-plan.json
-sources_digest: 8572c22bcc70cf26
+sources_digest: 742b49be865d34fd
 ---
 
 # The answer

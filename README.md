@@ -78,7 +78,7 @@ the mod writes no files of its own. See
 
 The web apps install a skill from a zip you upload. Download it here:
 
-- [training-week-meal-plan.zip](https://github.com/4e6/skills/releases/download/training-week-meal-plan-v1.9.2/training-week-meal-plan.zip)
+- [training-week-meal-plan.zip](https://github.com/4e6/skills/releases/download/training-week-meal-plan-v1.10.0/training-week-meal-plan.zip)
 
 and upload it as the app's own help describes:
 [Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude),
