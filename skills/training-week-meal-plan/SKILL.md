@@ -325,9 +325,9 @@ Rules:
   no path.
 - Publish the page the renderer wrote, as it stands. Do not redesign, restyle or
   retype it.
-- Where the publishing tool takes a title or a description, pass the
-  renderer's `title` and `description` lines as printed. Never a name of your
-  own.
+- Where the publishing tool takes a title or a description, pass the text
+  after `title` and after `description` on the renderer's lines, as printed.
+  Never a name of your own.
 - A file attached is always `plan-<date>.html`. It carries its photos.
 
 With photos and a tool that takes files beside the page, publish a linked copy:

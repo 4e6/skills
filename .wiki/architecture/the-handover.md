@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: cab787ed1c2e8668
+sources_digest: 96c131a0a8030124
 ---
 
 # Progress is the host's, and the reply is the athlete's
@@ -117,8 +117,8 @@ artifact unprompted and named no path.
 `render.py … --photos photos.json --link-photos` writes a copy whose image
 elements point at each photo's path from the list instead of carrying its bytes
 — 48 KB for that six-photo week, against 663 KB — and prints one `link PATH`
-line per photo, then a `title` and a `description` line. Step 7 publishes it, with each of those files beside it at the
-same path, where the tool takes files beside a page. It is written beside
+line per photo, then a `title` and a `description` line. Step 7 publishes it,
+with each of those files beside it at the same path, where the tool takes files beside a page. It is written beside
 `photos.json`, and refuses to be written anywhere else, so the paths that
 resolve on disk are the paths it is published with. It is the one page a host
 may read back, and only because a publishing tool asks to. Where the tool takes
@@ -143,8 +143,8 @@ above.
 **The page was named for its week and nothing else.** `<title>` was
 `week_label`, and a publishing tool names a page from it. In the athlete's
 gallery two published plans were each titled exactly their `week_label`: days
-and a month, and in the other the days and *easy week, no structured training*,
-which step 1 asks the label to say. Neither said *meal plan*, so an agent asked
+and a month, and in the other the days and a note that the week was easy, which step
+1 asks the label to say. Neither said *meal plan*, so an agent asked
 to find the athlete's meal plan, whose listing gives a title, a link and a time,
 had nothing to match. The title does the work: the description is a subtitle
 people see, and an agent sees none.

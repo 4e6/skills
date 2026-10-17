@@ -42,7 +42,7 @@ page, not the plan.
   percent-encoded, and every check above still runs, so a photo the embedded page
   would drop is dropped here too. The page must be written in the list's folder,
   and prints a `link` line per photo, the files to publish, then the page's
-`title` and `description`
+  `title` and `description`
   ([publishing a page with photos](/architecture/the-handover.md#publishing-a-page-with-photos)).
 
 **A photo is named for what it shows, never its position** — a short digest of

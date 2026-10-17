@@ -278,8 +278,8 @@ The renderer parses exactly two inline patterns, bold and italic, so the
 committed example does not print raw asterisks. **Escaping runs before the
 substitution**, and the order is the security property: afterwards the only
 angle brackets are the ones the substitution inserts, so a dish name containing
-markup cannot become markup. The document title takes the escape alone, after its emphasis markers are
-dropped: it is plain text, and a literal asterisk in a listing's name would read
+markup cannot become markup. The document title takes the escape alone, after
+its emphasis markers are dropped and its whitespace collapsed: it is plain text, and a literal asterisk in a listing's name would read
 as a fault. **An id is a position, never words** — `recipe-<n>` — because a
 title would need case mapping to become an id, and plan text never goes in an
 attribute, with one exception: the `<meta name="description">`, which carries
