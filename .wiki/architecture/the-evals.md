@@ -5,7 +5,7 @@ description: On-demand behavioural tests for training-week-meal-plan, outside th
 tags: [architecture, testing, evals]
 sources:
   - resource: evals/**
-sources_digest: e60baec9c49272b2
+sources_digest: 3cbbd3ab13070f52
 ---
 
 `evals/session-review/` is a different thing: the unit tests of

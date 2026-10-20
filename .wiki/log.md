@@ -1,6 +1,7 @@
 # Wiki Update Log
 
 ## 2026-10-21
+* **Update**: `rio-maior-events` review fixes: an event page's excerpt skips a title mention that leads into a mini calendar (Torres Novas) and does not say the title twice, a follow accepts the same host with or without `www.` as a marker does and must be https, and `reading.md` counts an excerpt's time, venue and end date, makes a run of four or more dated shows one `ongoing`/`multi_day` event, gives hints a `kind`, a source url and a rule for "early/mid/late", and the schema's `kids` reads as `reading.md` does; readers also get `events-schema.json` in step 3.
 * **Update**: `rio-maior-events` follows event pages: sources with `links` write `<url>` marker lines so an event cites its own page, sources with `follow` have up to 150 event pages in all fetched after the list pages (same host spacing, a redirect off the site refused, a failure leaves the source ok) and read into `details`, the Nazaré, Batalha and Chamusca feeds are read by a `municipal_rss` adapter, the XML guards move to `adapters/common.py`, and `reading.md` tells readers to prefer a detail's time, venue and title and never fetch.
 
 ## 2026-10-20

@@ -12,7 +12,7 @@ sources:
   - resource: skills/rio-maior-events/SKILL.md
   - resource: plugins/session-review/skills/session-review/SKILL.md
   - resource: plugins/session-watch/.claude-plugin/plugin.json
-sources_digest: 12fee5c733f30efc
+sources_digest: 5cae4398d92aea42
 ---
 
 # What it is
