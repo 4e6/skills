@@ -31,6 +31,8 @@ jobs:
       # The tests sit beside the skill, not in it: whatever is in it ships.
       - name: Test the session condenser
         run: python3 -m unittest discover -s evals/session-review
+      - name: Test the events collector and page
+        run: python3 -m unittest discover -s evals/rio-maior-events
       - name: Check the zips
         run: python3 tools/release.py check
 

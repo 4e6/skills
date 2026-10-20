@@ -5,13 +5,15 @@ description: On-demand behavioural tests for training-week-meal-plan, outside th
 tags: [architecture, testing, evals]
 sources:
   - resource: evals/**
-sources_digest: 7ee87b4aa707b497
+sources_digest: 1d082fcf2f5599c7
 ---
 
 `evals/session-review/` is a different thing: the unit tests of
 [session review](/architecture/session-review.md)'s condenser, kept outside the
 skill because whatever is inside ships. Unlike the meal-plan evals below they are
-fast and deterministic, and CI runs them.
+fast and deterministic, and CI runs them. `evals/rio-maior-events/` is the same
+kind: the offline unit tests of the collector and renderer of
+[Rio Maior events](/architecture/rio-maior-events.md#tests).
 
 # What they are for
 

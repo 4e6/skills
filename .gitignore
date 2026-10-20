@@ -6,6 +6,10 @@ plan-[0-9]*.json
 plan-[0-9]*.html
 photos.json
 photos/
+# What rio-maior-events writes when it is run from inside this checkout.
+rio-maior-collected.json
+rio-maior-events.json
+rio-maior-events.html
 # What tools/release.py builds.
 /dist/
 # What the evals write: every run's plan, reply, transcript and grades.

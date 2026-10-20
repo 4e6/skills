@@ -17,7 +17,7 @@ sources:
   - id: git-archive
     resource: https://git-scm.com/docs/git-archive
     title: git-archive(1)
-sources_digest: 736da6a6626104ef
+sources_digest: d8dd935e73b509c0
 ---
 
 # Why there is a zip at all
@@ -137,7 +137,8 @@ On every pull request and every push to `main`:
   specification with `agentskills validate` from the `skills-ref` package (it
   needs Python 3.11, where the skills need 3.9);
 - the session condenser's unit tests, `python3 -m unittest discover -s
-  evals/session-review`;
+  evals/session-review`, and the events collector's and page renderer's,
+  `evals/rio-maior-events` ([Rio Maior events](/architecture/rio-maior-events.md#tests));
 - every offered zip, and every plugin's version, with `tools/release.py check`;
 - the marketplace and each plugin with `claude plugin validate --strict`, and
   each plugin that has tests with `claude plugin test`. Claude Code is installed
