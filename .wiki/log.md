@@ -1,5 +1,8 @@
 # Wiki Update Log
 
+## 2026-10-21
+* **Update**: `rio-maior-events` follows event pages: sources with `links` write `<url>` marker lines so an event cites its own page, sources with `follow` have up to 150 event pages in all fetched after the list pages (same host spacing, a redirect off the site refused, a failure leaves the source ok) and read into `details`, the Nazaré, Batalha and Chamusca feeds are read by a `municipal_rss` adapter, the XML guards move to `adapters/common.py`, and `reading.md` tells readers to prefer a detail's time, venue and title and never fetch.
+
 ## 2026-10-20
 * **Update**: `rio-maior-events` reading rules and checks: a hint spanning two months takes the month inside the window, a yearly title that is our own description is marked `descriptive` in `sources.md` and its hint says the name is not confirmed, `reading.md` gains rules for an event already under way today, a race with only a municipality, year-round recurring workshops, "big enough" at 50+ minutes and `kids` on hints, `merge.py` reads Cyrillic and Greek lookalike letters as Latin before comparing titles and towns, and tests cover `fetch` with gzip and a gzip body reaching the runner. Checked: 167 offline tests.
 * **Update**: `rio-maior-events` reads Santarém through the council's events feed (`santarem_rss` adapter: dates from the event fields, touching periods joined, a DOCTYPE refused) instead of the `/agenda` text, and adds the culture programme site `santaremcultura`; a run is about 33 pages. [Why](/architecture/rio-maior-events-sources.md).
