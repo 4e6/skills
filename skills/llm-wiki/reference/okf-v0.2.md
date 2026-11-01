@@ -39,7 +39,8 @@ MUST NOT be used as concept documents. Every other `.md` file is a concept.
 > `CLAUDE.local.md` and `AGENTS.md` at any level, so that a bundle can carry the
 > instructions for editing it (see A5). By §3.1 those are concepts, and an
 > unfrontmattered one fails §11 — so a bundle this skill considers clean is one
-> a strict OKF consumer would reject with two untyped concepts. `okf.py` still
+> a strict OKF consumer would reject with one untyped concept, more in an older
+> bundle that still carries a `CLAUDE.md`. `okf.py` still
 > prints *conformant with OKF v0.2*, which is a statement about everything the
 > spec covers **minus this exemption**. Nothing else is exempt.
 

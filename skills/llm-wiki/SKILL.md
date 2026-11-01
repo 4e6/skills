@@ -9,7 +9,7 @@ compatibility: >-
   bundle is read and written offline.
 metadata:
   author: 4e6
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # LLM-wiki (Open Knowledge Format)
@@ -48,7 +48,7 @@ Rank every candidate fact by half-life. Write the top half; refuse the bottom:
 | Module responsibility, boundaries, and why it is shaped so | Restated code comments |
 | Gotchas, sharp edges, "we tried that, it failed" | Step-by-step code walkthroughs |
 | Operational playbooks and their verification steps | Dependency version numbers |
-| Third-party quirks discovered the hard way | Content already in the *project's* `CLAUDE.md` |
+| Third-party quirks discovered the hard way | Content already in the *project's* `AGENTS.md` |
 | What is still unknown (`Open Question`) | Speculation stated as fact |
 
 When unsure, apply the test: *would this page still be correct after a big
@@ -96,10 +96,9 @@ what lets a single commit change behaviour and the knowledge about it together.
 
 ```
 <project>/
-├── CLAUDE.md            # points at the wiki (see A5) — this is the read path
+├── AGENTS.md            # points at the wiki (see A5) — this is the read path
 └── wiki/                # the OKF bundle root (some projects use .wiki/)
-    ├── CLAUDE.md        # how to edit this bundle — loads on demand (see A5)
-    ├── AGENTS.md        # the same, for agents that do not read CLAUDE.md
+    ├── AGENTS.md        # how to edit this bundle — loads on demand (see A5)
     ├── index.md         # okf_version: "0.2"; the only index with frontmatter
     ├── log.md           # newest-first, ISO-dated change history
     ├── overview.md      # type: Overview
@@ -120,8 +119,9 @@ Create directories lazily — only when a real page needs one. An empty
 into the page that owns what it shaped, and `decisions/` (`NNNN-slug.md`, never
 renumbered) appears only once A2's gate lets a page through.
 
-`CLAUDE.md`, `CLAUDE.local.md` and `AGENTS.md` are instructions rather than
-knowledge, so `okf.py` ignores them at every level and in any case: never
+`AGENTS.md` is instructions rather than knowledge, and so are `CLAUDE.md` and
+`CLAUDE.local.md`, which older bundles carry; `okf.py` ignores all three at
+every level and in any case: never
 concepts, never indexed, never stale. With `index.md` and `log.md` that is the
 whole exempt list — every other `.md` in a bundle is a concept, and a stray notes
 file will be linted as a page missing its `type`.
@@ -166,8 +166,9 @@ bundle's (§6.2 would read a leading `/` as the bundle's). A plain string in the
 `stale_after` are legal and kept if a page has them; the skill neither writes nor
 reads them.
 
-The bundle may also hold `CLAUDE.md`, `CLAUDE.local.md` and `AGENTS.md`, which
-carry no frontmatter and are not concepts. That is a **deviation from OKF §3.1**,
+The bundle may also hold `AGENTS.md` (and, in an older bundle, `CLAUDE.md` or
+`CLAUDE.local.md`), which carry no frontmatter and are not concepts. That is a
+**deviation from OKF §3.1**,
 not an extension of it, and it is written down in
 [reference/okf-v0.2.md](reference/okf-v0.2.md) beside the clause it breaks.
 
@@ -396,16 +397,35 @@ Warnings are judgement: `W010` on a deliberate forward reference is fine.
 
 ### A5 — Wire up the read and write paths
 
-Three files, doing two different jobs. Run it on bootstrap, and on any existing
-bundle that predates it — **but on an existing bundle, check for a collision
-first**: a page already named `CLAUDE.md` or `AGENTS.md` stops being a concept
-the moment these rules apply to it. `okf.py lint` names them (`W018`), and
+Two files, doing two different jobs, and both named `AGENTS.md`. Run it on
+bootstrap, and on any existing bundle that predates it — **but on an existing
+bundle, check for a collision first**: a page already named `AGENTS.md` or
+`CLAUDE.md` stops being a concept the moment these rules apply to it. `okf.py
+lint` names them (`W018`), and
 [reference/bundle-instructions.md](reference/bundle-instructions.md) opens with
 the check.
 
-#### The read path: the project's `CLAUDE.md`
+**An existing `CLAUDE.md` switches these files off.** Claude Code (v2.1.277 or
+later) reads `AGENTS.md`, but by default not where `CLAUDE.md`,
+`.claude/CLAUDE.md` or `CLAUDE.local.md` exists in the working directory or
+above it, and a subdirectory's own `CLAUDE.md` takes precedence over its
+`AGENTS.md`. If the project has one, say so and offer to move its content into
+`AGENTS.md` and delete it.
 
-A wiki nobody opens is a liability. Add to the **project's** `CLAUDE.md` (create
+- **If the user keeps it**, add `@AGENTS.md` to it, which loads the read path,
+  and name the `claude-md-and-agents-md` *Project instructions* setting, which
+  the bundle's `AGENTS.md` needs to load; it is read from user or managed
+  settings, not the project's. Merge a bundle-level `CLAUDE.md` into `AGENTS.md`
+  and reduce it to the one line `@AGENTS.md`: it is then the only write path
+  that loads.
+- **A `CLAUDE.local.md` is personal and uncommitted.** Report it and name the
+  same setting; its content does not belong in a committed file.
+- **Otherwise** a bundle-level `CLAUDE.md` is merged into `AGENTS.md` and
+  removed.
+
+#### The read path: the project's `AGENTS.md`
+
+A wiki nobody opens is a liability. Add to the **project's** `AGENTS.md` (create
 it if absent), matching the bundle's actual directory name:
 
 ```markdown
@@ -419,12 +439,7 @@ and drill down; don't read the whole bundle.
 Wiki updates land in the same commit as the change, never as a follow-up.
 ```
 
-**Write it to the project's `CLAUDE.md`, never to `~/CLAUDE.md`.** A copy in the
-home directory says *this project* while applying to every project opened on that
-machine, including the ones with no bundle at all — and it hard-codes one
-bundle's directory name into all of them.
-
-That last sentence is the highest-leverage sync mechanism in this skill — same
+The last sentence is the highest-leverage sync mechanism in this skill — same
 commit, same review, no drift. **Keep the snippet to those two things**, the read
 path and that rule. A trigger list in it — *a boundary, a decision, an
 invariant…* — only duplicates this skill's own `description`, and the word
@@ -432,7 +447,7 @@ invariant…* — only duplicates this skill's own `description`, and the word
 which section a page belongs in is
 [reference/concept-types.md](reference/concept-types.md)'s job.
 
-#### The write path: `CLAUDE.md` and `AGENTS.md` **inside** the bundle
+#### The write path: `AGENTS.md` **inside** the bundle
 
 The read path tells an agent the wiki exists. It does not reach the agent that is
 already editing a page — one asked to fix a stale sentence, or landing a wiki
@@ -440,11 +455,11 @@ update beside a code change. That agent needs the frontmatter contract, the
 concept types and the index/lint steps, and has no reason to know this skill
 carries them.
 
-Two files in the bundle close most of that gap, because Claude Code loads a
-nested `CLAUDE.md` on demand when it reads any file at or below that directory:
+One file in the bundle closes part of that gap, because Claude Code loads a
+nested `AGENTS.md` on demand when its Read tool opens a file in that directory:
 the rules arrive with the directory, and cost nothing until something touches it.
-**Both templates, the collision check that must precede them, and the limits of
-what they reach are in
+**The template, the collision check that must precede it, and the limits of
+what it reaches are in
 [reference/bundle-instructions.md](reference/bundle-instructions.md)** — read it
 when running A5, and not otherwise.
 
@@ -525,7 +540,7 @@ wiki working exactly as intended; only evidence retires a page.
   than extending them.
 - A page with no `sources` is never stale by construction. That is a feature —
   prefer timeless pages.
-- Don't copy the *project's* `CLAUDE.md` content into concepts, or the repo tree
+- Don't copy the *project's* `AGENTS.md` content into concepts, or the repo tree
   into `architecture/`. Both create two sources of truth, which is the one thing a
-  wiki must not do. The bundle's own `CLAUDE.md` is not that: it says how to edit
+  wiki must not do. The bundle's own `AGENTS.md` is not that: it says how to edit
   the bundle and asserts nothing about the project.
