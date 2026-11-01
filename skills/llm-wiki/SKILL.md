@@ -409,8 +409,8 @@ the check.
 later) reads `AGENTS.md`, but by default not where `CLAUDE.md`,
 `.claude/CLAUDE.md` or `CLAUDE.local.md` exists in the working directory or
 above it, and a subdirectory's own `CLAUDE.md` takes precedence over its
-`AGENTS.md`. If the project has one, say so and offer to move its content into `AGENTS.md` and
-delete it.
+`AGENTS.md`. If the project has one, say so and offer to move its content into
+`AGENTS.md` and delete it.
 
 - **If the user keeps it**, add `@AGENTS.md` to it, which loads the read path,
   and name the `claude-md-and-agents-md` *Project instructions* setting, which
