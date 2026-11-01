@@ -35,8 +35,8 @@ warning prints, its own `index --write` has already dropped the page's entry.
   fix its inbound links before writing anything here.
 * **A file without frontmatter is already doing this job.** Merge into it; do not
   overwrite. The template below is a starting point, not a canonical form to
-  restore. A `CLAUDE.md` or `CLAUDE.local.md` here is merged into `AGENTS.md`
-  and deleted (A5).
+  restore. What happens to a `CLAUDE.md` here depends on whether the project
+  keeps its own (A5).
 
 ## `<bundle>/AGENTS.md`
 
@@ -65,9 +65,8 @@ past it.
 
 Three things hold either way:
 
-- `index.md` and `log.md` are reserved names, and `AGENTS.md` (with `CLAUDE.md`
-  and `CLAUDE.local.md`, if an older bundle has them) is instructions. Every other `.md` here is a concept and needs
-  a `type`.
+- `index.md` and `log.md` are reserved names, and `AGENTS.md` (or a `CLAUDE.md`)
+  is instructions. Every other `.md` here is a concept and needs a `type`.
 - Every edit is followed by `okf.py index --write` and `okf.py lint`. That script
   ships with the `llm-wiki` skill. If you do not have it, say the index was not
   regenerated rather than skipping the step in silence — a stale index is exactly
@@ -78,15 +77,20 @@ Three things hold either way:
 ## What it reaches, and what it does not
 
 **Claude Code loads it on demand** (v2.1.277 or later): when its Read tool opens
-a file in that directory, which is what makes a single file at the bundle root
-cover every concept under it. Other hosts that read `AGENTS.md` may load it too,
+a file in that directory. The docs do not say whether that includes files in its
+subdirectories, where nearly every page sits, so whether one file at the bundle
+root covers every concept is unverified. Other hosts that read `AGENTS.md` may load it too,
 each in its own way.
 
-Four ways it does not fire, and the last is the largest:
+Five ways it does not fire, and the last is the largest:
 
-* A **`CLAUDE.md` in the project root or above it**, or in the bundle itself,
-  turns it off under Claude Code's default *Project instructions* setting, which
-  reads `AGENTS.md` only where there is no `CLAUDE.md`.
+* A **`CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md`** in the working
+  directory or above it, or in the bundle itself, turns it off under Claude
+  Code's default *Project instructions* setting; `claude-md-and-agents-md` turns
+  it back on.
+* **Claude Code without `AGENTS.md` support**: before v2.1.277, sometimes the
+  first session after upgrading to it, with its built-in AGENTS.md plugin
+  disabled, or in a directory added with `--add-dir`.
 * An agent that **writes a new page without reading one first** never triggers it.
 * A host that does not read `AGENTS.md` gets nothing, by construction.
 * **Only the Read tool is documented to trigger it**, not Edit, Write, `cat`,

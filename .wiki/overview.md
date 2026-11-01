@@ -11,7 +11,7 @@ sources:
   - resource: skills/supervise-work/SKILL.md
   - resource: plugins/session-review/skills/session-review/SKILL.md
   - resource: plugins/session-watch/.claude-plugin/plugin.json
-sources_digest: 129fe17c70454925
+sources_digest: 8243ae2025062847
 ---
 
 # What it is

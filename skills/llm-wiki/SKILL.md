@@ -406,11 +406,20 @@ lint` names them (`W018`), and
 the check.
 
 **An existing `CLAUDE.md` switches these files off.** Claude Code (v2.1.277 or
-later) reads `AGENTS.md`, but by default not where a `CLAUDE.md` exists in the
-working directory or above it, and a subdirectory's `CLAUDE.md` takes precedence
-over its `AGENTS.md`. If the project has one, say so and offer to move its
-content into `AGENTS.md` and delete it. A bundle-level `CLAUDE.md` is merged into
-`AGENTS.md` and removed.
+later) reads `AGENTS.md`, but by default not where `CLAUDE.md`,
+`.claude/CLAUDE.md` or `CLAUDE.local.md` exists in the working directory or
+above it, and a subdirectory's own takes precedence over its `AGENTS.md`. If the
+project has one, say so and offer to move its content into `AGENTS.md` and
+delete it.
+
+- **If the user keeps it**, add `@AGENTS.md` to it, which loads the read path,
+  and name the `claude-md-and-agents-md` *Project instructions* setting, which
+  the bundle's `AGENTS.md` needs to load. Leave a bundle-level `CLAUDE.md` in
+  place: it is then the only write path that loads.
+- **A `CLAUDE.local.md` is personal and uncommitted.** Report it and name the
+  same setting; its content does not belong in a committed file.
+- **Otherwise** a bundle-level `CLAUDE.md` is merged into `AGENTS.md` and
+  removed.
 
 #### The read path: the project's `AGENTS.md`
 

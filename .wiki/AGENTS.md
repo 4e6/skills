@@ -26,9 +26,8 @@ change is judged.
 
 Three things hold either way:
 
-- `index.md` and `log.md` are reserved names, and `AGENTS.md` (with `CLAUDE.md`
-  and `CLAUDE.local.md`, if an older bundle has them) is instructions. Every other `.md` here is a concept and needs
-  a `type`.
+- `index.md` and `log.md` are reserved names, and `AGENTS.md` (or a `CLAUDE.md`)
+  is instructions. Every other `.md` here is a concept and needs a `type`.
 - Every edit is followed by `okf.py index --write` and `okf.py lint`. That script
   ships with the `llm-wiki` skill. If you do not have it, say the index was not
   regenerated rather than skipping the step in silence — a stale index is exactly

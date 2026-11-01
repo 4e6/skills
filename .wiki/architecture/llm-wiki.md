@@ -5,7 +5,7 @@ description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits 
 tags: [architecture, llm-wiki, retirement]
 sources:
   - resource: skills/llm-wiki/**
-sources_digest: 1b8812e245e9e858
+sources_digest: ef066a2371d7bd3d
 ---
 
 # What it is for
@@ -144,15 +144,18 @@ on something it does not say, which no section can hold.
 Up to 1.5.0 a project got a `CLAUDE.md` for the read path, and the bundle a
 `CLAUDE.md` for the write path with an `AGENTS.md` beside it that only pointed at
 it, because only Claude Code loaded instructions on its own, and it loaded
-`CLAUDE.md`. From 1.6.0 Claude Code reads `AGENTS.md` itself (v2.1.277 or
-later), at the project root and nested, so the skill writes `AGENTS.md` only.
+`CLAUDE.md`. Claude Code now reads `AGENTS.md` itself (v2.1.277 or later), at
+the project root and nested, so from 1.6.0 the skill writes `AGENTS.md` only.
 
 - **No `CLAUDE.md` beside it.** Under Claude Code's default *Project
-  instructions* setting a `CLAUDE.md` in the working directory or above it stops
-  `AGENTS.md` being read at all, and a subdirectory's own `CLAUDE.md` shadows its
-  `AGENTS.md`. Keeping both would turn the new file off, so an old one is merged
-  in and removed; a project's own `CLAUDE.md` is the user's, and is only
-  offered for removal.
+  instructions* setting a `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md`
+  in the working directory or above it stops `AGENTS.md` being read at all, and a
+  subdirectory's own shadows its `AGENTS.md`. So an old bundle `CLAUDE.md` is
+  merged in and removed. A project's own `CLAUDE.md` is the user's and is only
+  offered for removal; if it stays, it gets `@AGENTS.md`, the bundle keeps its
+  `CLAUDE.md`, and the user is pointed at `claude-md-and-agents-md`, since
+  deleting the bundle's file would leave no write path that loads. A
+  `CLAUDE.local.md` is never folded in: it is personal and uncommitted.
 - **One file per level cannot drift**, which the pointer file existed to prevent.
 - **`okf.py` still exempts `CLAUDE.md` and `CLAUDE.local.md`.** Bundles written
   before 1.6.0 carry them, and linting them as concepts missing a `type` would be
@@ -160,7 +163,8 @@ later), at the project root and nested, so the skill writes `AGENTS.md` only.
 - **The nested load is narrower than `CLAUDE.md`'s was.** It is documented only
   for the Read tool, where a nested `CLAUDE.md` also loads on writes, edits and a
   `cat` of one file. An agent editing the bundle through the shell is less likely
-  than before to see the rules. Not measured.
+  than before to see the rules. Whether a bundle-root `AGENTS.md` loads for a
+  page in a subdirectory is not documented either. Neither is measured.
 
 # OKF v0.2
 
