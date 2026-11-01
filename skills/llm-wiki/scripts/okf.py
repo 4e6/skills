@@ -38,9 +38,11 @@ RESERVED = {"index.md", "log.md"}
 
 # Agent instruction files, which a bundle carries so that the rules for editing
 # it arrive with the directory rather than having to be sought out. Claude Code
-# loads a nested CLAUDE.md on demand when it reads a file in that directory, and
-# other agents read AGENTS.md the same way — so an agent that opens a page it was
-# about to edit has been told to load this skill before it does.
+# loads a nested AGENTS.md on demand when it reads a file in that directory, and
+# other agents read it too — so an agent that opens a page it was about to edit
+# has been told to load this skill before it does. The skill now writes only
+# AGENTS.md; CLAUDE.md and CLAUDE.local.md stay exempt because older bundles
+# carry them, and linting those as untyped concepts would be wrong.
 #
 # They are instructions, not knowledge: never concepts, never indexed, never
 # reported stale. The trade is that nothing here checks their links either.

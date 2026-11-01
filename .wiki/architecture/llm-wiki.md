@@ -1,11 +1,11 @@
 ---
 type: Module
 title: llm-wiki
-description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits behind a gate, why a page is retired on evidence and never on age, and why it is pinned by the content of its sources and not by a commit.
+description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits behind a gate, a page is retired on evidence and never on age, it is pinned by content and not by a commit, and only AGENTS.md is written.
 tags: [architecture, llm-wiki, retirement]
 sources:
   - resource: skills/llm-wiki/**
-sources_digest: ee53c4d739d2e9f4
+sources_digest: 1b8812e245e9e858
 ---
 
 # What it is for
@@ -138,6 +138,29 @@ skill folder by glob, and `overview` and `the-zip-release` name `README.md`,
 whose release link changes on every release. Five pages kept the whole of
 `SKILL.md`, because they rest on its frontmatter, on a step-by-step pattern, or
 on something it does not say, which no section can hold.
+
+# One instruction file, AGENTS.md
+
+Up to 1.5.0 a project got a `CLAUDE.md` for the read path, and the bundle a
+`CLAUDE.md` for the write path with an `AGENTS.md` beside it that only pointed at
+it, because only Claude Code loaded instructions on its own, and it loaded
+`CLAUDE.md`. From 1.6.0 Claude Code reads `AGENTS.md` itself (v2.1.277 or
+later), at the project root and nested, so the skill writes `AGENTS.md` only.
+
+- **No `CLAUDE.md` beside it.** Under Claude Code's default *Project
+  instructions* setting a `CLAUDE.md` in the working directory or above it stops
+  `AGENTS.md` being read at all, and a subdirectory's own `CLAUDE.md` shadows its
+  `AGENTS.md`. Keeping both would turn the new file off, so an old one is merged
+  in and removed; a project's own `CLAUDE.md` is the user's, and is only
+  offered for removal.
+- **One file per level cannot drift**, which the pointer file existed to prevent.
+- **`okf.py` still exempts `CLAUDE.md` and `CLAUDE.local.md`.** Bundles written
+  before 1.6.0 carry them, and linting them as concepts missing a `type` would be
+  wrong.
+- **The nested load is narrower than `CLAUDE.md`'s was.** It is documented only
+  for the Read tool, where a nested `CLAUDE.md` also loads on writes, edits and a
+  `cat` of one file. An agent editing the bundle through the shell is less likely
+  than before to see the rules. Not measured.
 
 # OKF v0.2
 

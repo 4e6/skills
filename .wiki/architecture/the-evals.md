@@ -136,7 +136,7 @@ would otherwise answer instead of the skill:
 
 - **Project settings only**, so none of the author's own skills, memory or
   `CLAUDE.md`. Started inside this checkout, a run would load this repository's
-  `CLAUDE.md` and its wiki instructions, which is why the folder is outside it.
+  `AGENTS.md` and its wiki instructions, which is why the folder is outside it.
 - **No MCP servers.** The author's machine has a meal-plan server and a training
   calendar, either of which would plan the week itself.
 - **A fixed set of tools**: read, write, search, and a shell. Nothing that
