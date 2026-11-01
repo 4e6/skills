@@ -5,7 +5,7 @@ description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits 
 tags: [architecture, llm-wiki, retirement]
 sources:
   - resource: skills/llm-wiki/**
-sources_digest: ef066a2371d7bd3d
+sources_digest: 95c0c3da63ca2229
 ---
 
 # What it is for
@@ -150,10 +150,10 @@ the project root and nested, so from 1.6.0 the skill writes `AGENTS.md` only.
 - **No `CLAUDE.md` beside it.** Under Claude Code's default *Project
   instructions* setting a `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md`
   in the working directory or above it stops `AGENTS.md` being read at all, and a
-  subdirectory's own shadows its `AGENTS.md`. So an old bundle `CLAUDE.md` is
+  subdirectory's own `CLAUDE.md` shadows its `AGENTS.md`. So an old bundle `CLAUDE.md` is
   merged in and removed. A project's own `CLAUDE.md` is the user's and is only
-  offered for removal; if it stays, it gets `@AGENTS.md`, the bundle keeps its
-  `CLAUDE.md`, and the user is pointed at `claude-md-and-agents-md`, since
+  offered for removal; if it stays, it gets `@AGENTS.md`, the bundle's
+  `CLAUDE.md` shrinks to `@AGENTS.md` so the two cannot drift, and the user is pointed at `claude-md-and-agents-md`, since
   deleting the bundle's file would leave no write path that loads. A
   `CLAUDE.local.md` is never folded in: it is personal and uncommitted.
 - **One file per level cannot drift**, which the pointer file existed to prevent.

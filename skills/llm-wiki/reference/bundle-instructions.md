@@ -79,8 +79,8 @@ Three things hold either way:
 **Claude Code loads it on demand** (v2.1.277 or later): when its Read tool opens
 a file in that directory. The docs do not say whether that includes files in its
 subdirectories, where nearly every page sits, so whether one file at the bundle
-root covers every concept is unverified. Other hosts that read `AGENTS.md` may load it too,
-each in its own way.
+root covers every concept is unverified. Other hosts that read `AGENTS.md` may
+load it too, each in its own way.
 
 Five ways it does not fire, and the last is the largest:
 
@@ -90,7 +90,8 @@ Five ways it does not fire, and the last is the largest:
   it back on.
 * **Claude Code without `AGENTS.md` support**: before v2.1.277, sometimes the
   first session after upgrading to it, with its built-in AGENTS.md plugin
-  disabled, or in a directory added with `--add-dir`.
+  disabled, or in a directory added with `--add-dir` while
+  `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` is set.
 * An agent that **writes a new page without reading one first** never triggers it.
 * A host that does not read `AGENTS.md` gets nothing, by construction.
 * **Only the Read tool is documented to trigger it**, not Edit, Write, `cat`,

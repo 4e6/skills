@@ -408,14 +408,16 @@ the check.
 **An existing `CLAUDE.md` switches these files off.** Claude Code (v2.1.277 or
 later) reads `AGENTS.md`, but by default not where `CLAUDE.md`,
 `.claude/CLAUDE.md` or `CLAUDE.local.md` exists in the working directory or
-above it, and a subdirectory's own takes precedence over its `AGENTS.md`. If the
-project has one, say so and offer to move its content into `AGENTS.md` and
+above it, and a subdirectory's own `CLAUDE.md` takes precedence over its
+`AGENTS.md`. If the project has one, say so and offer to move its content into `AGENTS.md` and
 delete it.
 
 - **If the user keeps it**, add `@AGENTS.md` to it, which loads the read path,
   and name the `claude-md-and-agents-md` *Project instructions* setting, which
-  the bundle's `AGENTS.md` needs to load. Leave a bundle-level `CLAUDE.md` in
-  place: it is then the only write path that loads.
+  the bundle's `AGENTS.md` needs to load; it is read from user or managed
+  settings, not the project's. Merge a bundle-level `CLAUDE.md` into `AGENTS.md`
+  and reduce it to the one line `@AGENTS.md`: it is then the only write path
+  that loads.
 - **A `CLAUDE.local.md` is personal and uncommitted.** Report it and name the
   same setting; its content does not belong in a committed file.
 - **Otherwise** a bundle-level `CLAUDE.md` is merged into `AGENTS.md` and
