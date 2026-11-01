@@ -5,7 +5,7 @@ description: Keeps a codebase's wiki as an OKF bundle. Why a Decision page sits 
 tags: [architecture, llm-wiki, retirement]
 sources:
   - resource: skills/llm-wiki/**
-sources_digest: bf84fd568b389049
+sources_digest: deb89af2c99ac245
 ---
 
 # What it is for
@@ -33,7 +33,10 @@ than [Z-Image Turbo on macOS](/architecture/z-image-turbo-macos.md) does.
 - **What it writes.** `okf.py` runs `git` in the repository it is pointed at and
   reads the bundle; it writes nothing but `index.md` files under `index --write`,
   a page's `sources_digest` line under `pin`, and a page's `sources` and `status`
-  lines under `upgrade --write`.
+  lines under `upgrade --write`. Index entries are `-` bullets: formatters such
+  as Biome normalise list bullets to `-`, and `okf.py` reads any bullet, so
+  generated indexes and a formatter no longer fight and a hand-written
+  description is never dropped.
 - **It names the host.** Its instructions name Claude Code's own paths and files,
   as instructions about the host.
 

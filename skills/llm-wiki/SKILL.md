@@ -9,7 +9,7 @@ compatibility: >-
   bundle is read and written offline.
 metadata:
   author: 4e6
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 # LLM-wiki (Open Knowledge Format)
@@ -387,7 +387,9 @@ Always run both, in this order, after any wiki edit:
 
 `index` regenerates every `index.md` from concept frontmatter (grouping by
 `type`, entries reusing each page's L0), preserving hand-written descriptions it
-cannot derive. An `index.md` containing `<!-- okf:manual -->` is left untouched.
+cannot derive. It writes `-` bullets and reads any bullet, so a formatter that
+rewrites them loses nothing; the first run on an older bundle rewrites its
+indexes once. An `index.md` containing `<!-- okf:manual -->` is left untouched.
 
 `lint` enforces OKF §11 conformance (`E…`) and reports rot (`W…`): broken links,
 orphans, concepts missing from their index, directories with no index, absent

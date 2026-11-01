@@ -1689,7 +1689,10 @@ def prune(bundle: Bundle) -> list[dict]:
 # index
 # ---------------------------------------------------------------------------
 
-INDEX_ENTRY_RE = re.compile(r"^\*\s+\[[^\]]*\]\(\s*([^)\s]+)\s*\)\s*(?:-\s*(.*))?$")
+# Entries are written with "-": formatters such as Biome rewrite list bullets to "-",
+# and a generated index must not fight them. Any bullet is read, so a rewritten index
+# (or an older one with "*") keeps its hand-written descriptions.
+INDEX_ENTRY_RE = re.compile(r"^[*+-]\s+\[[^\]]*\]\(\s*([^)\s]+)\s*\)\s*(?:-\s*(.*))?$")
 
 
 def existing_descriptions(index_path: Path) -> dict[str, str]:
@@ -1731,7 +1734,7 @@ def render_index(directory: Path, bundle: Bundle) -> str:
         lines += ["---", f'okf_version: "{declared or OKF_VERSION}"', "---", ""]
 
     def entry_for(doc: Doc) -> str:
-        entry = f"* [{doc.title}]({doc.path.name})"
+        entry = f"- [{doc.title}]({doc.path.name})"
         desc = doc.description or kept.get(doc.path.name, "")
         return f"{entry} - {desc}" if desc else entry
 
@@ -1742,8 +1745,9 @@ def render_index(directory: Path, bundle: Bundle) -> str:
 
         lines.append(f"# {type_name}")
         lines.append("")
-        lines += [entry_for(doc) for doc in live]
-        lines.append("")
+        if live:
+            lines += [entry_for(doc) for doc in live]
+            lines.append("")
         if retired:
             lines.append(f"## {RETIRED_HEADING}")
             lines.append("")
@@ -1755,7 +1759,7 @@ def render_index(directory: Path, bundle: Bundle) -> str:
         lines.append("")
         for child in subdirs:
             target = f"{child.name}/"
-            entry = f"* [{derive_title(child)}]({target})"
+            entry = f"- [{derive_title(child)}]({target})"
             desc = kept.get(target) or kept.get(f"{child.name}/index.md", "")
             if desc:
                 entry += f" - {desc}"
