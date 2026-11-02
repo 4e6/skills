@@ -157,13 +157,15 @@ with the photos linked where step 8 publishes — one handover, never edit the
 page and never read it back except where a publishing tool asks to read the
 linked copy. What the report says about photos is step 8's, not `photos.md`'s: a
 line that they show the idea of each dish rather than the athlete's plate, and
-another whenever a page went out with no photos, saying why. It used to say nothing about photos where none were drawn, so an athlete
-never learned a feature had been skipped; the silence was right only while "no
-tool" meant a host that could not draw, and it hid the host that did not look.
-The rule is about a page, so where there is none — no Python, so `photos.md`
-was never read — the reply says nothing about photos: there is nothing to be
-missing from. It is left to the host to word the reason, and it names no tool,
-as the one line before drawing does not.
+another whenever a page went out with no photos, saying why. It used to say
+nothing about photos where none were drawn, so an athlete never learned a
+feature had been skipped; the silence was right only while "no tool" meant a
+host that could not draw, and it hid the host that did not look. The rule is
+about a page, so where there is none — no Python, so `photos.md` was never
+read — the reply says nothing about photos: there is nothing to be missing from.
+The wording of the reason is left to the host. The rule that the reason names no
+file and quotes no command output used to sit in `photos.md` and went with its
+report section; step 8 does not restate it.
 
 # Measured, 2026-09-29
 
