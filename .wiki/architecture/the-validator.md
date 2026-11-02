@@ -6,7 +6,7 @@ tags: [architecture, validation]
 sources:
   - resource: skills/training-week-meal-plan/scripts/validate.py
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: 0a5ba1f9dd15931e
+sources_digest: 205250fc8b1e828d
 ---
 
 # Why it exists

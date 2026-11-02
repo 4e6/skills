@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: 2fa02adf48b4dec5
+sources_digest: c240e91c8d7920d6
 ---
 
 # Progress is the host's, and the reply is the athlete's
@@ -28,8 +28,12 @@ person reading this reply is neither.
   checked. It **promises no check and no page**, because a host without Python
   makes neither and would have to take the promise back.
 - **Silence is anchored to steps.** From the end of step 1 to step 8 the host
-  says nothing but a question it cannot go on without — and one line before photos are drawn, since on a host
-  that draws in the chat unexplained plates would otherwise appear.
+  says nothing but a question it cannot go on without, a question a tool it uses
+  tells it to ask, and one line before photos are drawn, since on a host that
+  draws in the chat unexplained plates would otherwise appear. The tool's own
+  question is let through because a tool may need the athlete's consent before it
+  installs anything, and the meal-plan skill can go on without photos, so a strict
+  host could otherwise treat it as not allowed.
 - **The check's output is never pasted**, step 8 included. Step 8 says what the
   check found in the host's own words.
 

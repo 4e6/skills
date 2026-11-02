@@ -139,8 +139,11 @@ taken the tools list for the whole answer while the image skill sat in the
 skills list. On 2026-11-02 a real run skipped without checking whether the image
 skill was set up or asking, having judged its ~12 GB setup too heavy. The
 meal-plan skill says nothing about setting a tool up: the host decides whether a
-setup is needed, and the image skill owns the athlete's consent to its own
-([z-image-turbo-macos](/architecture/z-image-turbo-macos.md)). `photos.md` no
+setup is needed, and an image tool asks for the athlete's consent itself where
+it needs one: z-image-turbo-macos gives the size and asks before its own setup
+([z-image-turbo-macos](/architecture/z-image-turbo-macos.md)). A question a tool
+raises is let through the silence rule
+([the handover](/architecture/the-handover.md)). `photos.md` no
 longer tells the host to install nothing. No tool is named, since one that
 exists on one host is wrong on the next, and no example is given, as
 [editing a skill](/conventions/editing-a-skill.md) allows only those every page

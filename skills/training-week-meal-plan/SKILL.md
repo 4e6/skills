@@ -61,8 +61,9 @@ What the athlete hears:
 - It names the days the plan covers, with dates where known.
 - It names no file, script, runtime or step.
 - It promises no check and no page.
-- Then nothing until step 8, except a question you cannot go on without, or the
-  one line before photos are drawn.
+- Then nothing until step 8, except a question you cannot go on without, a
+  question a tool you use tells you to ask, or the one line before photos are
+  drawn.
 - Narrate no step. Report nothing as skipped.
 - Never paste the check's output. Say what it found in your own words.
 
