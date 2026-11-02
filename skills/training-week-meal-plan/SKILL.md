@@ -359,6 +359,8 @@ Then say, in a few lines:
   session's day.
 - Whether the plan was checked, and what the check found, in your own words.
 - The page to print: the link, the file as attached, else its full path.
+- That the photos show the idea of each dish rather than their plate, if the
+  page has them.
 - Why the page has no photos, if it has none.
 
 Hand over the page, never `plan-<date>.json`. When they open it themselves, give

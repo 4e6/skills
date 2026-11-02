@@ -80,11 +80,3 @@ There is one page and one handover.
   publish. That copy is small enough to read where a publishing tool asks.
 - An exit 2 is the command or the plan, never a photo: step 7's four messages, or
   a usage line if the list's name went missing.
-
-## In the report
-
-One line in step 8: the photos were made for this plan, so they show the idea of
-each dish rather than their plate.
-
-If the page went out with no photos, say why in one more plain line. Name no files
-and quote none of what the command said.

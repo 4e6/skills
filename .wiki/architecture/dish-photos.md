@@ -9,7 +9,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md#step-7--create-the-page
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: 3b8799cfd203f3b1
+sources_digest: f79c0438abd56167
 ---
 
 # Why the renderer does it
@@ -149,13 +149,15 @@ longer tells the host to install nothing. No tool is named, since one that
 exists on one host is wrong on the next, and no example is given, as
 [editing a skill](/conventions/editing-a-skill.md) allows only those every page
 would accept. `photos.md` is loaded only where it applies, and no longer repeats step 4's
-gate; step 4's table still skips step 6 where there is no Python. It says: one line to the athlete first; square and top-down, describing the food and never the athlete; stop at
-the first quota, rate-limit or billing error; render once — again only after
-fixing a name that matched no dish or a photo over the cap, or with the photos
-linked where step 8 publishes — one handover, never edit the page and never read
-it back except where a publishing tool asks to read the linked copy; one line
-in the report, and another whenever a page went out with no photos, saying
-why. It used to say nothing about photos where none were drawn, so an athlete
+gate; step 4's table still skips step 6 where there is no Python. It says: one
+line to the athlete first; square and top-down, describing the food and never
+the athlete; stop at the first quota, rate-limit or billing error; render once —
+again only after fixing a name that matched no dish or a photo over the cap, or
+with the photos linked where step 8 publishes — one handover, never edit the
+page and never read it back except where a publishing tool asks to read the
+linked copy. What the report says about photos is step 8's, not `photos.md`'s: a
+line that they show the idea of each dish rather than the athlete's plate, and
+another whenever a page went out with no photos, saying why. It used to say nothing about photos where none were drawn, so an athlete
 never learned a feature had been skipped; the silence was right only while "no
 tool" meant a host that could not draw, and it hid the host that did not look.
 The rule is about a page, so where there is none — no Python, so `photos.md`
