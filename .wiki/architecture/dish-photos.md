@@ -8,7 +8,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md#step-6--make-it-printable
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: b25631dfe67a4ce4
+sources_digest: 58a08144a6605de0
 ---
 
 # Why the renderer does it
@@ -123,23 +123,28 @@ it once did only on a page with photos.
 
 Step 6 names a capability — the tools and skills *that make a picture from a
 written description* — never a host, and is worded so a host whose only tool is
-Python does not try to plot a plate. It tells the host to **list** what it has,
-naming the two places to look, the tools list and the skills list in its context. It then has the host find out, the way
-each tool's own instructions say, whether it is ready, and branches: none, or none
-that can run here, no photos; one ready, read `photos.md` (ask only when none is);
-none ready and one needing a setup, ask the athlete once with what it is, how large
-and how long, wait, and go on without photos only on a no or a failed setup. The
-size or the time of a setup is never the host's to judge: on 2026-11-02 a real run
-skipped without checking whether the image skill was set up or asking the athlete,
-having judged its ~12 GB setup too heavy; the old text said to ask, while
-`photos.md` told the host to install nothing, and that line is gone. It once said *where your host can make
-a picture*, which left the judgement to the host: in a real run an agent skipped
-the photos without looking, though a local image skill was installed, and never
-told the athlete. A condition about what the host can do is answered from memory;
-a list is answered from the session. A real run in 2026-10 still skipped the
-list on Sonnet 5.5, having taken the tools list for the whole answer while the
-image skill sat in the skills list. No tool is named, since one that exists on
-one host is wrong on the next, and no example is given, as
+Python does not try to plot a plate.
+
+It once said *where your host can make a picture*, which left the judgement to
+the host: in a real run an agent skipped the photos without looking, though a
+local image skill was installed, and never told the athlete. A condition about
+what the host can do is answered from memory; a list is answered from the
+session. A real run in 2026-10 still skipped the list on Sonnet 5.5, having
+taken the tools list for the whole answer while the image skill sat in the
+skills list. Then the text said to ask the athlete before setting up a tool the
+host had not seen set up, while `photos.md` told the host to install nothing,
+and on 2026-11-02 a real run skipped without checking whether the image skill
+was set up or asking, having judged its ~12 GB setup too heavy. So step 6 now
+has the host **list** what it has, in the two places to look, the tools list and
+the skills list in its context, find out whether each is ready the way its own
+instructions say, and branch: none, or none that can run here, no photos; a
+ready one, read `photos.md` (with several listed, use a ready one); none ready
+and one needing a setup, ask the athlete what it is, how large and how long,
+wait, and go on without photos only on a no or a failed setup. What a tool's own
+check would tell the athlete waits for step 7, apart from that one question. The
+size or the time of a setup is never the host's to judge, and the `photos.md`
+line that said to install nothing is gone. No tool is named, since one that
+exists on one host is wrong on the next, and no example is given, as
 [editing a skill](/conventions/editing-a-skill.md) allows only those every page
 would accept. `photos.md` is loaded only where it applies:
 draw only where step 4's check ran, whatever it found; one line to the athlete

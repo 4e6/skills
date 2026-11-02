@@ -287,7 +287,8 @@ Never:
 Where step 4's check ran, look through the tools list and the skills list in
 your context for any that draw a picture from a written description. Look; do
 not decide from memory. Then find out whether each is ready, the way its own
-instructions say.
+instructions say. What its check would tell the athlete waits for step 7, apart
+from the setup question below.
 
 - **None, or none whose own check says it cannot run here:** go on without
   photos.
