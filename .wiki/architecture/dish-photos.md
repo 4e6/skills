@@ -9,7 +9,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md#step-7--create-the-page
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: 9b960bb7148c8067
+sources_digest: a653badc89538525
 ---
 
 # Why the renderer does it
@@ -147,9 +147,9 @@ raises is let through the silence rule
 longer tells the host to install nothing. No tool is named, since one that
 exists on one host is wrong on the next, and no example is given, as
 [editing a skill](/conventions/editing-a-skill.md) allows only those every page
-would accept. `photos.md` is loaded only where it applies:
-draw only where step 4's check ran, whatever it found; one line to the athlete
-first; square and top-down, describing the food and never the athlete; stop at
+would accept. `photos.md` is loaded only where it applies, and no longer gates
+on step 4's check: the skill also runs where the host has other tools for a page
+or a picture. It says: one line to the athlete first; square and top-down, describing the food and never the athlete; stop at
 the first quota, rate-limit or billing error; render once — again only after
 fixing a name that matched no dish or a photo over the cap, or with the photos
 linked where step 8 publishes — one handover, never edit the page and never read

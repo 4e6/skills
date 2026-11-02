@@ -4,9 +4,6 @@ Use this only where your host has a tool that makes a picture from a written
 description. Drawing with code, a plotting library or an SVG is not that: skip
 this file.
 
-Use it only where step 4's check ran, whatever it found. Without Python there is
-no page to put a photo on.
-
 This is step 6:
 
 1. List the dishes.
