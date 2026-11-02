@@ -61,9 +61,8 @@ What the athlete hears:
 - It names the days the plan covers, with dates where known.
 - It names no file, script, runtime or step.
 - It promises no check and no page.
-- Then nothing until step 8, except a question you cannot go on without (the
-  question whether to set up a tool that draws included), or the one line before
-  photos are drawn.
+- Then nothing until step 8, except a question you cannot go on without, or the
+  one line before photos are drawn.
 - Narrate no step. Report nothing as skipped.
 - Never paste the check's output. Say what it found in your own words.
 
@@ -285,22 +284,9 @@ Never:
 
 ## Step 6 — Generate photos
 
-Where step 4's check ran:
-
-1. Look through the tools list and the skills list in your context for any that
-   draw a picture from a written description. Look; do not decide from memory.
-2. Find out whether each is ready, the way its own instructions say. What its
-   check says waits for step 8, apart from the setup question.
-3. Then:
-   - **None, or none whose own check says it cannot run here:** go on to step 7
-     without photos.
-   - **One is ready** (with several listed, use a ready one): read
-     [references/photos.md](references/photos.md) and follow it.
-   - **None ready, one needs a setup first** (an install or a download): ask the
-     athlete whether to set it up, whatever its size, saying what it is, how
-     large it is and, where known, how long it takes; then wait. Yes: set it up
-     as the tool's own instructions say, then read photos.md and follow it. No,
-     or a setup that fails: go on to step 7 without photos.
+Look through the tools list and the skills list in your context for any that
+draw a picture from a written description. Look; do not decide from memory. If
+there is any, read [references/photos.md](references/photos.md) now.
 
 ## Step 7 — Create the page
 

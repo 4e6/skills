@@ -9,7 +9,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md#step-7--create-the-page
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: a4d384c8feb3751c
+sources_digest: 9b960bb7148c8067
 ---
 
 # Why the renderer does it
@@ -122,9 +122,13 @@ it once did only on a page with photos.
 
 # What the skill tells the host
 
-Step 6 names a capability — the tools and skills *that make a picture from a
-written description* — never a host, and is worded so a host whose only tool is
-Python does not try to plot a plate.
+Photos are a step of their own, step 6, ahead of the page (step 7) and the
+handover (step 8): as a clause inside the step that makes the page printable it
+was easy to pass over. Step 6 names a capability — the tools and skills *that
+make a picture from a written description* — never a host, and is worded so a
+host whose only tool is Python does not try to plot a plate. It has the host
+**list** what it has, in the two places to look, the tools list and the skills
+list in its context, and read `photos.md` if there is any.
 
 It once said *where your host can make a picture*, which left the judgement to
 the host: in a real run an agent skipped the photos without looking, though a
@@ -132,19 +136,12 @@ local image skill was installed, and never told the athlete. A condition about
 what the host can do is answered from memory; a list is answered from the
 session. A real run in 2026-10 still skipped the list on Sonnet 5.5, having
 taken the tools list for the whole answer while the image skill sat in the
-skills list. Then the text said to ask the athlete before setting up a tool the
-host had not seen set up, while `photos.md` told the host to install nothing,
-and on 2026-11-02 a real run skipped without checking whether the image skill
-was set up or asking, having judged its ~12 GB setup too heavy. So step 6, photos as a step of their own
-since the page became step 7, now has the host **list** what it has, in the two places to look, the tools list and
-the skills list in its context, find out whether each is ready the way its own
-instructions say, and branch: none, or none that can run here, no photos; a
-ready one, read `photos.md` (with several listed, use a ready one); none ready
-and one needing a setup, ask the athlete what it is, how large and how long,
-wait, and go on without photos only on a no or a failed setup. What a tool's own
-check would tell the athlete waits for step 8, apart from that one question. The
-size or the time of a setup is never the host's to judge, and the `photos.md`
-line that said to install nothing is gone. No tool is named, since one that
+skills list. On 2026-11-02 a real run skipped without checking whether the image
+skill was set up or asking, having judged its ~12 GB setup too heavy. The
+meal-plan skill says nothing about setting a tool up: the host decides whether a
+setup is needed, and the image skill owns the athlete's consent to its own
+([z-image-turbo-macos](/architecture/z-image-turbo-macos.md)). `photos.md` no
+longer tells the host to install nothing. No tool is named, since one that
 exists on one host is wrong on the next, and no example is given, as
 [editing a skill](/conventions/editing-a-skill.md) allows only those every page
 would accept. `photos.md` is loaded only where it applies:
