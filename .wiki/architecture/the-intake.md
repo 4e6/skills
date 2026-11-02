@@ -11,7 +11,7 @@ sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md#body-weight-is-the-number-every-target-is-built-from
   - resource: skills/training-week-meal-plan/references/fuelling.md#weights-and-measures-are-their-countrys
   - resource: skills/training-week-meal-plan/references/fuelling.md#a-dietary-restriction-outranks-everything-here
-sources_digest: d064b55218bec795
+sources_digest: 8347ca7847ac9960
 ---
 
 # What it asks

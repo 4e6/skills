@@ -14,7 +14,7 @@ compatibility: >-
   checked and a printable page is rendered; without it you still get the plan.
 metadata:
   author: 4e6
-  version: "1.11.0"
+  version: "1.12.0"
 ---
 
 # A week of meals that tracks the training
@@ -60,8 +60,9 @@ What the athlete hears:
 - It names the days the plan covers, with dates where known.
 - It names no file, script, runtime or step.
 - It promises no check and no page.
-- Then nothing until step 7, except a question you cannot go on without, or the
-  one line before photos are drawn.
+- Then nothing until step 7, except a question you cannot go on without (the
+  question whether to set up a tool that draws included), or the one line before
+  photos are drawn.
 - Narrate no step. Report nothing as skipped.
 - Never paste the check's output. Say what it found in your own words.
 
@@ -283,11 +284,23 @@ Never:
 
 ## Step 6 — Make it printable
 
-Look through the tools list and the skills list in your context for any that
-draw a picture from a written description. Look; do not decide from memory. If
-there is any, read [references/photos.md](references/photos.md) now. One that
-needs a setup you have not seen done counts: ask the athlete whether to set it
-up.
+Where step 4's check ran, look through the tools list and the skills list in
+your context for any that draw a picture from a written description. Look; do
+not decide from memory. Then find out whether each is ready, the way its own
+instructions say.
+
+- **None, or none whose own check says it cannot run here:** go on without
+  photos.
+- **One is ready:** read [references/photos.md](references/photos.md) now. If
+  several are listed, use a ready one; ask only when none is.
+- **None ready, one needs a setup first** (an install or a download): ask the
+  athlete whether to set it up, saying what it is, how large it is and, where
+  known, how long it takes; then wait. Yes is their agreement: set it up as the
+  tool's own instructions say, then go on as for a ready one. No, or a setup
+  that fails: go on without photos.
+
+Never decide yourself that a setup is too large or too slow; that is the
+athlete's to say.
 
 ```
 python3 <this skill's directory>/scripts/render.py plan-<date>.json plan-<date>.html

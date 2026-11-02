@@ -5,9 +5,10 @@ description: Where the host can draw, each dish gets a square photo beside its r
 tags: [architecture, rendering, photos]
 sources:
   - resource: skills/training-week-meal-plan/references/photos.md
+  - resource: skills/training-week-meal-plan/SKILL.md#step-6--make-it-printable
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: 1c70d9b17bbe9c61
+sources_digest: b25631dfe67a4ce4
 ---
 
 # Why the renderer does it
@@ -123,10 +124,15 @@ it once did only on a page with photos.
 Step 6 names a capability — the tools and skills *that make a picture from a
 written description* — never a host, and is worded so a host whose only tool is
 Python does not try to plot a plate. It tells the host to **list** what it has,
-naming the two places to look, the tools list and the skills list in its context,
-and read `photos.md` if anything is there. A generator that needs a setup the host
-has not seen done counts, and the host asks the athlete before setting it up: a
-long one-time install is the athlete's to agree to. It once said *where your host can make
+naming the two places to look, the tools list and the skills list in its context. It then has the host find out, the way
+each tool's own instructions say, whether it is ready, and branches: none, or none
+that can run here, no photos; one ready, read `photos.md` (ask only when none is);
+none ready and one needing a setup, ask the athlete once with what it is, how large
+and how long, wait, and go on without photos only on a no or a failed setup. The
+size or the time of a setup is never the host's to judge: on 2026-11-02 a real run
+skipped without checking whether the image skill was set up or asking the athlete,
+having judged its ~12 GB setup too heavy; the old text said to ask, while
+`photos.md` told the host to install nothing, and that line is gone. It once said *where your host can make
 a picture*, which left the judgement to the host: in a real run an agent skipped
 the photos without looking, though a local image skill was installed, and never
 told the athlete. A condition about what the host can do is answered from memory;
