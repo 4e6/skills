@@ -5,10 +5,11 @@ description: Where the host can draw, each dish gets a square photo beside its r
 tags: [architecture, rendering, photos]
 sources:
   - resource: skills/training-week-meal-plan/references/photos.md
-  - resource: skills/training-week-meal-plan/SKILL.md#step-6--make-it-printable
+  - resource: skills/training-week-meal-plan/SKILL.md#step-6--generate-photos
+  - resource: skills/training-week-meal-plan/SKILL.md#step-7--create-the-page
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: 58a08144a6605de0
+sources_digest: a4d384c8feb3751c
 ---
 
 # Why the renderer does it
@@ -134,14 +135,14 @@ taken the tools list for the whole answer while the image skill sat in the
 skills list. Then the text said to ask the athlete before setting up a tool the
 host had not seen set up, while `photos.md` told the host to install nothing,
 and on 2026-11-02 a real run skipped without checking whether the image skill
-was set up or asking, having judged its ~12 GB setup too heavy. So step 6 now
-has the host **list** what it has, in the two places to look, the tools list and
+was set up or asking, having judged its ~12 GB setup too heavy. So step 6, photos as a step of their own
+since the page became step 7, now has the host **list** what it has, in the two places to look, the tools list and
 the skills list in its context, find out whether each is ready the way its own
 instructions say, and branch: none, or none that can run here, no photos; a
 ready one, read `photos.md` (with several listed, use a ready one); none ready
 and one needing a setup, ask the athlete what it is, how large and how long,
 wait, and go on without photos only on a no or a failed setup. What a tool's own
-check would tell the athlete waits for step 7, apart from that one question. The
+check would tell the athlete waits for step 8, apart from that one question. The
 size or the time of a setup is never the host's to judge, and the `photos.md`
 line that said to install nothing is gone. No tool is named, since one that
 exists on one host is wrong on the next, and no example is given, as
@@ -151,7 +152,7 @@ draw only where step 4's check ran, whatever it found; one line to the athlete
 first; square and top-down, describing the food and never the athlete; stop at
 the first quota, rate-limit or billing error; render once — again only after
 fixing a name that matched no dish or a photo over the cap, or with the photos
-linked where step 7 publishes — one handover, never edit the page and never read
+linked where step 8 publishes — one handover, never edit the page and never read
 it back except where a publishing tool asks to read the linked copy; one line
 in the report, and another whenever a page went out with no photos, saying
 why. It used to say nothing about photos where none were drawn, so an athlete

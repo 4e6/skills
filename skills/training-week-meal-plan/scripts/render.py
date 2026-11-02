@@ -232,7 +232,7 @@ def number(value) -> str:
     other prints the shortest form that round-trips, which has been fixed since
     3.1.
 
-    **The escape is not decoration.** Nothing here validates, and step 6 renders
+    **The escape is not decoration.** Nothing here validates, and step 7 renders
     even when the check found something — so this is the one component
     guaranteed to run on plans nothing has looked at, and a model that emits a
     string where the schema says integer gets it printed. Without the escape
@@ -241,7 +241,7 @@ def number(value) -> str:
 
     It is a funnel rather than a check for the same reason the two above are:
     refusing would mean an athlete whose plan has one bad field gets no page at
-    all, and the whole point of step 6 is that a document still comes out.
+    all, and the whole point of step 7 is that a document still comes out.
     """
     if isinstance(value, float):
         if value.is_integer():
@@ -285,7 +285,7 @@ def meal_body(meal, name=prose, bookkeeping=True) -> str:
     forbids and no check rejects — must print the reason alone. Appending them
     instead produces a page telling the athlete to eat chicken pasta at work.
 
-    That case is reachable rather than theoretical: step 6 renders even when the
+    That case is reachable rather than theoretical: step 7 renders even when the
     check found something, so this is the one component guaranteed to run on
     plans nothing has validated.
 
@@ -1801,7 +1801,7 @@ def main(argv=None) -> int:
     # folder, one name away.
     #
     # It is worth a guard rather than a warning because the paths are exactly
-    # what step 6 says is easiest to get wrong. resolve() follows a symlink; the
+    # what step 7 says is easiest to get wrong. resolve() follows a symlink; the
     # stat comparison catches a hard link, which resolve() cannot see. Both are
     # best-effort: a path that cannot be inspected is not a reason to refuse a
     # write that would otherwise be fine.
