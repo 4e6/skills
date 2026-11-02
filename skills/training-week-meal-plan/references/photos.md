@@ -63,10 +63,6 @@ Food photography, top-down view, square: {what is on the plate, naming the ingre
   preview.
 - **At the path the list gave it.**
 
-Make the first photo before the rest. If it is over 400 KB and your host cannot
-make it smaller, stop. The page goes out without photos. A photo that is too big
-is left off the page, and the command says which.
-
 ## Render once
 
 Run step 7's command with `--photos photos.json` added at the end.

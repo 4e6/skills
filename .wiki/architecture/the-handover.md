@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: fc80306d16abd552
+sources_digest: c6c30267336db270
 ---
 
 # Progress is the host's, and the reply is the athlete's

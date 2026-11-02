@@ -9,7 +9,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md#step-7--create-the-page
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: a653badc89538525
+sources_digest: 3b8799cfd203f3b1
 ---
 
 # Why the renderer does it
@@ -73,9 +73,10 @@ drawn again. Nothing is deleted or dated.
   still unmeasured. `photos.md` specifies the photo — square, 640 px, about
   quality 80, asked for at that size rather than drawn larger and shrunk — and
   does not teach resizing: the standard library cannot, and a
-  host that draws usually sizes its pictures too. The host that cannot is caught
-  before it spends the week: the first photo is made and checked before the rest,
-  and one too big with no way to shrink it stops the drawing.
+  host that draws usually sizes its pictures too. `photos.md` once had the host
+  make the first photo before the rest and stop if it was over the cap and could
+  not be shrunk; that rule is gone, since what to do about an oversize photo is
+  the host's call and the renderer leaves it off the page either way.
 - **A photo never costs the page.** Anything wrong — unreadable, wrong kind, too
   big, past the total, a key naming no dish — is a warning on stderr and that dish
   has no tile; the exit is 0. A photo that is not square gets a warning, and the
@@ -170,8 +171,8 @@ the same raster with and without photos. The final layout added one or two pages
 method.
 
 37 simulated host runs, all reading an earlier `photos.md` with resize recipes
-and a hand-built list; the current text is unmeasured beyond the rule to make the
-first photo and stop if it cannot be shrunk. Every Opus host that could draw and
+and a hand-built list; the current text is unmeasured, and the rule to make the
+first photo and stop if it cannot be shrunk is gone. Every Opus host that could draw and
 shrink produced a page
 byte-identical to re-rendering its own plan and list, every prompt square and
 top-down with no weight or name, and stopped at the first quota error. A host
