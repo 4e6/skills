@@ -11,7 +11,7 @@ sources:
   - resource: skills/supervise-work/SKILL.md
   - resource: plugins/session-review/skills/session-review/SKILL.md
   - resource: plugins/session-watch/.claude-plugin/plugin.json
-sources_digest: 962ee38714023263
+sources_digest: c56be58b3f3bf456
 ---
 
 # What it is
@@ -62,7 +62,7 @@ and is checked against that statement
 
 # How it is built
 
-Seven steps in `SKILL.md`, which the host follows:
+Eight steps in `SKILL.md`, which the host follows:
 
 | Step | What happens | Page |
 |---|---|---|
@@ -70,8 +70,9 @@ Seven steps in `SKILL.md`, which the host follows:
 | 2 | Read the fuelling rules, and look for recent plans to vary the dishes | [carb periodization](/domain/carb-periodization.md), [recent weeks](/architecture/last-weeks-plan.md) |
 | 3 | Write the plan as JSON against the published schema | [origin, repeat and leftover](/domain/origin-repeat-and-leftover.md) |
 | 4–5 | Check it with `validate.py`, repair at most twice | [the validator](/architecture/the-validator.md) |
-| 6 | Render the page with `render.py`, with photos where the host can draw | [the printable page](/architecture/the-printable-page.md), [dish photos](/architecture/dish-photos.md) |
-| 7 | Hand the page over and report | [the handover](/architecture/the-handover.md) |
+| 6 | Generate a photo of each dish where the host has a tool that draws | [dish photos](/architecture/dish-photos.md) |
+| 7 | Render the page with `render.py`, with the photos where there are any | [the printable page](/architecture/the-printable-page.md) |
+| 8 | Hand the page over and report | [the handover](/architecture/the-handover.md) |
 
 Two invariants carry most of the weight, stated in the rules and, where Python
 runs, checked in code: [every cooked portion is eaten](/invariants/portion-conservation.md)

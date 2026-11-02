@@ -4,15 +4,13 @@ Use this only where your host has a tool that makes a picture from a written
 description. Drawing with code, a plotting library or an SVG is not that: skip
 this file.
 
-Use it only where step 4's check ran, whatever it found. Without Python there is
-no page to put a photo on.
-
-This happens inside step 6, before its command:
+This is step 6:
 
 1. List the dishes.
 2. Say one line.
 3. Make the photos.
-4. Render once, with the photos added.
+
+Step 7 then renders once, with the photos added.
 
 ## Which dishes, and the list
 
@@ -41,7 +39,7 @@ prints one line per dish: draw or have, the path, and the title.
 
 Before the first drawing, tell the athlete in one plain line that you are
 drawing a photo of each dish for their page and that it takes a few minutes.
-Name no tool, file or step. Say nothing else until step 7.
+Name no tool, file or step. Say nothing else until step 8.
 
 Draw each dish from its own recipe, never from the athlete: no weight, no name,
 no diet. Ask for a square picture where the tool takes a size.
@@ -65,15 +63,9 @@ Food photography, top-down view, square: {what is on the plate, naming the ingre
   preview.
 - **At the path the list gave it.**
 
-Use whatever your host already uses for pictures. Install nothing.
-
-Make the first photo before the rest. If it is over 400 KB and your host cannot
-make it smaller, stop. The page goes out without photos. A photo that is too big
-is left off the page, and the command says which.
-
 ## Render once
 
-Run step 6's command with `--photos photos.json` added at the end.
+Run step 7's command with `--photos photos.json` added at the end.
 
 - It exits 0 even when a photo is left out, and says which and why.
 - Render again only when it named a name that matched no dish or a photo that was
@@ -84,15 +76,7 @@ There is one page and one handover.
 
 - Never edit the page.
 - Never read it back to check it. It is mostly the photos' bytes.
-- Step 7 may render it once more with the photos linked rather than carried, to
+- Step 8 may render it once more with the photos linked rather than carried, to
   publish. That copy is small enough to read where a publishing tool asks.
-- An exit 2 is the command or the plan, never a photo: step 6's four messages, or
+- An exit 2 is the command or the plan, never a photo: step 7's four messages, or
   a usage line if the list's name went missing.
-
-## In the report
-
-One line in step 7: the photos were made for this plan, so they show the idea of
-each dish rather than their plate.
-
-If the page went out with no photos, say why in one more plain line. Name no files
-and quote none of what the command said.

@@ -4,7 +4,7 @@ Read this in either case:
 
 - **Before writing the plan,** if this host cannot run any command (no shell, no
   code execution).
-- **At step 7,** whenever step 6 made no page.
+- **At step 8,** whenever step 7 made no page.
 
 The athlete reads the week wherever they read your reply, most likely on a phone.
 What you write is the page, so design it as one.
@@ -49,7 +49,7 @@ nothing does. Every ingredient line you print has to be the pot it describes.
   ingredients, but its pot is still bought.
 - **The shopping list is the sum of the pots,** repeats included.
 
-Reached at step 7, the plan was written for the page to scale. Leave it as it is
+Reached at step 8, the plan was written for the page to scale. Leave it as it is
 and print each line at its factor. Those are the amounts the page would have
 printed, so the shopping list and anything the check said still hold.
 
@@ -132,7 +132,7 @@ Build each from the origin's `servings`, not from the meal's `note`:
 
 ## The sentence about checking
 
-Step 7 of SKILL.md has three shapes for whether the plan was checked. They hold
+Step 8 of SKILL.md has three shapes for whether the plan was checked. They hold
 here unchanged.
 
 - If the check ran and only the page failed, say what it found in your own words,

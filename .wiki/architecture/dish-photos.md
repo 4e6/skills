@@ -5,9 +5,11 @@ description: Where the host can draw, each dish gets a square photo beside its r
 tags: [architecture, rendering, photos]
 sources:
   - resource: skills/training-week-meal-plan/references/photos.md
+  - resource: skills/training-week-meal-plan/SKILL.md#step-6--generate-photos
+  - resource: skills/training-week-meal-plan/SKILL.md#step-7--create-the-page
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: 1c70d9b17bbe9c61
+sources_digest: f79c0438abd56167
 ---
 
 # Why the renderer does it
@@ -71,9 +73,10 @@ drawn again. Nothing is deleted or dated.
   still unmeasured. `photos.md` specifies the photo — square, 640 px, about
   quality 80, asked for at that size rather than drawn larger and shrunk — and
   does not teach resizing: the standard library cannot, and a
-  host that draws usually sizes its pictures too. The host that cannot is caught
-  before it spends the week: the first photo is made and checked before the rest,
-  and one too big with no way to shrink it stops the drawing.
+  host that draws usually sizes its pictures too. `photos.md` once had the host
+  make the first photo before the rest and stop if it was over the cap and could
+  not be shrunk; that rule is gone, since what to do about an oversize photo is
+  the host's call and the renderer leaves it off the page either way.
 - **A photo never costs the page.** Anything wrong — unreadable, wrong kind, too
   big, past the total, a key naming no dish — is a warning on stderr and that dish
   has no tile; the exit is 0. A photo that is not square gets a warning, and the
@@ -120,36 +123,49 @@ it once did only on a page with photos.
 
 # What the skill tells the host
 
-Step 6 names a capability — the tools and skills *that make a picture from a
-written description* — never a host, and is worded so a host whose only tool is
-Python does not try to plot a plate. It tells the host to **list** what it has,
-naming the two places to look, the tools list and the skills list in its context,
-and read `photos.md` if anything is there. A generator that needs a setup the host
-has not seen done counts, and the host asks the athlete before setting it up: a
-long one-time install is the athlete's to agree to. It once said *where your host can make
-a picture*, which left the judgement to the host: in a real run an agent skipped
-the photos without looking, though a local image skill was installed, and never
-told the athlete. A condition about what the host can do is answered from memory;
-a list is answered from the session. A real run in 2026-10 still skipped the
-list on Sonnet 5.5, having taken the tools list for the whole answer while the
-image skill sat in the skills list. No tool is named, since one that exists on
-one host is wrong on the next, and no example is given, as
+Photos are a step of their own, step 6, ahead of the page (step 7) and the
+handover (step 8): as a clause inside the step that makes the page printable it
+was easy to pass over. Step 6 names a capability — the tools and skills *that
+make a picture from a written description* — never a host, and is worded so a
+host whose only tool is Python does not try to plot a plate. It has the host
+**list** what it has, in the two places to look, the tools list and the skills
+list in its context, and read `photos.md` if there is any.
+
+It once said *where your host can make a picture*, which left the judgement to
+the host: in a real run an agent skipped the photos without looking, though a
+local image skill was installed, and never told the athlete. A condition about
+what the host can do is answered from memory; a list is answered from the
+session. A real run in 2026-10 still skipped the list on Sonnet 5.5, having
+taken the tools list for the whole answer while the image skill sat in the
+skills list. On 2026-11-02 a real run skipped without checking whether the image
+skill was set up or asking, having judged its ~12 GB setup too heavy. The
+meal-plan skill says nothing about setting a tool up: the host decides whether a
+setup is needed, and an image tool asks for the athlete's consent itself where
+it needs one: z-image-turbo-macos gives the size and asks before its own setup
+([z-image-turbo-macos](/architecture/z-image-turbo-macos.md)). A question a tool
+raises is let through the silence rule
+([the handover](/architecture/the-handover.md)). `photos.md` no
+longer tells the host to install nothing. No tool is named, since one that
+exists on one host is wrong on the next, and no example is given, as
 [editing a skill](/conventions/editing-a-skill.md) allows only those every page
-would accept. `photos.md` is loaded only where it applies:
-draw only where step 4's check ran, whatever it found; one line to the athlete
-first; square and top-down, describing the food and never the athlete; stop at
-the first quota, rate-limit or billing error; render once — again only after
-fixing a name that matched no dish or a photo over the cap, or with the photos
-linked where step 7 publishes — one handover, never edit the page and never read
-it back except where a publishing tool asks to read the linked copy; one line
-in the report, and another whenever a page went out with no photos, saying
-why. It used to say nothing about photos where none were drawn, so an athlete
-never learned a feature had been skipped; the silence was right only while "no
-tool" meant a host that could not draw, and it hid the host that did not look.
-The rule is about a page, so where there is none — no Python, so `photos.md`
-was never read — the reply says nothing about photos: there is nothing to be
-missing from. It is left to the host to word the reason, and it names no tool,
-as the one line before drawing does not.
+would accept. `photos.md` is loaded only where it applies, and no longer repeats step 4's
+gate; step 4's table still skips step 6 where there is no Python. It says: one
+line to the athlete first; square and top-down, describing the food and never
+the athlete; stop at the first quota, rate-limit or billing error; render once —
+again only after fixing a name that matched no dish or a photo over the cap, or
+with the photos linked where step 8 publishes — one handover, never edit the
+page and never read it back except where a publishing tool asks to read the
+linked copy. What the report says about photos is step 8's, not `photos.md`'s: a
+line that they show the idea of each dish rather than the athlete's plate, and
+another whenever a page went out with no photos, saying why. It used to say
+nothing about photos where none were drawn, so an athlete never learned a
+feature had been skipped; the silence was right only while "no tool" meant a
+host that could not draw, and it hid the host that did not look. The rule is
+about a page, so where there is none — no Python, so `photos.md` was never
+read — the reply says nothing about photos: there is nothing to be missing from.
+The wording of the reason is left to the host. The rule that the reason names no
+file and quotes no command output used to sit in `photos.md` and went with its
+report section; step 8 does not restate it.
 
 # Measured, 2026-09-29
 
@@ -159,8 +175,8 @@ the same raster with and without photos. The final layout added one or two pages
 method.
 
 37 simulated host runs, all reading an earlier `photos.md` with resize recipes
-and a hand-built list; the current text is unmeasured beyond the rule to make the
-first photo and stop if it cannot be shrunk. Every Opus host that could draw and
+and a hand-built list; the current text is unmeasured, and the rule to make the
+first photo and stop if it cannot be shrunk is gone. Every Opus host that could draw and
 shrink produced a page
 byte-identical to re-rendering its own plan and list, every prompt square and
 top-down with no weight or name, and stopped at the first quota error. A host

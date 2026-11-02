@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: 620b21fc61ce8ef0
+sources_digest: c3e1667a5e841dec
 ---
 
 # One file, and Cmd-P
@@ -150,7 +150,7 @@ day, the day's training and its breakfast, lunch and dinner by name.
 - **A row per day the plan covers**, never seven.
 - **The week starts page two**, so pinning page one takes nothing from the stack.
 - **Nothing holds the table whole.** Keeping it together moved it off page one and
-  left the masthead alone there, so step 6 says the glance *comes first*, not that
+  left the masthead alone there, so step 7 says the glance *comes first*, not that
   it *is* page one.
 - **Hidden on a phone**, where five columns do not fit. That is a loss: a phone
   gets neither the grid nor its links.

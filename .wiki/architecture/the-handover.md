@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md
   - resource: skills/training-week-meal-plan/references/when-there-is-no-page.md
   - resource: skills/training-week-meal-plan/references/photos.md
-sources_digest: a700bb985a74f6c8
+sources_digest: 5aafd1c2e1b72b7b
 ---
 
 # Progress is the host's, and the reply is the athlete's
@@ -27,11 +27,14 @@ person reading this reply is neither.
 - **One plain line at most, when step 1 ends**, while the plan is written and
   checked. It **promises no check and no page**, because a host without Python
   makes neither and would have to take the promise back.
-- **Silence is anchored to steps.** From the end of step 1 to step 7 the host
-  says nothing but a question it cannot go on without — and one line before
-  photos are drawn, since on a host that draws in the chat unexplained plates
-  would otherwise appear.
-- **The check's output is never pasted**, step 7 included. Step 7 says what the
+- **Silence is anchored to steps.** From the end of step 1 to step 8 the host
+  says nothing but a question it cannot go on without, a question a tool it uses
+  tells it to ask, and one line before photos are drawn, since on a host that
+  draws in the chat unexplained plates would otherwise appear. The tool's own
+  question is let through because a tool may need the athlete's consent before it
+  installs anything, and the meal-plan skill can go on without photos, so a strict
+  host could otherwise treat it as not allowed.
+- **The check's output is never pasted**, step 8 included. Step 8 says what the
   check found in the host's own words.
 
 Two runs of the old text pasted the checklist and two of the new one did not. A
@@ -45,11 +48,11 @@ The JSON is scaffolding: it is named in every step that writes, checks or
 repairs it, and in none of the handover. Two paths ask somebody to work out
 which file is their week.
 
-**Step 7 is an order, not a menu: publish, else attach, else open.** A link
+**Step 8 is an order, not a menu: publish, else attach, else open.** A link
 reaches the athlete wherever they are: at the stove, in the shop, sent on to
 whoever cooks with them. A file in the chat reaches them where the chat does. A
-file on a disk reaches whoever sits at that machine. So step 7 hands over the
-page step 6 wrote by the first of the three the host can do, each failure
+file on a disk reaches whoever sits at that machine. So step 8 hands over the
+page step 7 wrote by the first of the three the host can do, each failure
 falling back to the next in one plain line, and the page is:
 
 - **never retyped.** The page is about 55 KB without photos, and a hand copy is not the page the
@@ -119,7 +122,7 @@ artifact unprompted and named no path.
 `render.py … --photos photos.json --link-photos` writes a copy whose image
 elements point at each photo's path from the list instead of carrying its bytes
 — 48 KB for that six-photo week, against 663 KB — and prints one `link PATH`
-line per photo. Step 7 publishes it, with each of those files beside it at the
+line per photo. Step 8 publishes it, with each of those files beside it at the
 same path, where the tool takes files beside a page. It is written beside
 `photos.json`, and refuses to be written anywhere else, so the paths that
 resolve on disk are the paths it is published with. It is the one page a host
@@ -166,7 +169,7 @@ people see, and an agent sees none.
   field, and the skill's rule is never to guess a date. The gallery's updated
   time separates one year's week from the next.
 - **The host is not told to pass them.** A draft had the renderer print the
-  two as `title` and `description` lines and step 7 tell the host to pass them
+  two as `title` and `description` lines and step 8 tell the host to pass them
   to the publishing tool, never a name of its own. It was dropped before
   release. A tool that names a page from its `<title>` needs no help, and both
   plans in the gallery were named exactly that, by hosts never told to. A tool
@@ -208,7 +211,7 @@ them:
   requirement.
 - **Nothing scales the pot, so the pot is what the recipe says.** A host that
   knows at step 3 it cannot run a command writes each origin's `yields` as the
-  portions its sittings add up to. A host that only finds out at step 7 — no
+  portions its sittings add up to. A host that only finds out at step 8 — no
   Python after all, or a page that would not render — leaves the plan as written.
   Either way each printed line is the written list at its factor, rounded once:
   the same amounts the page would print.
