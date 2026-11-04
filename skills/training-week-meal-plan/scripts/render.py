@@ -504,10 +504,11 @@ def glance_days(plan):
     return result
 
 
-# A day's name is a link in three places, to two destinations, so a links list
-# would read "Monday" several times. Each link points at one of two shared
-# descriptions, which a screen reader announces after the name; the name itself,
-# and so the heading that holds it, is left as it is.
+# A day's name is a link in three places, to two destinations. Each link points
+# at one of two shared descriptions, which a screen reader announces after the
+# name when the link is focused or reached; a links list still shows the bare
+# name. The name itself is left alone, since changing it would rename the
+# heading that holds it.
 DESC_DAY_RECIPES = ("desc-day-recipes", "this day's recipes")
 DESC_DAY_WEEK = ("desc-day-week", "this day in The week")
 

@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: 2d3ab0a00e4f2bb9
+sources_digest: 77905c46564c93e0
 ---
 
 # One file, and Cmd-P
@@ -273,12 +273,16 @@ position in the week, as for `day-<n>`.
   `scroll-margin-top` that recipes need is for a target inside a sitting, under
   the stuck band.
 - **Said apart.** The day's name is a link in three places to two destinations:
-  the week's heading, every band, and the rail's day. A links list reads
-  *Monday* several times. Each link carries `aria-describedby`, which a screen
-  reader announces after the name: *this day's recipes* on the week's link, *this
-  day in The week* on a band's and the rail's, since both go to `#day-<n>`. Not
-  `aria-label`, because the link sits in a heading and a label would rename the
-  heading, and not visible text, so neither the page nor the paper changes.
+  the week's heading, every band, and the rail's day. Each link carries
+  `aria-describedby`, and a screen reader announces the description after the
+  name when the link is focused or reached: *this day's recipes* on the week's
+  link, *this day in The week* on a band's and the rail's, since both go to
+  `#day-<n>`. That tells the three kinds apart where the reader is. **A links
+  list still shows the bare name** (*Monday* several times), because such lists
+  show names, not descriptions. That was accepted: a name changed with
+  `aria-label` or hidden text would rename the headings the links sit in, so the
+  week's heading and the band's *Monday BREAKFAST* would be read differently. No
+  visible text either, so neither the page nor the paper changes.
 - **The descriptions are two hidden spans after `</main>`**, `desc-day-recipes`
   and `desc-day-week`, once on the page. `hidden` keeps them off the screen and
   the paper, and out of `pdftotext`, yet `aria-describedby` still reads them.
@@ -287,7 +291,7 @@ position in the week, as for `day-<n>`.
   like the page's other fixed strings (`lang="en"`), and the plan has no
   language setting.
 - **Not measured** on a real phone or with a real screen reader (VoiceOver,
-  NVDA); checked in headless Chrome, light and dark, at 1000 px, 390 px and
+  NVDA), so how a given reader announces the description is unverified; checked in headless Chrome, light and dark, at 1000 px, 390 px and
   1280 px with the rail, and in print, where the sample's twelve pages are
   pixel-identical to the page before. Chrome's accessibility tree gives each
   link its name and description and leaves both headings' names as they were.
