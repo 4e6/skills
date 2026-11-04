@@ -17,13 +17,86 @@
  * Two rules everything else follows from:
  *
  *   1. Nothing here may reach the network. No web font, no remote asset, no
- *      import. The document is one file and it has to print on a machine that
- *      has never been online.
+ *      import, and no script that reaches outside the file: the one inline
+ *      script sets the colour theme and nothing else. The document is one file
+ *      and it has to print on a machine that has never been online.
  *   2. No background fills. Browsers drop backgrounds when printing unless the
  *      reader has turned that on, so a design made of tints is a design the
  *      commonest printer throws away. This one is made of rules, weight and
- *      space, which survive.
+ *      space, which survive. Colour on screen (Auto, Light or Dark) is a few
+ *      variables and nothing else; print is always the light ones.
  */
+
+/* Colour. Every colour on the page is one of these, set here and nowhere else.
+ * The light values are exactly what the page used before it had a theme: one
+ * variable for each distinct grey it had, so none moved. The dark ones are the
+ * reader's screen's, chosen by their system (Auto) or by the button in the
+ * masthead (data-theme on <html>); each keeps its light twin's place between
+ * the ink and the paper. Print is always light, whatever was chosen, and is
+ * declared last so that it wins at equal specificity. */
+:root {
+  --ink: #000;
+  --ink-1: #222;
+  --ink-2: #333;
+  --ink-2b: #444;
+  --ink-3: #555;
+  --ink-4: #999;
+  --rule: #bbb;
+  --rule-2: #ccc;
+  --rule-3: #ddd;
+  --paper: #fff;
+  --desk: #f4f2ee;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #ece7df;
+    --ink-1: #ddd7ce;
+    --ink-2: #cfc9bf;
+    --ink-2b: #bab4aa;
+    --ink-3: #a8a299;
+    --ink-4: #6a655e;
+    --rule: #3a3f45;
+    --rule-2: #33383d;
+    --rule-3: #2c3035;
+    --paper: #1d2024;
+    --desk: #141619;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ink: #ece7df;
+  --ink-1: #ddd7ce;
+  --ink-2: #cfc9bf;
+  --ink-2b: #bab4aa;
+  --ink-3: #a8a299;
+  --ink-4: #6a655e;
+  --rule: #3a3f45;
+  --rule-2: #33383d;
+  --rule-3: #2c3035;
+  --paper: #1d2024;
+  --desk: #141619;
+  color-scheme: dark;
+}
+
+@media print {
+  :root,
+  :root[data-theme] {
+    --ink: #000;
+    --ink-1: #222;
+    --ink-2: #333;
+    --ink-2b: #444;
+    --ink-3: #555;
+    --ink-4: #999;
+    --rule: #bbb;
+    --rule-2: #ccc;
+    --rule-3: #ddd;
+    --paper: #fff;
+    --desk: #f4f2ee;
+    color-scheme: light;
+  }
+}
 
 *,
 *::before,
@@ -47,8 +120,8 @@ html {
 
 body {
   margin: 0;
-  color: #000;
-  background: #fff;
+  color: var(--ink);
+  background: var(--paper);
   font-family: Georgia, "Times New Roman", Times, serif;
   line-height: 1.42;
   /* Hyphenation off: quantities and dish names read badly broken. */
@@ -97,7 +170,7 @@ h2 {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   padding-bottom: 2mm;
-  border-bottom: 0.6pt solid #000;
+  border-bottom: 0.6pt solid var(--ink);
   margin: 0 0 4mm;
 }
 
@@ -110,7 +183,7 @@ h4 {
 
 .masthead {
   padding-bottom: 4mm;
-  border-bottom: 1.6pt solid #000;
+  border-bottom: 1.6pt solid var(--ink);
   margin-bottom: 6mm;
 }
 
@@ -131,7 +204,7 @@ h4 {
   flex: 0 0 22mm;
   font-variant: small-caps;
   letter-spacing: 0.04em;
-  color: #333;
+  color: var(--ink-2);
 }
 
 .overview dd {
@@ -147,7 +220,7 @@ h4 {
   font-size: 10pt;
 }
 
-/* Two inks: a link is in the text's black rather than the engine's blue —
+/* Two inks: a link is in the text's ink rather than the engine's blue —
  * which also prints. */
 .glance a,
 .jump a,
@@ -206,7 +279,7 @@ h4 {
   text-align: left;
   vertical-align: top;
   padding: 1.8mm 2.5mm 1.8mm 0;
-  border-bottom: 0.4pt solid #bbb;
+  border-bottom: 0.4pt solid var(--rule);
   overflow-wrap: anywhere;
 }
 
@@ -216,8 +289,8 @@ h4 {
   font-weight: 400;
   font-variant: small-caps;
   letter-spacing: 0.04em;
-  color: #333;
-  border-bottom: 0.6pt solid #000;
+  color: var(--ink-2);
+  border-bottom: 0.6pt solid var(--ink);
 }
 
 .glance-table tbody th {
@@ -227,7 +300,7 @@ h4 {
 .glance-training {
   font-size: 9.5pt;
   font-style: italic;
-  color: #333;
+  color: var(--ink-2);
 }
 
 .glance-table tr {
@@ -250,7 +323,7 @@ h4 {
   page-break-inside: avoid;
   margin-bottom: 5mm;
   padding-bottom: 4mm;
-  border-bottom: 0.4pt solid #bbb;
+  border-bottom: 0.4pt solid var(--rule);
 }
 
 .day:last-child {
@@ -268,7 +341,7 @@ h4 {
   font-size: 9.5pt;
   font-weight: 400;
   font-style: italic;
-  color: #333;
+  color: var(--ink-2);
 }
 
 .meals {
@@ -290,7 +363,7 @@ h4 {
   font-size: 9pt;
   font-variant: small-caps;
   letter-spacing: 0.04em;
-  color: #333;
+  color: var(--ink-2);
   padding-top: 0.4mm;
 }
 
@@ -339,18 +412,18 @@ h4 {
 
 .example {
   font-style: italic;
-  color: #444;
+  color: var(--ink-2b);
 }
 
 .note,
 .extra {
   font-size: 9.5pt;
-  color: #444;
+  color: var(--ink-2b);
 }
 
 .excluded {
   font-style: italic;
-  color: #444;
+  color: var(--ink-2b);
 }
 
 /* ---- Recipes --------------------------------------------------------- */
@@ -418,7 +491,7 @@ h4 {
   line-height: 1.2;
   margin: 0 0 4mm;
   padding-bottom: 1.5mm;
-  border-bottom: 0.8pt solid #000;
+  border-bottom: 0.8pt solid var(--ink);
   /* Inherited from the heading rule above, and repeated because this is the one
    * place where losing it is the whole feature failing. Both spellings, because
    * engines differ over which they implement in paged mode. */
@@ -470,7 +543,7 @@ h4 {
   page-break-inside: avoid;
   margin-bottom: 6mm;
   padding-bottom: 5mm;
-  border-bottom: 0.4pt solid #bbb;
+  border-bottom: 0.4pt solid var(--rule);
   /* A word longer than the line -- a link pasted into a method, a title
    * copied from a calendar -- breaks rather than running off the page, where
    * the printer clips it without a word. In every medium: the two print
@@ -495,7 +568,7 @@ h4 {
   font-size: 9pt;
   font-variant: small-caps;
   letter-spacing: 0.04em;
-  color: #333;
+  color: var(--ink-2);
   margin: 1mm 0 0.5mm;
 }
 
@@ -507,14 +580,14 @@ h4 {
   font-size: 9pt;
   font-variant: small-caps;
   letter-spacing: 0.04em;
-  color: #333;
+  color: var(--ink-2);
   margin: 0 0 3.5mm;
 }
 
 .serves {
   font-size: 9.5pt;
   font-style: italic;
-  color: #444;
+  color: var(--ink-2b);
   margin: 0 0 2mm;
 }
 
@@ -604,11 +677,11 @@ h4 {
   display: inline-block;
   width: 3.5mm;
   text-indent: 0;
-  color: #555;
+  color: var(--ink-3);
 }
 
 .qty {
-  color: #333;
+  color: var(--ink-2);
 }
 
 .steps {
@@ -642,7 +715,7 @@ h4 {
 .fridge-list li,
 .shop-list li {
   padding: 0.7mm 0;
-  border-bottom: 0.3pt dotted #999;
+  border-bottom: 0.3pt dotted var(--ink-4);
   break-inside: avoid;
   page-break-inside: avoid;
 }
@@ -670,7 +743,7 @@ h4 {
   font-variant: small-caps;
   letter-spacing: 0.05em;
   padding-bottom: 1mm;
-  border-bottom: 0.5pt solid #000;
+  border-bottom: 0.5pt solid var(--ink);
   margin-bottom: 1mm;
 }
 
@@ -693,7 +766,7 @@ h4 {
 
 .when {
   font-size: 9pt;
-  color: #555;
+  color: var(--ink-3);
 }
 
 /* The count beside the weight — on a shopping row, and on a recipe line, whose
@@ -709,7 +782,7 @@ h4 {
  * on paper alike, and one beside a photo. On a phone both lists are one
  * column. */
 .qty-hint {
-  color: #555;
+  color: var(--ink-3);
   /* Nothing caps this field — validate.py checks arithmetic, not shapes — so
    * the page defends itself. A 400-character hint with no space in it is one
    * unbreakable token, and it crossed two columns before this line. `note`
@@ -727,14 +800,14 @@ h4 {
 
 @media screen {
   body {
-    background: #f4f2ee;
+    background: var(--desk);
     padding: 8mm 4mm 16mm;
   }
 
   .sheet {
-    background: #fff;
+    background: var(--paper);
     padding: 12mm;
-    border: 0.5pt solid #ddd;
+    border: 0.5pt solid var(--rule-3);
   }
 
   /* The band is a landmark, and on screen there are no pages to flick through
@@ -747,7 +820,7 @@ h4 {
   .sitting-band {
     position: sticky;
     top: 0;
-    background: #fff;
+    background: var(--paper);
     padding-top: 3mm;
   }
 
@@ -756,7 +829,7 @@ h4 {
   .shop-sheet {
     margin-top: 8mm;
     padding-top: 6mm;
-    border-top: 1.6pt solid #000;
+    border-top: 1.6pt solid var(--ink);
   }
 
   /* A jump lands below the band that is stuck to the top, not under it. */
@@ -771,13 +844,17 @@ h4 {
   }
 
   .shop-list input {
-    accent-color: #000;
+    accent-color: var(--ink);
   }
 
   /* Opacity rather than a colour, because the quantity, the count and the days
-   * each set their own ink and a colour would grey only the name. */
+   * each set their own ink and a colour would grey only the name. 0.82 leaves
+   * the dimmest of them, the days, the note and the count in the third ink,
+   * at 4.5:1 or better against the sheet in both themes (4.7 in light, 4.8 in
+   * dark; 0.8 does not); 0.5 left them at 2.3 and 2.6. The line through the
+   * row is what says it is done, so the dimming is not the only signal. */
   .shop-list label:has(input:checked) {
-    opacity: 0.5;
+    opacity: 0.82;
     text-decoration: line-through;
   }
 }
@@ -860,7 +937,7 @@ h4 {
     font-size: 12pt;
     margin: 0 0 3mm;
     padding-bottom: 2mm;
-    border-bottom: 1.2pt solid #000;
+    border-bottom: 1.2pt solid var(--ink);
   }
 
   .rail-parts {
@@ -882,7 +959,7 @@ h4 {
 
   .rail-week > li {
     padding: 1.5mm 0 2mm;
-    border-bottom: 0.4pt solid #ccc;
+    border-bottom: 0.4pt solid var(--rule-2);
   }
 
   .rail-day {
@@ -893,7 +970,7 @@ h4 {
     display: block;
     font-size: 8.5pt;
     font-style: italic;
-    color: #444;
+    color: var(--ink-2b);
   }
 
   .rail-dishes {
@@ -901,7 +978,7 @@ h4 {
     margin: 0.8mm 0 0;
     padding: 0;
     font-size: 9pt;
-    color: #222;
+    color: var(--ink-1);
   }
 
   .rail-dishes li {
@@ -1011,12 +1088,83 @@ h4 {
   .shop-list input {
     appearance: none;
     -webkit-appearance: none;
-    border: 0.6pt solid #000;
+    border: 0.6pt solid var(--ink);
     border-radius: 0;
   }
 }
 
+/* ---- The colour button ----------------------------------------------- */
+
+/* One pill in the masthead's corner that cycles Auto, Light, Dark. Rendered
+ * hidden and shown by the page's one script, since without the script it does
+ * nothing. Never printed. */
+.masthead {
+  position: relative;
+}
+
+.theme-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5mm;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 3mm;
+  border: 0.5pt solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 10pt;
+  cursor: pointer;
+}
+
+.theme-btn[hidden] {
+  display: none;
+}
+
+.theme-btn svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+}
+
+@media screen {
+  /* The pill is 44px high and about 74px wide; 24mm keeps a title off it, and a
+   * word with no break in it wraps rather than running underneath. */
+  .masthead h1 {
+    padding-right: 24mm;
+    overflow-wrap: anywhere;
+  }
+
+  .theme-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-3);
+  }
+
+  /* In dark the rule colour is nearly the sheet's, so the pill's edge takes the
+   * mid ink. Written for both ways of being dark, as the variables are. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-btn {
+      border-color: var(--ink-3);
+    }
+  }
+
+  :root[data-theme="dark"] .theme-btn {
+    border-color: var(--ink-3);
+  }
+}
+
+@media print {
+  .theme-btn {
+    display: none !important;
+  }
+}
+
 </style>
+<script>(function(){var R=document.documentElement,K="mealplan:theme",T=["auto","light","dark"],t="auto";try{var s=localStorage.getItem(K);if(T.indexOf(s)>0)t=s}catch(e){}function N(){var n=T[(T.indexOf(t)+1)%3];return n.charAt(0).toUpperCase()+n.slice(1)}function set(){if(t==="auto")R.removeAttribute("data-theme");else R.setAttribute("data-theme",t)}set();var I={auto:'<circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/>',light:'<circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"/>',dark:'<path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>'};document.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("theme-btn");if(!b)return;function show(){b.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">'+I[t]+"</svg><span>"+t.charAt(0).toUpperCase()+t.slice(1)+"</span>";b.setAttribute("aria-label","Colour theme: "+t+". Change");b.title="Switch to "+N()}show();b.hidden=false;b.addEventListener("click",function(){t=T[(T.indexOf(t)+1)%3];set();show();try{localStorage.setItem(K,t)}catch(e){}})})})();</script>
 </head>
 <body>
 <nav class="rail" aria-label="Contents">
@@ -1048,6 +1196,7 @@ h4 {
 </nav>
 <main class="sheet">
 <header class="masthead">
+<button class="theme-btn" id="theme-btn" type="button" hidden></button>
 <h1>Training week</h1>
 <nav class="jump"><a href="#week">The week</a> &middot; <a href="#recipes">Recipes</a> &middot; <a href="#shopping">Shopping list</a></nav>
 <dl class="overview">

@@ -5,7 +5,7 @@ description: training-week-meal-plan runs from its folder alone, installed by np
 tags: [architecture, distribution]
 sources:
   - resource: skills/training-week-meal-plan/**
-sources_digest: 04801eb0efa941b2
+sources_digest: cf3d12de56e560e8
 ---
 
 # The boundary
@@ -21,10 +21,19 @@ there. Three consequences look like restrictions and are the design.
 ## Nothing of its own reaches the network
 
 Not for a font, not for a renderer, not for telemetry. That covers the markup —
-no `@import`, `<link`, `<script`, remote `url()` or `src` — **and the verbs**:
+no `@import`, `<link`, remote `url()` or `src`, and no script that reaches
+the network or any resource outside the file — **and the verbs**:
 no `curl`, `wget`, install command, fetch call or networking import. The second
 half matters more, because what the skill ships is instructions an agent
 executes, and prose reaches the network as easily as markup does.
+
+The one script the page has is the colour-theme button's, a few lines inline in
+`<head>`. It reads and writes one `localStorage` key and sets an attribute on
+`<html>`; it fetches nothing and loads nothing. It used to be that the page had
+no script at all, and the rule was written as a ban on `<script`; the ban was
+about reach, not about the tag, so the rule now says reach, and a second script
+would have to make the same case ([the colour
+theme](/architecture/the-printable-page.md#the-colour-theme-auto-light-dark)).
 
 The host may still publish the finished page with its own tool, kept private
 ([the handover](/architecture/the-handover.md)). That is the host's network, not
