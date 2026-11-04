@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: c5d805e5248cbf84
+sources_digest: 496adacfdcae333e
 ---
 
 # One file, and Cmd-P
@@ -293,12 +293,15 @@ pill in the masthead's corner cycles **Auto, Light, Dark**. Every colour in
 `plan.css` is one of eleven custom properties, one for each distinct ink, rule
 and ground the stylesheet had (`--ink`, `--ink-1`, `--ink-2`, `--ink-2b`,
 `--ink-3`, `--ink-4`, `--rule`, `--rule-2`, `--rule-3`, `--paper` for the sheet,
-`--desk` behind it). The light values are the old literals exactly, so paper and
-a light screen did not move by a shade; a merge of near greys into fewer
-variables was tried first and shifted several, and was undone. The dark set,
-which keeps each variable's place between the ink and the paper, and
-`color-scheme: dark`, so that the shopping list's checkboxes draw dark, are
-declared in one place. Light and Dark
+`--desk` behind it). The light values are the old literals exactly, one variable
+for each distinct old value, so paper and a light screen stay as they were; do
+not merge near greys into fewer variables. The dark set keeps each variable's
+place between the ink and the paper, and with `color-scheme: dark` (so that the
+shopping list's checkboxes draw dark) it is **written twice** in `plan.css`, in
+the `prefers-color-scheme` block and in the `[data-theme="dark"]` block, and the
+two must be kept in step. The dotted rules under list rows (`--ink-4`) are the
+dimmest dark ink, below the solid rules' tone, so they stay lighter than a
+solid rule. Light and Dark
 set `data-theme` on `<html>`; Auto removes it and the media query decides.
 
 - **Auto comes first** because the reader who never touches the button gets the
@@ -313,6 +316,12 @@ set `data-theme` on `<html>`; Auto removes it and the media query decides.
 - **The choice is kept** in `localStorage` under `mealplan:theme`, every access in
   `try`/`catch`: a file opened from disk or a private window may refuse storage,
   and then the button still cycles for the visit.
+- **The pill** is at least 44 px, takes the mid ink for its edge in dark (the
+  rule colour is nearly the sheet's), darkens on hover on a screen, and its
+  `title` names the next state ("Switch to Light") beside an `aria-label` that
+  names the current one. The masthead title carries `padding-right` and
+  `overflow-wrap: anywhere` on a screen, so a long unbreakable word wraps
+  instead of running under the pill.
 - **The script is in `<head>`** and applies the stored theme before the body is
   parsed, so a Dark reader does not see a white flash; it wires the button once
   the document is ready. The button is written hidden and shown by the script,

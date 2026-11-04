@@ -47,7 +47,7 @@
     --ink-2: #cfc9bf;
     --ink-2b: #bab4aa;
     --ink-3: #a8a299;
-    --ink-4: #8a857d;
+    --ink-4: #6a655e;
     --rule: #3a3f45;
     --rule-2: #33383d;
     --rule-3: #2c3035;
@@ -63,7 +63,7 @@
   --ink-2: #cfc9bf;
   --ink-2b: #bab4aa;
   --ink-3: #a8a299;
-  --ink-4: #8a857d;
+  --ink-4: #6a655e;
   --rule: #3a3f45;
   --rule-2: #33383d;
   --rule-3: #2c3035;
@@ -1120,8 +1120,28 @@ h4 {
 }
 
 @media screen {
+  /* The pill is 44px high and about 74px wide; 24mm keeps a title off it, and a
+   * word with no break in it wraps rather than running underneath. */
   .masthead h1 {
-    padding-right: 30mm;
+    padding-right: 24mm;
+    overflow-wrap: anywhere;
+  }
+
+  .theme-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-3);
+  }
+
+  /* In dark the rule colour is nearly the sheet's, so the pill's edge takes the
+   * mid ink. Written for both ways of being dark, as the variables are. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-btn {
+      border-color: var(--ink-3);
+    }
+  }
+
+  :root[data-theme="dark"] .theme-btn {
+    border-color: var(--ink-3);
   }
 }
 

@@ -55,7 +55,7 @@
     --ink-2: #cfc9bf;
     --ink-2b: #bab4aa;
     --ink-3: #a8a299;
-    --ink-4: #8a857d;
+    --ink-4: #6a655e;
     --rule: #3a3f45;
     --rule-2: #33383d;
     --rule-3: #2c3035;
@@ -71,7 +71,7 @@
   --ink-2: #cfc9bf;
   --ink-2b: #bab4aa;
   --ink-3: #a8a299;
-  --ink-4: #8a857d;
+  --ink-4: #6a655e;
   --rule: #3a3f45;
   --rule-2: #33383d;
   --rule-3: #2c3035;
@@ -1128,8 +1128,28 @@ h4 {
 }
 
 @media screen {
+  /* The pill is 44px high and about 74px wide; 24mm keeps a title off it, and a
+   * word with no break in it wraps rather than running underneath. */
   .masthead h1 {
-    padding-right: 30mm;
+    padding-right: 24mm;
+    overflow-wrap: anywhere;
+  }
+
+  .theme-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-3);
+  }
+
+  /* In dark the rule colour is nearly the sheet's, so the pill's edge takes the
+   * mid ink. Written for both ways of being dark, as the variables are. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-btn {
+      border-color: var(--ink-3);
+    }
+  }
+
+  :root[data-theme="dark"] .theme-btn {
+    border-color: var(--ink-3);
   }
 }
 
@@ -1140,7 +1160,7 @@ h4 {
 }
 
 </style>
-<script>(function(){var R=document.documentElement,K="mealplan:theme",T=["auto","light","dark"],t="auto";try{var s=localStorage.getItem(K);if(T.indexOf(s)>0)t=s}catch(e){}function set(){if(t==="auto")R.removeAttribute("data-theme");else R.setAttribute("data-theme",t)}set();var I={auto:'<circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/>',light:'<circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"/>',dark:'<path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>'};document.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("theme-btn");if(!b)return;function show(){b.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">'+I[t]+"</svg><span>"+t.charAt(0).toUpperCase()+t.slice(1)+"</span>";b.setAttribute("aria-label","Colour theme: "+t+". Change")}show();b.hidden=false;b.addEventListener("click",function(){t=T[(T.indexOf(t)+1)%3];set();show();try{localStorage.setItem(K,t)}catch(e){}})})})();</script>
+<script>(function(){var R=document.documentElement,K="mealplan:theme",T=["auto","light","dark"],t="auto";try{var s=localStorage.getItem(K);if(T.indexOf(s)>0)t=s}catch(e){}function N(){var n=T[(T.indexOf(t)+1)%3];return n.charAt(0).toUpperCase()+n.slice(1)}function set(){if(t==="auto")R.removeAttribute("data-theme");else R.setAttribute("data-theme",t)}set();var I={auto:'<circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/>',light:'<circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"/>',dark:'<path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>'};document.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("theme-btn");if(!b)return;function show(){b.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">'+I[t]+"</svg><span>"+t.charAt(0).toUpperCase()+t.slice(1)+"</span>";b.setAttribute("aria-label","Colour theme: "+t+". Change");b.title="Switch to "+N()}show();b.hidden=false;b.addEventListener("click",function(){t=T[(T.indexOf(t)+1)%3];set();show();try{localStorage.setItem(K,t)}catch(e){}})})})();</script>
 </head>
 <body>
 <nav class="rail" aria-label="Contents">

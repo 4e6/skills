@@ -1659,6 +1659,7 @@ THEME_SCRIPT = (
     "(function(){"
     'var R=document.documentElement,K="mealplan:theme",T=["auto","light","dark"],t="auto";'
     "try{var s=localStorage.getItem(K);if(T.indexOf(s)>0)t=s}catch(e){}"
+    'function N(){var n=T[(T.indexOf(t)+1)%3];return n.charAt(0).toUpperCase()+n.slice(1)}'
     'function set(){if(t==="auto")R.removeAttribute("data-theme");else R.setAttribute("data-theme",t)}'
     "set();"
     'var I={auto:\'<circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/>\','
@@ -1668,7 +1669,7 @@ THEME_SCRIPT = (
     'var b=document.getElementById("theme-btn");if(!b)return;'
     "function show(){"
     'b.innerHTML=\'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">\'+I[t]+"</svg><span>"+t.charAt(0).toUpperCase()+t.slice(1)+"</span>";'
-    'b.setAttribute("aria-label","Colour theme: "+t+". Change")}'
+    'b.setAttribute("aria-label","Colour theme: "+t+". Change");b.title="Switch to "+N()}'
     'show();b.hidden=false;'
     'b.addEventListener("click",function(){t=T[(T.indexOf(t)+1)%3];set();show();try{localStorage.setItem(K,t)}catch(e){}})'
     "})})();"
