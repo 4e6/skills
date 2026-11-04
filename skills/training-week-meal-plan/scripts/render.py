@@ -376,7 +376,7 @@ def days(plan) -> str:
         # each of its sittings leads back. A day no recipe survives for has no
         # group, so no link and no id to land on.
         if linked.get(day["name"]) == n:
-            name = '<a href="#' + recipe_day_anchor(n) + '">' + name + "</a>"
+            name = '<a href="#' + recipe_day_anchor(n) + '"' + describedby(DESC_DAY_RECIPES) + ">" + name + "</a>"
         out.append(
             '<div class="day-head"><h3>' + name + "</h3>"
             + '<span class="session">' + prose(day["session"]) + "</span></div>"
@@ -504,6 +504,32 @@ def glance_days(plan):
     return result
 
 
+# A day's name is a link in three places, to two destinations, so a links list
+# would read "Monday" several times. Each link points at one of two shared
+# descriptions, which a screen reader announces after the name; the name itself,
+# and so the heading that holds it, is left as it is.
+DESC_DAY_RECIPES = ("desc-day-recipes", "this day's recipes")
+DESC_DAY_WEEK = ("desc-day-week", "this day in The week")
+
+
+def describedby(desc) -> str:
+    return ' aria-describedby="' + desc[0] + '"'
+
+
+def descriptions(body) -> str:
+    """The description elements the page's links point at, and only those.
+
+    Hidden, so they are neither drawn nor printed, yet still reachable by
+    aria-describedby. Built from the finished body, so a plan with no day links
+    carries no element nothing refers to, and no link refers to a missing one.
+    """
+    return "\n".join(
+        '<span hidden id="' + ident + '">' + text + "</span>"
+        for ident, text in (DESC_DAY_RECIPES, DESC_DAY_WEEK)
+        if describedby((ident,)) in body
+    )
+
+
 def day_anchor(n) -> str:
     """The id a day of the week carries: its position, from one, as recipe_anchor's is."""
     return "day-" + str(n)
@@ -551,7 +577,7 @@ def rail(plan) -> str:
     out.append('<ol class="rail-week">')
     for n, (day, cells) in enumerate(glance_days(plan), 1):
         out.append(
-            '<li><a class="rail-day" href="#' + day_anchor(n) + '">' + prose(day["name"]) + "</a>"
+            '<li><a class="rail-day" href="#' + day_anchor(n) + '"' + describedby(DESC_DAY_WEEK) + ">" + prose(day["name"]) + "</a>"
             + '<span class="rail-training">' + prose(day["session"]) + "</span>"
         )
         if cells is None:
@@ -1140,7 +1166,7 @@ def recipes(plan, photos=None) -> str:
             # first. A group for a day the week lacks has no day to link to.
             band_day = prose(name)
             if n:
-                band_day = '<a href="#' + day_anchor(n) + '">' + band_day + "</a>"
+                band_day = '<a href="#' + day_anchor(n) + '"' + describedby(DESC_DAY_WEEK) + ">" + band_day + "</a>"
             out.append(
                 '<h3 class="sitting-band"><span class="band-day">' + band_day + "</span> "
                 + '<span class="band-meal">' + prose(meal) + "</span></h3>"
@@ -1715,6 +1741,9 @@ THEME_SCRIPT = (
 
 def document(plan, css, photos=None) -> str:
     title, description = listing_text(plan)
+    sheet = [head(plan), glance(plan), days(plan), recipes(plan, photos), shop_sheet(plan)]
+    side = rail(plan)
+    notes = descriptions(side + "\n".join(sheet))
     return "\n".join(
         [
             "<!doctype html>",
@@ -1730,14 +1759,11 @@ def document(plan, css, photos=None) -> str:
             "<script>" + THEME_SCRIPT + "</script>",
             "</head>",
             "<body>",
-            rail(plan),
+            side,
             '<main class="sheet">',
-            head(plan),
-            glance(plan),
-            days(plan),
-            recipes(plan, photos),
-            shop_sheet(plan),
+            *sheet,
             "</main>",
+            *([notes] if notes else []),
             "</body>",
             "</html>",
             "",

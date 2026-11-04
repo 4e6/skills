@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: e3d669677e56b6ba
+sources_digest: 2d3ab0a00e4f2bb9
 ---
 
 # One file, and Cmd-P
@@ -272,9 +272,25 @@ position in the week, as for `day-<n>`.
   band at the top of the window with the first recipe directly beneath. The
   `scroll-margin-top` that recipes need is for a target inside a sitting, under
   the stuck band.
-- **Not measured** on a real phone; checked in headless Chrome, light and dark,
-  at 1000 px, 390 px and 1280 px with the rail, and in print, where the sample's
-  twelve pages are pixel-identical to the page before.
+- **Said apart.** The day's name is a link in three places to two destinations:
+  the week's heading, every band, and the rail's day. A links list reads
+  *Monday* several times. Each link carries `aria-describedby`, which a screen
+  reader announces after the name: *this day's recipes* on the week's link, *this
+  day in The week* on a band's and the rail's, since both go to `#day-<n>`. Not
+  `aria-label`, because the link sits in a heading and a label would rename the
+  heading, and not visible text, so neither the page nor the paper changes.
+- **The descriptions are two hidden spans after `</main>`**, `desc-day-recipes`
+  and `desc-day-week`, once on the page. `hidden` keeps them off the screen and
+  the paper, and out of `pdftotext`, yet `aria-describedby` still reads them.
+  `render.py` writes one only when some link refers to it, so a plan with no
+  recipes has the second alone and none has a dangling id. The text is English
+  like the page's other fixed strings (`lang="en"`), and the plan has no
+  language setting.
+- **Not measured** on a real phone or with a real screen reader (VoiceOver,
+  NVDA); checked in headless Chrome, light and dark, at 1000 px, 390 px and
+  1280 px with the rail, and in print, where the sample's twelve pages are
+  pixel-identical to the page before. Chrome's accessibility tree gives each
+  link its name and description and leaves both headings' names as they were.
 
 # A repeat reads as a first cook
 
