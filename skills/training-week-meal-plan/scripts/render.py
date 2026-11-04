@@ -368,10 +368,17 @@ def days(plan) -> str:
     # No block stating the fuel ranges above Monday: each session's own lines
     # carry what applies to it, and the plan has no field restating the ranges.
     out = ['<section class="week">', section_heading("week")]
+    linked = recipe_day_numbers(plan)
     for n, day in enumerate(plan["days"], 1):
         out.append('<section class="day" id="' + day_anchor(n) + '">')
+        name = prose(day["name"])
+        # The day's name leads to its recipes when it has any, and the band of
+        # each of its sittings leads back. A day no recipe survives for has no
+        # group, so no link and no id to land on.
+        if linked.get(day["name"]) == n:
+            name = '<a href="#' + recipe_day_anchor(n) + '">' + name + "</a>"
         out.append(
-            '<div class="day-head"><h3>' + prose(day["name"]) + "</h3>"
+            '<div class="day-head"><h3>' + name + "</h3>"
             + '<span class="session">' + prose(day["session"]) + "</span></div>"
         )
         training = sessions(day)
@@ -500,6 +507,26 @@ def glance_days(plan):
 def day_anchor(n) -> str:
     """The id a day of the week carries: its position, from one, as recipe_anchor's is."""
     return "day-" + str(n)
+
+
+def recipe_day_anchor(n) -> str:
+    """The id a day's recipes carry: the day's position in the week, as day_anchor's is."""
+    return "recipes-day-" + str(n)
+
+
+def recipe_day_numbers(plan):
+    """Day name -> its position in the week, for each day that has a recipes group.
+
+    The first position when the week names a day twice, since recipe_days makes
+    one group for it. A group for a day the week does not list has no entry, so
+    it carries no id and its band has nowhere to link back to. A lookup only,
+    never iterated.
+    """
+    first = {}
+    for n, day in enumerate(plan["days"], 1):
+        if day["name"] not in first:
+            first[day["name"]] = n
+    return {name: first[name] for name, _group in recipe_days(plan) if name in first}
 
 
 def rail(plan) -> str:
@@ -1097,15 +1124,25 @@ def recipes(plan, photos=None) -> str:
     # and the pack lives on the shopping row rather than on the line.
     packs = packs_by_name(plan)
     out = ['<section class="recipes">', section_heading("recipes")]
+    numbers = recipe_day_numbers(plan)
     for name, group in recipe_days(plan):
-        out.append('<section class="recipe-day">')
+        n = numbers.get(name)
+        out.append(
+            '<section class="recipe-day"' + (' id="' + recipe_day_anchor(n) + '"' if n else "") + ">"
+        )
         for meal, dishes in sittings_in(group):
             # A band for each sitting, the day on the left and the meal on the
             # right: scrolled to the middle of a method, the band stuck to the
             # top of the window still says which meal this is.
             out.append('<section class="sitting">')
+            # Every band's day links back to the day in the week, since a reader
+            # at lunch or dinner has the stuck band in front of them, not the
+            # first. A group for a day the week lacks has no day to link to.
+            band_day = prose(name)
+            if n:
+                band_day = '<a href="#' + day_anchor(n) + '">' + band_day + "</a>"
             out.append(
-                '<h3 class="sitting-band"><span class="band-day">' + prose(name) + "</span> "
+                '<h3 class="sitting-band"><span class="band-day">' + band_day + "</span> "
                 + '<span class="band-meal">' + prose(meal) + "</span></h3>"
             )
             # The exclusion rule reaches one site further once the recipes are
