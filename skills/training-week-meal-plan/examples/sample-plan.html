@@ -224,7 +224,9 @@ h4 {
  * which also prints. */
 .glance a,
 .jump a,
-.pointer a {
+.pointer a,
+.day-head h3 a,
+.band-day a {
   color: inherit;
 }
 
@@ -843,6 +845,16 @@ h4 {
     padding: 3.5mm 0;
   }
 
+  /* The same for a day's name, which links across the week and the recipes. The
+   * negative margin takes the padding back out of the line, so the heading and
+   * the band are as tall as they were and the baseline does not move. */
+  .day-head h3 a,
+  .band-day a {
+    display: inline-block;
+    padding: 2.5mm 1mm;
+    margin: -2.5mm -1mm;
+  }
+
   .shop-list input {
     accent-color: var(--ink);
   }
@@ -1225,7 +1237,7 @@ h4 {
 <section class="week">
 <h2 id="week">The week</h2>
 <section class="day" id="day-1">
-<div class="day-head"><h3>Monday</h3><span class="session">Run Z2 60&#x27; aerobic</span></div>
+<div class="day-head"><h3><a href="#recipes-day-1">Monday</a></h3><span class="session">Run Z2 60&#x27; aerobic</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Run 60&#x27; aerobic</span>
 </li>
@@ -1237,7 +1249,7 @@ h4 {
 </ul>
 </section>
 <section class="day" id="day-2">
-<div class="day-head"><h3>Tuesday</h3><span class="session">Bike Z4 6x6&#x27; + brick run 20&#x27;</span></div>
+<div class="day-head"><h3><a href="#recipes-day-2">Tuesday</a></h3><span class="session">Bike Z4 6x6&#x27; + brick run 20&#x27;</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Bike threshold 6x6&#x27;, 1h30</span>
 <ul class="fuel">
@@ -1257,7 +1269,7 @@ h4 {
 <ul class="fuel snacks"><li><span class="slot">Snacks</span><span class="fuel-body">at least about 20 g of carbohydrate, up to 280 g <span class="example">e.g. 1 banana</span></span></li></ul>
 </section>
 <section class="day" id="day-3">
-<div class="day-head"><h3>Wednesday</h3><span class="session">Run Z5 VO2max 12x500m + strength</span></div>
+<div class="day-head"><h3><a href="#recipes-day-3">Wednesday</a></h3><span class="session">Run Z5 VO2max 12x500m + strength</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Run VO2max 12x500m, 1h25</span>
 <ul class="fuel">
@@ -1277,7 +1289,7 @@ h4 {
 <ul class="fuel snacks"><li><span class="slot">Snacks</span><span class="fuel-body">at least about 20 g of carbohydrate, up to 280 g <span class="example">e.g. 1 banana</span></span></li></ul>
 </section>
 <section class="day" id="day-4">
-<div class="day-head"><h3>Thursday</h3><span class="session">Swim Z5 12x50</span></div>
+<div class="day-head"><h3><a href="#recipes-day-4">Thursday</a></h3><span class="session">Swim Z5 12x50</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Swim 12x50 Z5, 1h</span>
 <ul class="fuel">
@@ -1295,7 +1307,7 @@ h4 {
 <ul class="fuel snacks"><li><span class="slot">Snacks</span><span class="fuel-body">at least about 90 g of carbohydrate, up to 220 g, and some protein <span class="example">e.g. 1 bagel with peanut butter, 1 banana, 1 glass of milk</span></span></li></ul>
 </section>
 <section class="day" id="day-5">
-<div class="day-head"><h3>Friday</h3><span class="session">Day off</span></div>
+<div class="day-head"><h3><a href="#recipes-day-5">Friday</a></h3><span class="session">Day off</span></div>
 <ul class="meals">
 <li class="meal breakfast"><span class="slot">Breakfast</span><span class="meal-body">Eggs on toast with avocado</span></li>
 <li class="meal lunch"><span class="slot">Lunch</span><span class="meal-body">Chickpea and roasted vegetable salad</span></li>
@@ -1304,7 +1316,7 @@ h4 {
 <ul class="fuel snacks"><li><span class="slot">Snacks</span><span class="fuel-body">at least about 170 g of carbohydrate, up to 430 g, and some protein <span class="example">e.g. 2 bagels with jam, 1 banana, 1 glass of milk</span></span></li></ul>
 </section>
 <section class="day" id="day-6">
-<div class="day-head"><h3>Saturday</h3><span class="session">Bike Z4 TT 4x10&#x27; + 30&#x27; Z3, brick run 30&#x27;</span></div>
+<div class="day-head"><h3><a href="#recipes-day-6">Saturday</a></h3><span class="session">Bike Z4 TT 4x10&#x27; + 30&#x27; Z3, brick run 30&#x27;</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Bike TT 4x10&#x27; Z4 + 30&#x27; Z3, 2h40</span>
 <ul class="fuel">
@@ -1323,7 +1335,7 @@ h4 {
 </ul>
 </section>
 <section class="day" id="day-7">
-<div class="day-head"><h3>Sunday</h3><span class="session">Run Z4 4x8&#x27; threshold + open water swim 2000m</span></div>
+<div class="day-head"><h3><a href="#recipes-day-7">Sunday</a></h3><span class="session">Run Z4 4x8&#x27; threshold + open water swim 2000m</span></div>
 <ul class="sessions">
 <li class="training"><span class="training-name">Run threshold 4x8&#x27;, 1h30</span>
 <ul class="fuel">
@@ -1344,9 +1356,9 @@ h4 {
 </section>
 <section class="recipes">
 <h2 id="recipes">Recipes</h2>
-<section class="recipe-day">
+<section class="recipe-day" id="recipes-day-1">
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Monday</span> <span class="band-meal">Breakfast</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-1">Monday</a></span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe origin" id="recipe-1">
 <h4>Porridge with banana, walnuts and honey</h4>
 <p class="recipe-meta">prep 3 min &middot; cook 7 min</p>
@@ -1412,9 +1424,9 @@ h4 {
 </article>
 </section>
 </section>
-<section class="recipe-day">
+<section class="recipe-day" id="recipes-day-2">
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Tuesday</span> <span class="band-meal">Breakfast</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-2">Tuesday</a></span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe origin" id="recipe-4">
 <h4>Eggs on toast with avocado</h4>
 <p class="recipe-meta">prep 5 min &middot; cook 5 min</p>
@@ -1475,9 +1487,9 @@ h4 {
 </article>
 </section>
 </section>
-<section class="recipe-day">
+<section class="recipe-day" id="recipes-day-3">
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Wednesday</span> <span class="band-meal">Breakfast</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-3">Wednesday</a></span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe repeat" id="recipe-7">
 <h4>Porridge with banana, walnuts and honey</h4>
 <p class="recipe-meta">prep 3 min &middot; cook 7 min</p>
@@ -1529,9 +1541,9 @@ h4 {
 </article>
 </section>
 </section>
-<section class="recipe-day">
+<section class="recipe-day" id="recipes-day-4">
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Thursday</span> <span class="band-meal">Breakfast</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-4">Thursday</a></span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe origin" id="recipe-10">
 <h4>Greek yogurt with oats, berries and honey</h4>
 <p class="recipe-meta">prep 5 min &middot; cook 0 min</p>
@@ -1594,9 +1606,9 @@ h4 {
 </article>
 </section>
 </section>
-<section class="recipe-day">
+<section class="recipe-day" id="recipes-day-5">
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Friday</span> <span class="band-meal">Breakfast</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-5">Friday</a></span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe repeat" id="recipe-13">
 <h4>Eggs on toast with avocado</h4>
 <p class="recipe-meta">prep 5 min &middot; cook 5 min</p>
@@ -1657,9 +1669,9 @@ h4 {
 </article>
 </section>
 </section>
-<section class="recipe-day">
+<section class="recipe-day" id="recipes-day-6">
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Saturday</span> <span class="band-meal">Breakfast</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-6">Saturday</a></span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe repeat" id="recipe-16">
 <h4>Porridge with banana, walnuts and honey</h4>
 <p class="recipe-meta">prep 3 min &middot; cook 7 min</p>
@@ -1711,9 +1723,9 @@ h4 {
 </article>
 </section>
 </section>
-<section class="recipe-day">
+<section class="recipe-day" id="recipes-day-7">
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Sunday</span> <span class="band-meal">Breakfast</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-7">Sunday</a></span> <span class="band-meal">Breakfast</span></h3>
 <article class="recipe repeat" id="recipe-19">
 <h4>Porridge with banana, walnuts and honey</h4>
 <p class="recipe-meta">prep 3 min &middot; cook 7 min</p>

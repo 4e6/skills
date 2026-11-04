@@ -14,7 +14,7 @@ compatibility: >-
   checked and a printable page is rendered; without it you still get the plan.
 metadata:
   author: 4e6
-  version: "1.13.0"
+  version: "1.14.0"
 ---
 
 # A week of meals that tracks the training

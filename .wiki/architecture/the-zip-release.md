@@ -17,7 +17,7 @@ sources:
   - id: git-archive
     resource: https://git-scm.com/docs/git-archive
     title: git-archive(1)
-sources_digest: 5f8c4c76b0ac9aeb
+sources_digest: 364f383bd729e17e
 ---
 
 # Why there is a zip at all

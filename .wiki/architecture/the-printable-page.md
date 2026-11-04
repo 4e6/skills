@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: 6ad6536ba7291188
+sources_digest: 8e8f1fe9fb7b0526
 ---
 
 # One file, and Cmd-P
@@ -28,7 +28,9 @@ Monday Dinner* links to the card that cooked it, whose band reads the same words
 every dish on the glance with a recipe links to
 it, and a side with none prints plain. On a wide screen the rail beside the page
 carries the same links and the glance's again ([a wide screen](#a-wide-screen-is-the-paper-with-the-week-beside-it)).
-**An id is a position or a fixed word, never plan text**: `recipe-<n>` and `day-<n>`, and the parts' own `glance`, `week`, `recipes` and `shopping`.
+A day's name in the week links to that day's recipes, and the first band of the day's recipes links back to it
+([the day, both ways](#the-day-links-both-ways)).
+**An id is a position or a fixed word, never plan text**: `recipe-<n>`, `day-<n>` and `recipes-day-<n>`, and the parts' own `glance`, `week`, `recipes` and `shopping`.
 
 # A plain design, and why plain is load-bearing
 
@@ -241,6 +243,36 @@ next sitting's band pushes it off.
 - **A day away repeats its reason under each of its bands**, where a dish is
   kept on it for a later leftover: each band is read on its own, stuck to the
   top of the window or heading a printed page.
+
+# The day links both ways
+
+The athlete arrives with a day in hand, and the week and the recipes each hold
+it under the same name. In the week the day's `<h3>` is a link to
+`#recipes-day-<n>`, the group of that day's recipes; in the recipes the day name
+in the **first** band of the group links back to `#day-<n>`. `<n>` is the day's
+position in the week, as for `day-<n>`.
+
+- **Only the first band links.** A link on every band would stick a second one
+  to the top of the window all through the day's recipes; the later bands stay
+  plain text.
+- **No recipes, no link.** A day nothing survives for has no group, so its name
+  in the week is plain text and no id is left dangling. A group for a day the
+  week does not list (a plan that failed a check still renders) has no id and
+  its band no link, since there is no day to go back to. A day named twice
+  links from its first place only, where `recipe_days` makes its one group.
+- **Plain ink, plain underline.** The links are in the text's ink like every
+  other link on the page, so print keeps no colour for them; the only change on
+  paper is the underline under the names. On a screen the target is padded and
+  the padding taken out again with a negative margin, so the heading and the
+  sticky band are as tall as they were.
+- **The landing needs no margin.** The target is the group, not a recipe, and
+  the group's first band is the first thing in it, so a jump to it puts the
+  band at the top of the window with the first recipe directly beneath. The
+  `scroll-margin-top` that recipes need is for a target inside a sitting, under
+  the stuck band.
+- **Not measured** on a real phone; checked in headless Chrome, light and dark,
+  at 1000 px, 390 px and 1280 px with the rail, and in print, where the sample's
+  twelve pages and their text are as before.
 
 # A repeat reads as a first cook
 
