@@ -373,7 +373,7 @@ def days(plan) -> str:
         out.append('<section class="day" id="' + day_anchor(n) + '">')
         name = prose(day["name"])
         # The day's name leads to its recipes when it has any, and the band of
-        # its first sitting leads back. A day no recipe survives for has no
+        # each of its sittings leads back. A day no recipe survives for has no
         # group, so no link and no id to land on.
         if linked.get(day["name"]) == n:
             name = '<a href="#' + recipe_day_anchor(n) + '">' + name + "</a>"

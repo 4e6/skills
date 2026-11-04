@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: d46c596dba26d0ba
+sources_digest: e3d669677e56b6ba
 ---
 
 # One file, and Cmd-P
@@ -28,7 +28,7 @@ Monday Dinner* links to the card that cooked it, whose band reads the same words
 every dish on the glance with a recipe links to
 it, and a side with none prints plain. On a wide screen the rail beside the page
 carries the same links and the glance's again ([a wide screen](#a-wide-screen-is-the-paper-with-the-week-beside-it)).
-A day's name in the week links to that day's recipes, and the first band of the day's recipes links back to it
+A day's name in the week links to that day's recipes, and the day name in every band of the day's recipes links back to it
 ([the day, both ways](#the-day-links-both-ways)).
 **An id is a position or a fixed word, never plan text**: `recipe-<n>`, `day-<n>` and `recipes-day-<n>`, and the parts' own `glance`, `week`, `recipes` and `shopping`.
 
@@ -249,7 +249,7 @@ next sitting's band pushes it off.
 The athlete arrives with a day in hand, and the week and the recipes each hold
 it under the same name. In the week the day's `<h3>` is a link to
 `#recipes-day-<n>`, the group of that day's recipes; in the recipes the day name
-in the **first** band of the group links back to `#day-<n>`. `<n>` is the day's
+in **every** band of the group links back to `#day-<n>`. `<n>` is the day's
 position in the week, as for `day-<n>`.
 
 - **Every band links.** The stuck band is what a reader sees at lunch or dinner,

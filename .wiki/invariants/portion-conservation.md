@@ -12,7 +12,7 @@ sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md#days-the-athlete-is-away
   - resource: skills/training-week-meal-plan/references/fuelling.md#meals-the-athlete-eats-elsewhere
   - resource: skills/training-week-meal-plan/references/fuelling.md#the-days-this-plan-covers
-sources_digest: cb446772e25fcf94
+sources_digest: 6733e5513fc9e244
 ---
 
 # Statement
