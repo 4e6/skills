@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: 496adacfdcae333e
+sources_digest: e4781ccaa642f44f
 ---
 
 # One file, and Cmd-P
@@ -133,6 +133,13 @@ breaking mid-row. The fix is CSS, no script:
   in a label, no name, no form, cleared on reload. In print it is an empty ruled
   square for a pen, sized explicitly, because a box with its appearance removed
   prints as a dot. The fridge list has none: nothing on it is bought.
+- **A ticked row is dimmed to 0.82 and struck through**, on a screen only. The
+  dimmest ink in a row (the days and the count, `--ink-3`) must stay at 4.5:1 or
+  better against the sheet in both themes, which 0.82 gives (4.7 in light, 4.8 in
+  dark; 0.8 gives 4.48 in light). It was 0.5, which left those at 2.3 and 2.6.
+  The line through the row is what says it is ticked, so the dimming is not the
+  only signal. This is the one deliberate change to the light page since the
+  theme was added; everything else in light and in print is what it was.
 - **Links in the text's ink in every medium**, or they print blue.
 
 Not exercised: a real phone viewer. Preview surfaces — a mail attachment, a file
@@ -299,9 +306,10 @@ not merge near greys into fewer variables. The dark set keeps each variable's
 place between the ink and the paper, and with `color-scheme: dark` (so that the
 shopping list's checkboxes draw dark) it is **written twice** in `plan.css`, in
 the `prefers-color-scheme` block and in the `[data-theme="dark"]` block, and the
-two must be kept in step. The dotted rules under list rows (`--ink-4`) are the
-dimmest dark ink, below the solid rules' tone, so they stay lighter than a
-solid rule. Light and Dark
+two must be kept in step. The dotted rules under list rows use `--ink-4`, which
+contrasts with the sheet more than `--rule` does in both themes; it is the
+0.3 pt dotted stroke, not the tone, that keeps them lighter than a solid rule.
+Light and Dark
 set `data-theme` on `<html>`; Auto removes it and the media query decides.
 
 - **Auto comes first** because the reader who never touches the button gets the
@@ -317,7 +325,7 @@ set `data-theme` on `<html>`; Auto removes it and the media query decides.
   `try`/`catch`: a file opened from disk or a private window may refuse storage,
   and then the button still cycles for the visit.
 - **The pill** is at least 44 px, takes the mid ink for its edge in dark (the
-  rule colour is nearly the sheet's), darkens on hover on a screen, and its
+  rule colour is nearly the sheet's), takes the full ink on hover on a screen, and its
   `title` names the next state ("Switch to Light") beside an `aria-label` that
   names the current one. The masthead title carries `padding-right` and
   `overflow-wrap: anywhere` on a screen, so a long unbreakable word wraps

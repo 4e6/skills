@@ -848,9 +848,13 @@ h4 {
   }
 
   /* Opacity rather than a colour, because the quantity, the count and the days
-   * each set their own ink and a colour would grey only the name. */
+   * each set their own ink and a colour would grey only the name. 0.82 is the
+   * least dimming that leaves the dimmest of them, the days and the count in
+   * the third ink, at 4.5:1 or better against the sheet in both themes (4.7 in
+   * light, 4.8 in dark); 0.5 left them at 2.3 and 2.6. The line through the
+   * row is what says it is done, so the dimming is not the only signal. */
   .shop-list label:has(input:checked) {
-    opacity: 0.5;
+    opacity: 0.82;
     text-decoration: line-through;
   }
 }

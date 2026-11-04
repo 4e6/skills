@@ -5,7 +5,7 @@ description: training-week-meal-plan runs from its folder alone, installed by np
 tags: [architecture, distribution]
 sources:
   - resource: skills/training-week-meal-plan/**
-sources_digest: 04da08a8887343ab
+sources_digest: 4e2b9f47bc3c8c8c
 ---
 
 # The boundary
