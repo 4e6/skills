@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: c3e1667a5e841dec
+sources_digest: c5d805e5248cbf84
 ---
 
 # One file, and Cmd-P
@@ -133,7 +133,7 @@ breaking mid-row. The fix is CSS, no script:
   in a label, no name, no form, cleared on reload. In print it is an empty ruled
   square for a pen, sized explicitly, because a box with its appearance removed
   prints as a dot. The fridge list has none: nothing on it is bought.
-- **Links in the text's black in every medium**, or they print blue.
+- **Links in the text's ink in every medium**, or they print blue.
 
 Not exercised: a real phone viewer. Preview surfaces — a mail attachment, a file
 manager, an artifact panel — may make the links and boxes inert, and the page
@@ -285,6 +285,44 @@ title would need case mapping to become an id, and plan text never goes in an
 attribute, with one exception: the `<meta name="description">`, which carries
 the hard days, escaped with its quotes
 ([why](/architecture/the-handover.md#a-published-page-says-what-it-is)).
+
+# The colour theme: Auto, Light, Dark
+
+On a screen the page follows the reader's system (`prefers-color-scheme`), and a
+pill in the masthead's corner cycles **Auto, Light, Dark**. Every colour in
+`plan.css` is one of eleven custom properties, one for each distinct ink, rule
+and ground the stylesheet had (`--ink`, `--ink-1`, `--ink-2`, `--ink-2b`,
+`--ink-3`, `--ink-4`, `--rule`, `--rule-2`, `--rule-3`, `--paper` for the sheet,
+`--desk` behind it). The light values are the old literals exactly, so paper and
+a light screen did not move by a shade; a merge of near greys into fewer
+variables was tried first and shifted several, and was undone. The dark set,
+which keeps each variable's place between the ink and the paper, and
+`color-scheme: dark`, so that the shopping list's checkboxes draw dark, are
+declared in one place. Light and Dark
+set `data-theme` on `<html>`; Auto removes it and the media query decides.
+
+- **Auto comes first** because the reader who never touches the button gets the
+  setting they already made for their whole system, and the button is only for
+  the page that disagrees with it. Light then Dark is the order the words are
+  said in.
+- **Print is always light**, and the button is hidden in print. A dark sheet on
+  paper is ink, and the page's design is rules and weight on white; a reader who
+  chose Dark to read in bed still prints the same page as everyone. The print
+  block is declared last and resets `color-scheme`, so it wins at equal
+  specificity over a chosen theme.
+- **The choice is kept** in `localStorage` under `mealplan:theme`, every access in
+  `try`/`catch`: a file opened from disk or a private window may refuse storage,
+  and then the button still cycles for the visit.
+- **The script is in `<head>`** and applies the stored theme before the body is
+  parsed, so a Dark reader does not see a white flash; it wires the button once
+  the document is ready. The button is written hidden and shown by the script,
+  since without it the button does nothing. It is the page's one script, and
+  reaches nothing outside the file
+  ([the boundary](/architecture/training-week-meal-plan.md#nothing-of-its-own-reaches-the-network)).
+  A host that strips scripts when it publishes leaves a page that follows the
+  system and has no button.
+- **Not measured** on a real phone or on paper; checked in headless Chrome on
+  the sample in each theme, on a wide screen with the rail, and in print.
 
 # The example is compared byte for byte
 

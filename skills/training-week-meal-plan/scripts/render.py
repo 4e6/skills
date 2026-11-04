@@ -8,7 +8,9 @@
 
 The output is a single self-contained file. The stylesheet beside this script
 is inlined into it, so there are no sidecar assets and nothing to fetch: the
-athlete can mail the file to themselves, open it anywhere, and press Cmd-P.
+athlete can mail the file to themselves, open it anywhere, and press Cmd-P. It
+carries one small inline script, the colour-theme button's, which reaches
+nothing outside the file.
 
 --link-photos is the one exception, and it is for publishing. A self-contained
 page with photos is mostly their bytes in base64 -- about 650 KB for six dishes
@@ -258,6 +260,7 @@ def head(plan) -> str:
         ("Easy days", overview["easy_days"]),
     ]
     out = ['<header class="masthead">']
+    out.append('<button class="theme-btn" id="theme-btn" type="button" hidden></button>')
     out.append("<h1>" + prose(plan["week_label"]) + "</h1>")
     # A phone gets the page as one long scroll, and the list the athlete carries
     # into the shop is at the very end of it. Hidden in print, where a page is
@@ -1646,6 +1649,32 @@ def load_photos(path, titles, link=False):
     return photos, warnings, files
 
 
+# The page's one script, and the only one: it sets the colour theme and wires
+# the masthead's button, and reaches nothing outside the file. Auto leaves
+# <html> bare so the system's setting decides; Light and Dark set data-theme.
+# The choice is kept in localStorage, every access guarded, because a file
+# opened from disk or a private window may refuse storage. It runs in <head>,
+# before the first paint, so a stored choice never flashes the other theme.
+THEME_SCRIPT = (
+    "(function(){"
+    'var R=document.documentElement,K="mealplan:theme",T=["auto","light","dark"],t="auto";'
+    "try{var s=localStorage.getItem(K);if(T.indexOf(s)>0)t=s}catch(e){}"
+    'function set(){if(t==="auto")R.removeAttribute("data-theme");else R.setAttribute("data-theme",t)}'
+    "set();"
+    'var I={auto:\'<circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/>\','
+    'light:\'<circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"/>\','
+    'dark:\'<path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>\'};'
+    "document.addEventListener(\"DOMContentLoaded\",function(){"
+    'var b=document.getElementById("theme-btn");if(!b)return;'
+    "function show(){"
+    'b.innerHTML=\'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">\'+I[t]+"</svg><span>"+t.charAt(0).toUpperCase()+t.slice(1)+"</span>";'
+    'b.setAttribute("aria-label","Colour theme: "+t+". Change")}'
+    'show();b.hidden=false;'
+    'b.addEventListener("click",function(){t=T[(T.indexOf(t)+1)%3];set();show();try{localStorage.setItem(K,t)}catch(e){}})'
+    "})})();"
+)
+
+
 def document(plan, css, photos=None) -> str:
     title, description = listing_text(plan)
     return "\n".join(
@@ -1660,6 +1689,7 @@ def document(plan, css, photos=None) -> str:
             "<style>",
             css,
             "</style>",
+            "<script>" + THEME_SCRIPT + "</script>",
             "</head>",
             "<body>",
             rail(plan),
