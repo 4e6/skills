@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: e4781ccaa642f44f
+sources_digest: 6ad6536ba7291188
 ---
 
 # One file, and Cmd-P
@@ -134,12 +134,14 @@ breaking mid-row. The fix is CSS, no script:
   square for a pen, sized explicitly, because a box with its appearance removed
   prints as a dot. The fridge list has none: nothing on it is bought.
 - **A ticked row is dimmed to 0.82 and struck through**, on a screen only. The
-  dimmest ink in a row (the days and the count, `--ink-3`) must stay at 4.5:1 or
+  dimmest ink in a row (`--ink-3`: the days, the note and the count; `.when`
+  carries the note as well as the days) must stay at 4.5:1 or
   better against the sheet in both themes, which 0.82 gives (4.7 in light, 4.8 in
   dark; 0.8 gives 4.48 in light). It was 0.5, which left those at 2.3 and 2.6.
   The line through the row is what says it is ticked, so the dimming is not the
-  only signal. This is the one deliberate change to the light page since the
-  theme was added; everything else in light and in print is what it was.
+  only signal. Besides the button and the room the title leaves for it, this is
+  the one deliberate change to the light screen against the page before the
+  theme; print is unchanged.
 - **Links in the text's ink in every medium**, or they print blue.
 
 Not exercised: a real phone viewer. Preview surfaces — a mail attachment, a file

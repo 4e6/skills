@@ -9,7 +9,7 @@ sources:
   - resource: skills/training-week-meal-plan/SKILL.md#step-7--create-the-page
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
-sources_digest: c61e0a87e85dca7b
+sources_digest: 91564219b99ddfd8
 ---
 
 # Why the renderer does it
