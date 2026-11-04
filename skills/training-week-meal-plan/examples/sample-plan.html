@@ -851,8 +851,23 @@ h4 {
   .day-head h3 a,
   .band-day a {
     display: inline-block;
-    padding: 2.5mm 1mm;
-    margin: -2.5mm -1mm;
+  }
+
+  .day-head h3 a {
+    padding: 3mm 1mm;
+    margin: -3mm -1mm;
+  }
+
+  /* Less below than above, so the target stays inside the band and does not
+   * reach over the recipe scrolling under it. */
+  .band-day a {
+    padding: 3mm 1mm 1.5mm;
+    margin: -3mm -1mm -1.5mm;
+  }
+
+  /* A jump to a day does not land flush on the top edge. */
+  .day {
+    scroll-margin-top: 5mm;
   }
 
   .shop-list input {
@@ -1081,7 +1096,9 @@ h4 {
   /* The pointer prints as it always did: the same words, in the same ink. So
    * does a dish on the glance. */
   .glance a,
-  .pointer a {
+  .pointer a,
+  .day-head h3 a,
+  .band-day a {
     text-decoration: none;
   }
 
@@ -1379,7 +1396,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Monday</span> <span class="band-meal">Lunch</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-1">Monday</a></span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe origin" id="recipe-2">
 <h4>Chicken and rice bowl with roasted peppers</h4>
 <p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
@@ -1401,7 +1418,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Monday</span> <span class="band-meal">Dinner</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-1">Monday</a></span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-3">
 <h4>Lentil soup</h4>
 <p class="recipe-meta">prep 10 min &middot; cook 35 min</p>
@@ -1446,7 +1463,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Tuesday</span> <span class="band-meal">Lunch</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-2">Tuesday</a></span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe origin" id="recipe-5">
 <h4>Tuna pasta salad</h4>
 <p class="recipe-meta">prep 5 min &middot; cook 12 min</p>
@@ -1467,7 +1484,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Tuesday</span> <span class="band-meal">Dinner</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-2">Tuesday</a></span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-6">
 <h4>Salmon fillet with sweet potato and green beans</h4>
 <p class="recipe-meta">prep 10 min &middot; cook 30 min</p>
@@ -1510,7 +1527,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Wednesday</span> <span class="band-meal">Lunch</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-3">Wednesday</a></span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe leftover" id="recipe-8">
 <h4>Lentil soup</h4>
 <p class="recipe-meta">prep 0 min &middot; reheat 5 min</p>
@@ -1519,7 +1536,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Wednesday</span> <span class="band-meal">Dinner</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-3">Wednesday</a></span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-9">
 <h4>Spaghetti bolognese</h4>
 <p class="recipe-meta">prep 15 min &middot; cook 40 min</p>
@@ -1563,7 +1580,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Thursday</span> <span class="band-meal">Lunch</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-4">Thursday</a></span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe origin" id="recipe-11">
 <h4>Chickpea and roasted vegetable salad</h4>
 <p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
@@ -1584,7 +1601,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Thursday</span> <span class="band-meal">Dinner</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-4">Thursday</a></span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-12">
 <h4>Omelette with potatoes and side salad</h4>
 <p class="recipe-meta">prep 10 min &middot; cook 20 min</p>
@@ -1628,7 +1645,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Friday</span> <span class="band-meal">Lunch</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-5">Friday</a></span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe repeat" id="recipe-14">
 <h4>Chickpea and roasted vegetable salad</h4>
 <p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
@@ -1649,7 +1666,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Friday</span> <span class="band-meal">Dinner</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-5">Friday</a></span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe origin" id="recipe-15">
 <h4>Grilled mackerel with boiled potatoes and tomato salad</h4>
 <p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
@@ -1692,7 +1709,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Saturday</span> <span class="band-meal">Lunch</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-6">Saturday</a></span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe leftover" id="recipe-17">
 <h4>Spaghetti bolognese</h4>
 <p class="recipe-meta">prep 0 min &middot; reheat 12 min</p>
@@ -1701,7 +1718,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Saturday</span> <span class="band-meal">Dinner</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-6">Saturday</a></span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe repeat" id="recipe-18">
 <h4>Chicken and rice bowl with roasted peppers</h4>
 <p class="recipe-meta">prep 10 min &middot; cook 25 min</p>
@@ -1746,7 +1763,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Sunday</span> <span class="band-meal">Lunch</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-7">Sunday</a></span> <span class="band-meal">Lunch</span></h3>
 <article class="recipe leftover" id="recipe-20">
 <h4>Spaghetti bolognese</h4>
 <p class="recipe-meta">prep 0 min &middot; reheat 12 min</p>
@@ -1755,7 +1772,7 @@ h4 {
 </article>
 </section>
 <section class="sitting">
-<h3 class="sitting-band"><span class="band-day">Sunday</span> <span class="band-meal">Dinner</span></h3>
+<h3 class="sitting-band"><span class="band-day"><a href="#day-7">Sunday</a></span> <span class="band-meal">Dinner</span></h3>
 <article class="recipe repeat" id="recipe-21">
 <h4>Salmon fillet with sweet potato and green beans</h4>
 <p class="recipe-meta">prep 10 min &middot; cook 30 min</p>

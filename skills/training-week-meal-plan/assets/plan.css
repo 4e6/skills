@@ -843,8 +843,23 @@ h4 {
   .day-head h3 a,
   .band-day a {
     display: inline-block;
-    padding: 2.5mm 1mm;
-    margin: -2.5mm -1mm;
+  }
+
+  .day-head h3 a {
+    padding: 3mm 1mm;
+    margin: -3mm -1mm;
+  }
+
+  /* Less below than above, so the target stays inside the band and does not
+   * reach over the recipe scrolling under it. */
+  .band-day a {
+    padding: 3mm 1mm 1.5mm;
+    margin: -3mm -1mm -1.5mm;
+  }
+
+  /* A jump to a day does not land flush on the top edge. */
+  .day {
+    scroll-margin-top: 5mm;
   }
 
   .shop-list input {
@@ -1073,7 +1088,9 @@ h4 {
   /* The pointer prints as it always did: the same words, in the same ink. So
    * does a dish on the glance. */
   .glance a,
-  .pointer a {
+  .pointer a,
+  .day-head h3 a,
+  .band-day a {
     text-decoration: none;
   }
 

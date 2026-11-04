@@ -7,7 +7,7 @@ sources:
   - resource: skills/training-week-meal-plan/scripts/render.py
   - resource: skills/training-week-meal-plan/assets/plan.css
   - resource: skills/training-week-meal-plan/examples/**
-sources_digest: 8e8f1fe9fb7b0526
+sources_digest: d46c596dba26d0ba
 ---
 
 # One file, and Cmd-P
@@ -252,27 +252,29 @@ it under the same name. In the week the day's `<h3>` is a link to
 in the **first** band of the group links back to `#day-<n>`. `<n>` is the day's
 position in the week, as for `day-<n>`.
 
-- **Only the first band links.** A link on every band would stick a second one
-  to the top of the window all through the day's recipes; the later bands stay
-  plain text.
+- **Every band links.** The stuck band is what a reader sees at lunch or dinner,
+  which is when they want the day back, and a band that links only on the first
+  sitting is a link they have scrolled past.
 - **No recipes, no link.** A day nothing survives for has no group, so its name
   in the week is plain text and no id is left dangling. A group for a day the
   week does not list (a plan that failed a check still renders) has no id and
   its band no link, since there is no day to go back to. A day named twice
   links from its first place only, where `recipe_days` makes its one group.
-- **Plain ink, plain underline.** The links are in the text's ink like every
-  other link on the page, so print keeps no colour for them; the only change on
-  paper is the underline under the names. On a screen the target is padded and
-  the padding taken out again with a negative margin, so the heading and the
-  sticky band are as tall as they were.
-- **The landing needs no margin.** The target is the group, not a recipe, and
+- **Plain ink.** The links are in the text's ink like every other link on the
+  page, and print removes their underline as it does the glance's, so the names
+  print exactly as before. On a screen the target is padded and the padding taken
+  out again with a negative margin, so the heading and the sticky band are as
+  tall as they were; the band's has less below than above, so it stays inside
+  the band.
+- **The landing.** A day in the week has `scroll-margin-top: 5mm` on screen so a
+  jump does not land flush on the edge. The recipes target is the group, not a recipe, and
   the group's first band is the first thing in it, so a jump to it puts the
   band at the top of the window with the first recipe directly beneath. The
   `scroll-margin-top` that recipes need is for a target inside a sitting, under
   the stuck band.
 - **Not measured** on a real phone; checked in headless Chrome, light and dark,
   at 1000 px, 390 px and 1280 px with the rail, and in print, where the sample's
-  twelve pages and their text are as before.
+  twelve pages are pixel-identical to the page before.
 
 # A repeat reads as a first cook
 

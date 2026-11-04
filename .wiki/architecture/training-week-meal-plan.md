@@ -5,7 +5,7 @@ description: training-week-meal-plan runs from its folder alone, installed by np
 tags: [architecture, distribution]
 sources:
   - resource: skills/training-week-meal-plan/**
-sources_digest: b2729ea3b070e431
+sources_digest: e2a271d98d9f8cde
 ---
 
 # The boundary
@@ -39,7 +39,7 @@ The host may still publish the finished page with its own tool, kept private
 ([the handover](/architecture/the-handover.md)). That is the host's network, not
 the skill's.
 
-It follows that **the skill cannot measure anything**. There is no link on the
+It follows that **the skill cannot measure anything**. There is no link off the
 page and nothing to count arrivals with. Evidence about how it behaves comes
 from running it ([the evals](/architecture/the-evals.md)), never from telemetry.
 

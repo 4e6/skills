@@ -1130,16 +1130,16 @@ def recipes(plan, photos=None) -> str:
         out.append(
             '<section class="recipe-day"' + (' id="' + recipe_day_anchor(n) + '"' if n else "") + ">"
         )
-        for index, (meal, dishes) in enumerate(sittings_in(group)):
+        for meal, dishes in sittings_in(group):
             # A band for each sitting, the day on the left and the meal on the
             # right: scrolled to the middle of a method, the band stuck to the
             # top of the window still says which meal this is.
             out.append('<section class="sitting">')
-            # Only the first band of a day names it as a link: a link on every
-            # band would stick a second one to the top of the window all through
-            # the day's recipes.
+            # Every band's day links back to the day in the week, since a reader
+            # at lunch or dinner has the stuck band in front of them, not the
+            # first. A group for a day the week lacks has no day to link to.
             band_day = prose(name)
-            if n and index == 0:
+            if n:
                 band_day = '<a href="#' + day_anchor(n) + '">' + band_day + "</a>"
             out.append(
                 '<h3 class="sitting-band"><span class="band-day">' + band_day + "</span> "
