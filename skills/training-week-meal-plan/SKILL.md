@@ -14,7 +14,7 @@ compatibility: >-
   checked and a printable page is rendered; without it you still get the plan.
 metadata:
   author: 4e6
-  version: "1.14.1"
+  version: "1.14.2"
 ---
 
 # A week of meals that tracks the training
@@ -257,7 +257,7 @@ Read the message, not only the exit number.
 
 | Result | Meaning | Do |
 |---|---|---|
-| Exits 0, "nothing to report" | Clean | Go to step 6 |
+| Exits 0, says `no findings` | Clean | Go to step 6 |
 | Exits 1 | Lists what is wrong | Go to step 5 |
 | Exits 2, says `could not validate` | Bad JSON or a missing required field. Yours. | Reread the schema, rewrite, check again. This is not a repair. A second one is the last row. |
 | Exits 2, says `could not read` | The plan's path is wrong | Fix the path. The plan is fine. |

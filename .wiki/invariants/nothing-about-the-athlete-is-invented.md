@@ -11,7 +11,7 @@ sources:
   - resource: skills/training-week-meal-plan/references/fuelling.md#you-can-ask-but-the-plan-cannot
   - resource: skills/training-week-meal-plan/references/fuelling.md#body-weight-is-the-number-every-target-is-built-from
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: 4414fb7c2c601350
+sources_digest: 4ff2fd6f7c4c13bd
 ---
 
 # Statement
