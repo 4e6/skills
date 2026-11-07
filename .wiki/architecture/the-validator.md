@@ -6,7 +6,7 @@ tags: [architecture, validation]
 sources:
   - resource: skills/training-week-meal-plan/scripts/validate.py
   - resource: skills/training-week-meal-plan/SKILL.md
-sources_digest: 98d6c9084fda4019
+sources_digest: e57b660892f424ea
 ---
 
 # Why it exists
@@ -31,7 +31,8 @@ Exit 2 comes as two messages that callers tell apart: *could not read* means the
 path is wrong, *could not validate* means the document. Step 4 answers them
 differently, so changing either wording changes the step.
 
-Exit 0 prints a line. Silence-is-golden is a shell convention; the consumer here
+Exit 0 prints a line, `<path>: no findings`, and step 4 quotes it, so the same
+holds: changing it changes the step. Silence-is-golden is a shell convention; the consumer here
 is a model reading a transcript, and a clean run and a crashed one both produce
 empty output.
 
